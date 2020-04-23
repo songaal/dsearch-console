@@ -69,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
     width: '100%',
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: theme.palette.background.paper
   },
 }));
 
@@ -82,76 +82,45 @@ function Blank() {
   };
 
   return (
-    <React.Fragment>
-      <Helmet title="Blank" />
-      <Typography variant="h3" gutterBottom display="inline">
-        Blank
-      </Typography>
-
-      <Breadcrumbs aria-label="Breadcrumb" mt={2}>
-        <Link component={NavLink} exact to="/">
-          Dashboard
-        </Link>
-        <Link component={NavLink} exact to="/">
-          Pages
-        </Link>
-        <Typography>Blank</Typography>
-      </Breadcrumbs>
-
-      <Divider my={6} />
-
-      <Grid container spacing={6}>
-        <Grid item xs={12}>
-          <div className={classes.root}>
-
-          
-        <AppBar position="static" color="default">
-          <Tabs value={value} 
-                    onChange={handleChange} 
-                    indicatorColor="primary"
-                    textColor="primary"
-                    variant="scrollable"
-                    scrollButtons="on"
-                    indicatorColor="primary"
-                    textColor="primary"
-                    aria-label="scrollable force tabs example"
-              >
-                <Tab label="Item 0" {...a11yProps(0)} />
-                <Tab label="Item 1" {...a11yProps(1)} />
-                <Tab label="Item 2" {...a11yProps(2)} />
-                <Tab label="Item 3" {...a11yProps(3)} />
-                <Tab label="Item 4" {...a11yProps(4)} />
-                <Tab label="Item 5" {...a11yProps(5)} />
-                <Tab label="Item 6" {...a11yProps(6)} />
-                <Tab label="Item 7" {...a11yProps(7)} />
-                <Tab label="Item 8" {...a11yProps(8)} />
-                <Tab label="Item 9" {...a11yProps(9)} />
-                <Tab label="Item 10" {...a11yProps(10)} />
-                <Tab label="Item 11" {...a11yProps(11)} />
-                <Tab label="Item 12" {...a11yProps(12)} />
-              </Tabs></AppBar>
-            {/* <AppBar position="static">
-              
-            </AppBar> */}
-            <Divider />
-            <TabPanel value={value} index={0}>Item 1</TabPanel>
-            <TabPanel value={value} index={1}>Item 2</TabPanel>
-            <TabPanel value={value} index={2}>Item 3</TabPanel>
-            <TabPanel value={value} index={3}>Item 4</TabPanel>
-            <TabPanel value={value} index={4}>Item 5</TabPanel>
-            <TabPanel value={value} index={5}>Item 6</TabPanel>
-            <TabPanel value={value} index={6}>Item 7</TabPanel>
-            <TabPanel value={value} index={7}>Item 8</TabPanel>
-            <TabPanel value={value} index={8}>Item 9</TabPanel>
-            <TabPanel value={value} index={9}>Item 10</TabPanel>
-            <TabPanel value={value} index={10}>Item 11</TabPanel>
-            <TabPanel value={value} index={11}>Item 12</TabPanel>
-            <TabPanel value={value} index={12}>Item 13</TabPanel>
-            <TabPanel value={value} index={13}>Item 14</TabPanel>
-            </div>
-        </Grid>
-      </Grid>
-    </React.Fragment>
+    <>
+      <div className={classes.root}>
+        <Tabs value={value} 
+              onChange={handleChange} 
+              indicatorColor="primary"
+              textColor="primary"
+              variant="scrollable"
+              scrollButtons="on"
+        >
+          <Tab label="개요" {...a11yProps(0)} />
+          <Tab label="검색" {...a11yProps(1)} />
+          <Tab label="사용자사전" {...a11yProps(2)} />
+          <Tab label="유사어사전" {...a11yProps(3)} />
+          <Tab label="불용어사전" {...a11yProps(4)} />
+          <Tab label="분리어사전" {...a11yProps(5)} />
+          <Tab label="복합명사사전" {...a11yProps(6)} />
+          <Tab label="단위명사전" {...a11yProps(7)} />
+          <Tab label="단위명동의어사전" {...a11yProps(8)} />
+          <Tab label="제조사명사전" {...a11yProps(9)} />
+          <Tab label="브랜드명사전" {...a11yProps(10)} />
+          <Tab label="카테고리키워드사전" {...a11yProps(11)} />
+          <Tab label="영단어사전" {...a11yProps(12)} />
+        </Tabs>
+        <Divider />
+        <TabPanel value={value} index={0}>개요</TabPanel>
+        <TabPanel value={value} index={1}>검색</TabPanel>
+        <TabPanel value={value} index={2}>사용자사전</TabPanel>
+        <TabPanel value={value} index={3}>유사어사전</TabPanel>
+        <TabPanel value={value} index={4}>불용어사전</TabPanel>
+        <TabPanel value={value} index={5}>분리어사전</TabPanel>
+        <TabPanel value={value} index={6}>복합명사전</TabPanel>
+        <TabPanel value={value} index={7}>단위명사전</TabPanel>
+        <TabPanel value={value} index={8}>단명동의어사전</TabPanel>
+        <TabPanel value={value} index={9}>제조사명사전</TabPanel>
+        <TabPanel value={value} index={10}>브랜드명사전</TabPanel>
+        <TabPanel value={value} index={11}>카테고리키워드사전</TabPanel>
+        <TabPanel value={value} index={12}>영단어사전</TabPanel>
+      </div>
+    </>
   );
 }
 

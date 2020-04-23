@@ -49,10 +49,12 @@ const Drawer = styled.div`
 `;
 
 const AppContent = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-`;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      width: calc(100% - ${drawerWidth}px);
+      min-height: 100vh;
+    `;
 
 const Paper = styled(MuiPaper)(spacing);
 
@@ -80,7 +82,7 @@ class Dashboard extends React.Component {
 
   render() {
     const { children, routes, width } = this.props;
-
+    
     return (
       <Root>
         <CssBaseline />
@@ -102,7 +104,7 @@ class Dashboard extends React.Component {
             />
           </Hidden>
         </Drawer>
-        <AppContent>
+        <AppContent >
           <Header onDrawerToggle={this.handleDrawerToggle} />
           <MainContent p={isWidthUp("lg", width) ? 10 : 5}>
             {children}
