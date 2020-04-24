@@ -16,8 +16,8 @@ function App({ theme }) {
   return (
     <React.Fragment>
       <Helmet
-        titleTemplate="%s | Fastcat X Console"
-        defaultTitle="Fastcat X Console"
+        titleTemplate="%s | FastcatX Console"
+        defaultTitle="FastcatX Console"
       />
       <StylesProvider injectFirst>
         <MuiPickersUtilsProvider utils={DateFnsUtils}>

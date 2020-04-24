@@ -5,6 +5,12 @@
   "author": "danawa <support@danawa.com>",
   "private": true,
   "scripts": {
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test --env=jsdom",
+    "eject": "react-app-rewired eject"
+  },
+  "scripts_backup": {
     "start": "react-scripts start",
     "build": "react-scripts build"
   },
@@ -53,5 +59,14 @@
     "react-swipeable-views": "^0.13.9",
     "redux": "4.0.5",
     "styled-components": "5.0.1"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-optional-chaining": "^7.9.0",
+    "babel-plugin-module-resolver": "^4.0.0",
+    "customize-cra": "^0.9.1",
+    "react-app-rewire-hot-loader-for-customize-cra": "^1.0.1",
+    "react-app-rewired": "^2.1.5",
+    "react-hot-loader": "^4.12.20",
+    "webpack-bundle-analyzer": "^3.7.0"
   }
 }

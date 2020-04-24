@@ -22,3 +22,10 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
+
+### `Chrome extension App`
+
+1. React Developer Tools 
+2. Redux DevTools
+
+컴포넌트 확인은 1번을 사용하고, redux 데이터 변화를 확인할땐 2번을 사용하면됩니다.

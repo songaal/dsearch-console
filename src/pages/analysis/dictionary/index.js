@@ -1,127 +1,81 @@
+// React components
 import React from "react";
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
+import { connect } from "react-redux";
+import Async from '~/components/Async'
+
+// Material components
 import styled from "styled-components";
-import { NavLink as RouterNavLink } from "react-router-dom";
-
 import Helmet from 'react-helmet';
-
+import { makeStyles, withStyles } from '@material-ui/core/styles';
+import { spacing } from "@material-ui/system";
 import {
-  CardContent,
-  Grid,
-  Link,
-  Breadcrumbs as MuiBreadcrumbs,
-  Card as MuiCard,
-  Divider as MuiDivider,
-  Typography,
-  AppBar,
-  Tabs,
-  Tab,
-  Box,
-  Paper
+    CardContent,
+    Grid,
+    Card as MuiCard,
+    Divider as MuiDivider,
+    Typography,
 } from "@material-ui/core";
 
-import { spacing } from "@material-ui/system";
+// FastcatX Components
+import AntTabs from "~/components/AntTabs"
 
-const NavLink = React.forwardRef((props, ref) => (
-  <RouterNavLink innerRef={ref} {...props} />
-));
-
+// Variable
 const Card = styled(MuiCard)(spacing);
-
 const Divider = styled(MuiDivider)(spacing);
-
-const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
-
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-  return (
-    <Typography
-      component="div"
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box p={3}>{children}</Box>}
-    </Typography>
-  )
-}
-
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
-};
-
-
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
-}
-
 const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    width: '100%',
-    backgroundColor: theme.palette.background.paper
-  },
+    root: {
+        flexGrow: 1,
+        width: '100%',
+        backgroundColor: theme.palette.background.paper
+    },
+    container: {
+        maxHeight: 440,
+    },
 }));
 
-function Blank() {
-  const classes = useStyles();
-  const [value, setValue] = React.useState(0);
+// TODO Redux
+const tabs = [
+    { id: "0", label: "개요", component: Async(() => import("./summary")) },
+    { id: "1", label: "검색", component: Async(() => import("./summary")) },
+    { id: "2", label: "사용자사전", component: Async(() => import("./summary")) },
+    { id: "3", label: "유사어사전", component: Async(() => import("./summary")) },
+    { id: "4", label: "불용어사전", component: Async(() => import("./summary")) },
+    { id: "5", label: "분리어사전", component: Async(() => import("./summary")) },
+    { id: "6", label: "복합명사사전", component: Async(() => import("./summary")) },
+    { id: "7", label: "단위명사전", component: Async(() => import("./summary")) },
+    { id: "8", label: "단위명동의어사전", component: Async(() => import("./summary")) },
+    { id: "9", label: "제조사명사전", component: Async(() => import("./summary")) },
+    { id: "10", label: "브랜드명사전", component: Async(() => import("./summary")) },
+    { id: "11", label: "카테고리키워드사전", component: Async(() => import("./summary")) },
+    { id: "12", label: "영단어사전", component: Async(() => import("./summary")) },
+]
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
 
-  return (
-    <>
-      <div className={classes.root}>
-        <Tabs value={value} 
-              onChange={handleChange} 
-              indicatorColor="primary"
-              textColor="primary"
-              variant="scrollable"
-              scrollButtons="on"
-        >
-          <Tab label="개요" {...a11yProps(0)} />
-          <Tab label="검색" {...a11yProps(1)} />
-          <Tab label="사용자사전" {...a11yProps(2)} />
-          <Tab label="유사어사전" {...a11yProps(3)} />
-          <Tab label="불용어사전" {...a11yProps(4)} />
-          <Tab label="분리어사전" {...a11yProps(5)} />
-          <Tab label="복합명사사전" {...a11yProps(6)} />
-          <Tab label="단위명사전" {...a11yProps(7)} />
-          <Tab label="단위명동의어사전" {...a11yProps(8)} />
-          <Tab label="제조사명사전" {...a11yProps(9)} />
-          <Tab label="브랜드명사전" {...a11yProps(10)} />
-          <Tab label="카테고리키워드사전" {...a11yProps(11)} />
-          <Tab label="영단어사전" {...a11yProps(12)} />
-        </Tabs>
-        <Divider />
-        <TabPanel value={value} index={0}>개요</TabPanel>
-        <TabPanel value={value} index={1}>검색</TabPanel>
-        <TabPanel value={value} index={2}>사용자사전</TabPanel>
-        <TabPanel value={value} index={3}>유사어사전</TabPanel>
-        <TabPanel value={value} index={4}>불용어사전</TabPanel>
-        <TabPanel value={value} index={5}>분리어사전</TabPanel>
-        <TabPanel value={value} index={6}>복합명사전</TabPanel>
-        <TabPanel value={value} index={7}>단위명사전</TabPanel>
-        <TabPanel value={value} index={8}>단명동의어사전</TabPanel>
-        <TabPanel value={value} index={9}>제조사명사전</TabPanel>
-        <TabPanel value={value} index={10}>브랜드명사전</TabPanel>
-        <TabPanel value={value} index={11}>카테고리키워드사전</TabPanel>
-        <TabPanel value={value} index={12}>영단어사전</TabPanel>
-      </div>
-    </>
-  );
+function Dictionary({dispatch}) {
+    const classes = useStyles();
+    const [state, setState] = React.useState({
+        tabIndex: 0
+    });
+    return (
+        <>
+            <Helmet title="사전" />
+
+            <Typography variant="h3" gutterBottom display="inline">
+                사전
+            </Typography>
+
+            <Divider my={6} />
+            <Grid container spacing={6}>
+                <Grid item xs={12}>
+                    <Card>
+                        <CardContent>
+                            <AntTabs tabs={tabs}/>
+                        </CardContent>
+                    </Card>
+                </Grid>
+            </Grid>
+        </>
+    );
 }
-
-export default Blank;
+export default connect()(Dictionary);
