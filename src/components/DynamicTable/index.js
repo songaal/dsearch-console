@@ -19,11 +19,11 @@ function DynamicTable({ dataList }) {
     let rowCount = 0
     dataList.forEach(data => rowCount < data.data.length ? rowCount = data.data.length : rowCount)
 
-    let rows = new Array()
+    let rows = []
     let array = [...dataList.map(data => data.data)]
 
     for (let i = 0; i < rowCount; i++) {
-        let cols = new Array()
+        let cols = []
         for (let j = 0; j < fields.length; j++) {
             cols.push(array[j][i] || null)
         }
