@@ -14,7 +14,7 @@ cache:
 build:
   stage: build
   script:
-    - ls -al
+    - npm cache clean
     - npm install && npm install -g react-scripts && npm run build
     - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}:${CI_PIPELINE_ID}"
     - echo "${IMAGE}"
