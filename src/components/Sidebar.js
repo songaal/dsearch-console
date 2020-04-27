@@ -80,21 +80,21 @@ const BrandIcon = styled(Layers)`
   color: ${props => props.theme.sidebar.header.brand.color};
 `;
 
-const BrandChip = styled(Chip)`
-  background-color: ${green[700]};
-  border-radius: 5px;
-  color: ${props => props.theme.palette.common.white};
-  font-size: 60%;
-  height: 20px;
-  margin-left: 2px;
-  margin-bottom: 1px;
-  padding: 4px 0;
-
-  span {
-    padding-left: ${props => props.theme.spacing(1.5)}px;
-    padding-right: ${props => props.theme.spacing(1.5)}px;
-  }
-`;
+// const BrandChip = styled(Chip)`
+//   background-color: ${green[700]};
+//   border-radius: 5px;
+//   color: ${props => props.theme.palette.common.white};
+//   font-size: 60%;
+//   height: 20px;
+//   margin-left: 2px;
+//   margin-bottom: 1px;
+//   padding: 4px 0;
+//
+//   span {
+//     padding-left: ${props => props.theme.spacing(1.5)}px;
+//     padding-right: ${props => props.theme.spacing(1.5)}px;
+//   }
+// `;
 
 const Category = styled(ListItem)`
   padding-top: ${props => props.theme.spacing(3)}px;

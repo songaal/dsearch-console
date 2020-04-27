@@ -81,7 +81,7 @@ function AntTabs({tabs}) {
     };
 
     return (
-        <div className={classes.root}>
+        <>
             <Tabs value={state.tabIndex}
                   onChange={handleChange}
                   indicatorColor="primary"
@@ -93,8 +93,7 @@ function AntTabs({tabs}) {
             </Tabs>
 
             { tabs.map((Tab, index) => <Panel value={state.tabIndex} index={index} ><Tab.component /></Panel>) }
-
-        </div>
+        </>
     )
 };
 
