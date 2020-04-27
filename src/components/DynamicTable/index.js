@@ -1,17 +1,60 @@
 import React from "react";
-import PropType from 'prop-types'
+import PropTypes from "prop-types"
 
-function DynamicTable({ type }) {
-    console.log(type)
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Paper
+} from "@material-ui/core";
 
 
+function DynamicTable({ dataList }) {
+    console.log(dataList[0].data)
+    const fields = dataList.map(data => data.field)
 
+    let rowCount = 0
+    dataList.forEach(data => rowCount < data.data.length ? rowCount = data.data.length : rowCount)
 
+    let rows = new Array()
+    let array = [...dataList.map(data => data.data)]
+
+    for (let i = 0; i < rowCount; i++) {
+        let cols = new Array()
+        for (let j = 0; j < fields.length; j++) {
+            cols.push(array[j][i] || null)
+        }
+        rows.push(cols)
+    }
+
+    return (
+        <TableContainer component={Paper}>
+            <Table size="small">
+                <TableHead>
+                    <TableRow>
+                        {fields.map((field, index) => <TableCell key={index}>{ field }</TableCell>)}
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {
+                        rows.map((cols, rowIdx) => {
+                            return (
+                                <TableRow key={rowIdx}>
+                                    { cols.map((col, colIdx) => <TableCell key={colIdx}>{ col }</TableCell>) }
+                                </TableRow>
+                            )
+                        })
+                    }
+                </TableBody>
+            </Table>
+        </TableContainer>
+    )
 }
 DynamicTable.prototype = {
-    type: PropType.symbol.isRequired
+    dataList: PropTypes.array.isRequired
 }
 
-
-
-return DynamicTable
+export default DynamicTable

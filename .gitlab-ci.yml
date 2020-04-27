@@ -12,7 +12,9 @@ build:
   stage: build
   when: manual
   script:
-    - npm install -g react-scripts && npm install
+    - npm install -g react-scripts && npm install && npm run build
+    - docker build -t "${REGISTRY}/${CI_PROJECT_PATH}:${CI_PIPELINE_ID}" .
+    - docker push "${REGISTRY}/${CI_PROJECT_PATH}:${CI_PIPELINE_ID}"
 
 deploy:
   stage: deploy

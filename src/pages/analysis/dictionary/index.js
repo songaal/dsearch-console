@@ -1,11 +1,10 @@
 // React components
 import React from "react";
-import PropTypes from 'prop-types';
 import { connect } from "react-redux";
 import Async from '~/components/Async';
 
 // Material components
-import { makeStyles, withStyles  } from '@material-ui/core/styles';
+// import { makeStyles } from '@material-ui/core/styles';
 import styled from "styled-components";
 import Helmet from 'react-helmet';
 import {
@@ -24,10 +23,6 @@ import SearchIcon from '@material-ui/icons/Search';
 // Variable
 const Card = styled(MuiCard)(spacing);
 const Divider = styled(MuiDivider)(spacing);
-const useStyles = makeStyles((theme) => ({
-    root: { flexGrow: 1, width: '100%', backgroundColor: theme.palette.background.paper},
-    container: { maxHeight: 440 },
-}));
 
 // TODO Redux
 const tabs = [
@@ -46,19 +41,15 @@ const tabs = [
     { label: "영단어사전", component: Async(() => import("./Summary")) },
 ]
 
-function Dictionary({dispatch}) {
-    const classes = useStyles();
-    const [state, setState] = React.useState({
-        tabIndex: 0
-    });
+function Dictionary({ dispatch }) {
+    // const classes = useStyles();
+    // const [state, setState] = React.useState({});
     return (
         <>
             <Helmet title="사전"/>
-
             <Typography variant="h3" gutterBottom display="inline">
                 사전
             </Typography>
-
             <Divider my={6}/>
             <Grid container spacing={6}>
                 <Grid item xs={12}>
