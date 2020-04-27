@@ -4,10 +4,14 @@ stages:
   - build
   - deploy
 
+cache:
+  paths:
+    - node_modules/
+
 build:
   stage: build
   script:
-    - echo "Kubectl Install"
+    - npm install
     - npm run build
     - docker build -t "${REGISTRY}/${CI_PROJECT_PATH}:${CI_PIPELINE_ID}" .
     - docker push "${REGISTRY}/${CI_PROJECT_PATH}:${CI_PIPELINE_ID}"
