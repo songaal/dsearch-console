@@ -14,7 +14,7 @@ build:
   script:
     - npm install -g react-scripts && npm install && npm run build
     - docker build -t "${REGISTRY}/${CI_PROJECT_PATH}:${CI_PIPELINE_ID}" .
-    - docker push "${REGISTRY}/${CI_PROJECT_PATH}:${CI_PIPELINE_ID}"
+    - docker push "${REGISTRY}/${CI_PROJECT_TITLE}:${CI_PIPELINE_ID}"
 
 deploy:
   stage: deploy
