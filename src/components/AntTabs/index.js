@@ -1,16 +1,21 @@
 // React components
 import React from "react";
 import PropTypes from 'prop-types';
-import { connect } from "react-redux";
 
 // Material components
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import {
     Tabs,
     Tab as AntTab,
+    Divider as MuiDivider,
     Typography,
     Box
 } from "@material-ui/core";
+import styled from "styled-components";
+import {spacing} from "@material-ui/system";
+
+
+const Divider = styled(MuiDivider)(spacing);
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -18,8 +23,8 @@ const useStyles = makeStyles((theme) => ({
         width: '100%',
         backgroundColor: theme.palette.background.paper
     },
-    container: {
-        maxHeight: 440,
+    indicator: {
+        backgroundColor: '#1890ff',
     },
 }));
 
@@ -28,7 +33,7 @@ const Tab = withStyles((theme) => ({
         textTransform: 'none',
         minWidth: 72,
         fontWeight: theme.typography.fontWeightRegular,
-        marginRight: theme.spacing(0),
+        marginRight: theme.spacing(2),
         '&:hover': {
             color: '#40a9ff',
             opacity: 1,
@@ -50,6 +55,7 @@ function Panel(props) {
 
     return (
         <Typography
+            key={props.key}
             component="div"
             role="tabpanel"
             hidden={value !== index}
@@ -68,12 +74,8 @@ Panel.propTypes = {
 };
 
 
-function AntTabs({tabs}) {
-    const classes = useStyles();
-    const [state, setState] = React.useState({
-        tabIndex: 0
-    });
-
+function AntTabs({ tabs }) {
+    const [state, setState] = React.useState({ tabIndex: 0 });
     const handleChange = (event, tabIndex) => {
         setState({
             tabIndex: tabIndex
@@ -89,10 +91,10 @@ function AntTabs({tabs}) {
                   variant="scrollable"
                   scrollButtons="auto"
             >
-                { tabs.map(tab => <Tab id={tab.id} label={tab.label} />) }
+                { tabs.map((tab, index) => <Tab id={tab.id}  icon={tab.icon} label={tab.label || ""} > {tab.id} </Tab>) }
             </Tabs>
-
-            { tabs.map((Tab, index) => <Panel value={state.tabIndex} index={index} ><Tab.component /></Panel>) }
+            <Divider />
+            { tabs.map((Tab, index) => <Panel value={state.tabIndex} index={index} ></Panel>) }
         </>
     )
 };
