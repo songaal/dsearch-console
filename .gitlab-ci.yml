@@ -1,13 +1,19 @@
-image: alpine/k8s:1.14.6
+image: dcr.danawa.io/alpine-k8s
 
+stages:
+  - build
+  - deploy
 
 build:
   stage: build
   script:
-    - curl -sL https://deb.nodesource.com/setup_12.x | bash -
-    - apt-get install -y nodejs
-    - apt-get install -y build-essential
+    - echo "Kubectl Install"
     - npm run build
     - docker build -t "${REGISTRY}/${CI_PROJECT_PATH}:${CI_PIPELINE_ID}" .
     - docker push "${REGISTRY}/${CI_PROJECT_PATH}:${CI_PIPELINE_ID}"
+
+deploy:
+  stage: deploy
+  script:
+    - env
 
