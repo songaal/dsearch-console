@@ -4,9 +4,9 @@ image: alpine/k8s:1.14.6
 build:
   stage: build
   script:
-    - curl -sL https://deb.nodesource.com/setup_12.x | sudo -E /bin/bash -
-    - sudo apt-get install -y nodejs
-    - sudo apt-get install -y build-essential
+    - curl -sL https://deb.nodesource.com/setup_12.x | bash -
+    - apt-get install -y nodejs
+    - apt-get install -y build-essential
     - npm run build
     - docker build -t "${REGISTRY}/${CI_PROJECT_PATH}:${CI_PIPELINE_ID}" .
     - docker push "${REGISTRY}/${CI_PROJECT_PATH}:${CI_PIPELINE_ID}"
