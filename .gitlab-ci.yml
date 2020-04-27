@@ -25,5 +25,7 @@ deploy:
   stage: deploy
   when: manual
   script:
-    - env
+    - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}:${CI_PIPELINE_ID}"
+    - echo "${IMAGE}"
+    - kubectl patch deployment fastcatx-console -n fastcatx --patch '{"spec": {"template": {"spec": {"containers": [{"name": "fastcatx-console", "image": ${IMAGE} }]}}}}'
 
