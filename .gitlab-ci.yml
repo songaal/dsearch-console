@@ -14,7 +14,7 @@ cache:
 build:
   stage: build
   script:
-    - npm update
+    - for package in `ls node_modules`; do npm uninstall $package; done;
     - npm install && npm install -g react-app-rewired && npm run build
     - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}:${CI_PIPELINE_ID}"
     - echo "${IMAGE}"
