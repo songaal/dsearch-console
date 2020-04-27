@@ -14,7 +14,8 @@ cache:
 build:
   stage: build
   script:
-    - npm install -g react-scripts && npm install && npm run build
+    - ls -al
+    - npm install && npm install -g react-scripts && npm run build
     - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}:${CI_PIPELINE_ID}"
     - echo "${IMAGE}"
     - docker build -t "${IMAGE}" .
