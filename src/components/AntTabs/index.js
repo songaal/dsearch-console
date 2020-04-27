@@ -50,27 +50,27 @@ const Tab = withStyles((theme) => ({
 }))((props) => <AntTab disableRipple {...props} />);
 
 
-function Panel(props) {
-    const { children, value, index } = props;
-
+function TabPanel(props) {
+    const { key, children, value, index } = props;
     return (
         <Typography
-            key={props.key}
+            key={key}
             component="div"
             role="tabpanel"
             hidden={value !== index}
             id={`scrollable-auto-tabpanel-${index}`}
             aria-labelledby={`scrollable-auto-tab-${index}`}
         >
-            {value === index && <Box p={3}>{children}</Box>}
+            {value === index && <Box  p={3}> <children key={key}/> </Box>}
         </Typography>
     );
 }
 
-Panel.propTypes = {
+TabPanel.propTypes = {
+    key: PropTypes.any,
     children: PropTypes.node,
-    index: PropTypes.any.isRequired,
-    value: PropTypes.any.isRequired,
+    index: PropTypes.any,
+    value: PropTypes.any,
 };
 
 
@@ -91,10 +91,21 @@ function AntTabs({ tabs }) {
                   variant="scrollable"
                   scrollButtons="auto"
             >
-                { tabs.map((tab, index) => <Tab id={tab.id}  icon={tab.icon} label={tab.label || ""} > {tab.id} </Tab>) }
+                { tabs.map((tab, index) => <Tab key={index} id={index}  icon={tab.icon} label={tab.label || ""} />) }
             </Tabs>
             <Divider />
-            { tabs.map((Tab, index) => <Panel value={state.tabIndex} index={index} ></Panel>) }
+            { tabs.map((Tab, index) => {
+                return (
+                    <div key={index}
+                         role="tabpanel"
+                         hidden={state.tabIndex !== index}
+                         id={`scrollable-auto-tabpanel-${index}`}
+                         aria-labelledby={`scrollable-auto-tab-${index}`}
+                    >
+                        {index === state.tabIndex && <Box  p={3}> <Tab.component tabs={Tab} /> </Box>}
+                    </div>
+                )
+            } )}
         </>
     )
 };

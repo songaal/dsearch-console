@@ -31,19 +31,19 @@ const useStyles = makeStyles((theme) => ({
 
 // TODO Redux
 const tabs = [
-    { id: "0", icon: (<SearchIcon />), component: Async(() => import("./Search")) },
-    { id: "1", label: "개요", component: Async(() => import("./Summary")) },
-    { id: "2", label: "사용자사전", component: Async(() => import("./Summary")) },
-    { id: "3", label: "유사어사전", component: Async(() => import("./Summary")) },
-    { id: "4", label: "불용어사전", component: Async(() => import("./Summary")) },
-    { id: "5", label: "분리어사전", component: Async(() => import("./Summary")) },
-    { id: "6", label: "복합명사사전", component: Async(() => import("./Summary")) },
-    { id: "7", label: "단위명사전", component: Async(() => import("./Summary")) },
-    { id: "8", label: "단위명동의어사전", component: Async(() => import("./Summary")) },
-    { id: "9", label: "제조사명사전", component: Async(() => import("./Summary")) },
-    { id: "10", label: "브랜드명사전", component: Async(() => import("./Summary")) },
-    { id: "11", label: "카테고리키워드사전", component: Async(() => import("./Summary")) },
-    { id: "12", label: "영단어사전", component: Async(() => import("./Summary")) },
+    { icon: (<SearchIcon />), component: Async(() => import("./Search")) },
+    { label: "개요", component: Async(() => import("./Summary")) },
+    { label: "사용자사전", component: Async(() => import("./Summary")) },
+    { label: "유사어사전", component: Async(() => import("./Summary")) },
+    { label: "불용어사전", component: Async(() => import("./Summary")) },
+    { label: "분리어사전", component: Async(() => import("./Summary")) },
+    { label: "복합명사사전", component: Async(() => import("./Summary")) },
+    { label: "단위명사전", component: Async(() => import("./Summary")) },
+    { label: "단위명동의어사전", component: Async(() => import("./Summary")) },
+    { label: "제조사명사전", component: Async(() => import("./Summary")) },
+    { label: "브랜드명사전", component: Async(() => import("./Summary")) },
+    { label: "카테고리키워드사전", component: Async(() => import("./Summary")) },
+    { label: "영단어사전", component: Async(() => import("./Summary")) },
 ]
 
 function Dictionary({dispatch}) {
