@@ -1,5 +1,8 @@
 image: dcr.danawa.io/alpine-k8s
 
+variables:
+  GIT_STRATEGY: clone
+
 stages:
   - build
   - deploy
@@ -13,7 +16,7 @@ build:
   when: manual
   script:
     - npm install -g react-scripts && npm install && npm run build
-    - export IMAGE = "${REGISTRY}/${CI_PROJECT_PATH}:${CI_PIPELINE_ID}"
+    - export IMAGE = "${REGISTRY}/${CI_PROJECT_TITLE}:${CI_PIPELINE_ID}"
     - echo "${IMAGE}"
     - docker build -t "${IMAGE}" .
     - docker push "${REGISTRY}/${IMAGE}"
