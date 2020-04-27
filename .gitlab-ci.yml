@@ -13,7 +13,6 @@ cache:
 
 build:
   stage: build
-  when: manual
   script:
     - npm install && npm run build
     - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}:${CI_PIPELINE_ID}"
@@ -23,9 +22,10 @@ build:
 
 deploy:
   stage: deploy
-  when: manual
   script:
     - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}:${CI_PIPELINE_ID}"
     - echo "${IMAGE}"
-    - kubectl patch deployment fastcatx-console -n fastcatx --patch '{"spec": {"template": {"spec": {"containers": [{"name": "fastcatx-console", "image": ${IMAGE} }]}}}}'
+    - kubectl patch deployment fastcatx-console -n fastcatx -p "{\"spec\":{\"template\":{\"spec\":{\"containers\":\[{\"name\":\"fastcatx-console\",\"image\":\"${IMAGE}\"}\]}}}}"
+    - sleep 5
+    - kubectl get pod -n fastcatx -o wide
 
