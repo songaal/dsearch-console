@@ -3,7 +3,7 @@ import React from "react";
 import PropTypes from 'prop-types';
 
 // Material components
-import { makeStyles, withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import {
     Tabs,
     Tab as AntTab,
