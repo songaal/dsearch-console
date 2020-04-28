@@ -8,13 +8,19 @@ stages:
   - build
   - deploy
 
+cache:
+  paths:
+    - node_modules/
+
 build:
   stage: build
   script:
-    - npm install -g create-react-app 
-    - npm install -g react-app-rewired
     - npm install --loglevel=error
-    - sleep 999999
+    - npm install -g create-react-app  --loglevel=error
+    - npm install -g react-app-rewired --loglevel=error
+    - npm install -g react-dev-utils --loglevel=error
+    - npm install -g react-scripts --loglevel=error
+    - npm install customize-cra --save-dev --loglevel=error
     - npm run build
     - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}:${CI_PIPELINE_ID}"
     - echo "${IMAGE}"
