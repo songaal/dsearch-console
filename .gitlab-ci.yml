@@ -15,9 +15,9 @@ cache:
 build:
   stage: build
   script:
+    - npm install -g create-react-app 
+    - npm install -g react-app-rewired
     - npm install --loglevel=error
-    - npm install react-dev-utils --save-dev
-    - npm install -g --loglevel=error react-app-rewired
     - npm run build
     - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}:${CI_PIPELINE_ID}"
     - echo "${IMAGE}"
