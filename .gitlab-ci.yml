@@ -14,9 +14,8 @@ cache:
 build:
   stage: build
   script:
-    - ls -al $HOME
-    - npm list -g --depth=0
-    - env
+    - ls -al /usr/lib
+    - npm fund
     - npm install && npm install -g react-app-rewired && npm install -g react-scripts && npm run build
     - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}:${CI_PIPELINE_ID}"
     - echo "${IMAGE}"
