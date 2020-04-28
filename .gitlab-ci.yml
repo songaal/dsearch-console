@@ -17,10 +17,10 @@ build:
   script:
     - npm install --loglevel=error
     - npm install -g create-react-app  --loglevel=error
+    - npm install customize-cra --save-dev --loglevel=error
     - npm install -g react-app-rewired --loglevel=error
     - npm install -g react-dev-utils --loglevel=error
     - npm install -g react-scripts --loglevel=error
-    - npm install customize-cra --save-dev --loglevel=error
     - npm run build
     - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}:${CI_PIPELINE_ID}"
     - echo "${IMAGE}"
