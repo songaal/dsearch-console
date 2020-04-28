@@ -16,6 +16,7 @@ build:
   stage: build
   script:
     - npm install --loglevel=error
+    - sleep 99999
     - npm run build
     - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}:${CI_PIPELINE_ID}"
     - echo "${IMAGE}"
