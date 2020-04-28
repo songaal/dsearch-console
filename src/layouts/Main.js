@@ -78,9 +78,7 @@ class Main extends React.Component {
 
     render() {
         const {children, routes, width} = this.props;
-        console.log("main ", routes, this.props);
-
-
+        console.log("main ", routes, this.props.theme);
         return (
             <Root>
                 <CssBaseline/>

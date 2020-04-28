@@ -3,13 +3,8 @@ import React from "react";
 import {connect, useSelector} from "react-redux";
 import {Grid} from "@material-ui/core";
 
-function UserDictionary({dispatch}) {
-    // const store = useStore()
-    const userList = useSelector(state => state.dictionaryReducers.userList, []);
-
-    console.log(userList);
-
-    // console.log("userList: ", userList)
+function UserDictionary({dispatch, userList, user}) {
+    console.log(dispatch, userList, user);
     return (
         <>
             <Grid container spacing={6}>
@@ -21,4 +16,4 @@ function UserDictionary({dispatch}) {
     )
 }
 
-export default connect()(UserDictionary);
+export default connect(store => ({userList: store.dictionaryReducers.userList, user: store.dictionaryReducers.user}))(UserDictionary);
