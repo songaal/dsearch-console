@@ -3,7 +3,7 @@ import React from "react";
 export default function () {
     return (
         <>
-            검색
+            영단어 사전
         </>
     )
 }

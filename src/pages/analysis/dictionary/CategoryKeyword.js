@@ -3,7 +3,7 @@ import React from "react";
 export default function () {
     return (
         <>
-            검색
+            카테고리키워드 사전
         </>
     )
 }

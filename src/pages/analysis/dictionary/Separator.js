@@ -3,7 +3,7 @@ import React from "react";
 export default function () {
     return (
         <>
-            검색
+            분리어 사전
         </>
     )
 }
