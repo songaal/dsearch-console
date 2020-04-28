@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import {connect} from "react-redux";
-import {setTheme} from "../redux/actions/themeActions";
 
 import {Button, Drawer, Fab as MuiFab, ListItem, Paper as MuiPaper, Typography} from "@material-ui/core";
 
@@ -55,13 +54,13 @@ let Demos = function ({dispatch}) {
     return (
         <Wrapper>
             <Heading>Select a demo</Heading>
-            <Demo my={2} mx={4} onClick={() => dispatch(setTheme(0))}>
+            <Demo my={2} mx={4} onClick={() => console.log("Dark")}>
                 <Screenshot alt="Dark" src="/static/img/screenshots/dark-small.png"/>
                 <Typography variant="subtitle1" gutterBottom>
                     Dark
                 </Typography>
             </Demo>
-            <Demo my={2} mx={4} onClick={() => dispatch(setTheme(1))}>
+            <Demo my={2} mx={4} onClick={() => console.log("Light")}>
                 <Screenshot
                     alt="Light"
                     src="/static/img/screenshots/light-small.png"
@@ -70,13 +69,13 @@ let Demos = function ({dispatch}) {
                     Light
                 </Typography>
             </Demo>
-            <Demo my={2} mx={4} onClick={() => dispatch(setTheme(2))}>
+            <Demo my={2} mx={4} onClick={() => console.log("Light")}>
                 <Screenshot alt="Blue" src="/static/img/screenshots/blue-small.png"/>
                 <Typography variant="subtitle1" gutterBottom>
                     Blue
                 </Typography>
             </Demo>
-            <Demo my={2} mx={4} onClick={() => dispatch(setTheme(3))}>
+            <Demo my={2} mx={4} onClick={() => console.log("Green")}>
                 <Screenshot
                     alt="Green"
                     src="/static/img/screenshots/green-small.png"
@@ -85,7 +84,7 @@ let Demos = function ({dispatch}) {
                     Green
                 </Typography>
             </Demo>
-            <Demo my={2} mx={4} onClick={() => dispatch(setTheme(4))}>
+            <Demo my={2} mx={4} onClick={() => console.log("Indigo")}>
                 <Screenshot
                     alt="Indigo"
                     src="/static/img/screenshots/indigo-small.png"
@@ -94,7 +93,7 @@ let Demos = function ({dispatch}) {
                     Indigo
                 </Typography>
             </Demo>
-            <Demo my={2} mx={4} onClick={() => dispatch(setTheme(5))}>
+            <Demo my={2} mx={4} onClick={() => console.log("Teal")}>
                 <Screenshot alt="Teal" src="/static/img/screenshots/teal-small.png"/>
                 <Typography variant="subtitle1" gutterBottom>
                     Teal
@@ -117,7 +116,7 @@ let Demos = function ({dispatch}) {
     )
 };
 
-Demos = connect()(Demos);
+// Demos = connect()(Demos);
 
 function Settings() {
     const [state, setState] = React.useState({
