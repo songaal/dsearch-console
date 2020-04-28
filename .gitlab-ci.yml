@@ -2,6 +2,7 @@ image: dcr.danawa.io/alpine-k8s
 
 variables:
   GIT_STRATEGY: clone
+  CI: false
 
 stages:
   - build
@@ -14,8 +15,8 @@ cache:
 build:
   stage: build
   script:
-    - sleep 9999
-    - npm install && npm run build
+    - npm install --loglevel=error
+    - npm run build
     - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}:${CI_PIPELINE_ID}"
     - echo "${IMAGE}"
     - docker build -t "${IMAGE}" .
