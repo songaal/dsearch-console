@@ -1,7 +1,8 @@
 image: dcr.danawa.io/alpine-k8s
 
 variables:
-  GIT_STRATEGY: clone
+  GIT_STRATEGY: "clone"
+  CI: "false"
 
 stages:
   - build
@@ -14,11 +15,19 @@ cache:
 build:
   stage: build
   script:
-    - bash npm install && npm run build
+    - export NODE_PATH="${PWD}/node_modules"
+    - npm install
+    - npm install -g create-react-app
+    - npm install -g react-dev-utils
+    - npm install -g react-scripts
+    - npm install customize-cra --save-dev
+    - npm install react-app-rewired --save-dev
+    - npm run build
     - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}:${CI_PIPELINE_ID}"
     - echo "${IMAGE}"
     - docker build -t "${IMAGE}" .
     - docker push "${IMAGE}"
+
 
 deploy:
   stage: deploy
