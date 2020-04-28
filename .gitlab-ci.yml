@@ -14,7 +14,6 @@ cache:
 build:
   stage: build
   script:
-    - - sleep 99999
     - npm install && npm run build
     - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}:${CI_PIPELINE_ID}"
     - echo "${IMAGE}"
