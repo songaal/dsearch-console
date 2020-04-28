@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { NavLink as RouterNavLink } from "react-router-dom";
+import {NavLink as RouterNavLink} from "react-router-dom";
 
 import Helmet from 'react-helmet';
 
@@ -12,17 +12,17 @@ import Streetview from "./Streetview";
 import Markers from "./Markers";
 
 import {
-  Grid,
-  Link,
-  Breadcrumbs as MuiBreadcrumbs,
-  Divider as MuiDivider,
-  Typography as MuiTypography
+    Breadcrumbs as MuiBreadcrumbs,
+    Divider as MuiDivider,
+    Grid,
+    Link,
+    Typography as MuiTypography
 } from "@material-ui/core";
 
-import { spacing } from "@material-ui/system";
+import {spacing} from "@material-ui/system";
 
 const NavLink = React.forwardRef((props, ref) => (
-  <RouterNavLink innerRef={ref} {...props} />
+    <RouterNavLink innerRef={ref} {...props} />
 ));
 
 const Divider = styled(MuiDivider)(spacing);
@@ -32,47 +32,47 @@ const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
 const Typography = styled(MuiTypography)(spacing);
 
 function GoogleMaps() {
-  return (
-    <React.Fragment>
-      <Helmet title="Google Maps" />
-      <Typography variant="h3" gutterBottom display="inline">
-        Google Maps
-      </Typography>
+    return (
+        <React.Fragment>
+            <Helmet title="Google Maps"/>
+            <Typography variant="h3" gutterBottom display="inline">
+                Google Maps
+            </Typography>
 
-      <Breadcrumbs aria-label="Breadcrumb" mt={2}>
-        <Link component={NavLink} exact to="/">
-          Dashboard
-        </Link>
-        <Link component={NavLink} exact to="/">
-          Maps
-        </Link>
-        <Typography>Google Maps</Typography>
-      </Breadcrumbs>
+            <Breadcrumbs aria-label="Breadcrumb" mt={2}>
+                <Link component={NavLink} exact to="/">
+                    Dashboard
+                </Link>
+                <Link component={NavLink} exact to="/">
+                    Maps
+                </Link>
+                <Typography>Google Maps</Typography>
+            </Breadcrumbs>
 
-      <Divider my={6} />
+            <Divider my={6}/>
 
-      <Grid container spacing={6}>
-        <Grid item xs={12} md={6}>
-          <Default />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Hybrid />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <LightStyle />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <DarkStyle />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Streetview />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Markers />
-        </Grid>
-      </Grid>
-    </React.Fragment>
-  );
+            <Grid container spacing={6}>
+                <Grid item xs={12} md={6}>
+                    <Default/>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <Hybrid/>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <LightStyle/>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <DarkStyle/>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <Streetview/>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <Markers/>
+                </Grid>
+            </Grid>
+        </React.Fragment>
+    );
 }
 
 export default GoogleMaps;

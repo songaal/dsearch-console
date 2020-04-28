@@ -53,15 +53,15 @@ let initState = {
     stopwordList: [],
     separator: {},
     separatorList: [],
-}
+};
 
-export default function reducer(state= initState, actions) {
+export default function reducer(state = initState, actions) {
     switch (actions.type) {
         case types.SET_DICTIONARY_USER_LIST:
             return {
                 ...state,
                 userDictionary: actions.payload
-            }
+            };
         default:
             return state
     }

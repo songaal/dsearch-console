@@ -1,7 +1,7 @@
 import React from "react";
-import { createGlobalStyle } from "styled-components";
+import {createGlobalStyle} from "styled-components";
 
-import { CssBaseline } from "@material-ui/core";
+import {CssBaseline} from "@material-ui/core";
 
 const GlobalStyle = createGlobalStyle`
   html,
@@ -15,14 +15,14 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-function Landing({ children }) {
-  return (
-    <React.Fragment>
-      <CssBaseline />
-      <GlobalStyle />
-      {children}
-    </React.Fragment>
-  );
+function Landing({children}) {
+    return (
+        <React.Fragment>
+            <CssBaseline/>
+            <GlobalStyle/>
+            {children}
+        </React.Fragment>
+    );
 }
 
 export default Landing;

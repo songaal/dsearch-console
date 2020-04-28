@@ -1,30 +1,30 @@
 import React from "react";
 import styled from "styled-components";
-import { NavLink as RouterNavLink } from "react-router-dom";
+import {NavLink as RouterNavLink} from "react-router-dom";
 
 import Helmet from 'react-helmet';
 
 import {
-  Avatar as MuiAvatar,
-  Breadcrumbs as MuiBreadcrumbs,
-  Button,
-  Card as MuiCard,
-  CardActions,
-  CardContent as MuiCardContent,
-  CardMedia as MuiCardMedia,
-  Chip as MuiChip,
-  Divider as MuiDivider,
-  Grid,
-  Link,
-  Typography as MuiTypography
+    Avatar as MuiAvatar,
+    Breadcrumbs as MuiBreadcrumbs,
+    Button,
+    Card as MuiCard,
+    CardActions,
+    CardContent as MuiCardContent,
+    CardMedia as MuiCardMedia,
+    Chip as MuiChip,
+    Divider as MuiDivider,
+    Grid,
+    Link,
+    Typography as MuiTypography
 } from "@material-ui/core";
 
-import { red, green, orange } from "@material-ui/core/colors";
+import {green, orange, red} from "@material-ui/core/colors";
 
-import { spacing } from "@material-ui/system";
+import {spacing} from "@material-ui/system";
 
 const NavLink = React.forwardRef((props, ref) => (
-  <RouterNavLink innerRef={ref} {...props} />
+    <RouterNavLink innerRef={ref} {...props} />
 ));
 
 const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
@@ -59,122 +59,122 @@ const Chip = styled(MuiChip)`
   margin-bottom: ${props => props.theme.spacing(4)}px;
 `;
 
-function Project({ image, title, description, chip }) {
-  return (
-    <Card mb={6}>
-      {image ? <CardMedia image={image} title="Contemplative Reptile" /> : null}
-      <CardContent>
-        <Typography gutterBottom variant="h5" component="h2">
-          {title}
-        </Typography>
+function Project({image, title, description, chip}) {
+    return (
+        <Card mb={6}>
+            {image ? <CardMedia image={image} title="Contemplative Reptile"/> : null}
+            <CardContent>
+                <Typography gutterBottom variant="h5" component="h2">
+                    {title}
+                </Typography>
 
-        {chip}
+                {chip}
 
-        <Typography mb={4} component="p">
-          {description}
-        </Typography>
+                <Typography mb={4} component="p">
+                    {description}
+                </Typography>
 
-        <Avatar alt="Avatar" src="/static/img/avatars/avatar-1.jpg" />
-        <Avatar alt="Avatar" src="/static/img/avatars/avatar-2.jpg" />
-        <Avatar alt="Avatar" src="/static/img/avatars/avatar-3.jpg" />
-      </CardContent>
-      <CardActions>
-        <Button size="small" color="primary">
-          Share
-        </Button>
-        <Button size="small" color="primary">
-          Learn More
-        </Button>
-      </CardActions>
-    </Card>
-  );
+                <Avatar alt="Avatar" src="/static/img/avatars/avatar-1.jpg"/>
+                <Avatar alt="Avatar" src="/static/img/avatars/avatar-2.jpg"/>
+                <Avatar alt="Avatar" src="/static/img/avatars/avatar-3.jpg"/>
+            </CardContent>
+            <CardActions>
+                <Button size="small" color="primary">
+                    Share
+                </Button>
+                <Button size="small" color="primary">
+                    Learn More
+                </Button>
+            </CardActions>
+        </Card>
+    );
 }
 
 function Projects() {
-  return (
-    <React.Fragment>
-      <Helmet title="Projects" />
-      
-      <Typography variant="h3" gutterBottom display="inline">
-        Projects
-      </Typography>
+    return (
+        <React.Fragment>
+            <Helmet title="Projects"/>
 
-      <Breadcrumbs aria-label="Breadcrumb" mt={2}>
-        <Link component={NavLink} exact to="/">
-          Dashboard
-        </Link>
-        <Link component={NavLink} exact to="/">
-          Pages
-        </Link>
-        <Typography>Projects</Typography>
-      </Breadcrumbs>
+            <Typography variant="h3" gutterBottom display="inline">
+                Projects
+            </Typography>
 
-      <Divider my={6} />
+            <Breadcrumbs aria-label="Breadcrumb" mt={2}>
+                <Link component={NavLink} exact to="/">
+                    Dashboard
+                </Link>
+                <Link component={NavLink} exact to="/">
+                    Pages
+                </Link>
+                <Typography>Projects</Typography>
+            </Breadcrumbs>
 
-      <Grid container spacing={6}>
-        <Grid item xs={12} lg={6} xl={3}>
-          <Project
-            title="Landing page redesign"
-            description="Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum."
-            chip={<Chip label="Finished" rgbcolor={green[500]} />}
-          />
-        </Grid>
-        <Grid item xs={12} lg={6} xl={3}>
-          <Project
-            title="Company posters"
-            description="Curabitur ligula sapien, tincidunt non, euismod vitae, posuere imperdiet, leo. Maecenas malesuada. Praesent congue erat at massa."
-            chip={<Chip label="In progress" rgbcolor={orange[500]} />}
-          />
-        </Grid>
-        <Grid item xs={12} lg={6} xl={3}>
-          <Project
-            title="Product page design"
-            description="Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum."
-            chip={<Chip label="Finished" rgbcolor={green[500]} />}
-          />
-        </Grid>
-        <Grid item xs={12} lg={6} xl={3}>
-          <Project
-            title="Upgrade CRM software"
-            description="Nam pretium turpis et arcu. Duis arcu tortor, suscipit eget, imperdiet nec, imperdiet iaculis, ipsum. Sed aliquam ultrices mauris."
-            chip={<Chip label="In progress" rgbcolor={orange[500]} />}
-          />
-        </Grid>
-        <Grid item xs={12} lg={6} xl={3}>
-          <Project
-            title="Fix form validation"
-            description="Nam pretium turpis et arcu. Duis arcu tortor, suscipit eget, imperdiet nec, imperdiet iaculis, ipsum. Sed aliquam ultrices mauris."
-            chip={<Chip label="In progress" rgbcolor={orange[500]} />}
-            image="/static/img/unsplash/unsplash-1.jpg"
-          />
-        </Grid>
-        <Grid item xs={12} lg={6} xl={3}>
-          <Project
-            title="New company logo"
-            description="Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum."
-            chip={<Chip label="On hold" rgbcolor={red[500]} />}
-            image="/static/img/unsplash/unsplash-2.jpg"
-          />
-        </Grid>
-        <Grid item xs={12} lg={6} xl={3}>
-          <Project
-            title="Upgrade to latest Maps API"
-            description="Nam pretium turpis et arcu. Duis arcu tortor, suscipit eget, imperdiet nec, imperdiet iaculis, ipsum. Sed aliquam ultrices mauris."
-            chip={<Chip label="Finished" rgbcolor={green[500]} />}
-            image="/static/img/unsplash/unsplash-3.jpg"
-          />
-        </Grid>
-        <Grid item xs={12} lg={6} xl={3}>
-          <Project
-            title="Refactor backend templates"
-            description="Curabitur ligula sapien, tincidunt non, euismod vitae, posuere imperdiet, leo. Maecenas malesuada. Praesent congue erat at massa."
-            chip={<Chip label="On hold" rgbcolor={red[500]} />}
-            image="/static/img/unsplash/unsplash-4.jpg"
-          />
-        </Grid>
-      </Grid>
-    </React.Fragment>
-  );
+            <Divider my={6}/>
+
+            <Grid container spacing={6}>
+                <Grid item xs={12} lg={6} xl={3}>
+                    <Project
+                        title="Landing page redesign"
+                        description="Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum."
+                        chip={<Chip label="Finished" rgbcolor={green[500]}/>}
+                    />
+                </Grid>
+                <Grid item xs={12} lg={6} xl={3}>
+                    <Project
+                        title="Company posters"
+                        description="Curabitur ligula sapien, tincidunt non, euismod vitae, posuere imperdiet, leo. Maecenas malesuada. Praesent congue erat at massa."
+                        chip={<Chip label="In progress" rgbcolor={orange[500]}/>}
+                    />
+                </Grid>
+                <Grid item xs={12} lg={6} xl={3}>
+                    <Project
+                        title="Product page design"
+                        description="Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum."
+                        chip={<Chip label="Finished" rgbcolor={green[500]}/>}
+                    />
+                </Grid>
+                <Grid item xs={12} lg={6} xl={3}>
+                    <Project
+                        title="Upgrade CRM software"
+                        description="Nam pretium turpis et arcu. Duis arcu tortor, suscipit eget, imperdiet nec, imperdiet iaculis, ipsum. Sed aliquam ultrices mauris."
+                        chip={<Chip label="In progress" rgbcolor={orange[500]}/>}
+                    />
+                </Grid>
+                <Grid item xs={12} lg={6} xl={3}>
+                    <Project
+                        title="Fix form validation"
+                        description="Nam pretium turpis et arcu. Duis arcu tortor, suscipit eget, imperdiet nec, imperdiet iaculis, ipsum. Sed aliquam ultrices mauris."
+                        chip={<Chip label="In progress" rgbcolor={orange[500]}/>}
+                        image="/static/img/unsplash/unsplash-1.jpg"
+                    />
+                </Grid>
+                <Grid item xs={12} lg={6} xl={3}>
+                    <Project
+                        title="New company logo"
+                        description="Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum."
+                        chip={<Chip label="On hold" rgbcolor={red[500]}/>}
+                        image="/static/img/unsplash/unsplash-2.jpg"
+                    />
+                </Grid>
+                <Grid item xs={12} lg={6} xl={3}>
+                    <Project
+                        title="Upgrade to latest Maps API"
+                        description="Nam pretium turpis et arcu. Duis arcu tortor, suscipit eget, imperdiet nec, imperdiet iaculis, ipsum. Sed aliquam ultrices mauris."
+                        chip={<Chip label="Finished" rgbcolor={green[500]}/>}
+                        image="/static/img/unsplash/unsplash-3.jpg"
+                    />
+                </Grid>
+                <Grid item xs={12} lg={6} xl={3}>
+                    <Project
+                        title="Refactor backend templates"
+                        description="Curabitur ligula sapien, tincidunt non, euismod vitae, posuere imperdiet, leo. Maecenas malesuada. Praesent congue erat at massa."
+                        chip={<Chip label="On hold" rgbcolor={red[500]}/>}
+                        image="/static/img/unsplash/unsplash-4.jpg"
+                    />
+                </Grid>
+            </Grid>
+        </React.Fragment>
+    );
 }
 
 export default Projects;

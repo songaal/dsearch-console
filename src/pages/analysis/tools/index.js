@@ -1,25 +1,23 @@
 import React from "react";
 import styled from "styled-components";
-import { NavLink as RouterNavLink } from "react-router-dom";
-import { connect } from "react-redux";
-import { setTheme } from "@actions/themeActions";
+import {NavLink as RouterNavLink} from "react-router-dom";
+import {connect} from "react-redux";
 import Helmet from 'react-helmet';
 
 import {
-  CardContent,
-  Grid,
-  Link,
-  Breadcrumbs as MuiBreadcrumbs,
-  Card as MuiCard,
-  Divider as MuiDivider,
-  Typography,
-    Button
+    Breadcrumbs as MuiBreadcrumbs,
+    Card as MuiCard,
+    CardContent,
+    Divider as MuiDivider,
+    Grid,
+    Link,
+    Typography
 } from "@material-ui/core";
 
-import { spacing } from "@material-ui/system";
+import {spacing} from "@material-ui/system";
 
 const NavLink = React.forwardRef((props, ref) => (
-  <RouterNavLink innerRef={ref} {...props} />
+    <RouterNavLink innerRef={ref} {...props} />
 ));
 
 const Card = styled(MuiCard)(spacing);
@@ -29,55 +27,53 @@ const Divider = styled(MuiDivider)(spacing);
 const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
 
 function EmptyCard() {
-  return (
-    <Card mb={6}>
-      <CardContent>
-        <Typography variant="h6" gutterBottom>
-          Empty card
-        </Typography>
-        <Typography variant="body2" gutterBottom>
+    return (
+        <Card mb={6}>
+            <CardContent>
+                <Typography variant="h6" gutterBottom>
+                    Empty card
+                </Typography>
+                <Typography variant="body2" gutterBottom>
 
 
-          Empty card
-        </Typography>
-      </CardContent>
-    </Card>
-  );
+                    Empty card
+                </Typography>
+            </CardContent>
+        </Card>
+    );
 }
 
 function Blank({dispatch}) {
 
 
+    return (
+        <React.Fragment>
+            <Helmet title="Blank"/>
+            <Typography variant="h3" gutterBottom display="inline">
+                Blank
+            </Typography>
 
+            <Breadcrumbs aria-label="Breadcrumb" mt={2}>
+                <Link component={NavLink} exact to="/">
+                    Dashboard
 
-  return (
-    <React.Fragment>
-      <Helmet title="Blank" />
-      <Typography variant="h3" gutterBottom display="inline">
-        Blank
-      </Typography>
+                </Link>
+                <Link component={NavLink} exact to="/dashboard"> gogogo</Link>
+                <Link component={NavLink} exact to="/">
+                    Pages
+                </Link>
+                <Typography>Blank</Typography>
+            </Breadcrumbs>
 
-      <Breadcrumbs aria-label="Breadcrumb" mt={2}>
-        <Link component={NavLink} exact to="/">
-          Dashboard
+            <Divider my={6}/>
 
-        </Link>
-          <Link component={NavLink} exact to="/dashboard" > gogogo</Link>
-        <Link component={NavLink} exact to="/">
-          Pages
-        </Link>
-        <Typography>Blank</Typography>
-      </Breadcrumbs>
-
-      <Divider my={6} />
-
-      <Grid container spacing={6}>
-        <Grid item xs={12}>
-          <EmptyCard  onClick={() => console.log("click")}/>
-        </Grid>
-      </Grid>
-    </React.Fragment>
-  );
+            <Grid container spacing={6}>
+                <Grid item xs={12}>
+                    <EmptyCard onClick={() => console.log("click")}/>
+                </Grid>
+            </Grid>
+        </React.Fragment>
+    );
 }
 
 export default connect()(Blank);

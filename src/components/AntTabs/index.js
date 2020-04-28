@@ -1,16 +1,9 @@
 // React components
 import React from "react";
 import PropTypes from 'prop-types';
-
 // Material components
-import { withStyles } from '@material-ui/core/styles';
-import {
-    Tabs,
-    Tab as AntTab,
-    Divider as MuiDivider,
-    Typography,
-    Box
-} from "@material-ui/core";
+import {withStyles} from '@material-ui/core/styles';
+import {Box, Divider as MuiDivider, Tab as AntTab, Tabs, Typography} from "@material-ui/core";
 import styled from "styled-components";
 import {spacing} from "@material-ui/system";
 
@@ -51,7 +44,7 @@ const Tab = withStyles((theme) => ({
 
 
 function TabPanel(props) {
-    const { key, children, value, index } = props;
+    const {key, children, value, index} = props;
     return (
         <Typography
             key={key}
@@ -61,7 +54,9 @@ function TabPanel(props) {
             id={`scrollable-auto-tabpanel-${index}`}
             aria-labelledby={`scrollable-auto-tab-${index}`}
         >
-            {value === index && <Box  p={3}> <children key={key}/> </Box>}
+            {value === index && <Box p={3}>
+                <children key={key}/>
+            </Box>}
         </Typography>
     );
 }
@@ -74,8 +69,8 @@ TabPanel.propTypes = {
 };
 
 
-function AntTabs({ tabs }) {
-    const [state, setState] = React.useState({ tabIndex: 0 });
+function AntTabs({tabs}) {
+    const [state, setState] = React.useState({tabIndex: 0});
     const handleChange = (event, tabIndex) => {
         setState({
             tabIndex: tabIndex
@@ -91,10 +86,10 @@ function AntTabs({ tabs }) {
                   variant="scrollable"
                   scrollButtons="auto"
             >
-                { tabs.map((tab, index) => <Tab key={index} id={index}  icon={tab.icon} label={tab.label || ""} />) }
+                {tabs.map((tab, index) => <Tab key={index} id={index} icon={tab.icon} label={tab.label || ""}/>)}
             </Tabs>
-            <Divider />
-            { tabs.map((Tab, index) => {
+            <Divider/>
+            {tabs.map((Tab, index) => {
                 return (
                     <div key={index}
                          role="tabpanel"
@@ -102,12 +97,12 @@ function AntTabs({ tabs }) {
                          id={`scrollable-auto-tabpanel-${index}`}
                          aria-labelledby={`scrollable-auto-tab-${index}`}
                     >
-                        {index === state.tabIndex && <Box  p={3}> <Tab.component tabs={Tab} /> </Box>}
+                        {index === state.tabIndex && <Box p={3}> <Tab.component tabs={Tab}/> </Box>}
                     </div>
                 )
-            } )}
+            })}
         </>
     )
-};
+}
 
 export default AntTabs;

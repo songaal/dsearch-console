@@ -1,39 +1,38 @@
 import React from "react";
 import styled from "styled-components";
-import { rgba } from "polished";
+import {darken, rgba} from "polished";
 
-import { NavLink as RouterNavLink, withRouter } from "react-router-dom";
-import { darken } from "polished";
+import {NavLink as RouterNavLink, withRouter} from "react-router-dom";
 
 import PerfectScrollbar from "react-perfect-scrollbar";
 import "../vendor/perfect-scrollbar.css";
 
-import { spacing } from "@material-ui/system";
+import {spacing} from "@material-ui/system";
 
 import {
-  Avatar,
-  Badge,
-  Box as MuiBox,
-  Chip,
-  Collapse,
-  Drawer as MuiDrawer,
-  Grid,
-  List as MuiList,
-  ListItem,
-  ListItemText,
-  Typography
+    Avatar,
+    Badge,
+    Box as MuiBox,
+    Chip,
+    Collapse,
+    Drawer as MuiDrawer,
+    Grid,
+    List as MuiList,
+    ListItem,
+    ListItemText,
+    Typography
 } from "@material-ui/core";
 
-import { ExpandLess, ExpandMore } from "@material-ui/icons";
+import {ExpandLess, ExpandMore} from "@material-ui/icons";
 
-import { green } from "@material-ui/core/colors";
+import {green} from "@material-ui/core/colors";
 //
-import { dashboard as dashboardRoutes, intro as introRoutes} from "../routes/index";
+import {dashboard as dashboardRoutes, intro as introRoutes} from "../routes/index";
 
-import { Layers } from "react-feather";
+import {Layers} from "react-feather";
 
 const NavLink = React.forwardRef((props, ref) => (
-  <RouterNavLink innerRef={ref} {...props} />
+    <RouterNavLink innerRef={ref} {...props} />
 ));
 
 const Box = styled(MuiBox)(spacing);
@@ -232,190 +231,190 @@ const StyledBadge = styled(Badge)`
     width: 12px;
     border-radius: 50%;
   }
-`
+`;
 
 function SidebarCategory({
-  name,
-  icon,
-  classes,
-  isOpen,
-  isCollapsable,
-  badge,
-  ...rest
-}) {
-  return (
-    <Category {...rest}>
-      {icon}
-      <CategoryText>{name}</CategoryText>
-      {isCollapsable ? (
-        isOpen ? (
-          <CategoryIconMore />
-        ) : (
-          <CategoryIconLess />
-        )
-      ) : null}
-      {badge ? <CategoryBadge label={badge} /> : ""}
-    </Category>
-  );
+                             name,
+                             icon,
+                             classes,
+                             isOpen,
+                             isCollapsable,
+                             badge,
+                             ...rest
+                         }) {
+    return (
+        <Category {...rest}>
+            {icon}
+            <CategoryText>{name}</CategoryText>
+            {isCollapsable ? (
+                isOpen ? (
+                    <CategoryIconMore/>
+                ) : (
+                    <CategoryIconLess/>
+                )
+            ) : null}
+            {badge ? <CategoryBadge label={badge}/> : ""}
+        </Category>
+    );
 }
 
-function SidebarLink({ name, to, badge }) {
-  return (
-    <Link
-      button
-      dense
-      component={NavLink}
-      exact
-      to={to}
-      activeClassName="active"
-    >
-      <LinkText>{name}</LinkText>
-      {badge ? <LinkBadge label={badge} /> : ""}
-    </Link>
-  );
+function SidebarLink({name, to, badge}) {
+    return (
+        <Link
+            button
+            dense
+            component={NavLink}
+            exact
+            to={to}
+            activeClassName="active"
+        >
+            <LinkText>{name}</LinkText>
+            {badge ? <LinkBadge label={badge}/> : ""}
+        </Link>
+    );
 }
 
 class Sidebar extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
-  toggle = index => {
-    // Collapse all elements
-    Object.keys(this.state).forEach(
-      item =>
-        this.state[index] ||
-        this.setState(() => ({
-          [item]: false
-        }))
-    );
-
-    // Toggle selected element
-    this.setState(state => ({
-      [index]: !state[index]
-    }));
-  };
-
-  UNSAFE_componentWillMount() {
-    /* Open collapse element that matches current url */
-    const pathName = this.props.location.pathname;
-    const { layout } = this.props;
-    let routes = []
-    if(layout == 'dashboard') {
-      routes = dashboardRoutes
-    } else {
-      routes = introRoutes
+    constructor(props) {
+        super(props);
+        this.state = {};
     }
 
-    routes.forEach((route, index) => {
-      const isActive = pathName.indexOf(route.path) === 0;
-      const isOpen = route.open;
-      const isHome = route.containsHome && pathName === "/" ? true : false;
+    toggle = index => {
+        // Collapse all elements
+        Object.keys(this.state).forEach(
+            item =>
+                this.state[index] ||
+                this.setState(() => ({
+                    [item]: false
+                }))
+        );
 
-      this.setState(() => ({
-        [index]: isActive || isOpen || isHome
-      }));
-    });
-  }
+        // Toggle selected element
+        this.setState(state => ({
+            [index]: !state[index]
+        }));
+    };
 
-  render() {
-    const { classes, layout, staticContext, ...other } = this.props;
-    let routes = []
-    if(layout == 'dashboard') {
-      routes = dashboardRoutes
-    } else {
-      routes = introRoutes
+    UNSAFE_componentWillMount() {
+        /* Open collapse element that matches current url */
+        const pathName = this.props.location.pathname;
+        const {layout} = this.props;
+        let routes = [];
+        if (layout == 'dashboard') {
+            routes = dashboardRoutes
+        } else {
+            routes = introRoutes
+        }
+
+        routes.forEach((route, index) => {
+            const isActive = pathName.indexOf(route.path) === 0;
+            const isOpen = route.open;
+            const isHome = route.containsHome && pathName === "/" ? true : false;
+
+            this.setState(() => ({
+                [index]: isActive || isOpen || isHome
+            }));
+        });
     }
 
-    return (
-      <Drawer variant="permanent" {...other}>
-        <Brand>
-          <BrandIcon /> 
-            <Box ml={1}>Fastcat X
-            {/* <BrandChip label="X" /> */}
-          </Box> 
-        </Brand>
-        <Scrollbar>
-          <List disablePadding>
-            <Items>
-              {routes.map((category, index) => (
-                <React.Fragment key={index}>
-                  {category.header ? (
-                    <SidebarSection>{category.header}</SidebarSection>
-                  ) : null}
+    render() {
+        const {classes, layout, staticContext, ...other} = this.props;
+        let routes = [];
+        if (layout == 'dashboard') {
+            routes = dashboardRoutes
+        } else {
+            routes = introRoutes
+        }
 
-                  {category.children ? (
-                    <React.Fragment key={index}>
-                      <SidebarCategory
-                        isOpen={!this.state[index]}
-                        isCollapsable={true}
-                        name={category.id}
-                        icon={category.icon}
-                        button={true}
-                        onClick={() => this.toggle(index)}
-                      />
+        return (
+            <Drawer variant="permanent" {...other}>
+                <Brand>
+                    <BrandIcon/>
+                    <Box ml={1}>Fastcat X
+                        {/* <BrandChip label="X" /> */}
+                    </Box>
+                </Brand>
+                <Scrollbar>
+                    <List disablePadding>
+                        <Items>
+                            {routes.map((category, index) => (
+                                <React.Fragment key={index}>
+                                    {category.header ? (
+                                        <SidebarSection>{category.header}</SidebarSection>
+                                    ) : null}
 
-                      <Collapse
-                        in={this.state[index]}
-                        timeout="auto"
-                        unmountOnExit
-                      >
-                        {category.children.map((route, index) => (
-                          <SidebarLink
-                            key={index}
-                            name={route.name}
-                            to={route.path}
-                            icon={route.icon}
-                            badge={route.badge}
-                          />
-                        ))}
-                      </Collapse>
-                    </React.Fragment>
-                  ) : (
-                    <SidebarCategory
-                      isCollapsable={false}
-                      name={category.id}
-                      to={category.path}
-                      activeClassName="active"
-                      component={NavLink}
-                      icon={category.icon}
-                      exact
-                      badge={category.badge}
-                    />
-                  )}
-                </React.Fragment>
-              ))}
-            </Items>
-          </List>
-        </Scrollbar>
-        <SidebarFooter>
-          <Grid container spacing={2}>
-            <Grid item>
-              <StyledBadge
-                overlap="circle"
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'right',
-                }}
-                variant="dot"
-              >
-                <Avatar alt="Lucy Lavender" src="/static/img/avatars/avatar-1.jpg" />
-              </StyledBadge>
-            </Grid>
-            <Grid item>
-              <SidebarFooterText variant="body2">
-                Lucy Lavender
-              </SidebarFooterText>
-              <SidebarFooterSubText variant="caption">
-                UX Designer
-              </SidebarFooterSubText>
-            </Grid>
-          </Grid>
-        </SidebarFooter>
-      </Drawer>
-    );
-  }
+                                    {category.children ? (
+                                        <React.Fragment key={index}>
+                                            <SidebarCategory
+                                                isOpen={!this.state[index]}
+                                                isCollapsable={true}
+                                                name={category.id}
+                                                icon={category.icon}
+                                                button={true}
+                                                onClick={() => this.toggle(index)}
+                                            />
+
+                                            <Collapse
+                                                in={this.state[index]}
+                                                timeout="auto"
+                                                unmountOnExit
+                                            >
+                                                {category.children.map((route, index) => (
+                                                    <SidebarLink
+                                                        key={index}
+                                                        name={route.name}
+                                                        to={route.path}
+                                                        icon={route.icon}
+                                                        badge={route.badge}
+                                                    />
+                                                ))}
+                                            </Collapse>
+                                        </React.Fragment>
+                                    ) : (
+                                        <SidebarCategory
+                                            isCollapsable={false}
+                                            name={category.id}
+                                            to={category.path}
+                                            activeClassName="active"
+                                            component={NavLink}
+                                            icon={category.icon}
+                                            exact
+                                            badge={category.badge}
+                                        />
+                                    )}
+                                </React.Fragment>
+                            ))}
+                        </Items>
+                    </List>
+                </Scrollbar>
+                <SidebarFooter>
+                    <Grid container spacing={2}>
+                        <Grid item>
+                            <StyledBadge
+                                overlap="circle"
+                                anchorOrigin={{
+                                    vertical: 'bottom',
+                                    horizontal: 'right',
+                                }}
+                                variant="dot"
+                            >
+                                <Avatar alt="Lucy Lavender" src="/static/img/avatars/avatar-1.jpg"/>
+                            </StyledBadge>
+                        </Grid>
+                        <Grid item>
+                            <SidebarFooterText variant="body2">
+                                Lucy Lavender
+                            </SidebarFooterText>
+                            <SidebarFooterSubText variant="caption">
+                                UX Designer
+                            </SidebarFooterSubText>
+                        </Grid>
+                    </Grid>
+                </SidebarFooter>
+            </Drawer>
+        );
+    }
 }
 
 export default withRouter(Sidebar);

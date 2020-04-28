@@ -2,14 +2,14 @@ import React from "react";
 import styled from "styled-components";
 
 import {
-  Box,
-  Card,
-  CardContent as MuiCardContent,
-  Chip as MuiChip,
-  Typography as MuiTypography
+    Box,
+    Card,
+    CardContent as MuiCardContent,
+    Chip as MuiChip,
+    Typography as MuiTypography
 } from "@material-ui/core";
 
-import { spacing } from "@material-ui/system";
+import {spacing} from "@material-ui/system";
 
 const Typography = styled(MuiTypography)(spacing);
 
@@ -48,27 +48,27 @@ const Percentage = styled(MuiTypography)`
   }
 `;
 
-function Stats({ title, amount, chip, percentageText, percentagecolor }) {
-  return (
-    <Card>
-      <CardContent>
-        <Typography variant="h6" mb={6}>
-          {title}
-        </Typography>
-        <Typography variant="h3" mb={6}>
-          <Box fontWeight="fontWeightRegular">{amount}</Box>
-        </Typography>
-        <Percentage
-          variant="subtitle1"
-          mb={6}
-          percentagecolor={percentagecolor}
-        >
-          <span>{percentageText}</span> Since last week
-        </Percentage>
-        <Chip label={chip} />
-      </CardContent>
-    </Card>
-  );
+function Stats({title, amount, chip, percentageText, percentagecolor}) {
+    return (
+        <Card>
+            <CardContent>
+                <Typography variant="h6" mb={6}>
+                    {title}
+                </Typography>
+                <Typography variant="h3" mb={6}>
+                    <Box fontWeight="fontWeightRegular">{amount}</Box>
+                </Typography>
+                <Percentage
+                    variant="subtitle1"
+                    mb={6}
+                    percentagecolor={percentagecolor}
+                >
+                    <span>{percentageText}</span> Since last week
+                </Percentage>
+                <Chip label={chip}/>
+            </CardContent>
+        </Card>
+    );
 }
 
 export default Stats;

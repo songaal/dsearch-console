@@ -1,18 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 
 import Helmet from 'react-helmet';
 
-import {
-  FormControl,
-  Input,
-  InputLabel,
-  Button as MuiButton,
-  Paper,
-  Typography
-} from "@material-ui/core";
-import { spacing } from "@material-ui/system";
+import {Button as MuiButton, FormControl, Input, InputLabel, Paper, Typography} from "@material-ui/core";
+import {spacing} from "@material-ui/system";
 
 const Button = styled(MuiButton)(spacing);
 
@@ -26,33 +19,33 @@ const Wrapper = styled(Paper)`
 `;
 
 function ResetPassword() {
-  return (
-    <Wrapper>
-      <Helmet title="Reset Password" />
-      <Typography component="h1" variant="h4" align="center" gutterBottom>
-        Reset Password
-      </Typography>
-      <Typography component="h2" variant="body1" align="center">
-        Enter your email to reset your password
-      </Typography>
-      <form>
-        <FormControl margin="normal" required fullWidth>
-          <InputLabel htmlFor="email">Email Address</InputLabel>
-          <Input id="email" name="email" autoComplete="email" autoFocus />
-        </FormControl>
-        <Button
-          component={Link}
-          to="/"
-          fullWidth
-          variant="contained"
-          color="primary"
-          mt={2}
-        >
-          Reset password
-        </Button>
-      </form>
-    </Wrapper>
-  );
+    return (
+        <Wrapper>
+            <Helmet title="Reset Password"/>
+            <Typography component="h1" variant="h4" align="center" gutterBottom>
+                Reset Password
+            </Typography>
+            <Typography component="h2" variant="body1" align="center">
+                Enter your email to reset your password
+            </Typography>
+            <form>
+                <FormControl margin="normal" required fullWidth>
+                    <InputLabel htmlFor="email">Email Address</InputLabel>
+                    <Input id="email" name="email" autoComplete="email" autoFocus/>
+                </FormControl>
+                <Button
+                    component={Link}
+                    to="/"
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    mt={2}
+                >
+                    Reset password
+                </Button>
+            </form>
+        </Wrapper>
+    );
 }
 
 export default ResetPassword;

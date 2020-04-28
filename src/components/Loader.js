@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-import { CircularProgress } from "@material-ui/core";
+import {CircularProgress} from "@material-ui/core";
 
 const Root = styled.div`
   justify-content: center;
@@ -11,11 +11,11 @@ const Root = styled.div`
 `;
 
 function Loader() {
-  return (
-    <Root>
-      <CircularProgress m={2} color="secondary" />
-    </Root>
-  );
+    return (
+        <Root>
+            <CircularProgress m={2} color="secondary"/>
+        </Root>
+    );
 }
 
 export default Loader;
