@@ -17,6 +17,7 @@ build:
   script:
     - npm install -g create-react-app 
     - npm install -g react-app-rewired
+    - npm install -g react-dev-utils/crossSpawn
     - npm install --loglevel=error
     - npm run build
     - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}:${CI_PIPELINE_ID}"
