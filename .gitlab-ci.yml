@@ -2,7 +2,7 @@ image: dcr.danawa.io/alpine-k8s
 
 variables:
   GIT_STRATEGY: clone
-  CI: false
+  CI: "false"
 
 stages:
   - build
