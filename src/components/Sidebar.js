@@ -26,9 +26,9 @@ import {
 
 import { ExpandLess, ExpandMore } from "@material-ui/icons";
 
-// import { green } from "@material-ui/core/colors";
-
-import routes from "../routes/index";
+import { green } from "@material-ui/core/colors";
+//
+import { dashboard as dashboardRoutes, intro as introRoutes} from "../routes/index";
 
 import { Layers } from "react-feather";
 
@@ -80,21 +80,21 @@ const BrandIcon = styled(Layers)`
   color: ${props => props.theme.sidebar.header.brand.color};
 `;
 
-// const BrandChip = styled(Chip)`
-//   background-color: ${green[700]};
-//   border-radius: 5px;
-//   color: ${props => props.theme.palette.common.white};
-//   font-size: 60%;
-//   height: 20px;
-//   margin-left: 2px;
-//   margin-bottom: 1px;
-//   padding: 4px 0;
-//
-//   span {
-//     padding-left: ${props => props.theme.spacing(1.5)}px;
-//     padding-right: ${props => props.theme.spacing(1.5)}px;
-//   }
-// `;
+const BrandChip = styled(Chip)`
+  background-color: ${green[700]};
+  border-radius: 5px;
+  color: ${props => props.theme.palette.common.white};
+  font-size: 60%;
+  height: 20px;
+  margin-left: 2px;
+  margin-bottom: 1px;
+  padding: 4px 0;
+
+  span {
+    padding-left: ${props => props.theme.spacing(1.5)}px;
+    padding-right: ${props => props.theme.spacing(1.5)}px;
+  }
+`;
 
 const Category = styled(ListItem)`
   padding-top: ${props => props.theme.spacing(3)}px;
@@ -300,6 +300,13 @@ class Sidebar extends React.Component {
   UNSAFE_componentWillMount() {
     /* Open collapse element that matches current url */
     const pathName = this.props.location.pathname;
+    const { layout } = this.props;
+    let routes = []
+    if(layout == 'dashboard') {
+      routes = dashboardRoutes
+    } else {
+      routes = introRoutes
+    }
 
     routes.forEach((route, index) => {
       const isActive = pathName.indexOf(route.path) === 0;
@@ -313,7 +320,13 @@ class Sidebar extends React.Component {
   }
 
   render() {
-    const { classes, staticContext, ...other } = this.props;
+    const { classes, layout, staticContext, ...other } = this.props;
+    let routes = []
+    if(layout == 'dashboard') {
+      routes = dashboardRoutes
+    } else {
+      routes = introRoutes
+    }
 
     return (
       <Drawer variant="permanent" {...other}>

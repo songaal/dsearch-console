@@ -18,6 +18,8 @@ import { isWidthUp } from "@material-ui/core/withWidth";
 
 const drawerWidth = 260;
 
+
+
 const GlobalStyle = createGlobalStyle`
   html,
   body,
@@ -71,7 +73,7 @@ const MainContent = styled(Paper)`
   }
 `;
 
-class Dashboard extends React.Component {
+class Main extends React.Component {
   state = {
     mobileOpen: false
   };
@@ -82,7 +84,9 @@ class Dashboard extends React.Component {
 
   render() {
     const { children, routes, width } = this.props;
-      console.log("dashboard", routes, this.props)
+    console.log("main ", routes, this.props)
+
+
     return (
       <Root>
         <CssBaseline />
@@ -95,20 +99,21 @@ class Dashboard extends React.Component {
               variant="temporary"
               open={this.state.mobileOpen}
               onClose={this.handleDrawerToggle}
-              layout={"dashboard"}
+              layout={"intro"}
             />
           </Hidden>
           <Hidden smDown implementation="css">
             <Sidebar
               routes={routes}
               PaperProps={{ style: { width: drawerWidth } }}
-              layout={"dashboard"}
+              layout={"intro"}
             />
           </Hidden>
         </Drawer>
         <AppContent >
           <Header onDrawerToggle={this.handleDrawerToggle} />
           <MainContent p={isWidthUp("lg", width) ? 10 : 5}>
+              <h1>메인 레이아웃!</h1>
             {children}
           </MainContent>
           <Footer />
@@ -119,4 +124,4 @@ class Dashboard extends React.Component {
   }
 }
 
-export default withWidth()(Dashboard);
+export default withWidth()(Main);
