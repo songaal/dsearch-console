@@ -1,8 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { NavLink as RouterNavLink } from "react-router-dom";
-import { connect } from "react-redux";
-import { setTheme } from "@actions/themeActions";
+
 import Helmet from 'react-helmet';
 
 import {
@@ -12,8 +11,7 @@ import {
   Breadcrumbs as MuiBreadcrumbs,
   Card as MuiCard,
   Divider as MuiDivider,
-  Typography,
-    Button
+  Typography
 } from "@material-ui/core";
 
 import { spacing } from "@material-ui/system";
@@ -36,8 +34,6 @@ function EmptyCard() {
           Empty card
         </Typography>
         <Typography variant="body2" gutterBottom>
-
-
           Empty card
         </Typography>
       </CardContent>
@@ -45,24 +41,18 @@ function EmptyCard() {
   );
 }
 
-function Blank({dispatch}) {
-
-
-
-
+function Blank() {
   return (
     <React.Fragment>
-      <Helmet title="Blank" />
+      <Helmet title="클러스터" />
       <Typography variant="h3" gutterBottom display="inline">
-        Blank
+        클러스터
       </Typography>
 
       <Breadcrumbs aria-label="Breadcrumb" mt={2}>
         <Link component={NavLink} exact to="/">
           Dashboard
-
         </Link>
-          <Link component={NavLink} exact to="/dashboard" > gogogo</Link>
         <Link component={NavLink} exact to="/">
           Pages
         </Link>
@@ -73,11 +63,11 @@ function Blank({dispatch}) {
 
       <Grid container spacing={6}>
         <Grid item xs={12}>
-          <EmptyCard  onClick={() => console.log("click")}/>
+          <EmptyCard />
         </Grid>
       </Grid>
     </React.Fragment>
   );
 }
 
-export default connect()(Blank);
+export default Blank;

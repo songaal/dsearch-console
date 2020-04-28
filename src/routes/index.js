@@ -5,9 +5,8 @@ import {
 } from "react-feather"
 import * as Icon from "@material-ui/icons";
 
-
-// Home components
-const Home = async(() => import("../pages/home"))
+// CLuster
+const Cluster = async(() => import("../pages/cluster"))
 
 // Dashboard components
 const Dashboard = async(() => import("../pages/dashboard"))
@@ -44,13 +43,14 @@ const ConfigurationManagement = async(() => import("../pages/management/configur
 
 
 // Routes Configuration
+
 const homeRoutes = {
-  id: "Home",
+  id: "Cluster",
   path: "/",
   icon: <Icon.Home />,
   containsHome: true,
-  component: Home,
-  children: null
+  component: Cluster,
+  children: null,
 }
 
 const dashboardRoutes = {
@@ -58,7 +58,7 @@ const dashboardRoutes = {
   path: "/dashboard",
   icon: <Icon.Dashboard />,
   component: Dashboard,
-  children: null
+  children: null,
 }
 
 const authRoutes = {
@@ -219,7 +219,6 @@ const managementRoutes = [
 
 // dashboard layout routing
 export const dashboard = [
-  homeRoutes,
   dashboardRoutes,
   ...analysisRoutes,
   ...indicesRoutes,
@@ -227,8 +226,13 @@ export const dashboard = [
   ...managementRoutes
 ]
 
+export const intro = [
+  homeRoutes,
+]
+
+
 // auth layout routing
 export const auth = [authRoutes]
 
 // 메뉴 노출
-export default dashboard.filter(o => o !== homeRoutes)
+// export default dashboard.filter(o => o !== homeRoutes)

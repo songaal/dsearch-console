@@ -27,8 +27,8 @@ import {
 import { ExpandLess, ExpandMore } from "@material-ui/icons";
 
 import { green } from "@material-ui/core/colors";
-
-import routes from "../routes/index";
+//
+import { dashboard as dashboardRoutes, intro as introRoutes} from "../routes/index";
 
 import { Layers } from "react-feather";
 
@@ -300,6 +300,13 @@ class Sidebar extends React.Component {
   UNSAFE_componentWillMount() {
     /* Open collapse element that matches current url */
     const pathName = this.props.location.pathname;
+    const { layout } = this.props;
+    let routes = []
+    if(layout == 'dashboard') {
+      routes = dashboardRoutes
+    } else {
+      routes = introRoutes
+    }
 
     routes.forEach((route, index) => {
       const isActive = pathName.indexOf(route.path) === 0;
@@ -313,7 +320,13 @@ class Sidebar extends React.Component {
   }
 
   render() {
-    const { classes, staticContext, ...other } = this.props;
+    const { classes, layout, staticContext, ...other } = this.props;
+    let routes = []
+    if(layout == 'dashboard') {
+      routes = dashboardRoutes
+    } else {
+      routes = introRoutes
+    }
 
     return (
       <Drawer variant="permanent" {...other}>
