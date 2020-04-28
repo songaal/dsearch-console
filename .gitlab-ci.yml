@@ -19,7 +19,9 @@ build:
     - npm install -g create-react-app
     - npm install -g react-dev-utils
     - npm install -g react-scripts
-    - npm install --save-dev react-app-rewired customize-cra
+    - npm install -g react-app-rewired 
+    - sleep 9999
+    - npm install customize-cra
     - npm run build
     - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}:${CI_PIPELINE_ID}"
     - echo "${IMAGE}"
