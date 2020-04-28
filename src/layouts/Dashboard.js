@@ -1,5 +1,5 @@
 import React from "react";
-import styled, {createGlobalStyle} from "styled-components";
+import styled, {createGlobalStyle, ThemeProvider} from "styled-components";
 
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
@@ -10,6 +10,8 @@ import {spacing} from "@material-ui/system";
 import {CssBaseline, Hidden, Paper as MuiPaper, withWidth} from "@material-ui/core";
 
 import {isWidthUp} from "@material-ui/core/withWidth";
+import maTheme from "../theme";
+import {ThemeProvider as MuiThemeProvider} from "@material-ui/styles";
 
 const drawerWidth = 260;
 
@@ -79,37 +81,42 @@ class Dashboard extends React.Component {
         const {children, routes, width} = this.props;
         console.log("dashboard", routes, this.props);
         return (
-            <Root>
-                <CssBaseline/>
-                <GlobalStyle/>
-                <Drawer>
-                    <Hidden mdUp implementation="js">
-                        <Sidebar
-                            routes={routes}
-                            PaperProps={{style: {width: drawerWidth}}}
-                            variant="temporary"
-                            open={this.state.mobileOpen}
-                            onClose={this.handleDrawerToggle}
-                            layout={"dashboard"}
-                        />
-                    </Hidden>
-                    <Hidden smDown implementation="css">
-                        <Sidebar
-                            routes={routes}
-                            PaperProps={{style: {width: drawerWidth}}}
-                            layout={"dashboard"}
-                        />
-                    </Hidden>
-                </Drawer>
-                <AppContent>
-                    <Header onDrawerToggle={this.handleDrawerToggle}/>
-                    <MainContent p={isWidthUp("lg", width) ? 10 : 5}>
-                        {children}
-                    </MainContent>
-                    <Footer/>
-                </AppContent>
-                <Settings/>
-            </Root>
+            // maTheme: /src/theme/variants.js 파일참조
+            <MuiThemeProvider theme={maTheme[0]}>
+                <ThemeProvider theme={maTheme[0]}>
+                    <Root>
+                        <CssBaseline/>
+                        <GlobalStyle/>
+                        <Drawer>
+                            <Hidden mdUp implementation="js">
+                                <Sidebar
+                                    routes={routes}
+                                    PaperProps={{style: {width: drawerWidth}}}
+                                    variant="temporary"
+                                    open={this.state.mobileOpen}
+                                    onClose={this.handleDrawerToggle}
+                                    layout={"dashboard"}
+                                />
+                            </Hidden>
+                            <Hidden smDown implementation="css">
+                                <Sidebar
+                                    routes={routes}
+                                    PaperProps={{style: {width: drawerWidth}}}
+                                    layout={"dashboard"}
+                                />
+                            </Hidden>
+                        </Drawer>
+                        <AppContent>
+                            <Header onDrawerToggle={this.handleDrawerToggle}/>
+                            <MainContent p={isWidthUp("lg", width) ? 10 : 5}>
+                                {children}
+                            </MainContent>
+                            <Footer/>
+                        </AppContent>
+                        <Settings/>
+                    </Root>
+                </ThemeProvider>
+            </MuiThemeProvider>
         );
     }
 }

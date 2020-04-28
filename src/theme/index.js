@@ -25,6 +25,7 @@ const theme = variant => {
     );
 };
 
+
 const themes = variants.map(variant => theme(variant));
 
 export default themes;

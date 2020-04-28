@@ -21,11 +21,7 @@ function App({theme}) {
             />
             <StylesProvider injectFirst>
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                    <MuiThemeProvider theme={maTheme[theme.currentTheme]}>
-                        <ThemeProvider theme={maTheme[theme.currentTheme]}>
-                            <Routes/>
-                        </ThemeProvider>
-                    </MuiThemeProvider>
+                    <Routes/>
                 </MuiPickersUtilsProvider>
             </StylesProvider>
         </React.Fragment>
