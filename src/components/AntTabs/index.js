@@ -1,34 +1,39 @@
 // React components
 import React from "react";
 import PropTypes from 'prop-types';
-import { connect } from "react-redux";
 
 // Material components
-import { makeStyles, withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import {
     Tabs,
     Tab as AntTab,
+    Divider as MuiDivider,
     Typography,
     Box
 } from "@material-ui/core";
+import styled from "styled-components";
+import {spacing} from "@material-ui/system";
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        flexGrow: 1,
-        width: '100%',
-        backgroundColor: theme.palette.background.paper
-    },
-    container: {
-        maxHeight: 440,
-    },
-}));
+
+const Divider = styled(MuiDivider)(spacing);
+
+// const useStyles = makeStyles((theme) => ({
+//     root: {
+//         flexGrow: 1,
+//         width: '100%',
+//         backgroundColor: theme.palette.background.paper
+//     },
+//     indicator: {
+//         backgroundColor: '#1890ff',
+//     },
+// }));
 
 const Tab = withStyles((theme) => ({
     root: {
         textTransform: 'none',
         minWidth: 72,
         fontWeight: theme.typography.fontWeightRegular,
-        marginRight: theme.spacing(0),
+        marginRight: theme.spacing(2),
         '&:hover': {
             color: '#40a9ff',
             opacity: 1,
@@ -45,35 +50,32 @@ const Tab = withStyles((theme) => ({
 }))((props) => <AntTab disableRipple {...props} />);
 
 
-function Panel(props) {
-    const { children, value, index } = props;
-
+function TabPanel(props) {
+    const { key, children, value, index } = props;
     return (
         <Typography
+            key={key}
             component="div"
             role="tabpanel"
             hidden={value !== index}
             id={`scrollable-auto-tabpanel-${index}`}
             aria-labelledby={`scrollable-auto-tab-${index}`}
         >
-            {value === index && <Box p={3}>{children}</Box>}
+            {value === index && <Box  p={3}> <children key={key}/> </Box>}
         </Typography>
     );
 }
 
-Panel.propTypes = {
+TabPanel.propTypes = {
+    key: PropTypes.any,
     children: PropTypes.node,
-    index: PropTypes.any.isRequired,
-    value: PropTypes.any.isRequired,
+    index: PropTypes.any,
+    value: PropTypes.any,
 };
 
 
-function AntTabs({tabs}) {
-    const classes = useStyles();
-    const [state, setState] = React.useState({
-        tabIndex: 0
-    });
-
+function AntTabs({ tabs }) {
+    const [state, setState] = React.useState({ tabIndex: 0 });
     const handleChange = (event, tabIndex) => {
         setState({
             tabIndex: tabIndex
@@ -81,7 +83,7 @@ function AntTabs({tabs}) {
     };
 
     return (
-        <div className={classes.root}>
+        <>
             <Tabs value={state.tabIndex}
                   onChange={handleChange}
                   indicatorColor="primary"
@@ -89,12 +91,22 @@ function AntTabs({tabs}) {
                   variant="scrollable"
                   scrollButtons="auto"
             >
-                { tabs.map(tab => <Tab id={tab.id} label={tab.label} />) }
+                { tabs.map((tab, index) => <Tab key={index} id={index}  icon={tab.icon} label={tab.label || ""} />) }
             </Tabs>
-
-            { tabs.map((Tab, index) => <Panel value={state.tabIndex} index={index} ><Tab.component /></Panel>) }
-
-        </div>
+            <Divider />
+            { tabs.map((Tab, index) => {
+                return (
+                    <div key={index}
+                         role="tabpanel"
+                         hidden={state.tabIndex !== index}
+                         id={`scrollable-auto-tabpanel-${index}`}
+                         aria-labelledby={`scrollable-auto-tab-${index}`}
+                    >
+                        {index === state.tabIndex && <Box  p={3}> <Tab.component tabs={Tab} /> </Box>}
+                    </div>
+                )
+            } )}
+        </>
     )
 };
 

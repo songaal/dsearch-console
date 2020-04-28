@@ -1,19 +1,34 @@
 image: dcr.danawa.io/alpine-k8s
 
+variables:
+  GIT_STRATEGY: clone
+
 stages:
   - build
   - deploy
 
+cache:
+  paths:
+    - node_modules/
+
 build:
   stage: build
   script:
-    - echo "Kubectl Install"
-    - npm run build
-    - docker build -t "${REGISTRY}/${CI_PROJECT_PATH}:${CI_PIPELINE_ID}" .
-    - docker push "${REGISTRY}/${CI_PROJECT_PATH}:${CI_PIPELINE_ID}"
+    - ls -al $HOME
+    - npm list -g --depth=0
+    - env
+    - npm install && npm install -g react-app-rewired && npm install -g react-scripts && npm run build
+    - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}:${CI_PIPELINE_ID}"
+    - echo "${IMAGE}"
+    - docker build -t "${IMAGE}" .
+    - docker push "${IMAGE}"
 
 deploy:
   stage: deploy
   script:
-    - env
+    - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}:${CI_PIPELINE_ID}"
+    - echo "${IMAGE}"
+    - kubectl patch deployment fastcatx-console -n fastcatx -p "{\"spec\":{\"template\":{\"spec\":{\"containers\":\[{\"name\":\"fastcatx-console\",\"image\":\"${IMAGE}\"}\]}}}}"
+    - sleep 5
+    - kubectl get pod -n fastcatx -o wide
 
