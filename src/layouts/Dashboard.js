@@ -79,7 +79,6 @@ class Dashboard extends React.Component {
 
     render() {
         const {children, routes, width} = this.props;
-        console.log("dashboard", routes, this.props);
         return (
             // maTheme: /src/theme/variants.js 파일참조
             <MuiThemeProvider theme={maTheme[0]}>

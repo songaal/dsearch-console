@@ -43,7 +43,7 @@ const ConfigurationManagement = async(() => import("../pages/management/configur
 // Routes Configuration
 
 const homeRoutes = {
-    id: "Cluster",
+    id: "클러스터",
     path: "/",
     icon: <Icon.Home/>,
     containsHome: true,

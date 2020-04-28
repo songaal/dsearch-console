@@ -81,7 +81,6 @@ class Main extends React.Component {
 
     render() {
         const {children, routes, width} = this.props;
-        console.log("main ", routes, this.props.theme);
         return (
             // maTheme: /src/theme/variants.js 파일참조
             <MuiThemeProvider theme={maTheme[1]}>
