@@ -10,13 +10,10 @@ import "../vendor/perfect-scrollbar.css";
 import {spacing} from "@material-ui/system";
 
 import {
-    Avatar,
-    Badge,
     Box as MuiBox,
     Chip,
     Collapse,
     Drawer as MuiDrawer,
-    Grid,
     List as MuiList,
     ListItem,
     ListItemText,
@@ -25,8 +22,8 @@ import {
 
 import {ExpandLess, ExpandMore} from "@material-ui/icons";
 
-import {green} from "@material-ui/core/colors";
-//
+// import {green} from "@material-ui/core/colors";
+
 import {dashboard as dashboardRoutes, intro as introRoutes} from "../routes/index";
 
 import {Layers} from "react-feather";
@@ -79,21 +76,21 @@ const BrandIcon = styled(Layers)`
   color: ${props => props.theme.sidebar.header.brand.color};
 `;
 
-const BrandChip = styled(Chip)`
-  background-color: ${green[700]};
-  border-radius: 5px;
-  color: ${props => props.theme.palette.common.white};
-  font-size: 60%;
-  height: 20px;
-  margin-left: 2px;
-  margin-bottom: 1px;
-  padding: 4px 0;
-
-  span {
-    padding-left: ${props => props.theme.spacing(1.5)}px;
-    padding-right: ${props => props.theme.spacing(1.5)}px;
-  }
-`;
+// const BrandChip = styled(Chip)`
+//   background-color: ${green[700]};
+//   border-radius: 5px;
+//   color: ${props => props.theme.palette.common.white};
+//   font-size: 60%;
+//   height: 20px;
+//   margin-left: 2px;
+//   margin-bottom: 1px;
+//   padding: 4px 0;
+//
+//   span {
+//     padding-left: ${props => props.theme.spacing(1.5)}px;
+//     padding-right: ${props => props.theme.spacing(1.5)}px;
+//   }
+// `;
 
 const Category = styled(ListItem)`
   padding-top: ${props => props.theme.spacing(3)}px;
@@ -202,36 +199,36 @@ const SidebarSection = styled(Typography)`
   display: block;
 `;
 
-const SidebarFooter = styled.div`
-  background-color: ${props =>
-    props.theme.sidebar.footer.background} !important;
-  padding: ${props => props.theme.spacing(2.75)}px
-    ${props => props.theme.spacing(4)}px;
-  border-right: 1px solid rgba(0, 0, 0, 0.12);
-`;
-
-const SidebarFooterText = styled(Typography)`
-  color: ${props => props.theme.sidebar.footer.color};
-`;
-
-const SidebarFooterSubText = styled(Typography)`
-  color: ${props => props.theme.sidebar.footer.color};
-  font-size: .725rem;
-  display: block;
-  padding: 1px;
-`;
-
-const StyledBadge = styled(Badge)`
-  margin-right: ${props => props.theme.spacing(1)}px;
-
-  span {
-    background-color: ${props => props.theme.sidebar.footer.online.background};
-    border: 1.5px solid ${props => props.theme.palette.common.white};
-    height: 12px;
-    width: 12px;
-    border-radius: 50%;
-  }
-`;
+// const SidebarFooter = styled.div`
+//   background-color: ${props =>
+//     props.theme.sidebar.footer.background} !important;
+//   padding: ${props => props.theme.spacing(2.75)}px
+//     ${props => props.theme.spacing(4)}px;
+//   border-right: 1px solid rgba(0, 0, 0, 0.12);
+// `;
+//
+// const SidebarFooterText = styled(Typography)`
+//   color: ${props => props.theme.sidebar.footer.color};
+// `;
+//
+// const SidebarFooterSubText = styled(Typography)`
+//   color: ${props => props.theme.sidebar.footer.color};
+//   font-size: .725rem;
+//   display: block;
+//   padding: 1px;
+// `;
+//
+// const StyledBadge = styled(Badge)`
+//   margin-right: ${props => props.theme.spacing(1)}px;
+//
+//   span {
+//     background-color: ${props => props.theme.sidebar.footer.online.background};
+//     border: 1.5px solid ${props => props.theme.palette.common.white};
+//     height: 12px;
+//     width: 12px;
+//     border-radius: 50%;
+//   }
+// `;
 
 function SidebarCategory({
                              name,
@@ -301,7 +298,7 @@ class Sidebar extends React.Component {
         const pathName = this.props.location.pathname;
         const {layout} = this.props;
         let routes = [];
-        if (layout == 'dashboard') {
+        if (layout === 'dashboard') {
             routes = dashboardRoutes
         } else {
             routes = introRoutes
@@ -321,7 +318,7 @@ class Sidebar extends React.Component {
     render() {
         const {classes, layout, staticContext, ...other} = this.props;
         let routes = [];
-        if (layout == 'dashboard') {
+        if (layout === 'dashboard') {
             routes = dashboardRoutes
         } else {
             routes = introRoutes
@@ -388,30 +385,30 @@ class Sidebar extends React.Component {
                         </Items>
                     </List>
                 </Scrollbar>
-                <SidebarFooter>
-                    <Grid container spacing={2}>
-                        <Grid item>
-                            <StyledBadge
-                                overlap="circle"
-                                anchorOrigin={{
-                                    vertical: 'bottom',
-                                    horizontal: 'right',
-                                }}
-                                variant="dot"
-                            >
-                                <Avatar alt="Lucy Lavender" src="/static/img/avatars/avatar-1.jpg"/>
-                            </StyledBadge>
-                        </Grid>
-                        <Grid item>
-                            <SidebarFooterText variant="body2">
-                                Lucy Lavender
-                            </SidebarFooterText>
-                            <SidebarFooterSubText variant="caption">
-                                UX Designer
-                            </SidebarFooterSubText>
-                        </Grid>
-                    </Grid>
-                </SidebarFooter>
+                {/*<SidebarFooter>*/}
+                {/*    <Grid container spacing={2}>*/}
+                {/*        <Grid item>*/}
+                {/*            <StyledBadge*/}
+                {/*                overlap="circle"*/}
+                {/*                anchorOrigin={{*/}
+                {/*                    vertical: 'bottom',*/}
+                {/*                    horizontal: 'right',*/}
+                {/*                }}*/}
+                {/*                variant="dot"*/}
+                {/*            >*/}
+                {/*                <Avatar alt="Lucy Lavender" src="/static/img/avatars/avatar-1.jpg"/>*/}
+                {/*            </StyledBadge>*/}
+                {/*        </Grid>*/}
+                {/*        <Grid item>*/}
+                {/*            <SidebarFooterText variant="body2">*/}
+                {/*                Lucy Lavender*/}
+                {/*            </SidebarFooterText>*/}
+                {/*            <SidebarFooterSubText variant="caption">*/}
+                {/*                UX Designer*/}
+                {/*            </SidebarFooterSubText>*/}
+                {/*        </Grid>*/}
+                {/*    </Grid>*/}
+                {/*</SidebarFooter>*/}
             </Drawer>
         );
     }

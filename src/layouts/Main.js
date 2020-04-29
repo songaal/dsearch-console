@@ -3,8 +3,8 @@ import styled, {createGlobalStyle, ThemeProvider} from "styled-components";
 
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
-import Footer from "../components/Footer";
-import Settings from "../components/Settings";
+// import Footer from "../components/Footer";
+// import Settings from "../components/Settings";
 
 import {spacing} from "@material-ui/system";
 import {CssBaseline, Hidden, Paper as MuiPaper, withWidth} from "@material-ui/core";
@@ -108,14 +108,13 @@ class Main extends React.Component {
                             </Hidden>
                         </Drawer>
                         <AppContent>
-                            <Header onDrawerToggle={this.handleDrawerToggle}/>
+                            <Header layout={"main"} onDrawerToggle={this.handleDrawerToggle}/>
                             <MainContent p={isWidthUp("lg", width) ? 10 : 5}>
-                                <h1>메인 레이아웃!</h1>
                                 {children}
                             </MainContent>
-                            <Footer/>
+                            {/*<Footer/>*/}
                         </AppContent>
-                        <Settings/>
+                        {/*<Settings/>*/}
                     </Root>
                 </ThemeProvider>
             </MuiThemeProvider>

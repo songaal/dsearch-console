@@ -1,6 +1,6 @@
 import React from "react";
 // import PropTypes from 'prop-types';
-import {connect, useSelector} from "react-redux";
+import { connect } from "react-redux";
 import {Grid} from "@material-ui/core";
 
 function UserDictionary({dispatch, userList, user}) {

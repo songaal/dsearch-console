@@ -12,12 +12,13 @@ import {
     InputBase,
     Menu,
     MenuItem,
-    Toolbar
+    Toolbar,
+    ButtonBase
 } from "@material-ui/core";
 
-import {Menu as MenuIcon} from "@material-ui/icons";
+import {Menu as MenuIcon, ArrowDropDown } from "@material-ui/icons";
 
-import {Bell, MessageSquare, Power, Search as SearchIcon} from "react-feather";
+import {Bell, MessageSquare, Search as SearchIcon, Home} from "react-feather";
 
 const AppBar = styled(MuiAppBar)`
   background: ${props => props.theme.header.background};
@@ -84,13 +85,20 @@ const Input = styled(InputBase)`
   }
 `;
 
+const Button = styled(ButtonBase)`
+  color: ${props => props.theme.header.search.color};
+  padding-left: ${props => props.theme.spacing(2)}px;
+  padding-right: ${props => props.theme.spacing(2)}px;
+`
+
+
 const Flag = styled.img`
   border-radius: 50%;
   width: 22px;
   height: 22px;
 `;
 
-class LanguageMenu extends Component {
+class ClusterMenu extends Component {
     state = {
         anchorMenu: null
     };
@@ -106,17 +114,16 @@ class LanguageMenu extends Component {
     render() {
         const {anchorMenu} = this.state;
         const open = Boolean(anchorMenu);
-
         return (
             <React.Fragment>
-                <IconButton
-                    aria-owns={open ? "menu-appbar" : undefined}
-                    aria-haspopup="true"
-                    onClick={this.toggleMenu}
-                    color="inherit"
+                <Button aria-owns={open ? "menu-appbar" : undefined}
+                        aria-haspopup="true"
+                        onClick={this.toggleMenu}
+                        variant={"outlined"}
                 >
-                    <Flag src="/static/img/flags/us.png" alt="English"/>
-                </IconButton>
+                    운영클러스터
+                    <ArrowDropDown />
+                </Button>
                 <Menu
                     id="menu-appbar"
                     anchorEl={anchorMenu}
@@ -128,28 +135,14 @@ class LanguageMenu extends Component {
                             this.closeMenu();
                         }}
                     >
-                        English
+                        운영클러스터
                     </MenuItem>
                     <MenuItem
                         onClick={() => {
                             this.closeMenu();
                         }}
                     >
-                        French
-                    </MenuItem>
-                    <MenuItem
-                        onClick={() => {
-                            this.closeMenu();
-                        }}
-                    >
-                        German
-                    </MenuItem>
-                    <MenuItem
-                        onClick={() => {
-                            this.closeMenu();
-                        }}
-                    >
-                        Dutch
+                        개발클러스터
                     </MenuItem>
                 </Menu>
             </React.Fragment>
@@ -173,17 +166,17 @@ class UserMenu extends Component {
     render() {
         const {anchorMenu} = this.state;
         const open = Boolean(anchorMenu);
-
         return (
             <React.Fragment>
-                <IconButton
-                    aria-owns={open ? "menu-appbar" : undefined}
-                    aria-haspopup="true"
-                    onClick={this.toggleMenu}
-                    color="inherit"
+                <Button aria-owns={open ? "menu-appbar" : undefined}
+                        aria-haspopup="true"
+                        onClick={this.toggleMenu}
+                        variant={"outlined"}
                 >
-                    <Power/>
-                </IconButton>
+                    admin@danawa.com
+                    <ArrowDropDown />
+                </Button>
+
                 <Menu
                     id="menu-appbar"
                     anchorEl={anchorMenu}
@@ -195,14 +188,14 @@ class UserMenu extends Component {
                             this.closeMenu();
                         }}
                     >
-                        Profile
+                        회원정보
                     </MenuItem>
                     <MenuItem
                         onClick={() => {
                             this.closeMenu();
                         }}
                     >
-                        Sign out
+                        로그아웃
                     </MenuItem>
                 </Menu>
             </React.Fragment>
@@ -210,7 +203,36 @@ class UserMenu extends Component {
     }
 }
 
-const Header = ({onDrawerToggle}) => (
+
+const MainHeader = ({theme, onDrawerToggle}) => (
+    <React.Fragment>
+        <AppBar position="sticky" elevation={0}>
+            <Toolbar>
+                <Grid container alignItems="center">
+                    <Hidden mdUp>
+                        <Grid item>
+                            <IconButton
+                                color="inherit"
+                                aria-label="Open drawer"
+                                onClick={onDrawerToggle}
+                            >
+                                <MenuIcon/>
+                            </IconButton>
+                        </Grid>
+                    </Hidden>
+                    <Grid item />
+                    <Grid item xs/>
+
+                    <Grid item>
+                        <ClusterMenu theme={theme}/>
+                        <UserMenu theme={theme}/>
+                    </Grid>
+                </Grid>
+            </Toolbar>
+        </AppBar>
+    </React.Fragment>)
+
+const DashBoardHeader = ({theme, onDrawerToggle}) => (
     <React.Fragment>
         <AppBar position="sticky" elevation={0}>
             <Toolbar>
@@ -231,28 +253,30 @@ const Header = ({onDrawerToggle}) => (
                             <SearchIconWrapper>
                                 <SearchIcon/>
                             </SearchIconWrapper>
-                            <Input placeholder="Search topics"/>
+                            <Input placeholder="검색"/>
                         </Search>
                     </Grid>
                     <Grid item xs/>
+
                     <Grid item>
                         <IconButton color="inherit">
-                            <Indicator badgeContent={3}>
-                                <MessageSquare/>
-                            </Indicator>
+                            <Home />
                         </IconButton>
-                        <IconButton color="inherit">
-                            <Indicator badgeContent={7}>
-                                <Bell/>
-                            </Indicator>
-                        </IconButton>
-                        <LanguageMenu/>
-                        <UserMenu/>
+                        <ClusterMenu theme={theme}/>
+                        <UserMenu theme={theme}/>
                     </Grid>
                 </Grid>
             </Toolbar>
         </AppBar>
     </React.Fragment>
-);
+)
+
+
+const Header = ({theme, layout, onDrawerToggle}) => {
+    return layout === "main" ?
+        <MainHeader theme={theme} onDrawerToggle={onDrawerToggle}/>
+        :
+        <DashBoardHeader theme={theme} onDrawerToggle={onDrawerToggle} />
+}
 
 export default connect()(withTheme(Header));

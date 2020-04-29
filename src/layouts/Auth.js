@@ -1,7 +1,9 @@
 import React from "react";
-import styled, {createGlobalStyle} from "styled-components";
+import styled, {createGlobalStyle, ThemeProvider} from "styled-components";
 
 import {CssBaseline} from "@material-ui/core";
+import maTheme from "../theme";
+import {ThemeProvider as MuiThemeProvider} from "@material-ui/styles";
 
 const GlobalStyle = createGlobalStyle`
   html,
@@ -26,11 +28,15 @@ const Root = styled.div`
 
 function Auth({children}) {
     return (
-        <Root>
-            <CssBaseline/>
-            <GlobalStyle/>
-            {children}
-        </Root>
+        <MuiThemeProvider theme={maTheme[0]}>
+            <ThemeProvider theme={maTheme[0]}>
+                <Root>
+                    <CssBaseline/>
+                    <GlobalStyle/>
+                    {children}
+                </Root>
+            </ThemeProvider>
+        </MuiThemeProvider>
     );
 }
 

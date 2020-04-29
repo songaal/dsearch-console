@@ -1,7 +1,9 @@
 import React from "react";
-import {createGlobalStyle} from "styled-components";
+import {createGlobalStyle, ThemeProvider} from "styled-components";
 
 import {CssBaseline} from "@material-ui/core";
+import maTheme from "../theme";
+import {ThemeProvider as MuiThemeProvider} from "@material-ui/styles";
 
 const GlobalStyle = createGlobalStyle`
   html,
@@ -17,11 +19,15 @@ const GlobalStyle = createGlobalStyle`
 
 function Landing({children}) {
     return (
-        <React.Fragment>
-            <CssBaseline/>
-            <GlobalStyle/>
-            {children}
-        </React.Fragment>
+        <MuiThemeProvider theme={maTheme[0]}>
+            <ThemeProvider theme={maTheme[0]}>
+                <React.Fragment>
+                    <CssBaseline/>
+                    <GlobalStyle/>
+                    {children}
+                </React.Fragment>
+            </ThemeProvider>
+        </MuiThemeProvider>
     );
 }
 
