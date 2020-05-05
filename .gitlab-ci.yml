@@ -1,9 +1,5 @@
 image: dcr.danawa.io/alpine-k8s
 
-variables:
-  GIT_STRATEGY: "clone"
-  CI: "false"
-
 stages:
   - build
   - deploy
@@ -15,26 +11,23 @@ cache:
 build:
   stage: build
   script:
-    - export NODE_PATH="${PWD}/node_modules"
-    - npm install
-    - npm install -g create-react-app
-    - npm install -g react-dev-utils
-    - npm install -g react-scripts
-    - npm install customize-cra --save-dev
-    - npm install react-app-rewired --save-dev
-    - npm run build
-    - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}:${CI_PIPELINE_ID}"
+    - npm install -g yarn
+    - yarn 
+    - yarn build
+    - export app_version=$(grep version package.json | awk '{print $2}'|sed 's/[\",]//g')
+    - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}:${app_version}"
     - echo "${IMAGE}"
     - docker build -t "${IMAGE}" .
     - docker push "${IMAGE}"
 
-
 deploy:
   stage: deploy
   script:
-    - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}:${CI_PIPELINE_ID}"
+    - export app_version=$(grep version package.json | awk '{print $2}'|sed 's/[\",]//g')
+    - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}:${app_version}"
     - echo "${IMAGE}"
     - kubectl patch deployment fastcatx-console -n fastcatx -p "{\"spec\":{\"template\":{\"spec\":{\"containers\":\[{\"name\":\"fastcatx-console\",\"image\":\"${IMAGE}\"}\]}}}}"
     - sleep 5
     - kubectl get pod -n fastcatx -o wide
+
 
