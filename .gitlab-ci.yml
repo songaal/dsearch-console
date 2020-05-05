@@ -26,7 +26,7 @@ deploy:
     - export app_version=$(grep version package.json | awk '{print $2}'|sed 's/[\",]//g')
     - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}:${app_version}"
     - echo "${IMAGE}"
-    - kubectl patch deployment fastcatx-console -n fastcatx -p '{"spec":{"template":{"spec":{"containers":{"name":"fastcatx-console","image":"${IMAGE}"}}}}}'
+    - kubectl patch deployment fastcatx-console -n fastcatx -p '{"spec":{"template":{"spec":{"containers":[{"name":"fastcatx-console","image":"${IMAGE}"}]}}}}'
     - sleep 5
     - kubectl get pod -n fastcatx -o wide
 
