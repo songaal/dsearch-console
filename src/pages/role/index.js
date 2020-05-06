@@ -45,14 +45,15 @@ const Divider = styled(MuiDivider)(spacing);
 
 const useStyles = makeStyles({
     table: {
-        minWidth: 400,
+        minWidth: 600,
     },
     roleTable: {
-        marginTop: "20px",
-        minWidth: 260
+        marginTop: "30px",
+        minWidth: 300
     },
     warning: {
-        color: red[500]
+        color: red[500],
+        marginTop: "30px"
     }
 });
 
@@ -74,17 +75,8 @@ const StyledTableRow = withStyles((theme) => ({
 const TextFieldSpacing = styled(MuiTextField)(spacing);
 
 const TextField = styled(TextFieldSpacing)`
-  width: 200px;
+  width: 100%;
 `;
-
-const Select = styled(MuiSelect)(spacing);
-
-const FormControlSpacing = styled(MuiFormControl)(spacing);
-
-const FormControl = styled(FormControlSpacing)`
-  min-width: 148px;
-`;
-
 
 function createData( name ) {
     return { name };
@@ -234,9 +226,7 @@ function Role() {
                 </Grid>
             </Grid>
 
-            <Dialog open={open}
-                    onClose={handleAddClose}
-            >
+            <Dialog open={open} onClose={handleAddClose}>
                 <DialogTitle id="form-dialog-title">역할 추가</DialogTitle>
                 <DialogContent>
 
@@ -254,7 +244,7 @@ function Role() {
                         </Grid>
 
                         <Grid container className={classes.roleTable}>
-                            <Grid item xs={4}>
+                            <Grid item xs={3}>
                                 권한
                             </Grid>
                             <Grid item xs={8}>
@@ -322,7 +312,7 @@ function Role() {
 
                         <Grid container>
                             <Grid item xs={12} m={5}>
-                                <Box component="span" className={classes.warning}>
+                                <Box  className={classes.warning}>
                                     * 모든영역에 대한 읽기권한은 기본적으로 존재합니다.
                                 </Box>
                             </Grid>

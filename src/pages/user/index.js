@@ -44,6 +44,10 @@ const Divider = styled(MuiDivider)(spacing);
 const useStyles = makeStyles({
     table: {
         minWidth: 700,
+    },
+    formStyle: {
+        marginTop: "10px",
+        marginBottom: "10px"
     }
 });
 
@@ -56,7 +60,7 @@ const StyledTableCell = withStyles((theme) => ({
 const TextFieldSpacing = styled(MuiTextField)(spacing);
 
 const TextField = styled(TextFieldSpacing)`
-  width: 200px;
+  width: 100%;
 `;
 
 const Select = styled(MuiSelect)(spacing);
@@ -237,29 +241,37 @@ function User() {
                 </Grid>
             </Grid>
 
-
-            <Dialog open={open}
-                    onClose={handleAddClose}
-            >
+            <Dialog open={open} onClose={handleAddClose}>
                 <DialogTitle id="form-dialog-title">사용자 초대</DialogTitle>
                 <DialogContent>
 
+                    <Grid container className={classes.formStyle}>
+                        <Grid item xs={4}>
+                            이메일
+                        </Grid>
+                        <Grid item xs={7}>
+                            <FormControl >
+                                <TextField
+                                    id="standard-name"
+                                />
+                            </FormControl>
+                        </Grid>
+                    </Grid>
 
-                    <form noValidate autoComplete="off">
-                        <TextField
-                            id="standard-email"
-                            label="이메일"
-                            m={2}
-                        />
-                        <FormControl m={2}>
-                            <InputLabel htmlFor="role">역할</InputLabel>
-                            <Select>
-                                <MenuItem value={"관리자"}>관리자</MenuItem>
-                                <MenuItem value={"운영자"}>운영자</MenuItem>
-                                <MenuItem value={"사용자"}>사용자</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </form>
+                    <Grid container className={classes.formStyle}>
+                        <Grid item xs={4}>
+                            역할
+                        </Grid>
+                        <Grid item xs={7}>
+                            <FormControl >
+                                <Select>
+                                    <MenuItem value={"관리자"}>관리자</MenuItem>
+                                    <MenuItem value={"운영자"}>운영자</MenuItem>
+                                    <MenuItem value={"사용자"}>사용자</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                    </Grid>
 
 
                 </DialogContent>
