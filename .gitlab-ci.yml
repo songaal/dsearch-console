@@ -27,7 +27,7 @@ build:
 deploy:
   stage: deploy
   script:
-    - kubectl patch deployment fastcatx-console -n fastcatx -p "{\"spec\":{\"template\":{\"spec\":{\"containers\":[{\"name\":\"fastcatx-console\",\"image\":\"${IMAGE}\"}]}}}}"
+    - kubectl patch deployment fastcatx-console -n fastcatx -p "{\"spec\":{\"template\":{\"metadata\":{\"labels\":{\"date\":\"`date +'%s'`\"}},\"spec\":{\"containers\":[{\"name\":\"fastcatx-console\",\"image\":\"${IMAGE}\"}]}}}}"
     - sleep 5
     - kubectl get pod -n fastcatx -o wide
 
