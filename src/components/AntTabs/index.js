@@ -40,7 +40,7 @@ const Tab = withStyles((theme) => ({
         },
     },
     selected: {},
-}))((props) => <AntTab disableRipple {...props} />);
+}), {index: 1})((props) => <AntTab disableRipple {...props} />);
 
 
 function TabPanel(props) {
