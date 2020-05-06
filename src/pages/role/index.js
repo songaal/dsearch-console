@@ -23,27 +23,36 @@ import {
     ListItemIcon,
     ListItemText,
     Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
     DialogTitle,
+    DialogContent,
+    InputLabel,
+    DialogActions,
+    Dialog,
     TextField as MuiTextField,
     Select as MuiSelect,
-    InputLabel,
     FormControl as MuiFormControl,
+    Switch,
+    Box
 } from "@material-ui/core";
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import DraftsIcon from '@material-ui/icons/Drafts';
 import SendIcon from '@material-ui/icons/Send';
 import {ArrowDropDown} from "@material-ui/icons";
+import red from '@material-ui/core/colors/red';
 
 const Card = styled(MuiCard)(spacing);
 const Divider = styled(MuiDivider)(spacing);
 
 const useStyles = makeStyles({
     table: {
-        minWidth: 700,
+        minWidth: 400,
+    },
+    roleTable: {
+        marginTop: "20px",
+        minWidth: 260
+    },
+    warning: {
+        color: red[500]
     }
 });
 
@@ -52,6 +61,15 @@ const StyledTableCell = withStyles((theme) => ({
         fontSize: 14,
     },
 }))(TableCell);
+
+const StyledTableRow = withStyles((theme) => ({
+    root: {
+        '&:nth-of-type(odd)': {
+            backgroundColor: theme.palette.background.default,
+        },
+    },
+}))(TableRow);
+
 
 const TextFieldSpacing = styled(MuiTextField)(spacing);
 
@@ -67,31 +85,14 @@ const FormControl = styled(FormControlSpacing)`
   min-width: 148px;
 `;
 
-const StyledTableRow = withStyles((theme) => ({
-    root: {
-        '&:nth-of-type(odd)': {
-            backgroundColor: theme.palette.background.default,
-        },
-    },
-}))(TableRow);
 
-
-function createData(email, role) {
-    return { email, role };
+function createData( name ) {
+    return { name };
 }
 const rows = [
-    createData('Cupcake@gmail.com', '관리자'),
-    createData('Donut@gmail.com', '관리자'),
-    createData('Eclair@gmail.com', '관리자'),
-    createData('Frozen yoghurt@gmail.com', '관리자'),
-    createData('Gingerbread@gmail.com', '관리자'),
-    createData('Honeycomb@gmail.com', '운영자'),
-    createData('Ice cream sandwich@gmail.com', '사용자'),
-    createData('Jelly Bean@gmail.com', '사용자'),
-    createData('KitKat@gmail.com', '사용자'),
-    createData('Lollipop@gmail.com', '사용자'),
-    createData('Marshmallow@gmail.com', '사용자'),
-    createData('Nougat@gmail.com', '사용자'),
+    createData('관리자'),
+    createData('운영자'),
+    createData('사용자'),
 ];
 
 
@@ -128,18 +129,19 @@ const StyledMenuItem = withStyles((theme) => ({
 }))(MenuItem);
 
 
-function User() {
+function Role() {
     const classes = useStyles();
+    const [checked, setChecked] = React.useState(true);
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [open, setOpen] = React.useState(false);
 
-
-    const handleButtonClick = (event) => {
+    const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
-    const handleButtonClose = () => {
+    const handleClose = () => {
         setAnchorEl(null);
     };
+
     const handleAddClickOpen = () => {
         setOpen(true);
     };
@@ -148,14 +150,11 @@ function User() {
         setOpen(false);
     };
 
-
-
-
     return (
         <React.Fragment>
-            <Helmet title="사용자"/>
+            <Helmet title="역할"/>
             <Typography variant="h3" gutterBottom display="inline">
-                사용자
+                역할
             </Typography>
 
             <Divider my={6}/>
@@ -170,7 +169,7 @@ function User() {
                                     aria-haspopup="true"
                                     variant="contained"
                                     color="primary"
-                                    onClick={handleButtonClick}
+                                    onClick={handleClick}
                                 >
                                     작업
                                     <ArrowDropDown />
@@ -181,7 +180,7 @@ function User() {
                                     anchorEl={anchorEl}
                                     keepMounted
                                     open={Boolean(anchorEl)}
-                                    onClose={handleButtonClose}
+                                    onClose={handleClose}
                                 >
                                     <StyledMenuItem onClick={handleAddClickOpen}>
                                         <ListItemIcon>
@@ -204,18 +203,17 @@ function User() {
                                 </StyledMenu>
                             </div>
 
-                            <TableContainer component={Paper}>
+                            <TableContainer >
                                 <Table className={classes.table} aria-label="customized table">
                                     <TableHead>
                                         <TableRow>
                                             <StyledTableCell align="center">#</StyledTableCell>
-                                            <StyledTableCell>이메일</StyledTableCell>
                                             <StyledTableCell align="center">역할</StyledTableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
                                         {rows.map((row) => (
-                                            <StyledTableRow key={row.email}>
+                                            <StyledTableRow key={row.name}>
                                                 <StyledTableCell component="th"
                                                                  scope="row"
                                                                  align="center"
@@ -225,8 +223,7 @@ function User() {
                                                         inputProps={{ 'aria-label': 'secondary checkbox' }}
                                                     />
                                                 </StyledTableCell>
-                                                <StyledTableCell>{row.email}</StyledTableCell>
-                                                <StyledTableCell align="center">{row.role}</StyledTableCell>
+                                                <StyledTableCell align="center">{row.name}</StyledTableCell>
                                             </StyledTableRow>
                                         ))}
                                     </TableBody>
@@ -237,35 +234,104 @@ function User() {
                 </Grid>
             </Grid>
 
-
             <Dialog open={open}
                     onClose={handleAddClose}
             >
-                <DialogTitle id="form-dialog-title">사용자 초대</DialogTitle>
+                <DialogTitle id="form-dialog-title">역할 추가</DialogTitle>
                 <DialogContent>
 
-
                     <form noValidate autoComplete="off">
-                        <TextField
-                            id="standard-email"
-                            label="이메일"
-                            m={2}
-                        />
-                        <FormControl m={2}>
-                            <InputLabel htmlFor="role">역할</InputLabel>
-                            <Select>
-                                <MenuItem value={"관리자"}>관리자</MenuItem>
-                                <MenuItem value={"운영자"}>운영자</MenuItem>
-                                <MenuItem value={"사용자"}>사용자</MenuItem>
-                            </Select>
-                        </FormControl>
+
+                        <Grid container spacing={6}>
+                            <Grid item xs={3}>
+                                이름
+                            </Grid>
+                            <Grid item xs={8}>
+                                <TextField
+                                    id="standard-name"
+                                />
+                            </Grid>
+                        </Grid>
+
+                        <Grid container className={classes.roleTable}>
+                            <Grid item xs={4}>
+                                권한
+                            </Grid>
+                            <Grid item xs={8}>
+
+                                <Table  size="small">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell align="center">쓰기권한</TableCell>
+                                            <TableCell align="center">영역</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        <TableRow>
+                                            <TableCell align="center">
+                                                <Switch
+                                                    color="primary"
+                                                    name="checkedB"
+                                                    inputProps={{ 'aria-label': 'primary checkbox' }}
+                                                />
+                                            </TableCell>
+                                            <TableCell align="center">
+                                                분석
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell align="center">
+                                                <Switch
+                                                    color="primary"
+                                                    name="checkedB"
+                                                    inputProps={{ 'aria-label': 'primary checkbox' }}
+                                                />
+                                            </TableCell>
+                                            <TableCell align="center">
+                                                인덱스
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell align="center">
+                                                <Switch
+                                                    color="primary"
+                                                    name="checkedB"
+                                                    inputProps={{ 'aria-label': 'primary checkbox' }}
+                                                />
+                                            </TableCell>
+                                            <TableCell align="center">
+                                                검색
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell align="center">
+                                                <Switch
+                                                    color="primary"
+                                                    name="checkedB"
+                                                    inputProps={{ 'aria-label': 'primary checkbox' }}
+                                                />
+                                            </TableCell>
+                                            <TableCell align="center">
+                                                관리
+                                            </TableCell>
+                                        </TableRow>
+                                    </TableBody>
+                                </Table>
+                            </Grid>
+                        </Grid>
+
+                        <Grid container>
+                            <Grid item xs={12} m={5}>
+                                <Box component="span" className={classes.warning}>
+                                    * 모든영역에 대한 읽기권한은 기본적으로 존재합니다.
+                                </Box>
+                            </Grid>
+                        </Grid>
                     </form>
-
-
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleAddClose} color="primary">
-                        초대하기
+                        추가
                     </Button>
                     <Button onClick={handleAddClose} color="primary">
                         취소
@@ -273,12 +339,8 @@ function User() {
                 </DialogActions>
             </Dialog>
 
-
-
-
-
         </React.Fragment>
     );
 }
 
-export default User;
+export default Role;

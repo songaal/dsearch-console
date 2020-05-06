@@ -6,6 +6,7 @@ import * as Icon from "@material-ui/icons";
 // CLuster
 const Cluster = async(() => import("../pages/cluster"));
 const User = async(() => import("../pages/user"));
+const Role = async(() => import("../pages/role"));
 
 // Dashboard components
 const Dashboard = async(() => import("../pages/dashboard"));
@@ -60,6 +61,13 @@ const userRoutes = {
     children: null,
 };
 
+const roleRoutes = {
+    id: "역할",
+    path: "/role",
+    icon: <Icon.Home/>,
+    component: Role,
+    children: null,
+};
 
 const dashboardRoutes = {
     id: "대시보드",
@@ -230,6 +238,7 @@ export const dashboard = [
 
 export const intro = [
     homeRoutes,
+    roleRoutes,
     userRoutes,
 ];
 
