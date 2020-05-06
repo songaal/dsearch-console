@@ -53,10 +53,13 @@ const useStyles = makeStyles({
 
 function ClusterCard(props) {
     const classes = props.className
+    function testDashboard() {
+        location.href="/dashboard"
+    }
     return (
         <Grid item xs={12} md={6} lg={4}>
             <Card variant="outlined">
-                <CardActionArea className={classes.cardRoot}>
+                <CardActionArea className={classes.cardRoot} onClick={testDashboard}>
                     <CardContent>
                         <Box className={classes.title} m={1}>
                             {props.title}
