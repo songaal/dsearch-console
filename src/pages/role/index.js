@@ -55,7 +55,7 @@ const useStyles = makeStyles({
         color: red[500],
         marginTop: "30px"
     }
-});
+}, {withTheme: true});
 
 const StyledTableCell = withStyles((theme) => ({
     body: {
