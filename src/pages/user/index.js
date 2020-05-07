@@ -43,7 +43,7 @@ const Divider = styled(MuiDivider)(spacing);
 
 const useStyles = makeStyles({
     table: {
-        minWidth: 700,
+        width: "100%",
     },
     formStyle: {
         marginTop: "10px",
@@ -165,7 +165,7 @@ function User() {
             <Divider my={6}/>
 
             <Grid container spacing={6} alignItems="center" justify="center">
-                <Grid item>
+                <Grid item xs={12}>
                     <Card>
                         <CardContent>
                             <div align={"right"}>

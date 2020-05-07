@@ -152,7 +152,7 @@ function Role() {
             <Divider my={6}/>
 
             <Grid container spacing={6} alignItems="center" justify="center">
-                <Grid item>
+                <Grid item xs={12}>
                     <Card>
                         <CardContent>
                             <div align={"right"}>
