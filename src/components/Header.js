@@ -259,7 +259,8 @@ const DashBoardHeader = ({theme, onDrawerToggle}) => (
                     <Grid item xs/>
 
                     <Grid item>
-                        <IconButton color="inherit">
+                        <IconButton color="inherit"
+                                    onClick={() => location.href="/"}>
                             <Home />
                         </IconButton>
                         <ClusterMenu theme={theme}/>

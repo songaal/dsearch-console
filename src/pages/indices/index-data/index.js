@@ -1,73 +1,184 @@
 import React from "react";
 import styled from "styled-components";
-import {NavLink as RouterNavLink} from "react-router-dom";
-
+import { makeStyles } from '@material-ui/core/styles';
 import Helmet from 'react-helmet';
 
 import {
-    Breadcrumbs as MuiBreadcrumbs,
     Card as MuiCard,
     CardContent,
     Divider as MuiDivider,
     Grid,
-    Link,
-    Typography
+    Typography,
+    Table, TableRow, TableCell, TableHead, TableBody, TableFooter, Checkbox, TableContainer, TablePagination,
+    TextareaAutosize,
+    TextField,
+    FormControl,
+    IconButton,
+    InputBase,
+    Paper,
 } from "@material-ui/core";
+import {
+    Search
+} from '@material-ui/icons';
 
 import {spacing} from "@material-ui/system";
 
-const NavLink = React.forwardRef((props, ref) => (
-    <RouterNavLink innerRef={ref} {...props} />
-));
+const useStyles = makeStyles((theme) => ({
+    form: {
+        padding: '2px 4px',
+        display: 'flex',
+        alignItems: 'center',
+        width: 400,
+        borderBottom: "1px solid"
+    },
+    input: {
+        marginLeft: theme.spacing(1),
+        flex: 1,
+    },
+    iconButton: {
+        padding: 10,
+    },
+    divider: {
+        height: 28,
+        margin: 4,
+    },
+}));
 
 const Card = styled(MuiCard)(spacing);
 
 const Divider = styled(MuiDivider)(spacing);
 
-const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
 
-function EmptyCard() {
-    return (
-        <Card mb={6}>
-            <CardContent>
-                <Typography variant="h6" gutterBottom>
-                    Empty card
-                </Typography>
-                <Typography variant="body2" gutterBottom>
-                    Empty card
-                </Typography>
-            </CardContent>
-        </Card>
-    );
+function createData(val1, val2, val3, val4, val5, val6, val7, val8, val9, val10, val11, val12, val13, val14, val15, val16, val17, val18, val19, val20) {
+    return { val1, val2, val3, val4, val5, val6, val7, val8, val9, val10, val11, val12, val13, val14, val15, val16, val17, val18, val19, val20 };
 }
+const rows = [
+    createData('4020382', 'e5c8cdd4489094495134add5bf958496', '4020382', 'dna', '', '클리어 할로겐 램프 12V', '바이오라이트'),
+    createData('1297991', '88f0d70f329d0ab8db8787dabd4367cf', '1297991', 'dna', '', '크리스탈 비전', '필립스', '필립스'),
+    createData('2195255', 'e4eab9181eadf04456d8ec63859e3995', '2195255', 'dna', '', '화이트 비전 LED 안개등 6000K',	'젠카코리아'),
+    createData('1104260', '40164f3c639023cc06811525394abe57', '1104260', 'dna', '', '스탠다드 벌브 1개', '보쉬', '보쉬'),
+    createData('4020366', 'e5c8cdd4489094495134add5bf958496', '4020366', 'dna', '', '클리어 할로겐 램프 12V', '바이오라이트'),
+    createData('4020476', 'e5c8cdd4489094495134add5bf958496', '4020476', 'dna', '', '클리어 할로겐 램프 12V', '바이오라이트'),
+    createData('4429766', 'fddaba9e7fe5530137a32eb0c348c672', '4429766', 'dna', '', '나이트호크 제논 전조등', 'GE')
+];
 
-function Blank() {
+function IndexData() {
+    const classes = useStyles();
     return (
         <React.Fragment>
-            <Helmet title="Blank"/>
+            <Helmet title="데이터"/>
             <Typography variant="h3" gutterBottom display="inline">
-                Blank
+                데이터
             </Typography>
-
-            <Breadcrumbs aria-label="Breadcrumb" mt={2}>
-                <Link component={NavLink} exact to="/">
-                    Dashboard
-                </Link>
-                <Link component={NavLink} exact to="/">
-                    Pages
-                </Link>
-                <Typography>Blank</Typography>
-            </Breadcrumbs>
 
             <Divider my={6}/>
 
-            <Grid container spacing={6}>
-                <Grid item xs={12}>
-                    <EmptyCard/>
-                </Grid>
-            </Grid>
+            <Card>
+                <CardContent>
+                    <Grid container>
+                        <Grid item xs={6}>
+                            <form noValidate autoComplete="off" className={classes.form}>
+                                <InputBase
+                                    className={classes.input}
+                                    placeholder="ID"
+                                />
+                                <IconButton type="submit" className={classes.iconButton} aria-label="search">
+                                    <Search />
+                                </IconButton>
+                            </form>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <TablePagination
+                                rowsPerPageOptions={[5, 10, 25]}
+                                component="div"
+                                count={100}
+                                rowsPerPage={10}
+                                page={0}
+                                backIconButtonProps={{
+                                    "aria-label": "Previous Page"
+                                }}
+                                nextIconButtonProps={{
+                                    "aria-label": "Next Page"
+                                }}
+                                // onChangePage={this.handleChangePage}
+                                // onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                            />
+                        </Grid>
+                    </Grid>
+
+                    <TableContainer>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell align="center">ID</TableCell>
+                                    <TableCell align="center">BUNDLEKEY</TableCell>
+                                    <TableCell align="center">PRODUCTCODE</TableCell>
+                                    <TableCell align="center">SHOPCODE</TableCell>
+                                    <TableCell align="center">SHOPPRODUCTCODE</TableCell>
+                                    <TableCell align="center">PRODUCTNAME</TableCell>
+                                    <TableCell align="center">PRODUCTMAKER</TableCell>
+                                    <TableCell align="center">MAKERKEYWORD</TableCell>
+                                    <TableCell align="center">PRODUCTBRAND</TableCell>
+                                    <TableCell align="center">BRANDKEYWORD</TableCell>
+                                    <TableCell align="center">PRODUCTMODEL</TableCell>
+                                    <TableCell align="center">MODELWEIGHT</TableCell>
+                                    <TableCell align="center">PRODUCTIMAGEURL</TableCell>
+                                    <TableCell align="center">LOWESTPRICE</TableCell>
+                                    <TableCell align="center">PCPRICE</TableCell>
+                                    <TableCell align="center">MOBILEPRICE</TableCell>
+                                    <TableCell align="center">AVERAGEPRICE</TableCell>
+                                    <TableCell align="center">TOTALPRICE</TableCell>
+                                    <TableCell align="center">SHOPQUANTITY</TableCell>
+                                    <TableCell align="center">DISCONTINUED</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {rows.map((row, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell  scope="row"> {row.val1} </TableCell>
+                                        <TableCell > {row.val2} </TableCell>
+                                        <TableCell > {row.val3} </TableCell>
+                                        <TableCell > {row.val4} </TableCell>
+                                        <TableCell > {row.val5} </TableCell>
+                                        <TableCell > {row.val6} </TableCell>
+                                        <TableCell > {row.val7} </TableCell>
+                                        <TableCell > {row.val8} </TableCell>
+                                        <TableCell > {row.val9} </TableCell>
+                                        <TableCell > {row.val10} </TableCell>
+                                        <TableCell > {row.val11} </TableCell>
+                                        <TableCell > {row.val12} </TableCell>
+                                        <TableCell > {row.val13} </TableCell>
+                                        <TableCell > {row.val14} </TableCell>
+                                        <TableCell > {row.val15} </TableCell>
+                                        <TableCell > {row.val16} </TableCell>
+                                        <TableCell > {row.val17} </TableCell>
+                                        <TableCell > {row.val18} </TableCell>
+                                        <TableCell > {row.val19} </TableCell>
+                                        <TableCell > {row.val20} </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    {/*<TablePagination*/}
+                    {/*    rowsPerPageOptions={[5, 10, 25]}*/}
+                    {/*    component="div"*/}
+                    {/*    count={100}*/}
+                    {/*    rowsPerPage={10}*/}
+                    {/*    page={0}*/}
+                    {/*    backIconButtonProps={{*/}
+                    {/*        "aria-label": "Previous Page"*/}
+                    {/*    }}*/}
+                    {/*    nextIconButtonProps={{*/}
+                    {/*        "aria-label": "Next Page"*/}
+                    {/*    }}*/}
+                    {/*    // onChangePage={this.handleChangePage}*/}
+                    {/*    // onChangeRowsPerPage={this.handleChangeRowsPerPage}*/}
+                    {/*/>*/}
+                </CardContent>
+            </Card>
         </React.Fragment>
     );
 }
 
-export default Blank;
+export default IndexData;

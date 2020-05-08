@@ -55,7 +55,7 @@ const StyledTableCell = withStyles((theme) => ({
     body: {
         fontSize: 14,
     },
-}))(TableCell);
+}), {withTheme: true})(TableCell);
 
 const TextFieldSpacing = styled(MuiTextField)(spacing);
 
@@ -77,7 +77,7 @@ const StyledTableRow = withStyles((theme) => ({
             backgroundColor: theme.palette.background.default,
         },
     },
-}))(TableRow);
+}), {withTheme: true})(TableRow);
 
 
 function createData(email, role) {
@@ -104,7 +104,7 @@ const StyledMenu = withStyles({
     paper: {
         border: '1px solid #d3d4d5',
     },
-})((props) => (
+}, {withTheme: true})((props) => (
     <Menu
         elevation={0}
         getContentAnchorEl={null}
@@ -129,7 +129,7 @@ const StyledMenuItem = withStyles((theme) => ({
             },
         },
     },
-}))(MenuItem);
+}), {withTheme: true})(MenuItem);
 
 
 function User() {

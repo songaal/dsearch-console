@@ -1,4 +1,4 @@
-# Fastcat X Console
+# FastcatX Console
 
 UI
 
