@@ -21,6 +21,7 @@ module install:
   when: manual
   script:
     - npm install -g yarn
+    - yarn cache clean
     - rm -rf node_modules
     - yarn
 
@@ -28,7 +29,7 @@ build:
   stage: build
   script:
     - npm install -g yarn
-    - yarn build
+    - yarn build --reset-cache
     - docker build -t "${IMAGE}" .
     - docker push "${IMAGE}"
 
