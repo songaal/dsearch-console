@@ -1,6 +1,7 @@
 image: dcr.danawa.io/alpine-k8s
 
 stages:
+  - install
   - build
   - deploy
 
@@ -10,8 +11,8 @@ cache:
 
 
 before_script:
-  - export app_version=$(grep version package.json | awk '{print $2}'|sed 's/[\",]//g')
-  - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}:${app_version}-${CI_BUILD_ID}"
+#  - export app_version=$(grep version package.json | awk '{print $2}'|sed 's/[\",]//g')
+#  - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}:${app_version}-${CI_BUILD_ID}"
   - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}:latest"
   - echo "${IMAGE}"
 
