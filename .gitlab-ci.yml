@@ -34,6 +34,7 @@ build:
 
 deploy:
   stage: deploy
+  cache: {}
   script:
     - kubectl patch deployment fastcatx-console -n fastcatx -p "{\"spec\":{\"template\":{\"metadata\":{\"labels\":{\"date\":\"`date +'%s'`\"}},\"spec\":{\"containers\":[{\"name\":\"fastcatx-console\",\"image\":\"${IMAGE}\"}]}}}}"
     - sleep 5
