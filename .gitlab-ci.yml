@@ -15,11 +15,17 @@ before_script:
   - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}:latest"
   - echo "${IMAGE}"
 
+module install:
+  stage: install
+  when: manual
+  script:
+    - yarn
+
 build:
   stage: build
   script:
-    - npm install -g yarn
-    - yarn 
+#    - npm install -g yarn
+#    - yarn
     - yarn build
     - docker build -t "${IMAGE}" .
     - docker push "${IMAGE}"

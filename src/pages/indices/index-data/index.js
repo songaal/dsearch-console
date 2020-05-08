@@ -15,7 +15,7 @@ import {
     FormControl,
     IconButton,
     InputBase,
-    Paper,
+    Paper, Box, InputLabel, Select, MenuItem,
 } from "@material-ui/core";
 import {
     Search
@@ -24,6 +24,10 @@ import {
 import {spacing} from "@material-ui/system";
 
 const useStyles = makeStyles((theme) => ({
+    formControl: {
+        // margin: theme.spacing(1),
+        minWidth: 250,
+    },
     form: {
         padding: '2px 4px',
         display: 'flex',
@@ -42,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
         height: 28,
         margin: 4,
     },
-}));
+}), {withTheme: true});
 
 const Card = styled(MuiCard)(spacing);
 
@@ -64,9 +68,51 @@ const rows = [
 
 function IndexData() {
     const classes = useStyles();
+    const [indices, setIndices] = React.useState('VM');
+    const handleChange = (event) => {
+        setIndices(event.target.value);
+    };
+
     return (
         <React.Fragment>
             <Helmet title="데이터"/>
+
+            <Box>
+                <FormControl className={classes.formControl}>
+                    <InputLabel id="demo-simple-select-label">인덱스</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={indices}
+                        onChange={handleChange}
+                    >
+                        <MenuItem value={"VM"}>VM</MenuItem>
+                        <MenuItem value={"V01"}>V01</MenuItem>
+                        <MenuItem value={"V02"}>V02</MenuItem>
+                        <MenuItem value={"V03"}>V03</MenuItem>
+                        <MenuItem value={"V04"}>V04</MenuItem>
+                        <MenuItem value={"V05"}>V05</MenuItem>
+                        <MenuItem value={"V06"}>V06</MenuItem>
+                        <MenuItem value={"V07"}>V07</MenuItem>
+                        <MenuItem value={"V08"}>V08</MenuItem>
+                        <MenuItem value={"V09"}>V09</MenuItem>
+                        <MenuItem value={"V10"}>V10</MenuItem>
+                        <MenuItem value={"V11"}>V11</MenuItem>
+                        <MenuItem value={"V12"}>V12</MenuItem>
+                        <MenuItem value={"V13"}>V13</MenuItem>
+                        <MenuItem value={"V14"}>V14</MenuItem>
+                        <MenuItem value={"V15"}>V15</MenuItem>
+                        <MenuItem value={"V16"}>V16</MenuItem>
+                        <MenuItem value={"V17"}>V17</MenuItem>
+                        <MenuItem value={"V18"}>V18</MenuItem>
+                        <MenuItem value={"V19"}>V19</MenuItem>
+                        <MenuItem value={"V20"}>V20</MenuItem>
+                    </Select>
+                </FormControl>
+            </Box>
+
+            <br/>
+
             <Typography variant="h3" gutterBottom display="inline">
                 데이터
             </Typography>
