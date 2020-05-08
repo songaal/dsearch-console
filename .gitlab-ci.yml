@@ -21,6 +21,7 @@ module install:
   when: manual
   script:
     - npm install -g yarn
+    - rm -rf node_modules
     - yarn
 
 build:
