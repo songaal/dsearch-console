@@ -1,73 +1,67 @@
-import React from "react";
+import React, {useState} from "react";
+import PropTypes from 'prop-types';
 import styled from "styled-components";
-import {NavLink as RouterNavLink} from "react-router-dom";
-
+import {makeStyles} from '@material-ui/core/styles';
 import Helmet from 'react-helmet';
 
 import {
-    Breadcrumbs as MuiBreadcrumbs,
+    Box,
     Card as MuiCard,
-    CardContent,
     Divider as MuiDivider,
-    Grid,
-    Link,
-    Typography
+    Typography,
+    CardContent,
+    TextField, FormControl, InputLabel, Select, MenuItem
 } from "@material-ui/core";
 
 import {spacing} from "@material-ui/system";
 
-const NavLink = React.forwardRef((props, ref) => (
-    <RouterNavLink innerRef={ref} {...props} />
-));
+import SwaggerUI from "swagger-ui-react"
+import "swagger-ui-react/swagger-ui.css"
 
 const Card = styled(MuiCard)(spacing);
 
 const Divider = styled(MuiDivider)(spacing);
 
-const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
+const useStyles = makeStyles((theme) => ({
+    textField: {
+        minWidth: "250px"
+    }
+}));
 
-function EmptyCard() {
-    return (
-        <Card mb={6}>
-            <CardContent>
-                <Typography variant="h6" gutterBottom>
-                    Empty card
-                </Typography>
-                <Typography variant="body2" gutterBottom>
-                    Empty card
-                </Typography>
-            </CardContent>
-        </Card>
-    );
-}
+function ApiManagement() {
+    const classes = useStyles();
+    const [url, setUrl] = useState("/static/index.json")
 
-function Blank() {
+    function handleChange(event){
+        setUrl(event.target.value)
+    }
+
     return (
         <React.Fragment>
-            <Helmet title="Blank"/>
-            <Typography variant="h3" gutterBottom display="inline">
-                Blank
-            </Typography>
+            <Helmet title="API"/>
 
-            <Breadcrumbs aria-label="Breadcrumb" mt={2}>
-                <Link component={NavLink} exact to="/">
-                    Dashboard
-                </Link>
-                <Link component={NavLink} exact to="/">
-                    Pages
-                </Link>
-                <Typography>Blank</Typography>
-            </Breadcrumbs>
+            <Box>
+                <FormControl className={classes.formControl}>
+                    <TextField label="주소"
+                               value={url}
+                               onChange={handleChange}
+                               className={classes.textField}
+                    />
+                </FormControl>
+            </Box>
+
+            <br/>
+
+            <Typography variant="h3" gutterBottom display="inline">
+                API
+            </Typography>
 
             <Divider my={6}/>
 
-            <Grid container spacing={6}>
-                <Grid item xs={12}>
-                    <EmptyCard/>
-                </Grid>
-            </Grid>
+            <SwaggerUI url={url} />
+
         </React.Fragment>
     );
 }
 
-export default Blank;
+export default ApiManagement;
