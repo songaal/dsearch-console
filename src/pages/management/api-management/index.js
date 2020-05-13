@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
 
 function ApiManagement() {
     const classes = useStyles();
-    const [url, setUrl] = useState("/static/index.json")
+    const [url, setUrl] = useState("https://raw.githubusercontent.com/elastic/elastic-client-generator/master/swagger-generator/swagger-output/index.yml")
 
     function handleChange(event){
         setUrl(event.target.value)
