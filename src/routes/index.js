@@ -37,7 +37,7 @@ const ReferenceUi = async(() => import("../pages/search/reference-ui"));
 
 // Management components
 const ServerManagement = async(() => import("../pages/management/server-management"));
-const ApiManagement = async(() => import("../pages/management/api-management/swagger-backup"));
+const ApiManagement = async(() => import("../pages/management/api-management"));
 const KibanaManagement = async(() => import("../pages/management/kibana-management"));
 const ConfigurationManagement = async(() => import("../pages/management/configuration-management"));
 
