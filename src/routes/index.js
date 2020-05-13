@@ -26,6 +26,7 @@ const RankingTuning = async(() => import("../pages/analysis/ranking-tuning"));
 // Indices components
 const Mapping = async(() => import("../pages/indices/mapping"));
 const IndexData = async(() => import("../pages/indices/index-data"));
+const Search = async(() => import("../pages/indices/search"));
 const DataSource = async(() => import("../pages/indices/data-source"));
 const Index = async(() => import("../pages/indices/index"));
 const Configuration = async(() => import("../pages/indices/configuration"));
@@ -36,8 +37,7 @@ const ReferenceUi = async(() => import("../pages/search/reference-ui"));
 
 // Management components
 const ServerManagement = async(() => import("../pages/management/server-management"));
-const UserManagement = async(() => import("../pages/management/user-management"));
-const ApiManagement = async(() => import("../pages/management/api-management"));
+const ApiManagement = async(() => import("../pages/management/api-management/swagger-backup"));
 const KibanaManagement = async(() => import("../pages/management/kibana-management"));
 const ConfigurationManagement = async(() => import("../pages/management/configuration-management"));
 
@@ -140,7 +140,13 @@ const indicesRoutes = [
         component: Mapping,
         children: null
     },
-
+    {
+        id: "검색",
+        path: "/indices/search",
+        icon: <Icon.Subject/>,
+        component: Search,
+        children: null
+    },
     {
         id: "데이터",
         path: "/indices/data",

@@ -3,7 +3,7 @@ import React from "react";
 import PropTypes from 'prop-types';
 // Material components
 import {withStyles} from '@material-ui/core/styles';
-import {Box, Divider as MuiDivider, Tab as AntTab, Tabs, Typography} from "@material-ui/core";
+import {Box, Divider as MuiDivider, Tab as AntTab, Tabs, Typography, Card, CardContent} from "@material-ui/core";
 import styled from "styled-components";
 import {spacing} from "@material-ui/system";
 
@@ -91,14 +91,13 @@ function AntTabs({tabs}) {
             <Divider/>
             {tabs.map((Tab, index) => {
                 return (
-                    <div key={index}
-                         role="tabpanel"
-                         hidden={state.tabIndex !== index}
-                         id={`scrollable-auto-tabpanel-${index}`}
-                         aria-labelledby={`scrollable-auto-tab-${index}`}
-                    >
+                    <Box key={index}
+                          role="tabpanel"
+                          hidden={state.tabIndex !== index}
+                          id={`scrollable-auto-tabpanel-${index}`}
+                          aria-labelledby={`scrollable-auto-tab-${index}`}>
                         {index === state.tabIndex && <Box p={3}> <Tab.component tabs={Tab}/> </Box>}
-                    </div>
+                    </Box>
                 )
             })}
         </>

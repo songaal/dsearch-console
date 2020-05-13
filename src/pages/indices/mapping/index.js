@@ -1,9 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-
+import Async from '~/components/Async';
 import Helmet from 'react-helmet';
-
+import AntTabs from "~/components/AntTabs"
 import {
     Card as MuiCard,
     CardContent,
@@ -11,7 +11,7 @@ import {
     Divider as MuiDivider,
     Grid,
     Typography,
-    Box,
+    Box as MuiBox,
     FormControl,
     Select,
     FormHelperText,
@@ -22,10 +22,12 @@ import {
     Tab,
     Tabs,
     TextareaAutosize,
-    Button
+    Button,
+    TextField
 } from "@material-ui/core";
 import {makeStyles, withStyles} from '@material-ui/core/styles';
 import {spacing} from "@material-ui/system";
+import SearchIcon from "@material-ui/icons/Search";
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -43,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
 }), {withTheme: true});
 
 const Divider = styled(MuiDivider)(spacing);
-
+const Box = styled(MuiBox)(spacing);
 const Card = styled(MuiCard)(spacing);
 
 const StyledTableCell = withStyles((theme) => ({
@@ -65,38 +67,170 @@ const rows = [
     createData('Gingerbread', 356, 16.0, 49, 3.9),
 ];
 
-function TabPanel(props) {
-    const { children, value, index, ...other } = props;
-
+function FormCard() {
+    const classes = useStyles();
     return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`scrollable-auto-tabpanel-${index}`}
-            aria-labelledby={`scrollable-auto-tab-${index}`}
-            {...other}
-        >
-            {value === index && (
-                <Box>
-                    <Typography>{children}</Typography>
-                </Box>
-            )}
+        <div>
+            <br/>
+            <Typography variant="h4" className={classes.root}>
+                필드
+            </Typography>
+            <Card>
+                <CardContent>
+                    <Table className={classes.table} size="small">
+                        <TableHead>
+                            <TableRow>
+                                <StyledTableCell align="center">#</StyledTableCell>
+                                <StyledTableCell>이름</StyledTableCell>
+                                <StyledTableCell align="center">타입</StyledTableCell>
+                                <StyledTableCell align="center">분석기</StyledTableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {rows.map((row, index) => (
+                                <TableRow key={row.name}>
+                                    <StyledTableCell component="th" scope="row" align="center">{index}</StyledTableCell>
+                                    <StyledTableCell>
+                                        <FormControl>
+                                            <TextField value={row.name} />
+                                        </FormControl>
+                                    </StyledTableCell>
+                                    <StyledTableCell align="center">
+
+                                        <FormControl className={classes.formControl}>
+                                            <Select disableUnderline>
+                                                <MenuItem value={"Keyword"}>Keyword</MenuItem>
+                                                <MenuItem value={"Text"}>Text</MenuItem>
+                                                <MenuItem value={"Alias"}>Alias</MenuItem>
+                                                <MenuItem value={"Arrays"}>Arrays</MenuItem>
+                                                <MenuItem value={"Binary"}>Binary</MenuItem>
+                                                <MenuItem value={"Boolean"}>Boolean</MenuItem>
+                                                <MenuItem value={"Date"}>Date</MenuItem>
+                                                <MenuItem value={"Date nanoseconds"}>Date nanoseconds</MenuItem>
+                                                <MenuItem value={"Dense vector"}>Dense vector</MenuItem>
+                                                <MenuItem value={"Histogram"}>Histogram</MenuItem>
+                                                <MenuItem value={"Flattened"}>Flattened</MenuItem>
+                                                <MenuItem value={"Geo-point"}>Geo-point</MenuItem>
+                                                <MenuItem value={"Geo-shape"}>Geo-shape</MenuItem>
+                                                <MenuItem value={"IP"}>IP</MenuItem>
+                                                <MenuItem value={"Join"}>Join</MenuItem>
+                                                <MenuItem value={"Nested"}>Nested</MenuItem>
+                                                <MenuItem value={"Numeric"}>Numeric</MenuItem>
+                                                <MenuItem value={"Object"}>Object</MenuItem>
+                                                <MenuItem value={"Percolator"}>Percolator</MenuItem>
+                                                <MenuItem value={"Range"}>Range</MenuItem>
+                                                <MenuItem value={"Rank feature"}>Rank feature</MenuItem>
+                                                <MenuItem value={"Search-as-you-type"}>Search-as-you-type</MenuItem>
+                                                <MenuItem value={"Sparse vector"}>Sparse vector</MenuItem>
+                                                <MenuItem value={"Token count"}>Token count</MenuItem>
+                                                <MenuItem value={"Shape"}>Shape</MenuItem>
+                                            </Select>
+                                        </FormControl>
+
+                                    </StyledTableCell>
+                                    <StyledTableCell align="center">
+                                        <FormControl className={classes.formControl}>
+                                            <Select disableUnderline>
+                                                <MenuItem value={"Standard Analyzer"}>Standard Analyzer</MenuItem>
+                                                <MenuItem value={"Simple Analyzer"}>Simple Analyzer</MenuItem>
+                                                <MenuItem value={"Whitespace Analyzer"}>Whitespace Analyzer</MenuItem>
+                                                <MenuItem value={"Stop Analyzer"}>Stop Analyzer</MenuItem>
+                                                <MenuItem value={"Keyword Analyzer"}>Keyword Analyzer</MenuItem>
+                                                <MenuItem value={"Pattern Analyzer"}>Pattern Analyzer</MenuItem>
+                                                <MenuItem value={"Language Analyzers"}>Language Analyzers</MenuItem>
+                                                <MenuItem value={"Fingerprint Analyzer"}>Fingerprint Analyzer</MenuItem>
+                                                <MenuItem value={"Keyword Analyzer"}>Keyword Analyzer</MenuItem>
+                                                <MenuItem value={"Keyword Analyzer"}>Keyword Analyzer</MenuItem>
+                                                <MenuItem value={"Keyword Analyzer"}>Nori Analyzer</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                    </StyledTableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                    <br/>
+                    <Box align={"right"}>
+                        <Button color={"primary"} variant={"outlined"}>저장</Button>
+                    </Box>
+                </CardContent>
+            </Card>
+
+
+            <br/><br/>
+
+            <Typography variant="h4" className={classes.root}>
+                분석기
+            </Typography>
+            <Card>
+                <CardContent>
+                    <Table className={classes.table} size="small">
+                        <TableHead>
+                            <TableRow>
+                                <StyledTableCell align="center">#</StyledTableCell>
+                                <StyledTableCell>이름</StyledTableCell>
+                                <StyledTableCell align="center">분석기</StyledTableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {rows.map((row, index) => (
+                                <TableRow key={row.name}>
+                                    <StyledTableCell component="th" scope="row" align="center">{index}</StyledTableCell>
+                                    <StyledTableCell>
+                                        <FormControl>
+                                            <TextField value={"Custom Analyzer"} />
+                                        </FormControl>
+                                    </StyledTableCell>
+                                    <StyledTableCell align="center">
+                                        <FormControl className={classes.formControl}>
+                                            <Select disableUnderline>
+                                                <MenuItem value={"Standard Analyzer"}>Standard Analyzer</MenuItem>
+                                                <MenuItem value={"Simple Analyzer"}>Simple Analyzer</MenuItem>
+                                                <MenuItem value={"Whitespace Analyzer"}>Whitespace Analyzer</MenuItem>
+                                                <MenuItem value={"Stop Analyzer"}>Stop Analyzer</MenuItem>
+                                                <MenuItem value={"Keyword Analyzer"}>Keyword Analyzer</MenuItem>
+                                                <MenuItem value={"Pattern Analyzer"}>Pattern Analyzer</MenuItem>
+                                                <MenuItem value={"Language Analyzers"}>Language Analyzers</MenuItem>
+                                                <MenuItem value={"Fingerprint Analyzer"}>Fingerprint Analyzer</MenuItem>
+                                                <MenuItem value={"Keyword Analyzer"}>Keyword Analyzer</MenuItem>
+                                                <MenuItem value={"Keyword Analyzer"}>Keyword Analyzer</MenuItem>
+                                                <MenuItem value={"Keyword Analyzer"}>Nori Analyzer</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                    </StyledTableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                    <br/>
+                    <Box align={"right"}>
+                        <Button color={"primary"} variant={"outlined"}>저장</Button>
+                    </Box>
+                </CardContent>
+            </Card>
+
+
+
         </div>
+
+
     );
 }
-TabPanel.propTypes = {
-    children: PropTypes.node,
-    index: PropTypes.any.isRequired,
-    value: PropTypes.any.isRequired,
-};
-
-function a11yProps(index) {
-    return {
-        id: `scrollable-auto-tab-${index}`,
-        'aria-controls': `scrollable-auto-tabpanel-${index}`,
-    };
+function JsonCard() {
+    const classes = useStyles();
+    return (<div>
+        <Card>
+            <CardContent alignItems="center" justify="center">
+                <Box align={"right"}>
+                    <Button variant={"outlined"} color={"primary"}>저장</Button>
+                </Box>
+                <Box>
+                    <TextareaAutosize rowsMin={50} className={classes.edit} placeholder="" value={JSON.stringify(sampleData, null, 4)}/>
+                </Box>
+            </CardContent>
+        </Card>
+    </div>)
 }
-
 
 const sampleData = {
     "mappings" : {
@@ -256,19 +390,19 @@ const sampleData = {
     }
 };
 
+const tabs = [
+    {label: "폼", component: FormCard},
+    {label: "JSON", component: JsonCard}
+];
 
 function Mapping() {
     const classes = useStyles();
     const [indices, setIndices] = React.useState('VM');
-    const [value, setValue] = React.useState(0);
-
-    const handleTabChange = (event, newValue) => {
-        setValue(newValue);
-    };
 
     const handleChange = (event) => {
         setIndices(event.target.value);
     };
+
 
     return (
         <React.Fragment>
@@ -319,161 +453,7 @@ function Mapping() {
 
             <Divider my={6}/>
 
-            <AppBar position="static" color={"default"} variant={"outlined"}>
-                <Tabs
-                    value={value}
-                    onChange={handleTabChange}
-                    indicatorColor="primary"
-                    textColor="primary"
-                    variant="scrollable"
-                    scrollButtons="auto"
-                    aria-label="scrollable auto tabs example"
-                >
-                    <Tab label="폼" {...a11yProps(0)} />
-                    <Tab label="JSON" {...a11yProps(1)} />
-                </Tabs>
-            </AppBar>
-            <TabPanel value={value} index={0}>
-                <br/><br/>
-
-                <Typography variant="h4" className={classes.root}>
-                    필드
-                </Typography>
-                <Card>
-                    <CardContent>
-                        <Table className={classes.table} size="small">
-                            <TableHead>
-                                <TableRow>
-                                    <StyledTableCell align="center">#</StyledTableCell>
-                                    <StyledTableCell>이름</StyledTableCell>
-                                    <StyledTableCell align="center">타입</StyledTableCell>
-                                    <StyledTableCell align="center">분석기</StyledTableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {rows.map((row, index) => (
-                                    <TableRow key={row.name}>
-                                        <StyledTableCell component="th" scope="row" align="center">{index}</StyledTableCell>
-                                        <StyledTableCell>
-                                            {row.name}
-                                        </StyledTableCell>
-                                        <StyledTableCell align="center">
-
-                                            <FormControl className={classes.formControl}>
-                                                <Select>
-                                                    <MenuItem value={"Keyword"}>Keyword</MenuItem>
-                                                    <MenuItem value={"Text"}>Text</MenuItem>
-                                                    <MenuItem value={"Alias"}>Alias</MenuItem>
-                                                    <MenuItem value={"Arrays"}>Arrays</MenuItem>
-                                                    <MenuItem value={"Binary"}>Binary</MenuItem>
-                                                    <MenuItem value={"Boolean"}>Boolean</MenuItem>
-                                                    <MenuItem value={"Date"}>Date</MenuItem>
-                                                    <MenuItem value={"Date nanoseconds"}>Date nanoseconds</MenuItem>
-                                                    <MenuItem value={"Dense vector"}>Dense vector</MenuItem>
-                                                    <MenuItem value={"Histogram"}>Histogram</MenuItem>
-                                                    <MenuItem value={"Flattened"}>Flattened</MenuItem>
-                                                    <MenuItem value={"Geo-point"}>Geo-point</MenuItem>
-                                                    <MenuItem value={"Geo-shape"}>Geo-shape</MenuItem>
-                                                    <MenuItem value={"IP"}>IP</MenuItem>
-                                                    <MenuItem value={"Join"}>Join</MenuItem>
-                                                    <MenuItem value={"Nested"}>Nested</MenuItem>
-                                                    <MenuItem value={"Numeric"}>Numeric</MenuItem>
-                                                    <MenuItem value={"Object"}>Object</MenuItem>
-                                                    <MenuItem value={"Percolator"}>Percolator</MenuItem>
-                                                    <MenuItem value={"Range"}>Range</MenuItem>
-                                                    <MenuItem value={"Rank feature"}>Rank feature</MenuItem>
-                                                    <MenuItem value={"Search-as-you-type"}>Search-as-you-type</MenuItem>
-                                                    <MenuItem value={"Sparse vector"}>Sparse vector</MenuItem>
-                                                    <MenuItem value={"Token count"}>Token count</MenuItem>
-                                                    <MenuItem value={"Shape"}>Shape</MenuItem>
-                                                </Select>
-                                            </FormControl>
-
-                                        </StyledTableCell>
-                                        <StyledTableCell align="center">
-                                            <FormControl className={classes.formControl}>
-                                                <Select>
-                                                    <MenuItem value={"Standard Analyzer"}>Standard Analyzer</MenuItem>
-                                                    <MenuItem value={"Simple Analyzer"}>Simple Analyzer</MenuItem>
-                                                    <MenuItem value={"Whitespace Analyzer"}>Whitespace Analyzer</MenuItem>
-                                                    <MenuItem value={"Stop Analyzer"}>Stop Analyzer</MenuItem>
-                                                    <MenuItem value={"Keyword Analyzer"}>Keyword Analyzer</MenuItem>
-                                                    <MenuItem value={"Pattern Analyzer"}>Pattern Analyzer</MenuItem>
-                                                    <MenuItem value={"Language Analyzers"}>Language Analyzers</MenuItem>
-                                                    <MenuItem value={"Fingerprint Analyzer"}>Fingerprint Analyzer</MenuItem>
-                                                    <MenuItem value={"Keyword Analyzer"}>Keyword Analyzer</MenuItem>
-                                                    <MenuItem value={"Keyword Analyzer"}>Keyword Analyzer</MenuItem>
-                                                    <MenuItem value={"Keyword Analyzer"}>Nori Analyzer</MenuItem>
-                                                </Select>
-                                            </FormControl>
-                                        </StyledTableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </CardContent>
-                </Card>
-
-
-                <br/><br/>
-
-                <Typography variant="h4" className={classes.root}>
-                    분석기
-                </Typography>
-                <Card>
-                    <CardContent>
-                        <Table className={classes.table} size="small">
-                            <TableHead>
-                                <TableRow>
-                                    <StyledTableCell align="center">#</StyledTableCell>
-                                    <StyledTableCell>이름</StyledTableCell>
-                                    <StyledTableCell align="center">분석기</StyledTableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {rows.map((row, index) => (
-                                    <TableRow key={row.name}>
-                                        <StyledTableCell component="th" scope="row" align="center">{index}</StyledTableCell>
-                                        <StyledTableCell>
-                                            Custom Analyzer
-                                        </StyledTableCell>
-                                        <StyledTableCell align="center">
-                                            <FormControl className={classes.formControl}>
-                                                <Select>
-                                                    <MenuItem value={"Standard Analyzer"}>Standard Analyzer</MenuItem>
-                                                    <MenuItem value={"Simple Analyzer"}>Simple Analyzer</MenuItem>
-                                                    <MenuItem value={"Whitespace Analyzer"}>Whitespace Analyzer</MenuItem>
-                                                    <MenuItem value={"Stop Analyzer"}>Stop Analyzer</MenuItem>
-                                                    <MenuItem value={"Keyword Analyzer"}>Keyword Analyzer</MenuItem>
-                                                    <MenuItem value={"Pattern Analyzer"}>Pattern Analyzer</MenuItem>
-                                                    <MenuItem value={"Language Analyzers"}>Language Analyzers</MenuItem>
-                                                    <MenuItem value={"Fingerprint Analyzer"}>Fingerprint Analyzer</MenuItem>
-                                                    <MenuItem value={"Keyword Analyzer"}>Keyword Analyzer</MenuItem>
-                                                    <MenuItem value={"Keyword Analyzer"}>Keyword Analyzer</MenuItem>
-                                                    <MenuItem value={"Keyword Analyzer"}>Nori Analyzer</MenuItem>
-                                                </Select>
-                                            </FormControl>
-                                        </StyledTableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </CardContent>
-                </Card>
-            </TabPanel>
-
-            <TabPanel value={value} index={1}>
-                <Card>
-                    <CardContent alignItems="center" justify="center">
-                        <Box align={"right"}>
-                            <Button variant={"outlined"} color={"primary"}>저장</Button>
-                        </Box>
-                        <Box>
-                            <TextareaAutosize rowsMin={50} className={classes.edit} placeholder="" value={JSON.stringify(sampleData, null, 4)}/>
-                        </Box>
-                    </CardContent>
-                </Card>
-            </TabPanel>
+            <AntTabs tabs={tabs}/>
 
         </React.Fragment>
     );

@@ -54,8 +54,7 @@
     "react-scripts": "3.4.0",
     "react-swipeable-views": "0.13.9",
     "redux": "4.0.5",
-    "styled-components": "5.0.1",
-    "swagger-ui-react": "3.25.0"
+    "styled-components": "5.0.1"
   },
   "devDependencies": {
     "@babel/plugin-proposal-optional-chaining": "^7.9.0",

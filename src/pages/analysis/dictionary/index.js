@@ -43,13 +43,11 @@ function Dictionary({dispatch}) {
                 사전
             </Typography>
             <Divider my={6}/>
+
+
             <Grid container spacing={6}>
                 <Grid item xs={12}>
-                    <Card>
-                        <CardContent>
-                            <AntTabs tabs={tabs}/>
-                        </CardContent>
-                    </Card>
+                    <AntTabs tabs={tabs}/>
                 </Grid>
             </Grid>
         </>

@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import {
     Grid, IconButton, InputBase,
     Button,
+    Card, CardContent
 } from "@material-ui/core";
 import DynamicTable from "~/components/DynamicTable";
 import {Search} from "@material-ui/icons";
@@ -59,42 +60,44 @@ function UserDictionary({dispatch, userList, user}) {
 
     const classes = useStyles();
     return (
-        <>
-            <Grid container>
-                <Grid item xs={6}>
-                    <form noValidate autoComplete="off" className={classes.form}>
-                        <InputBase
-                            className={classes.input}
-                            placeholder="ID"
-                        />
-                        <IconButton type="submit" className={classes.iconButton} aria-label="search">
-                            <Search />
-                        </IconButton>
-                    </form>
+        <Card>
+            <CardContent>
+                <Grid container>
+                    <Grid item xs={6}>
+                        <form noValidate autoComplete="off" className={classes.form}>
+                            <InputBase
+                                className={classes.input}
+                                placeholder="ID"
+                            />
+                            <IconButton type="submit" className={classes.iconButton} aria-label="search">
+                                <Search />
+                            </IconButton>
+                        </form>
+                    </Grid>
+                    <Grid item xs={6} className={classes.right}>
+                        <Button variant={"outlined"} color={"primary"}>다운로드</Button>
+                        <Button variant={"outlined"} color={"primary"}>새로고침</Button>
+                        <Button variant={"outlined"} color={"primary"}>수정</Button>
+                    </Grid>
                 </Grid>
-                <Grid item xs={6} className={classes.right}>
-                    <Button variant={"outlined"} color={"primary"}>다운로드</Button>
-                    <Button variant={"outlined"} color={"primary"}>새로고침</Button>
-                    <Button variant={"outlined"} color={"primary"}>수정</Button>
-                </Grid>
-            </Grid>
 
-            <br/>
-            <Grid container spacing={6}>
-                <Grid item xs={3}>
-                    <DynamicTable dataList={dataList1} />
+                <br/>
+                <Grid container spacing={6}>
+                    <Grid item xs={3}>
+                        <DynamicTable dataList={dataList1} />
+                    </Grid>
+                    <Grid item xs={3}>
+                        <DynamicTable dataList={dataList2} />
+                    </Grid>
+                    <Grid item xs={3}>
+                        <DynamicTable dataList={dataList3} />
+                    </Grid>
+                    <Grid item xs={3}>
+                        <DynamicTable dataList={dataList4} />
+                    </Grid>
                 </Grid>
-                <Grid item xs={3}>
-                    <DynamicTable dataList={dataList2} />
-                </Grid>
-                <Grid item xs={3}>
-                    <DynamicTable dataList={dataList3} />
-                </Grid>
-                <Grid item xs={3}>
-                    <DynamicTable dataList={dataList4} />
-                </Grid>
-            </Grid>
-        </>
+            </CardContent>
+        </Card>
     )
 }
 

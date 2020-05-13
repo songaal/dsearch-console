@@ -57,7 +57,7 @@ function ClusterCard(props) {
         location.href="/dashboard"
     }
     return (
-        <Grid item xs={12} md={6} lg={4}>
+        <Grid item xs={12} md={6} lg={4} xl={3}>
             <Card variant="outlined">
                 <CardActionArea className={classes.cardRoot} onClick={testDashboard}>
                     <CardContent>
@@ -97,7 +97,7 @@ function ClusterCard(props) {
 function AddClusterCard(props) {
     const classes = props.className
     return (
-        <Grid item xs={12} md={6} lg={4}>
+        <Grid item xs={12} md={6} lg={4} xl={3}>
             <Card variant="outlined" className={classes.cardRoot}>
                 <CardContent>
                     <Box display="flex"
@@ -135,7 +135,7 @@ function AddClusterCard(props) {
 function AddGuideCard(props) {
     const classes = props.className
     return (
-        <Grid item xs={12} md={6} lg={4}>
+        <Grid item xs={12} md={6} lg={4} xl={3}>
             <Card variant="outlined" className={classes.cardRoot}>
                 <CardContent>
                     <Box display="flex"

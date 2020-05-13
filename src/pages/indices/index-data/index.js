@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { makeStyles } from '@material-ui/core/styles';
 import Helmet from 'react-helmet';
-
+import AntTabs from "~/components/AntTabs"
 import {
     Card as MuiCard,
     CardContent,
@@ -24,6 +24,7 @@ import {
 
 import {spacing} from "@material-ui/system";
 import PropTypes from "prop-types";
+import SearchIcon from "@material-ui/icons/Search";
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -106,37 +107,166 @@ const indexRows = [
 ]
 
 
-function TabPanel(props) {
-    const { children, value, index, ...other } = props;
+function OriginalData() {
+    const classes = useStyles()
+    return (<div>
+        <br/>
+        <Card>
+            <CardContent>
+                <Grid container>
+                    <Grid item xs={6}>
+                        <form noValidate autoComplete="off" className={classes.form}>
+                            <InputBase
+                                className={classes.input}
+                                placeholder="ID"
+                            />
+                            <IconButton type="submit" className={classes.iconButton} aria-label="search">
+                                <Search />
+                            </IconButton>
+                        </form>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <TablePagination
+                            rowsPerPageOptions={[5, 10, 25]}
+                            component="div"
+                            count={100}
+                            rowsPerPage={10}
+                            page={0}
+                            backIconButtonProps={{
+                                "aria-label": "Previous Page"
+                            }}
+                            nextIconButtonProps={{
+                                "aria-label": "Next Page"
+                            }}
+                            // onChangePage={this.handleChangePage}
+                            // onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                        />
+                    </Grid>
+                </Grid>
 
-    return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`scrollable-auto-tabpanel-${index}`}
-            aria-labelledby={`scrollable-auto-tab-${index}`}
-            {...other}
-        >
-            {value === index && (
-                <Box>
-                    <Typography>{children}</Typography>
-                </Box>
-            )}
-        </div>
-    );
+                <TableContainer>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell align="center">ID</TableCell>
+                                <TableCell align="center">BUNDLEKEY</TableCell>
+                                <TableCell align="center">PRODUCTCODE</TableCell>
+                                <TableCell align="center">SHOPCODE</TableCell>
+                                <TableCell align="center">SHOPPRODUCTCODE</TableCell>
+                                <TableCell align="center">PRODUCTNAME</TableCell>
+                                <TableCell align="center">PRODUCTMAKER</TableCell>
+                                <TableCell align="center">MAKERKEYWORD</TableCell>
+                                <TableCell align="center">PRODUCTBRAND</TableCell>
+                                <TableCell align="center">BRANDKEYWORD</TableCell>
+                                <TableCell align="center">PRODUCTMODEL</TableCell>
+                                <TableCell align="center">MODELWEIGHT</TableCell>
+                                <TableCell align="center">PRODUCTIMAGEURL</TableCell>
+                                <TableCell align="center">LOWESTPRICE</TableCell>
+                                <TableCell align="center">PCPRICE</TableCell>
+                                <TableCell align="center">MOBILEPRICE</TableCell>
+                                <TableCell align="center">AVERAGEPRICE</TableCell>
+                                <TableCell align="center">TOTALPRICE</TableCell>
+                                <TableCell align="center">SHOPQUANTITY</TableCell>
+                                <TableCell align="center">DISCONTINUED</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {rows.map((row, index) => (
+                                <TableRow key={index}>
+                                    <TableCell  scope="row"> {row.val1} </TableCell>
+                                    <TableCell > {row.val2} </TableCell>
+                                    <TableCell > {row.val3} </TableCell>
+                                    <TableCell > {row.val4} </TableCell>
+                                    <TableCell > {row.val5} </TableCell>
+                                    <TableCell > {row.val6} </TableCell>
+                                    <TableCell > {row.val7} </TableCell>
+                                    <TableCell > {row.val8} </TableCell>
+                                    <TableCell > {row.val9} </TableCell>
+                                    <TableCell > {row.val10} </TableCell>
+                                    <TableCell > {row.val11} </TableCell>
+                                    <TableCell > {row.val12} </TableCell>
+                                    <TableCell > {row.val13} </TableCell>
+                                    <TableCell > {row.val14} </TableCell>
+                                    <TableCell > {row.val15} </TableCell>
+                                    <TableCell > {row.val16} </TableCell>
+                                    <TableCell > {row.val17} </TableCell>
+                                    <TableCell > {row.val18} </TableCell>
+                                    <TableCell > {row.val19} </TableCell>
+                                    <TableCell > {row.val20} </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </CardContent>
+        </Card>
+    </div>)
 }
-TabPanel.propTypes = {
-    children: PropTypes.node,
-    index: PropTypes.any.isRequired,
-    value: PropTypes.any.isRequired,
-};
+function IndexedData() {
+    const classes = useStyles()
+    return (<div>
+        <br/>
+        <Card>
+            <CardContent>
+                <Grid container>
+                    <Grid item xs={6}>
+                        <form noValidate autoComplete="off" className={classes.form}>
+                            <InputBase
+                                className={classes.input}
+                                placeholder="ID"
+                            />
+                            <IconButton type="submit" className={classes.iconButton} aria-label="search">
+                                <Search />
+                            </IconButton>
+                        </form>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <TablePagination
+                            rowsPerPageOptions={[5, 10, 25]}
+                            component="div"
+                            count={100}
+                            rowsPerPage={10}
+                            page={0}
+                            backIconButtonProps={{
+                                "aria-label": "Previous Page"
+                            }}
+                            nextIconButtonProps={{
+                                "aria-label": "Next Page"
+                            }}
+                            // onChangePage={this.handleChangePage}
+                            // onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                        />
+                    </Grid>
+                </Grid>
 
-function a11yProps(index) {
-    return {
-        id: `scrollable-auto-tab-${index}`,
-        'aria-controls': `scrollable-auto-tabpanel-${index}`,
-    };
+                <TableContainer>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>아이디</TableCell>
+                                <TableCell>값</TableCell>
+                                <TableCell>분석결과</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {indexRows.map((row, index) => (
+                                <TableRow key={index}>
+                                    <TableCell  scope="row"> {row.val1} </TableCell>
+                                    <TableCell > {row.val2} </TableCell>
+                                    <TableCell > {row.val3} </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </CardContent>
+        </Card>
+    </div>)
 }
+const tabs = [
+    {label: "기본", component: OriginalData},
+    {label: "분석된 색인어", component: IndexedData},
+];
 
 
 function IndexData() {
@@ -198,173 +328,8 @@ function IndexData() {
             <Divider my={6}/>
 
 
+            <AntTabs tabs={tabs}/>
 
-
-            <Card>
-                <CardContent>
-
-                    <AppBar position="static" color={"default"} variant={"outlined"}>
-                        <Tabs
-                            value={value}
-                            onChange={handleTabChange}
-                            indicatorColor="primary"
-                            textColor="primary"
-                            variant="scrollable"
-                            scrollButtons="auto"
-                            aria-label="scrollable auto tabs example"
-                        >
-                            <Tab label="기본" {...a11yProps(0)} />
-                            <Tab label="분석된 색인어" {...a11yProps(1)} />
-                        </Tabs>
-                    </AppBar>
-
-                    <TabPanel value={value} index={0}>
-                        <br/><br/>
-                        <Grid container>
-                            <Grid item xs={6}>
-                                <form noValidate autoComplete="off" className={classes.form}>
-                                    <InputBase
-                                        className={classes.input}
-                                        placeholder="ID"
-                                    />
-                                    <IconButton type="submit" className={classes.iconButton} aria-label="search">
-                                        <Search />
-                                    </IconButton>
-                                </form>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <TablePagination
-                                    rowsPerPageOptions={[5, 10, 25]}
-                                    component="div"
-                                    count={100}
-                                    rowsPerPage={10}
-                                    page={0}
-                                    backIconButtonProps={{
-                                        "aria-label": "Previous Page"
-                                    }}
-                                    nextIconButtonProps={{
-                                        "aria-label": "Next Page"
-                                    }}
-                                    // onChangePage={this.handleChangePage}
-                                    // onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                                />
-                            </Grid>
-                        </Grid>
-
-                        <TableContainer>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell align="center">ID</TableCell>
-                                        <TableCell align="center">BUNDLEKEY</TableCell>
-                                        <TableCell align="center">PRODUCTCODE</TableCell>
-                                        <TableCell align="center">SHOPCODE</TableCell>
-                                        <TableCell align="center">SHOPPRODUCTCODE</TableCell>
-                                        <TableCell align="center">PRODUCTNAME</TableCell>
-                                        <TableCell align="center">PRODUCTMAKER</TableCell>
-                                        <TableCell align="center">MAKERKEYWORD</TableCell>
-                                        <TableCell align="center">PRODUCTBRAND</TableCell>
-                                        <TableCell align="center">BRANDKEYWORD</TableCell>
-                                        <TableCell align="center">PRODUCTMODEL</TableCell>
-                                        <TableCell align="center">MODELWEIGHT</TableCell>
-                                        <TableCell align="center">PRODUCTIMAGEURL</TableCell>
-                                        <TableCell align="center">LOWESTPRICE</TableCell>
-                                        <TableCell align="center">PCPRICE</TableCell>
-                                        <TableCell align="center">MOBILEPRICE</TableCell>
-                                        <TableCell align="center">AVERAGEPRICE</TableCell>
-                                        <TableCell align="center">TOTALPRICE</TableCell>
-                                        <TableCell align="center">SHOPQUANTITY</TableCell>
-                                        <TableCell align="center">DISCONTINUED</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {rows.map((row, index) => (
-                                        <TableRow key={index}>
-                                            <TableCell  scope="row"> {row.val1} </TableCell>
-                                            <TableCell > {row.val2} </TableCell>
-                                            <TableCell > {row.val3} </TableCell>
-                                            <TableCell > {row.val4} </TableCell>
-                                            <TableCell > {row.val5} </TableCell>
-                                            <TableCell > {row.val6} </TableCell>
-                                            <TableCell > {row.val7} </TableCell>
-                                            <TableCell > {row.val8} </TableCell>
-                                            <TableCell > {row.val9} </TableCell>
-                                            <TableCell > {row.val10} </TableCell>
-                                            <TableCell > {row.val11} </TableCell>
-                                            <TableCell > {row.val12} </TableCell>
-                                            <TableCell > {row.val13} </TableCell>
-                                            <TableCell > {row.val14} </TableCell>
-                                            <TableCell > {row.val15} </TableCell>
-                                            <TableCell > {row.val16} </TableCell>
-                                            <TableCell > {row.val17} </TableCell>
-                                            <TableCell > {row.val18} </TableCell>
-                                            <TableCell > {row.val19} </TableCell>
-                                            <TableCell > {row.val20} </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    </TabPanel>
-
-                    <TabPanel value={value} index={1}>
-
-                        <br/><br/>
-                        <Grid container>
-                            <Grid item xs={6}>
-                                <form noValidate autoComplete="off" className={classes.form}>
-                                    <InputBase
-                                        className={classes.input}
-                                        placeholder="ID"
-                                    />
-                                    <IconButton type="submit" className={classes.iconButton} aria-label="search">
-                                        <Search />
-                                    </IconButton>
-                                </form>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <TablePagination
-                                    rowsPerPageOptions={[5, 10, 25]}
-                                    component="div"
-                                    count={100}
-                                    rowsPerPage={10}
-                                    page={0}
-                                    backIconButtonProps={{
-                                        "aria-label": "Previous Page"
-                                    }}
-                                    nextIconButtonProps={{
-                                        "aria-label": "Next Page"
-                                    }}
-                                    // onChangePage={this.handleChangePage}
-                                    // onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                                />
-                            </Grid>
-                        </Grid>
-
-                        <TableContainer>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>아이디</TableCell>
-                                        <TableCell>값</TableCell>
-                                        <TableCell>분석결과</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {indexRows.map((row, index) => (
-                                        <TableRow key={index}>
-                                            <TableCell  scope="row"> {row.val1} </TableCell>
-                                            <TableCell > {row.val2} </TableCell>
-                                            <TableCell > {row.val3} </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-
-                    </TabPanel>
-                </CardContent>
-            </Card>
         </React.Fragment>
     );
 }
