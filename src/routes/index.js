@@ -140,7 +140,7 @@ const indicesRoutes = [
         component: Mapping,
         children: null
     },
-    
+
     {
         id: "데이터",
         path: "/indices/data",
