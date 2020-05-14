@@ -71,7 +71,7 @@ const rows = [
     createData('Gingerbread', 356, 16.0, 49, 3.9),
 ];
 
-function FormCard({dispatch, mapping}) {
+function FormCard({mapping}) {
     const classes = useStyles();
     return (
         <div>
@@ -220,17 +220,9 @@ function FormCard({dispatch, mapping}) {
 
     );
 }
-function JsonCard({dispatch, mapping}) {
+function JsonCard({mapping}) {
     const classes = useStyles();
 
-    useEffect(() => {
-        fetch(`${process.env.REACT_APP_SERVER_URL}/case_s5_r0/_mapping`)
-            .then((response) => response.json())
-            .then((result) => {
-                dispatch(setIndicesMapping(result))
-            })
-    }, [])
-    
     return (<div>
         <Card>
             <CardContent>
@@ -248,14 +240,26 @@ function JsonCard({dispatch, mapping}) {
     </div>)
 }
 
+
+
 function Mapping({dispatch, mapping}) {
     const classes = useStyles();
     const [indices, setIndices] = React.useState('VM');
 
     const tabs = [
-        {label: "폼", component: () => FormCard({dispatch, mapping})},
-        {label: "JSON", component: () => JsonCard({dispatch, mapping})}
+        {label: "폼", component: () => FormCard({mapping})},
+        {label: "JSON", component: () => JsonCard({mapping})}
     ];
+
+    useEffect(() => {
+        fetch(`${process.env.REACT_APP_SERVER_URL}/case_s5_r0/_mapping`)
+            .then((response) => response.json())
+            .then((result) => {
+                dispatch(setIndicesMapping(result))
+            })
+    }, [])
+
+
 
     useEffect(() =>{
         dispatch(setIndicesMapping())
