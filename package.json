@@ -39,6 +39,7 @@
     "date-fns": "2.10.0",
     "dotenv": "^8.2.0",
     "google-map-react": "1.1.6",
+    "js-yaml": "^3.13.1",
     "jss": "10.0.4",
     "polished": "3.4.4",
     "prop-types": "15.7.2",
