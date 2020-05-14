@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import Async from '~/components/Async';
 import Helmet from 'react-helmet';
-import AntTabs from "~/components/AntTabs"
+import AntTabs from "~/components/AntTabs";
+import { setIndicesMapping } from '@actions/indicesMappingActions';
+
 import {
     Card as MuiCard,
     CardContent,
@@ -28,6 +30,8 @@ import {
 import {makeStyles, withStyles} from '@material-ui/core/styles';
 import {spacing} from "@material-ui/system";
 import SearchIcon from "@material-ui/icons/Search";
+import {connect} from "react-redux";
+import indicesMappingReducers from "../../../redux/reducers/indicesMappingReducers";
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -67,7 +71,7 @@ const rows = [
     createData('Gingerbread', 356, 16.0, 49, 3.9),
 ];
 
-function FormCard() {
+function FormCard({dispatch, mapping}) {
     const classes = useStyles();
     return (
         <div>
@@ -216,194 +220,50 @@ function FormCard() {
 
     );
 }
-function JsonCard() {
+function JsonCard({dispatch, mapping}) {
     const classes = useStyles();
+
+    useEffect(() => {
+        fetch(`${process.env.REACT_APP_SERVER_URL}/case_s5_r0/_mapping`)
+            .then((response) => response.json())
+            .then((result) => {
+                dispatch(setIndicesMapping(result))
+            })
+    }, [])
+    
     return (<div>
         <Card>
-            <CardContent alignItems="center" justify="center">
+            <CardContent>
                 <Box align={"right"}>
                     <Button variant={"outlined"} color={"primary"}>저장</Button>
                 </Box>
                 <Box>
-                    <TextareaAutosize rowsMin={50} className={classes.edit} placeholder="" value={JSON.stringify(sampleData, null, 4)}/>
+                    <TextareaAutosize rowsMin={50}
+                                      className={classes.edit}
+                                      placeholder=""
+                                      value={JSON.stringify(mapping, null, 4)}/>
                 </Box>
             </CardContent>
         </Card>
     </div>)
 }
 
-const sampleData = {
-    "mappings" : {
-        "properties" : {
-            "ADDDESCRIPTION" : {
-                "type" : "text",
-                "analyzer" : "korean"
-            },
-            "CATEGORYCODE1" : {
-                "type" : "integer"
-            },
-            "CATEGORYCODE2" : {
-                "type" : "integer"
-            },
-            "CATEGORYCODE3" : {
-                "type" : "integer"
-            },
-            "CATEGORYCODE4" : {
-                "type" : "integer"
-            },
-            "DATASTAT" : {
-                "type" : "keyword"
-            },
-            "DELIVERYPRICE" : {
-                "type" : "integer"
-            },
-            "GROUPSEQ" : {
-                "type" : "integer"
-            },
-            "MOBILEPRICE" : {
-                "type" : "integer"
-            },
-            "PCPRICE" : {
-                "type" : "integer"
-            },
-            "POPULARITYSCORE" : {
-                "type" : "integer"
-            },
-            "PRODUCTCODE" : {
-                "type" : "keyword"
-            },
-            "PRODUCTIMAGEURL" : {
-                "type" : "keyword"
-            },
-            "PRODUCTMAKER" : {
-                "type" : "keyword"
-            },
-            "PRODUCTNAME" : {
-                "type" : "text",
-                "analyzer" : "korean"
-            },
-            "REGISTERDATE" : {
-                "type" : "date"
-            },
-            "SHOPCODE" : {
-                "type" : "keyword"
-            },
-            "SHOPCOUPON" : {
-                "type" : "keyword"
-            },
-            "SHOPGIFT" : {
-                "type" : "keyword"
-            },
-            "SHOPPRODUCTCODE" : {
-                "type" : "keyword"
-            },
-            "SIMPRODMEMBERCNT" : {
-                "type" : "integer"
-            },
-            "host" : {
-                "type" : "text",
-                "fields" : {
-                    "keyword" : {
-                        "type" : "keyword",
-                        "ignore_above" : 256
-                    }
-                }
-            },
-            "message" : {
-                "type" : "text",
-                "fields" : {
-                    "keyword" : {
-                        "type" : "keyword",
-                        "ignore_above" : 256
-                    }
-                }
-            },
-            "path" : {
-                "type" : "text",
-                "fields" : {
-                    "keyword" : {
-                        "type" : "keyword",
-                        "ignore_above" : 256
-                    }
-                }
-            },
-            "tags" : {
-                "type" : "text",
-                "fields" : {
-                    "keyword" : {
-                        "type" : "keyword",
-                        "ignore_above" : 256
-                    }
-                }
-            }
-        }
-    },
-    "settings" : {
-        "index" : {
-            "number_of_shards" : "2",
-            "analysis" : {
-                "filter" : {
-                    "nori_part_of_speech_basic" : {
-                        "type" : "nori_part_of_speech",
-                        "stoptags" : [
-                            "E",
-                            "IC",
-                            "J",
-                            "MAG",
-                            "MAJ",
-                            "MM",
-                            "SP",
-                            "SSC",
-                            "SSO",
-                            "SC",
-                            "SE",
-                            "XPN",
-                            "XSA",
-                            "XSN",
-                            "XSV",
-                            "UNA",
-                            "NA",
-                            "VSV"
-                        ]
-                    }
-                },
-                "analyzer" : {
-                    "korean" : {
-                        "filter" : [
-                            "nori_readingform",
-                            "lowercase",
-                            "nori_part_of_speech_basic"
-                        ],
-                        "type" : "custom",
-                        "tokenizer" : "nori_user_dict"
-                    }
-                },
-                "tokenizer" : {
-                    "nori_user_dict" : {
-                        "type" : "nori_tokenizer",
-                        "decompound_mode" : "mixed"
-                    }
-                }
-            },
-            "number_of_replicas" : "0"
-        }
-    }
-};
-
-const tabs = [
-    {label: "폼", component: FormCard},
-    {label: "JSON", component: JsonCard}
-];
-
-function Mapping() {
+function Mapping({dispatch, mapping}) {
     const classes = useStyles();
     const [indices, setIndices] = React.useState('VM');
+
+    const tabs = [
+        {label: "폼", component: () => FormCard({dispatch, mapping})},
+        {label: "JSON", component: () => JsonCard({dispatch, mapping})}
+    ];
+
+    useEffect(() =>{
+        dispatch(setIndicesMapping())
+    }, [])
 
     const handleChange = (event) => {
         setIndices(event.target.value);
     };
-
-
     return (
         <React.Fragment>
             <Helmet title="맵핑"/>
@@ -459,4 +319,4 @@ function Mapping() {
     );
 }
 
-export default Mapping;
+export default connect(store => ({ mapping: store.indicesMappingReducers.mapping }))(Mapping);

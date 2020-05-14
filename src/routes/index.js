@@ -21,25 +21,25 @@ const Page500 = async(() => import("../pages/auth/Page500"));
 // Analysis components
 const Dictionary = async(() => import("../pages/analysis/dictionary"));
 const Tools = async(() => import("../pages/analysis/tools"));
-const RankingTuning = async(() => import("../pages/analysis/ranking-tuning"));
+const RankingTuning = async(() => import("../pages/analysis/rankingTuning"));
 
 // Indices components
 const Mapping = async(() => import("../pages/indices/mapping"));
-const IndexData = async(() => import("../pages/indices/index-data"));
+const IndexData = async(() => import("../pages/indices/indexData"));
 const Search = async(() => import("../pages/indices/search"));
-const DataSource = async(() => import("../pages/indices/data-source"));
+const DataSource = async(() => import("../pages/indices/dataSource"));
 const Index = async(() => import("../pages/indices/index"));
 const Configuration = async(() => import("../pages/indices/configuration"));
 
 // Search components
-const QueryTest = async(() => import("../pages/search/query-test"));
-const ReferenceUi = async(() => import("../pages/search/reference-ui"));
+const QueryTest = async(() => import("../pages/search/queryTest"));
+const ReferenceUi = async(() => import("../pages/search/referenceUI"));
 
 // Management components
-const ServerManagement = async(() => import("../pages/management/server-management"));
-const ApiManagement = async(() => import("../pages/management/api-management"));
-const KibanaManagement = async(() => import("../pages/management/kibana-management"));
-const ConfigurationManagement = async(() => import("../pages/management/configuration-management"));
+const ServerManagement = async(() => import("../pages/management/serverManagement"));
+const ApiManagement = async(() => import("../pages/management/apiManagement"));
+const KibanaManagement = async(() => import("../pages/management/kibanaManagement"));
+const ConfigurationManagement = async(() => import("../pages/management/configurationManagement"));
 
 
 // Routes Configuration
