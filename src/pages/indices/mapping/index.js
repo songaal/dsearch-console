@@ -56,6 +56,7 @@ const StyledTableCell = withStyles((theme) => ({
     body: {
         fontSize: 14,
     },
+
 }))(TableCell);
 
 
@@ -257,12 +258,6 @@ function Mapping({dispatch, mapping}) {
             .then((result) => {
                 dispatch(setIndicesMapping(result))
             })
-    }, [])
-
-
-
-    useEffect(() =>{
-        dispatch(setIndicesMapping())
     }, [])
 
     const handleChange = (event) => {
