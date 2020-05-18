@@ -107,8 +107,12 @@ function Template({dispatch, mapping}) {
                     <TableBody>
                         {rows.map((row, i) => (
                             <TableRow key={row.name}>
-                                <TableCell component="th" scope="row" align="center"> {i + 1} </TableCell>
-                                <TableCell align="center">{row.name}</TableCell>
+                                <TableCell component="th" scope="row" align="center">{i + 1}</TableCell>
+                                <TableCell align="center">
+                                    <Link onClick={() => {location.href="template/view/" + i}} href={"#"}>
+                                        {row.name}
+                                    </Link>
+                                </TableCell>
                                 <TableCell align="center">{row.pattern}</TableCell>
                                 <TableCell align="center">
                                     <Link href={"template/edit/1"} color={"primary"}>수정</Link>

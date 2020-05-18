@@ -156,7 +156,17 @@ const indicesRoutes = [
         hidden: true
     },
     {
+        path: "/indices/template/edit/*",
+        component: TemplateEdit,
+        hidden: true
+    },
+    {
         path: "/indices/template/view",
+        component: TemplateView,
+        hidden: true
+    },
+    {
+        path: "/indices/template/view/*",
         component: TemplateView,
         hidden: true
     },

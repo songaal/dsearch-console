@@ -360,14 +360,14 @@ function Mapping({dispatch}) {
                 </Grid>
                 <Grid item xs={6}>
                     <Box align={'right'}>
-                        <Button variant="outlined" color="primary" onClick={() => {location.href = "edit"}} >수정</Button>
+                        <Button variant="outlined" color="primary" onClick={() => {location.href = "../edit"}} >수정</Button>
                     </Box>
                 </Grid>
             </Grid>
 
             <br/>
             <FormControl>
-                <TextField label="인덱스 패턴" value={"VM-TEST-*"}  readOnly />
+                <TextField label="인덱스 패턴" value={"VM-TEST-*"}  disabled/>
             </FormControl>
 
             <br/><br/>

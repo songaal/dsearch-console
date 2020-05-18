@@ -298,7 +298,6 @@ function JsonCard({json}) {
                                       className={classes.edit}
                                       placeholder=""
                                       value={JSON.stringify(json, null, 4)}
-                                      readOnly
                     />
                 </Box>
             </CardContent>
@@ -361,6 +360,7 @@ function Mapping({dispatch}) {
                 <Grid item xs={6}>
                     <Box align={'right'}>
                         <Button variant="outlined" color="primary" >저장</Button>
+                        <Button variant="outlined" onClick={() => history.go(-1)} ml={1}>취소</Button>
                     </Box>
                 </Grid>
             </Grid>
