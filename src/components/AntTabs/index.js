@@ -96,7 +96,7 @@ function AntTabs({tabs}) {
                           hidden={state.tabIndex !== index}
                           id={`scrollable-auto-tabpanel-${index}`}
                           aria-labelledby={`scrollable-auto-tab-${index}`}>
-                        {index === state.tabIndex && <Box p={3}> <Tab.component tabs={Tab}/> </Box>}
+                        {index === state.tabIndex && Tab.component && <Box p={3}> <Tab.component tabs={Tab}/> </Box>}
                     </Box>
                 )
             })}

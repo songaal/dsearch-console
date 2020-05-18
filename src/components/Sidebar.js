@@ -324,6 +324,8 @@ class Sidebar extends React.Component {
             routes = introRoutes
         }
 
+        routes = routes.filter(route => route.hidden === undefined || route.hidden === null || route.hidden === false)
+
         return (
             <Drawer variant="permanent" {...other}>
                 <Brand>

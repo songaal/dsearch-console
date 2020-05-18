@@ -24,7 +24,10 @@ const Tools = async(() => import("../pages/analysis/tools"));
 const RankingTuning = async(() => import("../pages/analysis/rankingTuning"));
 
 // Indices components
-const Mapping = async(() => import("../pages/indices/mapping"));
+const Templates = async(() => import("../pages/indices/templates"));
+const TemplateEdit = async(() => import("../pages/indices/templates/edit"));
+const TemplateView = async(() => import("../pages/indices/templates/view"));
+
 const IndexData = async(() => import("../pages/indices/indexData"));
 const Search = async(() => import("../pages/indices/search"));
 const DataSource = async(() => import("../pages/indices/dataSource"));
@@ -134,11 +137,28 @@ const analysisRoutes = [
 const indicesRoutes = [
     {
         header: "인덱스",
-        id: "맵핑",
-        path: "/indices/mapping",
+        id: "설정",
+        path: "/indices/configuration",
         icon: <Icon.Subject/>,
-        component: Mapping,
+        component: Configuration,
         children: null
+    },
+    {
+        id: "템플릿",
+        path: "/indices/templates",
+        icon: <Icon.Subject/>,
+        component: Templates,
+        children: null
+    },
+    {
+        path: "/indices/template/edit",
+        component: TemplateEdit,
+        hidden: true
+    },
+    {
+        path: "/indices/template/view",
+        component: TemplateView,
+        hidden: true
     },
     {
         id: "검색",
@@ -166,13 +186,6 @@ const indicesRoutes = [
         path: "/indices/index",
         icon: <Icon.Subject/>,
         component: Index,
-        children: null
-    },
-    {
-        id: "설정",
-        path: "/indices/configuration",
-        icon: <Icon.Subject/>,
-        component: Configuration,
         children: null
     }
 ];
