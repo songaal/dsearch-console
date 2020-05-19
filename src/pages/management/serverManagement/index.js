@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import {NavLink as RouterNavLink} from "react-router-dom";
+import { setServerSummary } from '@actions/serverSummaryActions'
 import Async from '~/components/Async';
 
 import Helmet from 'react-helmet';
@@ -30,6 +31,8 @@ import {makeStyles, withStyles} from '@material-ui/core/styles';
 import {spacing, boxSizing} from "@material-ui/system";
 import { SentimentSatisfied } from "@material-ui/icons";
 import AntTabs from "~/components/AntTabs"
+import {connect} from "react-redux";
+import serverSummaryReducers from "../../../redux/reducers/serverSummaryReducers"
 
 
 
@@ -66,12 +69,6 @@ const Divider = styled(MuiDivider)(spacing);
 
 const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
 
-const serverList = [
-    {id:'search1'},
-    {id:'search2'},
-    {id:'search3'}
-]
-
 // callApi = () => {
 //     fetch("https://jsonplaceholder.typicode.com/todos/1")
 //       .then(res => res.json())
@@ -82,7 +79,7 @@ const serverList = [
 //      })
 // }
 
-function Server() {
+function Server({dispatch, server}) {
 
 
     const classes = useStyles();
@@ -93,13 +90,24 @@ function Server() {
         setIndices(event.target.value);
     };
 
+    useEffect(() => {
+        fetch(`${process.env.REACT_APP_SERVER_URL}/_nodes`)
+            .then((response) => response.json())
+            .then((result) => {
+                dispatch(setServerSummary(result))
+            })
+    }, [])
+
+
+
     let ServerInfoCall
     if(indices != '') {
         ServerInfoCall = Async(() => import("./serverInfo")); 
     }else{
         ServerInfoCall = Async(() => import("./summary")); 
     }
-    
+
+    console.log('cluster : ' , server.cluster_name);
     return (
         
         <React.Fragment>
@@ -116,8 +124,8 @@ function Server() {
                         value={indices}
                         onChange={handleChange}
                     >
-                    {serverList.map(row => (
-                        <MenuItem value={row.id}>{row.id}</MenuItem>
+                    {Object.entries(server.nodes).map((node,index) => (
+                        <MenuItem value={node[0]}>{node[1].name}</MenuItem>
                     ))};
 
                     </Select>
@@ -132,7 +140,7 @@ function Server() {
 
                     <Grid container spacing={6}>
                         <Grid item xs={12}>
-                            <ServerInfoCall/>
+                            <ServerInfoCall server={server} nodeKey={indices}/>
                         </Grid>
                     </Grid>
 
@@ -142,4 +150,4 @@ function Server() {
     );
 }
 
-export default Server;
+export default connect(store => ({ server: store.serverSummaryReducers.server}))(Server);
