@@ -1,138 +1,83 @@
-import React from "react";
-import PropTypes from 'prop-types';
+import React, {useEffect} from "react";
 import styled from "styled-components";
-import {makeStyles} from '@material-ui/core/styles';
 import Helmet from 'react-helmet';
-import Alert from '@material-ui/lab/Alert';
-import {Box, Card as MuiCard, Divider as MuiDivider, Grid, Tab, Tabs, Typography, CardContent,
-    ExpansionPanel,
-    ExpansionPanelDetails,
-    ExpansionPanelSummary,
-    Button,
-} from "@material-ui/core";
 import {
-    ExpandMore as ExpandMoreIcon
-} from '@material-ui/icons';
-import {spacing} from "@material-ui/system";
-import blue from '@material-ui/core/colors/blue';
-const Card = styled(MuiCard)(spacing);
+    Card as MuiCard,
+    Divider as MuiDivider,
+    FormControl,
+    MenuItem,
+    Select as MuiSelect,
+    Typography,
+    Table, TableBody, TableCell, TableContainer as MuiTableContainer, TableHead, TablePagination, TableRow, TableSortLabel, Toolbar,
+    Paper, Checkbox, IconButton, Tooltip, FormControlLabel, Switch, DeleteIcon, FilterListIcon,
+    Box,
+} from "@material-ui/core";
+import { lighten, makeStyles } from '@material-ui/core/styles';
+import {sizing, spacing, border} from "@material-ui/system";
+import clsx from 'clsx';
 
+const Card = styled(MuiCard)(spacing);
 const Divider = styled(MuiDivider)(spacing);
+const Select = styled(MuiSelect)(spacing, sizing)
+const TableContainer = styled(MuiTableContainer)(spacing)
 
 const useStyles = makeStyles((theme) => ({
     root: {
         width: '100%',
     },
-    heading: {
-        fontSize: theme.typography.pxToRem(15),
-        fontWeight: theme.typography.fontWeightRegular,
+    select: {
+        width: '100%',
     },
-    get: {
-        width: theme.typography.pxToRem(80),
-        textAlign: "center",
-        fontWeight: theme.typography.fontWeightBold,
-        color: blue[500],
+    table: {
+        minWidth: 650,
     },
-    response: {
-
-    }
 }));
 
-function API({method, uri, responseCode, responseBody}) {
-    const classes = useStyles();
-    return (
-        <ExpansionPanel>
-            <ExpansionPanelSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-            >
-                <Box color={"primary"} className={classes.get}>{method}</Box>
-                <Typography className={classes.heading}>{uri}</Typography>
-            </ExpansionPanelSummary>
-            <ExpansionPanelDetails>
-                <Grid container>
-                    <Grid item xs={2}>
-                        응답코드
-                        <Divider my={2}/>
-                    </Grid>
-                    <Grid item xs={10}>
-                        {responseCode}
-                        <Divider my={2}/>
-                    </Grid>
-                    <Grid item xs={12}>
-                        응답결과
-                        <Divider my={2}/>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Box>
-                                    <pre className={classes.response}>
-                                        {JSON.stringify(responseBody, null, 4)}
-                                    </pre>
-                        </Box>
-                    </Grid>
-                </Grid>
 
-
-            </ExpansionPanelDetails>
-        </ExpansionPanel>
-    )
+const sample  = {
+    "allocation": [{"shards":"5","disk.indices":"29.5kb","disk.used":"18.7gb","disk.avail":"347.8gb","disk.total":"366.6gb","disk.percent":"5","host":"192.168.80.4","ip":"192.168.80.4","node":"es1"},{"shards":"5","disk.indices":"43.4kb","disk.used":"18.7gb","disk.avail":"347.8gb","disk.total":"366.6gb","disk.percent":"5","host":"192.168.80.2","ip":"192.168.80.2","node":"es2"},{"shards":"5","disk.indices":"16kb","disk.used":"18.7gb","disk.avail":"347.8gb","disk.total":"366.6gb","disk.percent":"5","host":"192.168.80.6","ip":"192.168.80.6","node":"es4"},{"shards":"5","disk.indices":"49.6kb","disk.used":"18.7gb","disk.avail":"347.8gb","disk.total":"366.6gb","disk.percent":"5","host":"192.168.80.3","ip":"192.168.80.3","node":"es3"}],
+    "shards": [{"index":".kibana_task_manager_1","shard":"0","prirep":"p","state":"STARTED","docs":"2","store":"6.6kb","ip":"192.168.80.3","node":"es3"},{"index":".kibana_task_manager_1","shard":"0","prirep":"r","state":"STARTED","docs":"2","store":"10.4kb","ip":"192.168.80.4","node":"es1"},{"index":"test2","shard":"1","prirep":"r","state":"STARTED","docs":"1","store":"3.5kb","ip":"192.168.80.6","node":"es4"},{"index":"test2","shard":"1","prirep":"p","state":"STARTED","docs":"1","store":"3.5kb","ip":"192.168.80.3","node":"es3"},{"index":"test2","shard":"4","prirep":"r","state":"STARTED","docs":"2","store":"3.5kb","ip":"192.168.80.3","node":"es3"},{"index":"test2","shard":"4","prirep":"p","state":"STARTED","docs":"2","store":"3.5kb","ip":"192.168.80.4","node":"es1"},{"index":"test2","shard":"2","prirep":"p","state":"STARTED","docs":"1","store":"3.5kb","ip":"192.168.80.2","node":"es2"},{"index":"test2","shard":"2","prirep":"r","state":"STARTED","docs":"1","store":"3.5kb","ip":"192.168.80.4","node":"es1"},{"index":"test2","shard":"3","prirep":"r","state":"STARTED","docs":"0","store":"283b","ip":"192.168.80.6","node":"es4"},{"index":"test2","shard":"3","prirep":"p","state":"STARTED","docs":"0","store":"283b","ip":"192.168.80.2","node":"es2"},{"index":"test2","shard":"0","prirep":"p","state":"STARTED","docs":"0","store":"283b","ip":"192.168.80.2","node":"es2"},{"index":"test2","shard":"0","prirep":"r","state":"STARTED","docs":"0","store":"283b","ip":"192.168.80.3","node":"es3"},{"index":".apm-agent-configuration","shard":"0","prirep":"p","state":"STARTED","docs":"0","store":"283b","ip":"192.168.80.6","node":"es4"},{"index":".apm-agent-configuration","shard":"0","prirep":"r","state":"STARTED","docs":"0","store":"283b","ip":"192.168.80.2","node":"es2"},{"index":".kibana_1","shard":"0","prirep":"r","state":"STARTED","docs":"36","store":"39.1kb","ip":"192.168.80.2","node":"es2"},{"index":".kibana_1","shard":"0","prirep":"p","state":"STARTED","docs":"36","store":"35.6kb","ip":"192.168.80.3","node":"es3"},{"index":"test1","shard":"0","prirep":"p","state":"STARTED","docs":"10","store":"11.7kb","ip":"192.168.80.6","node":"es4"},{"index":"test1","shard":"0","prirep":"r","state":"STARTED","docs":"10","store":"11.7kb","ip":"192.168.80.4","node":"es1"},{"index":"test","shard":"0","prirep":"p","state":"STARTED","docs":"0","store":"283b","ip":"192.168.80.6","node":"es4"},{"index":"test","shard":"0","prirep":"r","state":"STARTED","docs":"0","store":"283b","ip":"192.168.80.4","node":"es1"}],
+    "master": [{"ip":"192.168.80.2","heap.percent":"19","ram.percent":"54","cpu":"0","load_1m":"0.00","load_5m":"0.01","load_15m":"0.05","node.role":"dil","master":"-","name":"es2"},{"ip":"192.168.80.4","heap.percent":"13","ram.percent":"54","cpu":"0","load_1m":"0.00","load_5m":"0.01","load_15m":"0.05","node.role":"dilm","master":"*","name":"es1"},{"ip":"192.168.80.6","heap.percent":"15","ram.percent":"54","cpu":"0","load_1m":"0.00","load_5m":"0.01","load_15m":"0.05","node.role":"dil","master":"-","name":"es4"},{"ip":"192.168.80.3","heap.percent":"23","ram.percent":"54","cpu":"0","load_1m":"0.00","load_5m":"0.01","load_15m":"0.05","node.role":"dil","master":"-","name":"es3"}],
+    "nodes": [{"ip":"192.168.80.2","heap.percent":"14","ram.percent":"54","cpu":"0","load_1m":"0.00","load_5m":"0.02","load_15m":"0.05","node.role":"dil","master":"-","name":"es2"},{"ip":"192.168.80.4","heap.percent":"13","ram.percent":"54","cpu":"0","load_1m":"0.00","load_5m":"0.02","load_15m":"0.05","node.role":"dilm","master":"*","name":"es1"},{"ip":"192.168.80.6","heap.percent":"9","ram.percent":"54","cpu":"0","load_1m":"0.00","load_5m":"0.02","load_15m":"0.05","node.role":"dil","master":"-","name":"es4"},{"ip":"192.168.80.3","heap.percent":"17","ram.percent":"54","cpu":"0","load_1m":"0.00","load_5m":"0.02","load_15m":"0.05","node.role":"dil","master":"-","name":"es3"}],
+    "tasks": [{"action":"cluster:monitor/tasks/lists","task_id":"31697q-1QVaPKiwCJNM2Bg:225719","parent_task_id":"-","type":"transport","start_time":"1589963248926","timestamp":"08:27:28","running_time":"2.1ms","ip":"192.168.80.4","node":"es1"},{"action":"cluster:monitor/tasks/lists[n]","task_id":"Qk95fRVET8u5C989bUewrA:80539","parent_task_id":"31697q-1QVaPKiwCJNM2Bg:225719","type":"transport","start_time":"1589963248927","timestamp":"08:27:28","running_time":"1.9ms","ip":"192.168.80.2","node":"es2"},{"action":"cluster:monitor/tasks/lists[n]","task_id":"-6cmgZgNQyOPXx91IKHWLg:68680","parent_task_id":"31697q-1QVaPKiwCJNM2Bg:225719","type":"transport","start_time":"1589963248927","timestamp":"08:27:28","running_time":"1.8ms","ip":"192.168.80.3","node":"es3"},{"action":"cluster:monitor/tasks/lists[n]","task_id":"6FUmLRpKRVeOPsoNmbF5Hw:65224","parent_task_id":"31697q-1QVaPKiwCJNM2Bg:225719","type":"transport","start_time":"1589963248927","timestamp":"08:27:28","running_time":"2ms","ip":"192.168.80.6","node":"es4"},{"action":"cluster:monitor/tasks/lists[n]","task_id":"31697q-1QVaPKiwCJNM2Bg:225720","parent_task_id":"31697q-1QVaPKiwCJNM2Bg:225719","type":"direct","start_time":"1589963248927","timestamp":"08:27:28","running_time":"2ms","ip":"192.168.80.4","node":"es1"}],
+    "indices": [{"health":"green","status":"open","index":"test2","uuid":"qi_qh4P0RlCixLp2Lad6eQ","pri":"5","rep":"1","docs.count":"4","docs.deleted":"0","store.size":"22.4kb","pri.store.size":"11.2kb"},{"health":"green","status":"open","index":"test","uuid":"MyRpp8pUTdKE1NZddt8LzQ","pri":"1","rep":"1","docs.count":"0","docs.deleted":"0","store.size":"566b","pri.store.size":"283b"},{"health":"green","status":"open","index":".kibana_task_manager_1","uuid":"X6LmChRIQq2J1LrerpZ3gQ","pri":"1","rep":"1","docs.count":"2","docs.deleted":"0","store.size":"17.1kb","pri.store.size":"6.6kb"},{"health":"green","status":"open","index":".apm-agent-configuration","uuid":"XxcFAYKxRQOBQ8vCnwXTKg","pri":"1","rep":"1","docs.count":"0","docs.deleted":"0","store.size":"566b","pri.store.size":"283b"},{"health":"green","status":"open","index":".kibana_1","uuid":"MHCzn1PwQi29G8i66DtsCA","pri":"1","rep":"1","docs.count":"36","docs.deleted":"5","store.size":"74.7kb","pri.store.size":"35.6kb"},{"health":"green","status":"open","index":"test1","uuid":"8EIms8uMQ0mSzewpzyrtNw","pri":"1","rep":"1","docs.count":"10","docs.deleted":"0","store.size":"23.4kb","pri.store.size":"11.7kb"}],
+    "segments": [{"index":"test2","shard":"1","prirep":"r","ip":"192.168.80.6","segment":"_0","generation":"0","docs.count":"1","docs.deleted":"0","size":"3.1kb","size.memory":"1221","committed":"true","searchable":"true","version":"8.4.0","compound":"true"},{"index":"test2","shard":"1","prirep":"p","ip":"192.168.80.3","segment":"_0","generation":"0","docs.count":"1","docs.deleted":"0","size":"3.1kb","size.memory":"1221","committed":"true","searchable":"true","version":"8.4.0","compound":"true"},{"index":"test2","shard":"2","prirep":"p","ip":"192.168.80.2","segment":"_0","generation":"0","docs.count":"1","docs.deleted":"0","size":"3.1kb","size.memory":"1221","committed":"true","searchable":"true","version":"8.4.0","compound":"true"},{"index":"test2","shard":"2","prirep":"r","ip":"192.168.80.4","segment":"_0","generation":"0","docs.count":"1","docs.deleted":"0","size":"3.1kb","size.memory":"1221","committed":"true","searchable":"true","version":"8.4.0","compound":"true"},{"index":"test2","shard":"4","prirep":"r","ip":"192.168.80.3","segment":"_0","generation":"0","docs.count":"2","docs.deleted":"0","size":"3.2kb","size.memory":"1221","committed":"true","searchable":"true","version":"8.4.0","compound":"true"},{"index":"test2","shard":"4","prirep":"p","ip":"192.168.80.4","segment":"_0","generation":"0","docs.count":"2","docs.deleted":"0","size":"3.2kb","size.memory":"1221","committed":"true","searchable":"true","version":"8.4.0","compound":"true"},{"index":".kibana_task_manager_1","shard":"0","prirep":"p","ip":"192.168.80.3","segment":"_8","generation":"8","docs.count":"2","docs.deleted":"0","size":"6.3kb","size.memory":"2309","committed":"true","searchable":"true","version":"8.4.0","compound":"true"},{"index":".kibana_task_manager_1","shard":"0","prirep":"r","ip":"192.168.80.4","segment":"_7","generation":"7","docs.count":"2","docs.deleted":"1","size":"10kb","size.memory":"2861","committed":"true","searchable":"true","version":"8.4.0","compound":"true"},{"index":"test1","shard":"0","prirep":"p","ip":"192.168.80.6","segment":"_0","generation":"0","docs.count":"1","docs.deleted":"0","size":"2.7kb","size.memory":"917","committed":"true","searchable":"true","version":"8.4.0","compound":"true"},{"index":"test1","shard":"0","prirep":"p","ip":"192.168.80.6","segment":"_1","generation":"1","docs.count":"7","docs.deleted":"0","size":"2.9kb","size.memory":"917","committed":"true","searchable":"true","version":"8.4.0","compound":"true"},{"index":"test1","shard":"0","prirep":"p","ip":"192.168.80.6","segment":"_2","generation":"2","docs.count":"1","docs.deleted":"0","size":"2.7kb","size.memory":"917","committed":"true","searchable":"true","version":"8.4.0","compound":"true"},{"index":"test1","shard":"0","prirep":"p","ip":"192.168.80.6","segment":"_3","generation":"3","docs.count":"1","docs.deleted":"0","size":"2.7kb","size.memory":"917","committed":"true","searchable":"true","version":"8.4.0","compound":"true"},{"index":"test1","shard":"0","prirep":"r","ip":"192.168.80.4","segment":"_0","generation":"0","docs.count":"1","docs.deleted":"0","size":"2.7kb","size.memory":"917","committed":"true","searchable":"true","version":"8.4.0","compound":"true"},{"index":"test1","shard":"0","prirep":"r","ip":"192.168.80.4","segment":"_1","generation":"1","docs.count":"7","docs.deleted":"0","size":"2.9kb","size.memory":"917","committed":"true","searchable":"true","version":"8.4.0","compound":"true"},{"index":"test1","shard":"0","prirep":"r","ip":"192.168.80.4","segment":"_2","generation":"2","docs.count":"1","docs.deleted":"0","size":"2.7kb","size.memory":"917","committed":"true","searchable":"true","version":"8.4.0","compound":"true"},{"index":"test1","shard":"0","prirep":"r","ip":"192.168.80.4","segment":"_3","generation":"3","docs.count":"1","docs.deleted":"0","size":"2.7kb","size.memory":"917","committed":"true","searchable":"true","version":"8.4.0","compound":"true"},{"index":".kibana_1","shard":"0","prirep":"r","ip":"192.168.80.2","segment":"_2m","generation":"94","docs.count":"30","docs.deleted":"5","size":"18kb","size.memory":"4110","committed":"true","searchable":"true","version":"8.4.0","compound":"false"},{"index":".kibana_1","shard":"0","prirep":"r","ip":"192.168.80.2","segment":"_2p","generation":"97","docs.count":"1","docs.deleted":"0","size":"3.7kb","size.memory":"917","committed":"true","searchable":"true","version":"8.4.0","compound":"true"},{"index":".kibana_1","shard":"0","prirep":"r","ip":"192.168.80.2","segment":"_2q","generation":"98","docs.count":"2","docs.deleted":"0","size":"3.3kb","size.memory":"917","committed":"true","searchable":"true","version":"8.4.0","compound":"true"},{"index":".kibana_1","shard":"0","prirep":"r","ip":"192.168.80.2","segment":"_2r","generation":"99","docs.count":"1","docs.deleted":"0","size":"5.9kb","size.memory":"1157","committed":"true","searchable":"true","version":"8.4.0","compound":"true"},{"index":".kibana_1","shard":"0","prirep":"r","ip":"192.168.80.2","segment":"_2s","generation":"100","docs.count":"1","docs.deleted":"0","size":"3.8kb","size.memory":"917","committed":"true","searchable":"true","version":"8.4.0","compound":"true"},{"index":".kibana_1","shard":"0","prirep":"r","ip":"192.168.80.2","segment":"_2t","generation":"101","docs.count":"1","docs.deleted":"0","size":"3.3kb","size.memory":"917","committed":"true","searchable":"true","version":"8.4.0","compound":"true"},{"index":".kibana_1","shard":"0","prirep":"p","ip":"192.168.80.3","segment":"_2p","generation":"97","docs.count":"30","docs.deleted":"5","size":"18kb","size.memory":"4110","committed":"true","searchable":"true","version":"8.4.0","compound":"false"},{"index":".kibana_1","shard":"0","prirep":"p","ip":"192.168.80.3","segment":"_2s","generation":"100","docs.count":"1","docs.deleted":"0","size":"3.3kb","size.memory":"917","committed":"true","searchable":"true","version":"8.4.0","compound":"true"},{"index":".kibana_1","shard":"0","prirep":"p","ip":"192.168.80.3","segment":"_2t","generation":"101","docs.count":"2","docs.deleted":"0","size":"3.7kb","size.memory":"917","committed":"true","searchable":"true","version":"8.4.0","compound":"true"},{"index":".kibana_1","shard":"0","prirep":"p","ip":"192.168.80.3","segment":"_2u","generation":"102","docs.count":"1","docs.deleted":"0","size":"5.9kb","size.memory":"1157","committed":"true","searchable":"true","version":"8.4.0","compound":"true"},{"index":".kibana_1","shard":"0","prirep":"p","ip":"192.168.80.3","segment":"_2v","generation":"103","docs.count":"2","docs.deleted":"0","size":"3.8kb","size.memory":"917","committed":"true","searchable":"true","version":"8.4.0","compound":"true"}],
+    "count": [{"epoch":"1589963284","timestamp":"08:28:04","count":"52"}],
+    "recovery": [{"index":"test2","shard":"0","time":"566ms","type":"peer","stage":"done","source_host":"192.168.80.4","source_node":"es1","target_host":"192.168.80.2","target_node":"es2","repository":"n/a","snapshot":"n/a","files":"1","files_recovered":"1","files_percent":"100.0%","files_total":"1","bytes":"283","bytes_recovered":"283","bytes_percent":"100.0%","bytes_total":"283","translog_ops":"0","translog_ops_recovered":"0","translog_ops_percent":"100.0%"},{"index":"test2","shard":"0","time":"66ms","type":"peer","stage":"done","source_host":"192.168.80.2","source_node":"es2","target_host":"192.168.80.3","target_node":"es3","repository":"n/a","snapshot":"n/a","files":"1","files_recovered":"1","files_percent":"100.0%","files_total":"1","bytes":"283","bytes_recovered":"283","bytes_percent":"100.0%","bytes_total":"283","translog_ops":"0","translog_ops_recovered":"0","translog_ops_percent":"100.0%"},{"index":"test2","shard":"1","time":"150ms","type":"peer","stage":"done","source_host":"192.168.80.2","source_node":"es2","target_host":"192.168.80.6","target_node":"es4","repository":"n/a","snapshot":"n/a","files":"0","files_recovered":"0","files_percent":"0.0%","files_total":"0","bytes":"0","bytes_recovered":"0","bytes_percent":"0.0%","bytes_total":"0","translog_ops":"0","translog_ops_recovered":"0","translog_ops_percent":"100.0%"},{"index":"test2","shard":"1","time":"587ms","type":"peer","stage":"done","source_host":"192.168.80.4","source_node":"es1","target_host":"192.168.80.3","target_node":"es3","repository":"n/a","snapshot":"n/a","files":"4","files_recovered":"4","files_percent":"100.0%","files_total":"4","bytes":"3611","bytes_recovered":"3611","bytes_percent":"100.0%","bytes_total":"3611","translog_ops":"0","translog_ops_recovered":"0","translog_ops_percent":"100.0%"},{"index":"test2","shard":"2","time":"621ms","type":"peer","stage":"done","source_host":"192.168.80.3","source_node":"es3","target_host":"192.168.80.2","target_node":"es2","repository":"n/a","snapshot":"n/a","files":"4","files_recovered":"4","files_percent":"100.0%","files_total":"4","bytes":"3611","bytes_recovered":"3611","bytes_percent":"100.0%","bytes_total":"3611","translog_ops":"0","translog_ops_recovered":"0","translog_ops_percent":"100.0%"},{"index":"test2","shard":"2","time":"113ms","type":"peer","stage":"done","source_host":"192.168.80.6","source_node":"es4","target_host":"192.168.80.4","target_node":"es1","repository":"n/a","snapshot":"n/a","files":"4","files_recovered":"4","files_percent":"100.0%","files_total":"4","bytes":"3611","bytes_recovered":"3611","bytes_percent":"100.0%","bytes_total":"3611","translog_ops":"0","translog_ops_recovered":"0","translog_ops_percent":"100.0%"},{"index":"test2","shard":"3","time":"89ms","type":"peer","stage":"done","source_host":"192.168.80.2","source_node":"es2","target_host":"192.168.80.6","target_node":"es4","repository":"n/a","snapshot":"n/a","files":"1","files_recovered":"1","files_percent":"100.0%","files_total":"1","bytes":"283","bytes_recovered":"283","bytes_percent":"100.0%","bytes_total":"283","translog_ops":"0","translog_ops_recovered":"0","translog_ops_percent":"100.0%"},{"index":"test2","shard":"3","time":"595ms","type":"peer","stage":"done","source_host":"192.168.80.4","source_node":"es1","target_host":"192.168.80.2","target_node":"es2","repository":"n/a","snapshot":"n/a","files":"1","files_recovered":"1","files_percent":"100.0%","files_total":"1","bytes":"283","bytes_recovered":"283","bytes_percent":"100.0%","bytes_total":"283","translog_ops":"0","translog_ops_recovered":"0","translog_ops_percent":"100.0%"},{"index":"test2","shard":"4","time":"699ms","type":"peer","stage":"done","source_host":"192.168.80.4","source_node":"es1","target_host":"192.168.80.3","target_node":"es3","repository":"n/a","snapshot":"n/a","files":"0","files_recovered":"0","files_percent":"0.0%","files_total":"0","bytes":"0","bytes_recovered":"0","bytes_percent":"0.0%","bytes_total":"0","translog_ops":"0","translog_ops_recovered":"0","translog_ops_percent":"100.0%"},{"index":"test2","shard":"4","time":"136ms","type":"existing_store","stage":"done","source_host":"n/a","source_node":"n/a","target_host":"192.168.80.4","target_node":"es1","repository":"n/a","snapshot":"n/a","files":"0","files_recovered":"0","files_percent":"100.0%","files_total":"4","bytes":"0","bytes_recovered":"0","bytes_percent":"100.0%","bytes_total":"3683","translog_ops":"0","translog_ops_recovered":"0","translog_ops_percent":"100.0%"},{"index":"test","shard":"0","time":"93ms","type":"existing_store","stage":"done","source_host":"n/a","source_node":"n/a","target_host":"192.168.80.6","target_node":"es4","repository":"n/a","snapshot":"n/a","files":"0","files_recovered":"0","files_percent":"100.0%","files_total":"1","bytes":"0","bytes_recovered":"0","bytes_percent":"100.0%","bytes_total":"283","translog_ops":"0","translog_ops_recovered":"0","translog_ops_percent":"100.0%"},{"index":"test","shard":"0","time":"85ms","type":"peer","stage":"done","source_host":"192.168.80.6","source_node":"es4","target_host":"192.168.80.4","target_node":"es1","repository":"n/a","snapshot":"n/a","files":"1","files_recovered":"1","files_percent":"100.0%","files_total":"1","bytes":"283","bytes_recovered":"283","bytes_percent":"100.0%","bytes_total":"283","translog_ops":"0","translog_ops_recovered":"0","translog_ops_percent":"100.0%"},{"index":".kibana_task_manager_1","shard":"0","time":"123ms","type":"peer","stage":"done","source_host":"192.168.80.2","source_node":"es2","target_host":"192.168.80.3","target_node":"es3","repository":"n/a","snapshot":"n/a","files":"22","files_recovered":"22","files_percent":"100.0%","files_total":"22","bytes":"36389","bytes_recovered":"36389","bytes_percent":"100.0%","bytes_total":"36389","translog_ops":"0","translog_ops_recovered":"0","translog_ops_percent":"100.0%"},{"index":".kibana_task_manager_1","shard":"0","time":"132ms","type":"peer","stage":"done","source_host":"192.168.80.2","source_node":"es2","target_host":"192.168.80.4","target_node":"es1","repository":"n/a","snapshot":"n/a","files":"0","files_recovered":"0","files_percent":"0.0%","files_total":"0","bytes":"0","bytes_recovered":"0","bytes_percent":"0.0%","bytes_total":"0","translog_ops":"0","translog_ops_recovered":"0","translog_ops_percent":"100.0%"},{"index":".apm-agent-configuration","shard":"0","time":"107ms","type":"existing_store","stage":"done","source_host":"n/a","source_node":"n/a","target_host":"192.168.80.6","target_node":"es4","repository":"n/a","snapshot":"n/a","files":"0","files_recovered":"0","files_percent":"100.0%","files_total":"1","bytes":"0","bytes_recovered":"0","bytes_percent":"100.0%","bytes_total":"283","translog_ops":"0","translog_ops_recovered":"0","translog_ops_percent":"100.0%"},{"index":".apm-agent-configuration","shard":"0","time":"129ms","type":"peer","stage":"done","source_host":"192.168.80.6","source_node":"es4","target_host":"192.168.80.2","target_node":"es2","repository":"n/a","snapshot":"n/a","files":"0","files_recovered":"0","files_percent":"0.0%","files_total":"0","bytes":"0","bytes_recovered":"0","bytes_percent":"0.0%","bytes_total":"0","translog_ops":"0","translog_ops_recovered":"0","translog_ops_percent":"100.0%"},{"index":"test1","shard":"0","time":"116ms","type":"existing_store","stage":"done","source_host":"n/a","source_node":"n/a","target_host":"192.168.80.6","target_node":"es4","repository":"n/a","snapshot":"n/a","files":"0","files_recovered":"0","files_percent":"100.0%","files_total":"13","bytes":"0","bytes_recovered":"0","bytes_percent":"100.0%","bytes_total":"12001","translog_ops":"0","translog_ops_recovered":"0","translog_ops_percent":"100.0%"},{"index":"test1","shard":"0","time":"108ms","type":"peer","stage":"done","source_host":"192.168.80.6","source_node":"es4","target_host":"192.168.80.4","target_node":"es1","repository":"n/a","snapshot":"n/a","files":"13","files_recovered":"13","files_percent":"100.0%","files_total":"13","bytes":"12001","bytes_recovered":"12001","bytes_percent":"100.0%","bytes_total":"12001","translog_ops":"0","translog_ops_recovered":"0","translog_ops_percent":"100.0%"},{"index":".kibana_1","shard":"0","time":"131ms","type":"peer","stage":"done","source_host":"192.168.80.4","source_node":"es1","target_host":"192.168.80.2","target_node":"es2","repository":"n/a","snapshot":"n/a","files":"0","files_recovered":"0","files_percent":"0.0%","files_total":"0","bytes":"0","bytes_recovered":"0","bytes_percent":"0.0%","bytes_total":"0","translog_ops":"0","translog_ops_recovered":"0","translog_ops_percent":"100.0%"},{"index":".kibana_1","shard":"0","time":"624ms","type":"peer","stage":"done","source_host":"192.168.80.4","source_node":"es1","target_host":"192.168.80.3","target_node":"es3","repository":"n/a","snapshot":"n/a","files":"24","files_recovered":"24","files_percent":"100.0%","files_total":"24","bytes":"29019","bytes_recovered":"29019","bytes_percent":"100.0%","bytes_total":"29019","translog_ops":"0","translog_ops_recovered":"0","translog_ops_percent":"100.0%"}],
+    "health": [{"epoch":"1589963317","timestamp":"08:28:37","cluster":"es-cluster","status":"green","node.total":"4","node.data":"4","shards":"20","pri":"10","relo":"0","init":"0","unassign":"0","pending_tasks":"0","max_task_wait_time":"-","active_shards_percent":"100.0%"}],
+    "pending_tasks": [],
+    "aliases": [{"alias":".kibana","index":".kibana_1","filter":"-","routing.index":"-","routing.search":"-","is_write_index":"-"},{"alias":".kibana_task_manager","index":".kibana_task_manager_1","filter":"-","routing.index":"-","routing.search":"-","is_write_index":"-"},{"alias":"alias2","index":"test1","filter":"*","routing.index":"-","routing.search":"-","is_write_index":"-"},{"alias":"test5","index":"test1","filter":"*","routing.index":"-","routing.search":"-","is_write_index":"-"}],
+    "thread_pool": [{"node_name":"es2","name":"analyze","active":"0","queue":"0","rejected":"0"},{"node_name":"es2","name":"ccr","active":"0","queue":"0","rejected":"0"},{"node_name":"es2","name":"fetch_shard_started","active":"0","queue":"0","rejected":"0"},{"node_name":"es2","name":"fetch_shard_store","active":"0","queue":"0","rejected":"0"},{"node_name":"es2","name":"flush","active":"0","queue":"0","rejected":"0"},{"node_name":"es2","name":"force_merge","active":"0","queue":"0","rejected":"0"},{"node_name":"es2","name":"generic","active":"0","queue":"0","rejected":"0"},{"node_name":"es2","name":"get","active":"0","queue":"0","rejected":"0"},{"node_name":"es2","name":"listener","active":"0","queue":"0","rejected":"0"},{"node_name":"es2","name":"management","active":"1","queue":"0","rejected":"0"},{"node_name":"es2","name":"ml_datafeed","active":"0","queue":"0","rejected":"0"},{"node_name":"es2","name":"ml_job_comms","active":"0","queue":"0","rejected":"0"},{"node_name":"es2","name":"ml_utility","active":"0","queue":"0","rejected":"0"},{"node_name":"es2","name":"refresh","active":"0","queue":"0","rejected":"0"},{"node_name":"es2","name":"rollup_indexing","active":"0","queue":"0","rejected":"0"},{"node_name":"es2","name":"search","active":"0","queue":"0","rejected":"0"},{"node_name":"es2","name":"search_throttled","active":"0","queue":"0","rejected":"0"},{"node_name":"es2","name":"security-token-key","active":"0","queue":"0","rejected":"0"},{"node_name":"es2","name":"snapshot","active":"0","queue":"0","rejected":"0"},{"node_name":"es2","name":"transform_indexing","active":"0","queue":"0","rejected":"0"},{"node_name":"es2","name":"warmer","active":"0","queue":"0","rejected":"0"},{"node_name":"es2","name":"watcher","active":"0","queue":"0","rejected":"0"},{"node_name":"es2","name":"write","active":"0","queue":"0","rejected":"0"},{"node_name":"es1","name":"analyze","active":"0","queue":"0","rejected":"0"},{"node_name":"es1","name":"ccr","active":"0","queue":"0","rejected":"0"},{"node_name":"es1","name":"fetch_shard_started","active":"0","queue":"0","rejected":"0"},{"node_name":"es1","name":"fetch_shard_store","active":"0","queue":"0","rejected":"0"},{"node_name":"es1","name":"flush","active":"0","queue":"0","rejected":"0"},{"node_name":"es1","name":"force_merge","active":"0","queue":"0","rejected":"0"},{"node_name":"es1","name":"generic","active":"0","queue":"0","rejected":"0"},{"node_name":"es1","name":"get","active":"0","queue":"0","rejected":"0"},{"node_name":"es1","name":"listener","active":"0","queue":"0","rejected":"0"},{"node_name":"es1","name":"management","active":"1","queue":"0","rejected":"0"},{"node_name":"es1","name":"ml_datafeed","active":"0","queue":"0","rejected":"0"},{"node_name":"es1","name":"ml_job_comms","active":"0","queue":"0","rejected":"0"},{"node_name":"es1","name":"ml_utility","active":"0","queue":"0","rejected":"0"},{"node_name":"es1","name":"refresh","active":"0","queue":"0","rejected":"0"},{"node_name":"es1","name":"rollup_indexing","active":"0","queue":"0","rejected":"0"},{"node_name":"es1","name":"search","active":"0","queue":"0","rejected":"0"},{"node_name":"es1","name":"search_throttled","active":"0","queue":"0","rejected":"0"},{"node_name":"es1","name":"security-token-key","active":"0","queue":"0","rejected":"0"},{"node_name":"es1","name":"snapshot","active":"0","queue":"0","rejected":"0"},{"node_name":"es1","name":"transform_indexing","active":"0","queue":"0","rejected":"0"},{"node_name":"es1","name":"warmer","active":"0","queue":"0","rejected":"0"},{"node_name":"es1","name":"watcher","active":"0","queue":"0","rejected":"0"},{"node_name":"es1","name":"write","active":"0","queue":"0","rejected":"0"},{"node_name":"es4","name":"analyze","active":"0","queue":"0","rejected":"0"},{"node_name":"es4","name":"ccr","active":"0","queue":"0","rejected":"0"},{"node_name":"es4","name":"fetch_shard_started","active":"0","queue":"0","rejected":"0"},{"node_name":"es4","name":"fetch_shard_store","active":"0","queue":"0","rejected":"0"},{"node_name":"es4","name":"flush","active":"0","queue":"0","rejected":"0"},{"node_name":"es4","name":"force_merge","active":"0","queue":"0","rejected":"0"},{"node_name":"es4","name":"generic","active":"0","queue":"0","rejected":"0"},{"node_name":"es4","name":"get","active":"0","queue":"0","rejected":"0"},{"node_name":"es4","name":"listener","active":"0","queue":"0","rejected":"0"},{"node_name":"es4","name":"management","active":"1","queue":"0","rejected":"0"},{"node_name":"es4","name":"ml_datafeed","active":"0","queue":"0","rejected":"0"},{"node_name":"es4","name":"ml_job_comms","active":"0","queue":"0","rejected":"0"},{"node_name":"es4","name":"ml_utility","active":"0","queue":"0","rejected":"0"},{"node_name":"es4","name":"refresh","active":"0","queue":"0","rejected":"0"},{"node_name":"es4","name":"rollup_indexing","active":"0","queue":"0","rejected":"0"},{"node_name":"es4","name":"search","active":"0","queue":"0","rejected":"0"},{"node_name":"es4","name":"search_throttled","active":"0","queue":"0","rejected":"0"},{"node_name":"es4","name":"security-token-key","active":"0","queue":"0","rejected":"0"},{"node_name":"es4","name":"snapshot","active":"0","queue":"0","rejected":"0"},{"node_name":"es4","name":"transform_indexing","active":"0","queue":"0","rejected":"0"},{"node_name":"es4","name":"warmer","active":"0","queue":"0","rejected":"0"},{"node_name":"es4","name":"watcher","active":"0","queue":"0","rejected":"0"},{"node_name":"es4","name":"write","active":"0","queue":"0","rejected":"0"},{"node_name":"es3","name":"analyze","active":"0","queue":"0","rejected":"0"},{"node_name":"es3","name":"ccr","active":"0","queue":"0","rejected":"0"},{"node_name":"es3","name":"fetch_shard_started","active":"0","queue":"0","rejected":"0"},{"node_name":"es3","name":"fetch_shard_store","active":"0","queue":"0","rejected":"0"},{"node_name":"es3","name":"flush","active":"0","queue":"0","rejected":"0"},{"node_name":"es3","name":"force_merge","active":"0","queue":"0","rejected":"0"},{"node_name":"es3","name":"generic","active":"0","queue":"0","rejected":"0"},{"node_name":"es3","name":"get","active":"0","queue":"0","rejected":"0"},{"node_name":"es3","name":"listener","active":"0","queue":"0","rejected":"0"},{"node_name":"es3","name":"management","active":"1","queue":"0","rejected":"0"},{"node_name":"es3","name":"ml_datafeed","active":"0","queue":"0","rejected":"0"},{"node_name":"es3","name":"ml_job_comms","active":"0","queue":"0","rejected":"0"},{"node_name":"es3","name":"ml_utility","active":"0","queue":"0","rejected":"0"},{"node_name":"es3","name":"refresh","active":"0","queue":"0","rejected":"0"},{"node_name":"es3","name":"rollup_indexing","active":"0","queue":"0","rejected":"0"},{"node_name":"es3","name":"search","active":"0","queue":"0","rejected":"0"},{"node_name":"es3","name":"search_throttled","active":"0","queue":"0","rejected":"0"},{"node_name":"es3","name":"security-token-key","active":"0","queue":"0","rejected":"0"},{"node_name":"es3","name":"snapshot","active":"0","queue":"0","rejected":"0"},{"node_name":"es3","name":"transform_indexing","active":"0","queue":"0","rejected":"0"},{"node_name":"es3","name":"warmer","active":"0","queue":"0","rejected":"0"},{"node_name":"es3","name":"watcher","active":"0","queue":"0","rejected":"0"},{"node_name":"es3","name":"write","active":"0","queue":"0","rejected":"0"}],
+    "plugins": [{"name":"es2","component":"analysis-nori","version":"7.6.2"},{"name":"es1","component":"analysis-nori","version":"7.6.2"},{"name":"es4","component":"analysis-nori","version":"7.6.2"},{"name":"es3","component":"analysis-nori","version":"7.6.2"}],
+    "fielddata": [{"id":"Qk95fRVET8u5C989bUewrA","host":"192.168.80.2","ip":"192.168.80.2","node":"es2","field":"type","size":"0b"},{"id":"-6cmgZgNQyOPXx91IKHWLg","host":"192.168.80.3","ip":"192.168.80.3","node":"es3","field":"type","size":"0b"},{"id":"-6cmgZgNQyOPXx91IKHWLg","host":"192.168.80.3","ip":"192.168.80.3","node":"es3","field":"_id","size":"332b"},{"id":"31697q-1QVaPKiwCJNM2Bg","host":"192.168.80.4","ip":"192.168.80.4","node":"es1","field":"_id","size":"332b"}],
+    "nodeattrs": [{"node":"es2","host":"192.168.80.2","ip":"192.168.80.2","attr":"ml.machine_memory","value":"101194371072"},{"node":"es2","host":"192.168.80.2","ip":"192.168.80.2","attr":"ml.max_open_jobs","value":"20"},{"node":"es2","host":"192.168.80.2","ip":"192.168.80.2","attr":"xpack.installed","value":"true"},{"node":"es2","host":"192.168.80.2","ip":"192.168.80.2","attr":"tag","value":"full-index"},{"node":"es1","host":"192.168.80.4","ip":"192.168.80.4","attr":"ml.machine_memory","value":"101194371072"},{"node":"es1","host":"192.168.80.4","ip":"192.168.80.4","attr":"xpack.installed","value":"true"},{"node":"es1","host":"192.168.80.4","ip":"192.168.80.4","attr":"ml.max_open_jobs","value":"20"},{"node":"es4","host":"192.168.80.6","ip":"192.168.80.6","attr":"ml.machine_memory","value":"101194371072"},{"node":"es4","host":"192.168.80.6","ip":"192.168.80.6","attr":"ml.max_open_jobs","value":"20"},{"node":"es4","host":"192.168.80.6","ip":"192.168.80.6","attr":"xpack.installed","value":"true"},{"node":"es3","host":"192.168.80.3","ip":"192.168.80.3","attr":"ml.machine_memory","value":"101194371072"},{"node":"es3","host":"192.168.80.3","ip":"192.168.80.3","attr":"ml.max_open_jobs","value":"20"},{"node":"es3","host":"192.168.80.3","ip":"192.168.80.3","attr":"xpack.installed","value":"true"}],
+    "repositories": [],
+    "templates": [{"name":".watch-history-10","index_patterns":"[.watcher-history-10*]","order":"2147483647","version":null},{"name":".ml-anomalies-","index_patterns":"[.ml-anomalies-*]","order":"0","version":"7060299"},{"name":".monitoring-alerts-7","index_patterns":"[.monitoring-alerts-7]","order":"0","version":"7000199"},{"name":".transform-internal-004","index_patterns":"[.transform-internal-004]","order":"0","version":"7060299"},{"name":".ml-notifications-000001","index_patterns":"[.ml-notifications-000001]","order":"0","version":"7060299"},{"name":".ml-config","index_patterns":"[.ml-config]","order":"0","version":"7060299"},{"name":".logstash-management","index_patterns":"[.logstash]","order":"0","version":null},{"name":".triggered_watches","index_patterns":"[.triggered_watches*]","order":"2147483647","version":null},{"name":".ml-inference-000001","index_patterns":"[.ml-inference-000001]","order":"0","version":"7060299"},{"name":".monitoring-beats","index_patterns":"[.monitoring-beats-7-*]","order":"0","version":"7000199"},{"name":".monitoring-logstash","index_patterns":"[.monitoring-logstash-7-*]","order":"0","version":"7000199"},{"name":".ml-meta","index_patterns":"[.ml-meta]","order":"0","version":"7060299"},{"name":".slm-history","index_patterns":"[.slm-history-1*]","order":"2147483647","version":null},{"name":".monitoring-es","index_patterns":"[.monitoring-es-7-*]","order":"0","version":"7000199"},{"name":".monitoring-kibana","index_patterns":"[.monitoring-kibana-7-*]","order":"0","version":"7000199"},{"name":".watches","index_patterns":"[.watches*]","order":"2147483647","version":null},{"name":"ilm-history","index_patterns":"[ilm-history-1*]","order":"2147483647","version":null},{"name":".transform-notifications-000002","index_patterns":"[.transform-notifications-*]","order":"0","version":"7060299"},{"name":".ml-state","index_patterns":"[.ml-state*]","order":"0","version":"7060299"},{"name":".management-beats","index_patterns":"[.management-beats]","order":"0","version":"70000"}]
 }
-
-const rows = [
-    {method: 'GET', uri: '/_cat/aliases', responseCode: 200,
-        responseBody: [
-            {
-                "alias": "string",
-                "filter": "string",
-                "index": "string",
-                "index_routing": "string",
-                "search_routing": "string"
-            }
-        ]
-    },
-    {method: 'GET', uri: '/_cat/allocation', responseCode: 200,
-        responseBody: [
-            {
-                "disk_available": "string",
-                "disk_ratio": "string",
-                "disk_used": "string",
-                "ip": "string",
-                "node": "string",
-                "shards": "string"
-            }
-        ]
-    },
-    {method: 'GET', uri: '/_cat/count', responseCode: 200,
-        responseBody: [
-            {
-                "count": "string",
-                "epoch": "string",
-                "timestamp": "string"
-            }
-        ]
-    },
-    {method: 'GET', uri: '/_cat/fielddata', responseCode: 200,
-        responseBody: [
-            {
-                "field": "string",
-                "host": "string",
-                "id": "string",
-                "ip": "string",
-                "node": "string",
-                "size": "string"
-            }
-        ]
-    },
-]
 
 function ApiManagement() {
     const classes = useStyles();
-    const [expanded, setExpanded] = React.useState(false);
+    const [selected, setSelected] = React.useState('');
+    const [dataList, setDataList] = React.useState([]);
 
-    const handleChange = (panel) => (event, isExpanded) => {
-        setExpanded(isExpanded ? panel : false);
+    const handleChange = (event) => {
+        setSelected(event.target.value);
     };
+
+    const handleDataChange = (dataList) => {
+        setDataList(dataList)
+    }
+
+    useEffect(() => {
+        if (sample[selected]) {
+            handleDataChange(sample[selected])
+        }
+    }, [selected])
+
+    let fields = []
+    if (sample[selected] && sample[selected].length > 0) {
+        fields = Object.keys(sample[selected][0])
+    }
 
     return (
         <>
@@ -145,36 +90,58 @@ function ApiManagement() {
 
             <div className={classes.root}>
 
-                <Typography variant="h6">
-                    Cat
-                </Typography>
-                {rows.map(row => <API {...row}></API>)}
+                <FormControl variant="outlined" fullWidth>
+                    <Select labelId="demo-simple-select-outlined-label"
+                            id="demo-simple-select-outlined"
+                            value={selected}
+                            onChange={handleChange}
+                    >
+                        <MenuItem value="allocation">allocation</MenuItem>
+                        <MenuItem value="shards">shards</MenuItem>
+                        <MenuItem value="master">master</MenuItem>
+                        <MenuItem value="nodes">nodes</MenuItem>
+                        <MenuItem value="tasks">tasks</MenuItem>
+                        <MenuItem value="indices">indices</MenuItem>
+                        <MenuItem value="segments">segments</MenuItem>
+                        <MenuItem value="count">count</MenuItem>
+                        <MenuItem value="recovery">recovery</MenuItem>
+                        <MenuItem value="health">health</MenuItem>
+                        <MenuItem value="pending_tasks">pending_tasks</MenuItem>
+                        <MenuItem value="aliases">aliases</MenuItem>
+                        <MenuItem value="thread_pool">thread_pool</MenuItem>
+                        <MenuItem value="plugins">plugins</MenuItem>
+                        <MenuItem value="fielddata">fielddata</MenuItem>
+                        <MenuItem value="nodeattrs">nodeattrs</MenuItem>
+                        <MenuItem value="repositories">repositories</MenuItem>
+                        <MenuItem value="templates">templates</MenuItem>
+                    </Select>
+                </FormControl>
 
-                <br/>
-                <Typography variant="h6">
-                    Cluster
-                </Typography>
-                {rows.map(row => <API {...row}></API>)}
+                <TableContainer component={Paper} mt={5}>
+                    <Table className={classes.table}>
+                        <TableHead>
+                            <TableRow>
+                                { fields.map((field, index) => <TableCell key={index}> {field} </TableCell>) }
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {
+                                dataList.map((data, index) => {
+                                    return (
+                                        <TableRow>
+                                            {
+                                                fields.map((field, index) => <TableCell key={index}> {data[field]} </TableCell>)
+                                            }
+                                        </TableRow>
+                                    )
 
-                <br/>
-                <Typography variant="h6">
-                    Node
-                </Typography>
-                {rows.map(row => <API {...row}></API>)}
+                                })
+                            }
+                        </TableBody>
+                    </Table>
+                </TableContainer>
 
-                <br/>
-                <Typography variant="h6">
-                    Indices
-                </Typography>
-                {rows.map(row => <API {...row}></API>)}
-
-                <br/>
-                <Typography variant="h6">
-                    Tasks
-                </Typography>
-                {rows.map(row => <API {...row}></API>)}
             </div>
-
         </>
     );
 }
