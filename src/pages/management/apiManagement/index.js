@@ -126,9 +126,9 @@ function ApiManagement() {
                         </TableHead>
                         <TableBody>
                             {
-                                dataList.map((data, index) => {
+                                dataList.map((data, dataIndex) => {
                                     return (
-                                        <TableRow>
+                                        <TableRow key={dataIndex}>
                                             {
                                                 fields.map((field, index) => <TableCell key={index}> {data[field]} </TableCell>)
                                             }
