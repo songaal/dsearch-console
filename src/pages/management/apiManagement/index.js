@@ -20,7 +20,7 @@ import {makeStyles} from '@material-ui/core/styles';
 import {sizing, spacing} from "@material-ui/system";
 
 import {connect} from "react-redux";
-import {setApiManagementActions} from "../../../redux/actions/apiManagementActions";
+import {setApiManagementActions} from "@actions/apiManagementActions";
 
 const Divider = styled(MuiDivider)(spacing);
 const Select = styled(MuiSelect)(spacing, sizing)
