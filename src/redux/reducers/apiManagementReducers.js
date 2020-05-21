@@ -5,12 +5,11 @@ let initState = {
 };
 
 export default function reducer(state = initState, actions) {
-    console.log(actions)
     switch (actions.type) {
         case types.SET_API_MANAGEMENT:
             return {
                 ...state,
-                cluster: actions.payload
+                cat: actions.payload
             };
         default:
             return state

@@ -20,6 +20,7 @@ import {makeStyles} from '@material-ui/core/styles';
 import {sizing, spacing} from "@material-ui/system";
 
 import {connect} from "react-redux";
+import {setApiManagementActions} from "../../../redux/actions/apiManagementActions";
 
 const Divider = styled(MuiDivider)(spacing);
 const Select = styled(MuiSelect)(spacing, sizing)
@@ -27,23 +28,22 @@ const TableContainer = styled(MuiTableContainer)(spacing)
 
 function ApiManagement({dispatch, cat}) {
     const classes = useStyles();
-    const [selected, setSelected] = React.useState('');
+    const [selected, setSelected] = React.useState(null);
 
+    useEffect(() => {
+        if (selected !== null) {
+            dispatch(setApiManagementActions(selected))
+        }
+    }, [selected])
 
     const handleChange = (event) => {
         setSelected(event.target.value);
     };
 
-
-
-    useEffect(() => {
-
-    }, [selected])
-
     let fields = []
-    // if (sample[selected] && sample[selected].length > 0) {
-    //     fields = Object.keys(sample[selected][0])
-    // }
+    if (cat.length > 0) {
+        fields = Object.keys(cat[0])
+    }
 
     return (
         <>
@@ -92,17 +92,17 @@ function ApiManagement({dispatch, cat}) {
                         </TableHead>
                         <TableBody>
                             {
-                                // dataList.map((data, dataIndex) => {
-                                //     return (
-                                //         <TableRow key={dataIndex}>
-                                //             {
-                                //                 fields.map((field, index) => <TableCell
-                                //                     key={index}> {data[field]} </TableCell>)
-                                //             }
-                                //         </TableRow>
-                                //     )
-                                //
-                                // })
+                                cat.map((data, dataIndex) => {
+                                    return (
+                                        <TableRow key={dataIndex}>
+                                            {
+                                                fields.map((field, index) => <TableCell
+                                                    key={index}> {data[field]} </TableCell>)
+                                            }
+                                        </TableRow>
+                                    )
+
+                                })
                             }
                         </TableBody>
                     </Table>
