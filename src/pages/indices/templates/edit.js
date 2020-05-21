@@ -280,11 +280,13 @@ function json2html(json) {
 
 function FormCard({json}) {
     return (
-        <Card>
-            <CardContent m={0}>
-                {json2html(json)}
-            </CardContent>
-        </Card>
+        <div>
+            <Card>
+                <CardContent m={0}>
+                    {json2html(json)}
+                </CardContent>
+            </Card>
+        </div>
     )
 }
 function JsonCard({json}) {

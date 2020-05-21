@@ -343,7 +343,7 @@ class Sidebar extends React.Component {
                                         <SidebarSection>{category.header}</SidebarSection>
                                     ) : null}
 
-                                    {category.children ? (
+                                    {category.children && category.children.filter(c => c.hidden !== true).length > 0 ? (
                                         <React.Fragment key={index}>
                                             <SidebarCategory
                                                 isOpen={!this.state[index]}
@@ -359,7 +359,7 @@ class Sidebar extends React.Component {
                                                 timeout="auto"
                                                 unmountOnExit
                                             >
-                                                {category.children.map((route, index) => (
+                                                {category.children.filter(c => c.hidden !== true).map((route, index) => (
                                                     <SidebarLink
                                                         key={index}
                                                         name={route.name}
