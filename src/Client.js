@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-class Client {
+export default class Client {
     constructor(props) {
         console.log("init")
     }
@@ -18,9 +18,6 @@ class Client {
         })
     }
 }
-
-const client = new Client()
-export default client
 
 //   url?: string;
 //   method?: Method;
