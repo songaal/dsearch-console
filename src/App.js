@@ -8,8 +8,6 @@ import {StylesProvider} from "@material-ui/styles";
 
 import Routes from "./routes/Routes";
 
-import '~/utils/client'
-
 function App() {
     return (
         <React.Fragment>
