@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
     edit: {
         width: '100%'
     }
-}), {withTheme: true});
+}));
 
 
 const StyledTableCell = withStyles((theme) => ({

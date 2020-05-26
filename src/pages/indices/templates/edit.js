@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
     table: {
         padding: '10px'
     },
-}), {withTheme: true});
+}));
 
 const Divider = styled(MuiDivider)(spacing);
 const Box = styled(MuiBox)(spacing, positions);

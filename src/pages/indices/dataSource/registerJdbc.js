@@ -50,7 +50,7 @@ const useStyles = makeStyles(
       backgroundColor: theme.palette.background.paper,
       border: "2px solid #000",
       boxShadow: theme.shadows[5],
-      padding: theme.spacing(2, 4, 3),
+      // padding: theme.spacing(2, 4, 3),
     },
   }),
 
@@ -83,7 +83,7 @@ function RegisterJdbc() {
                 <StyledTableCell align="center">아이디</StyledTableCell>
                 <StyledTableCell align="center">
                   <FormControl>
-                    <TextField variant="outlined"></TextField>
+                    <TextField size={"small"} variant="outlined"></TextField>
                   </FormControl>
                 </StyledTableCell>
               </TableRow>

@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
     edit: {
         width: '100%'
     }
-}), {withTheme: true});
+}));
 
 const Divider = styled(MuiDivider)(spacing);
 const Box = styled(MuiBox)(spacing, positions);

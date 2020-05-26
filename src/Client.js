@@ -3,11 +3,16 @@ import axios from 'axios'
 export default class Client {
     constructor(props) {
         console.log("init")
+        // const instance = axios.create({
+        //     baseURL: 'https://api',
+        //     timeout: 1000
+        // })
+        this.server = process.env.REACT_APP_FASTCATX_SERVER_URL
     }
     call(config) {
         return new Promise(async (resolve, reject) => {
             try {
-                config.url = process.env.REACT_APP_FASTCATX_SERVER_URL + config.uri
+                config.url = `${this.server}${config.uri}`
                 let response = await axios.request(config)
                 console.log('response >>> ', response)
                 resolve(response)
