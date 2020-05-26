@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import {connect} from "react-redux";
-import {Box, FormControl, InputLabel, MenuItem, Select,} from "@material-ui/core";
+import {Box, FormControl, InputLabel, MenuItem, Select, Checkbox} from "@material-ui/core";
 import {setIndexAction, setIndicesAction} from "../../redux/actions/indicesActions";
 import {makeStyles} from '@material-ui/core/styles';
 
@@ -36,6 +36,12 @@ function IndicesSelect({dispatch, indices, index}) {
                         }
                     </Select>
                 </FormControl>
+
+                {/*<Checkbox*/}
+                {/*    defaultChecked*/}
+                {/*    color="default"*/}
+                {/*    inputProps={{ 'aria-label': 'checkbox with default color' }}*/}
+                {/*/>*/}
             </Box>
             <br/>
         </React.Fragment>
