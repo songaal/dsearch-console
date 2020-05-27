@@ -1,14 +1,17 @@
-import {SET_INDICES_SOURCE_DATA_LIST} from "../constants";
+import * as types from "../constants";
 import Client from '~/Client'
 
 const client = new Client()
 
-export const setIndicesSourceDataListActions = (params) => dispatch =>
-    client.call({
-        uri: `/indices/${params.index}/_docs`,
-        params: params
-    }).then(response => dispatch({
-        type: SET_INDICES_SOURCE_DATA_LIST,
-        params: params,
-        payload: response.data.hits.hits,
-    })).catch(err => console.error(err))
+export const setIndicesDataAction = ({index, pageNum, rowSize, id}) => dispatch => client.call({
+    uri: `/indices/${index}/_docs`,
+    params: {
+        index,
+        pageNum,
+        rowSize,
+        id
+    }
+}).then(response => dispatch({
+    type: types.SET_INDICES_DATA,
+    payload: response.data,
+})).catch(err => console.error(err))
