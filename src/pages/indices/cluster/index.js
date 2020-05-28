@@ -9,7 +9,6 @@ import {
 import Helmet from "react-helmet";
 
 import {
-    Box,
     Button,
     Card as MuiCard,
     CardContent,
@@ -17,22 +16,18 @@ import {
     Divider as MuiDivider,
     FormControlLabel,
     Grid as MuiGrid,
+    Hidden,
     Table,
     TableBody,
     TableCell as MuiTableCell,
     TableHead,
     TableRow as MuiTableRow,
     Typography,
-    Hidden,
 } from "@material-ui/core";
 import {palette, sizing, spacing} from "@material-ui/system";
 import {makeStyles} from "@material-ui/core/styles";
 import {connect} from "react-redux";
-import {
-    lightGreen, pink,
-    red,
-    yellow
-} from '@material-ui/core/colors';
+import {pink, yellow} from '@material-ui/core/colors';
 
 const useStyles = makeStyles({
     headerField: {fontSize: '1.2em', fontWeight: "bold"},
@@ -107,14 +102,9 @@ function ClusterSummary({cluster}) {
                             <Typography className={classes.headerValue}>{cluster.indices.store.size}</Typography>
                         </Grid>
                         <Hidden smUp>
-                            <Grid item xs={3}>
-                                <Typography></Typography>
-                            </Grid>
-                            <Grid item xs={3}>
-                                <Typography></Typography>
-                            </Grid>
+                            <Grid item xs={3}> </Grid>
+                            <Grid item xs={3}> </Grid>
                         </Hidden>
-
                     </Grid>
                 </CardContent>
             </Card>
@@ -136,8 +126,6 @@ function ShardButton({prirep, label}) {
 }
 
 function ClusterShardMap({indices, nodes, shards}) {
-    const classes = useStyles();
-
     const [state, setState] = React.useState({
         checkedA: false,
         checkedB: false,
@@ -149,19 +137,15 @@ function ClusterShardMap({indices, nodes, shards}) {
 
     //닫힌 인덱스, 특수인덱스에 따른 처리
     let indicesArr = []
-    {
-        Object.values(indices).map(indicesInfo => {
-                if (state.checkedA && indicesInfo.status == 'close') {
-                    indicesArr.push(indicesInfo)
-                } else if (state.checkedB && indicesInfo.index.charAt(0) == '.') {
-                    indicesArr.push(indicesInfo)
-                } else if (indicesInfo.status == 'open' && indicesInfo.index.charAt(0) != '.') {
-                    indicesArr.push(indicesInfo)
-                }
-            }
-        )
-    }
-
+    Object.values(indices).forEach(indicesInfo => {
+        if (state.checkedA && indicesInfo.status === 'close') {
+            indicesArr.push(indicesInfo)
+        } else if (state.checkedB && indicesInfo.index.charAt(0) === '.') {
+            indicesArr.push(indicesInfo)
+        } else if (indicesInfo.status === 'open' && indicesInfo.index.charAt(0) !== '.') {
+            indicesArr.push(indicesInfo)
+        }
+    })
 
     //샤드 표시를 위한 MAP 생성
     let newMap = new Map()
@@ -170,7 +154,7 @@ function ClusterShardMap({indices, nodes, shards}) {
         let unassignedArr = []
         Object.values(indicesArr).forEach((indicesRow) => {
             Object.values(shards).forEach((shardsRow) => {
-                if (indicesRow.index == shardsRow.index && nodesRow.name == shardsRow.node) {
+                if (indicesRow.index === shardsRow.index && nodesRow.name === shardsRow.node) {
                     assignedArr.push({
                         node: shardsRow.node,
                         index: shardsRow.index,
@@ -178,7 +162,7 @@ function ClusterShardMap({indices, nodes, shards}) {
                         state: shardsRow.state,
                         prirep: shardsRow.prirep
                     })
-                } else if (indicesRow.index == shardsRow.index && shardsRow.state == 'UNASSIGNED') {
+                } else if (indicesRow.index === shardsRow.index && shardsRow.state === 'UNASSIGNED') {
                     unassignedArr.push({
                         node: 'unassigned',
                         index: shardsRow.index,
@@ -214,9 +198,9 @@ function ClusterShardMap({indices, nodes, shards}) {
                                     overflow: "hidden"
                                 }}>
                                 </TableCell>
-                                {Object.values(indicesArr).map(indicesInfo => {
+                                {Object.values(indicesArr).map((indicesInfo, indicesInfoIndex) => {
                                         return (
-                                            <TableCell style={{
+                                            <TableCell key={indicesInfoIndex} style={{
                                                 fontSize: "1em",
                                                 minWidth: "100px",
                                                 textOverflow: "ellipsis",
@@ -260,8 +244,8 @@ function ClusterShardMap({indices, nodes, shards}) {
                                     </TableRow>
                                     : <></>
                             }
-                            {Object.values(nodes).map(nodeRow =>
-                                <TableRow>
+                            {Object.values(nodes).map((nodeRow, nodeRowIndex) =>
+                                <TableRow key={nodeRowIndex}>
                                     <TableCell align="center">
                                         <Typography>{nodeRow.name}</Typography>
                                         <Typography>{nodeRow.ip}</Typography>
@@ -275,23 +259,7 @@ function ClusterShardMap({indices, nodes, shards}) {
                                                     {
                                                         Object.values(newMap.get(nodeRow.name)).map((data, dataIndex) => {
                                                             if (element.index === data.index) {
-                                                                return <ShardButton prirep={data.prirep} label={data.shard} />
-
-                                                                // if (data.prirep === 'p') {
-                                                                //     return <ShardButton type={"primary"} label={data.shard} />
-                                                                //     // return (
-                                                                //     //     <Button variant="contained" color="secondary">
-                                                                //     //         {data.shard}
-                                                                //     //     </Button>
-                                                                //     // )
-                                                                // } else if (data.prirep === 'r') {
-                                                                //
-                                                                //     // return (
-                                                                //     //     <Button variant="outlined" color="secondary">
-                                                                //     //         {data.shard}
-                                                                //     //     </Button>
-                                                                //     // )
-                                                                // }
+                                                                return <ShardButton key={dataIndex} prirep={data.prirep} label={data.shard} />
                                                             }
                                                         })
                                                     }
