@@ -222,7 +222,7 @@ function ClusterShardMap({indices, nodes, shards}) {
                                                 textOverflow: "ellipsis",
                                                 overflow: "hidden",
                                                 textAlign: "left",
-                                                backgroundColor: indicesInfo.health === 'yellow' ? pink['100'] : indicesInfo.health === 'yellow' ? yellow['A400'] : '#ffffff'
+                                                backgroundColor: indicesInfo.health === 'red' ? pink['100'] : indicesInfo.health === 'yellow' ? yellow['A400'] : '#ffffff'
                                             }}>
                                                 <Typography style={{fontWeight: "bold"}}>{indicesInfo.index}</Typography>
                                                 <Typography>샤드: P({indicesInfo.pri}) R({indicesInfo.rep})</Typography>
