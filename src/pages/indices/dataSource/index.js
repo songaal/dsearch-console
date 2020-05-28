@@ -8,7 +8,6 @@ import AntTabs from "~/components/AntTabs";
 import {
   Card as MuiCard,
   CardContent,
-  CardHeader,
   Divider as MuiDivider,
   Grid,
   Typography,
@@ -27,7 +26,6 @@ import {
   TableContainer,
   TableCell,
   Link,
-  AppBar,
   Tab,
   Tabs,
   TextareaAutosize,
@@ -63,6 +61,7 @@ const useStyles = makeStyles(
       border: "2px solid #000",
       boxShadow: theme.shadows[5],
       padding: theme.spacing(2, 4, 3),
+      
     },
   }),
 
@@ -115,9 +114,9 @@ let jdbcArr = [
   },
 ];
 
+//패스워드 처리(앞2글자, 뒷한글자 * 표시)
 const convertPasswd = (passwd) => {
   let result = "";
-
   for (var i = 0; i < passwd.length; i++) {
     if (i == 0 || i == 1 || i == passwd.length - 1) {
       result += "*";
@@ -125,14 +124,13 @@ const convertPasswd = (passwd) => {
       result += passwd.charAt(i);
     }
   }
-
   return result;
 };
 
-console.log("passwordType : " + convertPasswd("test123"));
 
 let query =
   "limit: 1000 \n bulk: 1000 \n sql: | SELECT /*+ USE_NL(TPC,TPD) USE_NL(TPC, TP) USE_NL(TP,TPM) USE_NL(TPM,TPCDAT) USE_NL(TPCDAT,TPR) USE_NL(TPR,TPB) USE_NL(TPM,TPD)  USE_NL(TSP, TUP) USE_NL(TKFS, TSP) USE_NL(TKFS,TPB) USE_NL(TPDD, TPIP) USE_NL(TPDD,TUP) USE_NL(TPIP,TPBC) USE_NL(TPBC,TPEV) USE_NL(TPEV, TPMP) USE_NL(TPMP, TFDS) USE_NL(TFDS, TSS) */ \n\t tP.prod_c as ID, \n\t tP.prod_c as productCode, \n\t 'dna' as shopCode, \n\t tP.prod_n as productName, NVL(tPM.maker_n ,'') as productMaker";
+
 
 function sourcePage() {
   const classes = useStyles();
@@ -148,7 +146,7 @@ function sourcePage() {
       setBtn("수정");
     }
   };
-  console.log("UI : " + FormCard());
+  
   if (btn == "수정") {
     PrintPage = () => FormCard();
   } else {
@@ -179,47 +177,53 @@ function sourcePage() {
 
 function UpdateForm() {
   const classes = useStyles();
-
+  
   return (
     <div>
       <Card>
         <CardContent>
           <Table className={classes.table} size="small">
             <TableHead>
-              <TableRow align="center">
+              {/* <TableRow align="center">
                 <StyledTableCell align="center">이름</StyledTableCell>
                 <StyledTableCell align="center">런처</StyledTableCell>
                 <StyledTableCell align="center">실행포트</StyledTableCell>
                 <StyledTableCell align="center">JDBC</StyledTableCell>
-              </TableRow>
+              </TableRow> */}
             </TableHead>
             <TableBody>
-              {data.map((row) => (
-                <TableRow align="center">
-                  <StyledTableCell align="center">
+              <TableRow align="center">
+                  <StyledTableCell align="left"><b>이름</b></StyledTableCell>
+                  <StyledTableCell align="left">
                     <FormControl>
-                      <TextField align="center" value={row.name} />
+                      <TextField align="left" value={data[0].name} />
                     </FormControl>
                   </StyledTableCell>
-                  <StyledTableCell align="center">
+              </TableRow>
+              <TableRow align="left">
+                  <StyledTableCell align="left"><b>런처</b></StyledTableCell>
+                  <StyledTableCell align="left">
                     <FormControl>
-                      <TextField align="center" value={row.luncher} />
+                      <TextField align="left" value={data[0].luncher} />
                     </FormControl>
                   </StyledTableCell>
-                  <StyledTableCell align="center">
+              </TableRow>
+              <TableRow align="left">
+                  <StyledTableCell align="left"><b>실행포트</b></StyledTableCell>
+                  <StyledTableCell align="left">
                     <FormControl>
-                      <TextField align="center" value={row.port} />
+                      <TextField align="left" value={data[0].port} />
                     </FormControl>
                   </StyledTableCell>
-                  <StyledTableCell align="center">
+              </TableRow>
+              <TableRow align="left">
+                  <StyledTableCell align="left"><b>JDBC</b></StyledTableCell>
+                  <StyledTableCell align="left">
                     <FormControl>
-                      <Select value={row.jdbc} disableUnderline>
-                        <MenuItem value={row.jdbc}>{row.jdbc}</MenuItem>
-                      </Select>
+                      <TextField align="left" value={data[0].jdbc} />
                     </FormControl>
                   </StyledTableCell>
-                </TableRow>
-              ))}
+              </TableRow>
             </TableBody>
           </Table>
           <br />
@@ -230,9 +234,7 @@ function UpdateForm() {
             <TextareaAutosize
               rowsMin={50}
               className={classes.edit}
-              placeholder=""
-              value={query}
-            />
+            >{query}</TextareaAutosize>
           </Box>
         </CardContent>
       </Card>
@@ -242,30 +244,57 @@ function UpdateForm() {
 
 function FormCard() {
   const classes = useStyles();
+  const head =  ['이름', '런처', '실행포트', 'JDBC'];
+
   return (
     <div>
       <Card>
         <CardContent>
           <Table className={classes.table} size="small">
             <TableHead>
-              <TableRow align="center">
+              {/* <TableRow align="center">
                 <StyledTableCell align="center">이름</StyledTableCell>
                 <StyledTableCell align="center">런처</StyledTableCell>
                 <StyledTableCell align="center">실행포트</StyledTableCell>
                 <StyledTableCell align="center">JDBC</StyledTableCell>
-              </TableRow>
+              </TableRow> */}
             </TableHead>
             <TableBody>
-              {data.map((row) => (
-                <TableRow align="center">
+              
+                {/* <TableRow align="center">
+                  <StyledTableCell align="center">이름</StyledTableCell>
                   <StyledTableCell align="center">{row.name}</StyledTableCell>
-                  <StyledTableCell align="center">
-                    {row.luncher}
-                  </StyledTableCell>
-                  <StyledTableCell align="center">{row.port}</StyledTableCell>
-                  <StyledTableCell align="center">{row.jdbc}</StyledTableCell>
                 </TableRow>
-              ))}
+                <TableRow>
+                  <StyledTableCell align="center">런처</StyledTableCell>
+                  <StyledTableCell align="center">{row.luncher}</StyledTableCell>
+                </TableRow>
+                <TableRow>
+                  <StyledTableCell align="center">실행포트</StyledTableCell>
+                  <StyledTableCell align="center">{row.port}</StyledTableCell>
+                </TableRow>
+                <TableRow>
+                <StyledTableCell align="center">JDBC</StyledTableCell>
+                  <StyledTableCell align="center">{row.jdbc}</StyledTableCell>
+                </TableRow> */}
+
+                <TableRow align="left">
+                  <StyledTableCell align="left"><b>이름</b></StyledTableCell>
+                  <StyledTableCell align="left">{data[0].name}</StyledTableCell>
+                </TableRow>
+                <TableRow>
+                  <StyledTableCell align="left"><b>런처</b></StyledTableCell>
+                  <StyledTableCell align="left">{data[0].luncher}</StyledTableCell>
+                </TableRow>
+                <TableRow>
+                  <StyledTableCell align="left"><b>실행포트</b></StyledTableCell>
+                  <StyledTableCell align="left">{data[0].port}</StyledTableCell>
+                </TableRow>
+                <TableRow>
+                <StyledTableCell align="left"><b>JDBC</b></StyledTableCell>
+                  <StyledTableCell align="left">{data[0].jdbc}</StyledTableCell>
+                </TableRow>
+            
             </TableBody>
           </Table>
           <br />
@@ -273,12 +302,11 @@ function FormCard() {
             <Typography variant="h5" gutterBottom display="inline">
               설정
             </Typography>
-            <TextareaAutosize
-              rowsMin={50}
-              className={classes.edit}
-              placeholder=""
-              value={query}
-            />
+            
+            <TextareaAutosize rowsMin={50}
+                              className={classes.edit}
+                              placeholder=""
+                              value={query}/>
           </Box>
         </CardContent>
       </Card>
@@ -298,8 +326,6 @@ function getModalStyle() {
     transform: `translate(-${top}%, -${left}%)`,
   };
 }
-
-function jdbcCard() {}
 
 function jdbcTable() {
   const classes = useStyles();

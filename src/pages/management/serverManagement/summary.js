@@ -69,7 +69,7 @@ function NodeSettingTalbe({server}) {
     const classes = useStyles();
     //const aaa = server.nodes
     //const keys = Object.keys(server.nodes)
-    //console.log(server.nodes, abc, typeof Object.entries(aaa),  "abc ",  Object.values(aaa))
+    console.log("server node : " + server.nodes)
 
      return (
         <div style={{ maxWidth: '100%' }}>
@@ -392,7 +392,7 @@ function ModuleInfoTable({nodes}) {
 }
 
 
-function Server({dispatch, server}) {
+function Server({server}) {
 
     const classes = useStyles();
 
@@ -405,6 +405,7 @@ function Server({dispatch, server}) {
     //         })
     // }, [])
 
+    console.log("cluster Name : "+ server.cluster_name)
 
     return (
         
@@ -451,4 +452,4 @@ function Server({dispatch, server}) {
     );
 }
 
-export default Server;
+export default connect(store => ({ server: store.serverSummaryReducers.server}))(Server);

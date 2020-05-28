@@ -22,11 +22,14 @@ import {
   TableCell,
   ButtonGroup,
   Button,
-  TextField,
+  TextField
 } from "@material-ui/core";
 
 import { spacing } from "@material-ui/system";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
+import DeleteIcon from '@material-ui/icons/Delete';
+import SaveIcon from '@material-ui/icons/Save';
+
 const useStyles = makeStyles(
   (theme) => ({
     formControl: {
@@ -52,6 +55,9 @@ const useStyles = makeStyles(
       boxShadow: theme.shadows[5],
       padding: theme.spacing(2, 4, 3),
     },
+    Button: {
+      color: 'red'
+    }
   }),
 
   { withTheme: true }
@@ -79,7 +85,7 @@ function EditJdbc(jdbcData) {
                 <StyledTableCell align="center">아이디</StyledTableCell>
                 <StyledTableCell align="center">
                   <FormControl>
-                    <TextField variant="outlined"></TextField>
+                    <TextField size='small' variant="outlined"></TextField>
                   </FormControl>
                 </StyledTableCell>
               </TableRow>
@@ -87,7 +93,7 @@ function EditJdbc(jdbcData) {
                 <StyledTableCell align="center">이름</StyledTableCell>
                 <StyledTableCell align="center">
                   <FormControl>
-                    <TextField variant="outlined"></TextField>
+                    <TextField size='small' variant="outlined"></TextField>
                   </FormControl>
                 </StyledTableCell>
               </TableRow>
@@ -95,7 +101,7 @@ function EditJdbc(jdbcData) {
                 <StyledTableCell align="center">드라이버</StyledTableCell>
                 <StyledTableCell align="center">
                   <FormControl>
-                    <TextField variant="outlined"></TextField>
+                    <TextField size='small' variant="outlined"></TextField>
                   </FormControl>
                 </StyledTableCell>
               </TableRow>
@@ -103,7 +109,7 @@ function EditJdbc(jdbcData) {
                 <StyledTableCell align="center">URL</StyledTableCell>
                 <StyledTableCell align="center">
                   <FormControl>
-                    <TextField variant="outlined"></TextField>
+                    <TextField size='small' variant="outlined"></TextField>
                   </FormControl>
                 </StyledTableCell>
               </TableRow>
@@ -111,7 +117,7 @@ function EditJdbc(jdbcData) {
                 <StyledTableCell align="center">사용자</StyledTableCell>
                 <StyledTableCell align="center">
                   <FormControl>
-                    <TextField variant="outlined"></TextField>
+                    <TextField size='small' variant="outlined"></TextField>
                   </FormControl>
                 </StyledTableCell>
               </TableRow>
@@ -119,22 +125,34 @@ function EditJdbc(jdbcData) {
                 <StyledTableCell align="center">비밀번호</StyledTableCell>
                 <StyledTableCell align="center">
                   <FormControl>
-                    <TextField variant="outlined" type="password"></TextField>
+                    <TextField size='small' variant="outlined" type="password"></TextField>
                   </FormControl>
                 </StyledTableCell>
               </TableRow>
             </TableBody>
           </Table>
           <br />
-          <Button align="left">삭제</Button>
-          <ButtonGroup
-            color="primary"
-            aria-label="outlined primary button group"
-            align="right"
-          >
-            <Button align="right">닫기</Button>
-            <Button align="right">저장</Button>
-          </ButtonGroup>
+          <div>
+              <TableRow>
+                <StyledTableCell>
+                <Button 
+                  size="small"
+                  color="inherit"
+                  className={classes.Button}
+                  startIcon={<DeleteIcon />}>삭제</Button>
+                </StyledTableCell>
+                <StyledTableCell></StyledTableCell>
+                
+                <StyledTableCell>
+                  <Button size="small">닫기</Button>
+                </StyledTableCell>
+                <StyledTableCell>
+                  <Button size="small" color="primary" startIcon={<SaveIcon/>}>저장</Button>
+                </StyledTableCell>
+              </TableRow>
+            </div>
+            <div className={classes.root}>
+    </div>
         </CardContent>
       </Card>
     </div>

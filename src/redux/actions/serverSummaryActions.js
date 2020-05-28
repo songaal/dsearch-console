@@ -1,9 +1,10 @@
-import * as types from "../constants";
+import {SET_SERVER_SUMMARY} from "../constants";
+import Client from '~/Client'
 
-export function setServerSummary(value) {
-    return {
-        type: types.SET_SERVER_SUMMARY,
-        payload: value
-    }
-}
+const client = new Client()
+
+export const setServerSummaryActions = key => dispatch => client.call({uri: `/elasticsearch/_nodes`})
+    .then(response => dispatch({type: SET_SERVER_SUMMARY, payload: response.data}))
+    .catch(err => console.error(err))
+
 

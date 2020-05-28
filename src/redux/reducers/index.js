@@ -5,6 +5,7 @@ import clusterReducers from "./clusterReducers";
 import indicesMappingReducers from "./indicesMappingReducers";
 import serverSummaryReducers from "./serverSummaryReducers";
 import apiManagementReducers from "./apiManagementReducers";
+import clusterInfoReducers from "./clusterInfoReducers";
 
 export default combineReducers({
     dictionaryReducers,
@@ -12,4 +13,5 @@ export default combineReducers({
     indicesMappingReducers,
     serverSummaryReducers,
     apiManagementReducers,
+    clusterInfoReducers
 });

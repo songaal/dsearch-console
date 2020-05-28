@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import {NavLink as RouterNavLink} from "react-router-dom";
-import { setServerSummary } from '@actions/serverSummaryActions'
+import { setServerSummaryActions } from '@actions/serverSummaryActions'
 import Async from '~/components/Async';
 
 import Helmet from 'react-helmet';
@@ -90,15 +90,19 @@ function Server({dispatch, server}) {
         setIndices(event.target.value);
     };
 
+
     useEffect(() => {
-        fetch(`${process.env.REACT_APP_SERVER_URL}/_nodes`)
-            .then((response) => response.json())
-            .then((result) => {
-                dispatch(setServerSummary(result))
-            })
+        dispatch(setServerSummaryActions())
     }, [])
+    
 
-
+    // useEffect(() => {
+    //     fetch(`${process.env.REACT_APP_SERVER_URL}/_nodes`)
+    //         .then((response) => response.json())
+    //         .then((result) => {
+    //             dispatch(setServerSummary(result))
+    //         })
+    // }, [])
 
     let ServerInfoCall
     if(indices != '') {
@@ -107,7 +111,6 @@ function Server({dispatch, server}) {
         ServerInfoCall = Async(() => import("./summary")); 
     }
 
-    console.log('cluster : ' , server.cluster_name);
     return (
         
         <React.Fragment>
@@ -140,7 +143,7 @@ function Server({dispatch, server}) {
 
                     <Grid container spacing={6}>
                         <Grid item xs={12}>
-                            <ServerInfoCall server={server} nodeKey={indices}/>
+                            <ServerInfoCall nodeKey={indices}/>
                         </Grid>
                     </Grid>
 
