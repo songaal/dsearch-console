@@ -30,7 +30,7 @@ export default function reducer(state = initState, actions) {
                 ...state,
                 index: index,
                 hidden: hidden,
-                indices: actions.payload.filter(index => index.startsWith('.') === false)
+                indices: actions.payload
             };
         default:
             return state

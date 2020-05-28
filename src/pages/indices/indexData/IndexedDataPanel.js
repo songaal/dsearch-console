@@ -159,15 +159,23 @@ function IndexedDataPanel({dispatch, index}) {
                             <TableBody>
                                 {
                                     dataList.map((data, dataIndex) => {
+                                        if (fields === null) {
+                                            return (<React.Fragment key={dataIndex}></React.Fragment>)
+                                        }
                                         const Fields = fields.map(field => {
+                                            let text = ""
+                                            if (data['sourceAsMap'] && typeof data["sourceAsMap"][field] !== 'object') {
+                                                text = data['sourceAsMap'][field]
+                                            }
                                             let analyzeText = ""
                                             if (analyzeTermMap[data.id] && analyzeTermMap[data.id][field] && analyzeTermMap[data.id][field].length > 0) {
                                                 analyzeText = analyzeTermMap[data.id][field].map(analyze => analyze.term).join(",")
                                             }
+
                                             return (
                                                 <TableRow>
                                                     <TableCell> {field} </TableCell>
-                                                    <TableCell> {data['sourceAsMap'][field]} </TableCell>
+                                                    <TableCell> {text} </TableCell>
                                                     <TableCell> {analyzeText} </TableCell>
                                                 </TableRow>
                                             )

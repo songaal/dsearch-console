@@ -166,16 +166,21 @@ function SourceDataPanel({dispatch, index}) {
                                             <TableRow key={dataIndex}>
                                                 {
                                                     fields.map((field, fieldIndex) => {
+                                                        let text = ""
+                                                        if (data["sourceAsMap"] && typeof data["sourceAsMap"][field] !== 'object') {
+                                                            text = data["sourceAsMap"][field]
+                                                        }
+
                                                         if (fieldIndex === 0) {
                                                             return (
-                                                                <React.Fragment key={fieldIndex}>
+                                                                <React.Fragment >
                                                                     <TableCell>{data["id"]}</TableCell>
-                                                                    <TableCell>{data["sourceAsMap"][field]}</TableCell>
+                                                                    <TableCell>{text}</TableCell>
                                                                 </React.Fragment>
                                                             )
                                                         } else {
                                                             return (
-                                                                <TableCell key={fieldIndex}>{data["sourceAsMap"][field]}</TableCell>
+                                                                <TableCell >{text}</TableCell>
                                                             )
                                                         }
                                                     })
