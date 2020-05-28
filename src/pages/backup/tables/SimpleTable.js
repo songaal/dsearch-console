@@ -46,7 +46,7 @@ const CustomTableCell = withStyles(theme => ({
     body: {
         fontSize: 14
     }
-}), {withTheme: true})(TableCell);
+}))(TableCell);
 
 const CustomTableRow = styled(TableRow)`
   &:nth-of-type(odd) {

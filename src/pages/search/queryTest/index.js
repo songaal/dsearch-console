@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
     addIcon: {
         verticalAlign: "top"
     }
-}), {withTheme: true});
+}));
 
 let json = {
     "ADDDESCRIPTION": {

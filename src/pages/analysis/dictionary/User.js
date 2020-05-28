@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
     right: {
         textAlign: "right"
     }
-}), {withTheme: true});
+}));
 
 
 const dataList1 = [

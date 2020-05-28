@@ -49,7 +49,7 @@ const useStyles = makeStyles({
     addCardButton: {
         border: "1px solid"
     }
-}, {withTheme: true});
+});
 
 function ClusterCard(props) {
     const classes = props.className
