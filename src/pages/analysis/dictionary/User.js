@@ -1,15 +1,19 @@
-import React from "react";
+import React, {useState} from "react";
+import styled from "styled-components";
 // import PropTypes from 'prop-types';
 import { connect } from "react-redux";
 import {
     Grid, IconButton, InputBase,
-    Button,
-    Card, CardContent
+    Button as MuiButton,
+    Card, CardContent,
+    Hidden,
 } from "@material-ui/core";
 import DynamicTable from "~/components/DynamicTable";
-import {Search} from "@material-ui/icons";
+import {Language, Search} from "@material-ui/icons";
 import {makeStyles} from "@material-ui/core/styles";
+import {sizing, spacing} from "@material-ui/system";
 
+const Button = styled(MuiButton)(spacing, sizing)
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -39,6 +43,14 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
+const sample = [
+    {
+        field: "단어",
+        data: [ {id: 1, text: "1"}, {id: 2, text: "2"}, {id: 3, text: "3"}, {id: 4, text: "4"} ]
+    }
+]
+
+
 
 const dataList1 = [
     {"field": "단어", data: ['dacco테스트', '테스트dacco', 'fff테스트', 'ff테스트', '테스트fff', '테스트ff', '장혁준667', '장혁준fe', '장혁준ffe', '장혁준ffef']},
@@ -57,8 +69,14 @@ const dataList4 = [
 ]
 
 function UserDictionary({dispatch, userList, user}) {
-
+    const [selected, setSelected] = useState([])
+    const [mode, setMode] = useState("view")  //view, edit
     const classes = useStyles();
+
+    function handleSelectClick(id, checked) {
+        checked ? setSelected(selected.concat(id)) : setSelected(selected.filter(select => select !== id))
+    }
+
     return (
         <>
             <br/>
@@ -77,25 +95,64 @@ function UserDictionary({dispatch, userList, user}) {
                             </form>
                         </Grid>
                         <Grid item xs={6} className={classes.right}>
-                            <Button variant={"outlined"} color={"primary"}>다운로드</Button>
-                            <Button variant={"outlined"} color={"primary"}>새로고침</Button>
-                            <Button variant={"outlined"} color={"primary"}>수정</Button>
+                            {mode === "view" ?
+                                (
+                                    <Button variant="outlined"
+                                            color="primary"
+                                            mx={1}
+                                    >다운로드</Button>
+                                )
+                                :
+                                (
+                                    <React.Fragment>
+                                        <Button variant="outlined"
+                                                color="primary"
+                                        >추가</Button>
+                                        <Button variant="outlined"
+                                                color="secondary"
+                                                mr={1}
+                                        >삭제</Button>
+                                    </React.Fragment>
+                                )
+                            }
+
+                            <Button variant="outlined"
+                                    color="primary"
+                                    mx={1}
+                            >새로고침</Button>
+                            <Button variant="outlined"
+                                    color="primary"
+                                    onClick={() => setMode(mode === "view" ? "edit" : "view")}
+                                    mx={1}
+                            >{mode === "view" ? "수정" : "보기"}</Button>
                         </Grid>
                     </Grid>
 
                     <br/>
                     <Grid container spacing={6}>
                         <Grid item xs={3}>
-                            <DynamicTable dataList={dataList1} />
+                            <DynamicTable dataList={sample}
+                                          showCheckBox={mode === "edit"}
+                                          onSelectClick={handleSelectClick}
+                            />
                         </Grid>
                         <Grid item xs={3}>
-                            <DynamicTable dataList={dataList2} />
+                            <DynamicTable dataList={dataList2}
+                                          showCheckBox={mode === "edit"}
+                                          onSelectClick={handleSelectClick}
+                            />
                         </Grid>
                         <Grid item xs={3}>
-                            <DynamicTable dataList={dataList3} />
+                            <DynamicTable dataList={dataList3}
+                                          showCheckBox={mode === "edit"}
+                                          onSelectClick={handleSelectClick}
+                            />
                         </Grid>
                         <Grid item xs={3}>
-                            <DynamicTable dataList={dataList4} />
+                            <DynamicTable dataList={dataList4}
+                                          showCheckBox={mode === "edit"}
+                                          onSelectClick={handleSelectClick}
+                            />
                         </Grid>
                     </Grid>
                 </CardContent>

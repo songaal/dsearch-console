@@ -48,7 +48,7 @@ function SourceDataPanel({dispatch, index}) {
     }, [index])
 
     // 인덱스가 없으면 무시.
-    if (!index) return;
+    if (!index) return null;
 
     function handlePagination(pageNum) {
         setPageNum(pageNum)
@@ -173,14 +173,14 @@ function SourceDataPanel({dispatch, index}) {
 
                                                         if (fieldIndex === 0) {
                                                             return (
-                                                                <React.Fragment >
+                                                                <React.Fragment key={fieldIndex}>
                                                                     <TableCell>{data["id"]}</TableCell>
                                                                     <TableCell>{text}</TableCell>
                                                                 </React.Fragment>
                                                             )
                                                         } else {
                                                             return (
-                                                                <TableCell >{text}</TableCell>
+                                                                <TableCell key={fieldIndex}>{text}</TableCell>
                                                             )
                                                         }
                                                     })

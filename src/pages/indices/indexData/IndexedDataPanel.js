@@ -51,7 +51,7 @@ function IndexedDataPanel({dispatch, index}) {
     }, [index])
 
     // 인덱스가 없으면 무시.
-    if (!index) return;
+    if (!index) return null;
 
     function handlePagination(pageNum) {
         setPageNum(pageNum)
@@ -160,9 +160,9 @@ function IndexedDataPanel({dispatch, index}) {
                                 {
                                     dataList.map((data, dataIndex) => {
                                         if (fields === null) {
-                                            return (<React.Fragment key={dataIndex}></React.Fragment>)
+                                            return <React.Fragment key={dataIndex}> </React.Fragment>
                                         }
-                                        const Fields = fields.map(field => {
+                                        const Fields = fields.map((field, fieldIndex) => {
                                             let text = ""
                                             if (data['sourceAsMap'] && typeof data["sourceAsMap"][field] !== 'object') {
                                                 text = data['sourceAsMap'][field]
@@ -173,7 +173,7 @@ function IndexedDataPanel({dispatch, index}) {
                                             }
 
                                             return (
-                                                <TableRow>
+                                                <TableRow key={fieldIndex}>
                                                     <TableCell> {field} </TableCell>
                                                     <TableCell> {text} </TableCell>
                                                     <TableCell> {analyzeText} </TableCell>
@@ -182,7 +182,7 @@ function IndexedDataPanel({dispatch, index}) {
                                         })
 
                                         return (
-                                            <React.Fragment>
+                                            <React.Fragment key={dataIndex}>
                                                 <TableRow>
                                                     <TableCell> * ID </TableCell>
                                                     <TableCell> {data.id} </TableCell>

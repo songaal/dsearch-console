@@ -174,7 +174,7 @@ function User() {
                                     aria-haspopup="true"
                                     variant="contained"
                                     color="primary"
-                                    onClick={handleButtonClick}
+                                    onclick={handleButtonClick}
                                 >
                                     작업
                                     <ArrowDropDown />

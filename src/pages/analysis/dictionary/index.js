@@ -47,7 +47,7 @@ function Dictionary({dispatch}) {
 
             <Grid container spacing={6}>
                 <Grid item xs={12}>
-                    <AntTabs tabs={tabs}/>
+                    <AntTabs tabs={tabs} tabIndex={2}/>
                 </Grid>
             </Grid>
         </>

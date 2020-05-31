@@ -1,11 +1,16 @@
-import React from "react";
+import React, {useState, useRef, useEffect} from "react";
 import PropTypes from "prop-types"
 
-import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@material-ui/core";
+import {Checkbox, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@material-ui/core";
 
 
-function DynamicTable({dataList}) {
-    console.log(dataList[0].data);
+function DynamicTable({dataList, showCheckBox = false, onSelectClick}) {
+    const [selected, setSelected] = useState([])
+
+    useEffect(() => {
+        setSelected([])
+    }, [showCheckBox])
+
     const fields = dataList.map(data => data.field);
 
     let rowCount = 0;
@@ -17,9 +22,26 @@ function DynamicTable({dataList}) {
     for (let i = 0; i < rowCount; i++) {
         let cols = [];
         for (let j = 0; j < fields.length; j++) {
-            cols.push(array[j][i] || null)
+            if (typeof array[j][i] !== 'object') {
+                cols.push({id: array[j][i], text: array[j][i]})
+            } else {
+                cols.push({id: array[j][i]['id'], text: array[j][i]['text']})
+            }
         }
         rows.push(cols)
+    }
+
+    function handleSelectAllClick(checked) {
+        let ids = []
+        rows.forEach(row => {
+            onSelectClick(row[0].id, checked)
+            ids.push(row[0].id)
+        })
+        checked ? setSelected(ids) : setSelected([])
+    }
+    function handleSelectClick(id, checked) {
+        onSelectClick(id, checked)
+        checked ? setSelected(selected.concat(id)) : setSelected(selected.filter(select => select !== id))
     }
 
     return (
@@ -27,6 +49,12 @@ function DynamicTable({dataList}) {
             <Table size="small">
                 <TableHead>
                     <TableRow>
+                        {
+                            !showCheckBox ? null :
+                                <TableCell padding="checkbox">
+                                    <Checkbox onChange={(event) => handleSelectAllClick(event.target.checked)}/>
+                                </TableCell>
+                        }
                         {fields.map((field, index) => <TableCell key={index}>{field}</TableCell>)}
                     </TableRow>
                 </TableHead>
@@ -35,7 +63,23 @@ function DynamicTable({dataList}) {
                         rows.map((cols, rowIdx) => {
                             return (
                                 <TableRow key={rowIdx}>
-                                    {cols.map((col, colIdx) => <TableCell key={colIdx}>{col}</TableCell>)}
+                                    {
+                                        cols.map((col, colIdx) => {
+                                            return (
+                                                <React.Fragment key={colIdx}>
+                                                    {
+                                                        !showCheckBox ? null :
+                                                            <TableCell padding="checkbox">
+                                                                <Checkbox checked={selected.includes(col.id)}
+                                                                          onChange={(event) => handleSelectClick(col.id, event.target.checked)}
+                                                                />
+                                                            </TableCell>
+                                                    }
+                                                    <TableCell>{col.text}</TableCell>
+                                                </React.Fragment>
+                                            )
+                                        })
+                                    }
                                 </TableRow>
                             )
                         })
