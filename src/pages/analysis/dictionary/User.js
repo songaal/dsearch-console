@@ -7,15 +7,31 @@ import {
     Card, CardContent,
     Box as MuiBox,
     Checkbox,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Paper,
+    Draggable,
+    TextField
 } from "@material-ui/core";
+
+
 import DynamicTable from "~/components/DynamicTable";
 import {Language, Search} from "@material-ui/icons";
 import {makeStyles} from "@material-ui/core/styles";
-import {sizing, spacing} from "@material-ui/system";
-import {downloadDictionaryUser, setDictionaryUser} from "../../../redux/actions/dictionaryActions";
+import {palette, sizing, spacing} from "@material-ui/system";
+import {
+    createDictionary,
+    deleteDictionary,
+    downloadDictionaryUser,
+    setDictionaryUser
+} from "../../../redux/actions/dictionaryActions";
 import {setIndicesDataAction} from "../../../redux/actions/indicesIndexDataActions";
+import utils from "../../../utils";
 
-const Button = styled(MuiButton)(spacing, sizing)
+const Button = styled(MuiButton)(spacing, sizing, palette)
 const Box = styled(MuiBox)(spacing, sizing)
 
 const useStyles = makeStyles((theme) => ({
@@ -53,19 +69,25 @@ const useStyles = makeStyles((theme) => ({
 //         data: [ {id: 1, text: "1"}, {id: 2, text: "2"}, {id: 3, text: "3"}, {id: 4, text: "4"} ]
 //     }
 // ]
+let selected = []
 function UserDictionary({dispatch, user}) {
-    const [selected, setSelected] = useState([]);
     const [keyword, setKeyword] = useState("");
+    const [search, setSearch] = useState("");
     const [keywordMatched, setKeywordMatched] = useState(false);
     const [mode, setMode] = useState("view")  //view, edit
     const [pageNum, setPageNum] = useState(0);
     const [rowSize, setRowSize] = useState(40);
-    const classes = useStyles();
+    const [createKeyword, setCreateKeyword] = useState("");
 
-    let lastPageNum = user['lastPageNum']||0
+    const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
+    const [createDialogOpen, setCreateDialogOpen] = React.useState(false);
+
+    const classes = useStyles();
+    const lastPageNum = user['lastPageNum']||0
 
     function handleSelectClick(id, checked) {
-        checked ? setSelected(selected.concat(id)) : setSelected(selected.filter(select => select !== id))
+        console.log(id, checked)
+        selected = checked ? selected.concat(id) : selected.filter(select => select !== id)
     }
 
     useEffect(() => {
@@ -74,36 +96,45 @@ function UserDictionary({dispatch, user}) {
 
 
     function handlePagination(pageNum) {
+        // selected = []
         setPageNum(pageNum)
-        dispatch(setDictionaryUser(
-            pageNum,
-            rowSize,
-            keywordMatched ? 'keyword.raw' : 'keyword',
-            keyword
-            )
-        )
+        dispatch(setDictionaryUser(pageNum, rowSize, keywordMatched, search))
     }
-    function handleInputChange(event) {
+    function handleSearch() {
+        selected = []
+        setSearch(keyword)
         setPageNum(0)
-        setKeyword(event.target.value)
-        dispatch(setDictionaryUser(
-            0,
-            rowSize,
-            keywordMatched ? 'keyword.raw' : 'keyword',
-            event.target.value
-            )
-        )
+        dispatch(setDictionaryUser(0, rowSize, keywordMatched, keyword))
     }
     function handleCheckboxChange(event) {
+        selected = []
+        setSearch(keyword)
         setPageNum(0)
         setKeywordMatched(event.target.checked)
-        dispatch(setDictionaryUser(
-            0,
-            rowSize,
-            event.target.checked ? 'keyword.raw' : 'keyword',
-            keyword
-            )
-        )
+        dispatch(setDictionaryUser(0, rowSize, event.target.checked, keyword))
+    }
+    function handleSearchShortcut(event) {
+        if (event.keyCode === 13) {
+            handleSearch()
+        }
+    }
+    async function handleDelete() {
+        for (let i = 0; i < selected.length; i++) {
+            await deleteDictionary("USER", selected[i])
+        }
+        setDeleteDialogOpen(false);
+        await utils.sleep(1000);
+        dispatch(setDictionaryUser(0, rowSize, keywordMatched, keyword))
+    }
+    async function handleCreate() {
+        createDictionary("USER", {
+            keyword: createKeyword
+        })
+        setCreateKeyword("")
+        setCreateDialogOpen(false);
+        await utils.sleep(1000);
+        dispatch(setDictionaryUser(0, rowSize, keywordMatched, keyword))
+
     }
 
     return (
@@ -118,12 +149,13 @@ function UserDictionary({dispatch, user}) {
                                     className={classes.input}
                                     placeholder="검색"
                                     value={keyword}
-                                    onChange={handleInputChange}
+                                    onChange={event => setKeyword(event.target.value)}
+                                    onKeyUp={handleSearchShortcut}
                                 />
                                 <IconButton type="submit"
                                             className={classes.iconButton}
                                             aria-label="search"
-                                            onClick={event => handlePagination(0)}
+                                            onClick={handleSearch}
                                 >
                                     <Search />
                                 </IconButton>
@@ -150,10 +182,12 @@ function UserDictionary({dispatch, user}) {
                                     <React.Fragment>
                                         <Button variant="outlined"
                                                 color="primary"
+                                                onClick={() => {setCreateKeyword('');setCreateDialogOpen(true);}}
                                         >추가</Button>
                                         <Button variant="outlined"
-                                                color="secondary"
+                                                color="primary"
                                                 mr={1}
+                                                onClick={() => setDeleteDialogOpen(true)}
                                         >삭제</Button>
                                     </React.Fragment>
                                 )
@@ -172,31 +206,8 @@ function UserDictionary({dispatch, user}) {
                         </Grid>
                     </Grid>
 
-                    {/*<br/>*/}
-
-                    {/*<Grid container>*/}
-                    {/*    <Grid item xs={12}>*/}
-                    {/*        <Box align={"center"}>*/}
-                    {/*            <Button variant={"outlined"}*/}
-                    {/*                    onClick={() => handlePagination(pageNum - 1)}*/}
-                    {/*                    disabled={pageNum === 0}*/}
-                    {/*            >*/}
-                    {/*                이전*/}
-                    {/*            </Button>*/}
-                    {/*            <Box component={"span"} m={3}>*/}
-                    {/*                {lastPageNum === 0 ? 0 : pageNum + 1} / {lastPageNum}*/}
-                    {/*            </Box>*/}
-                    {/*            <Button variant={"outlined"}*/}
-                    {/*                    onClick={() => handlePagination(pageNum + 1)}*/}
-                    {/*                    disabled={(pageNum + 1) === lastPageNum || lastPageNum === 0}*/}
-                    {/*            >*/}
-                    {/*                다음*/}
-                    {/*            </Button>*/}
-                    {/*        </Box>*/}
-                    {/*    </Grid>*/}
-                    {/*</Grid>*/}
-
                     <br/>
+
                     <Grid container spacing={6}>
                         <Grid item xs={3}>
                             <DynamicTable dataList={[{
@@ -270,6 +281,65 @@ function UserDictionary({dispatch, user}) {
 
                 </CardContent>
             </Card>
+
+
+
+            <Dialog
+                open={createDialogOpen}
+                onClose={() => setCreateDialogOpen(false)}
+            >
+                <DialogTitle style={{ cursor: 'move' }}>
+                    등록
+                </DialogTitle>
+                <DialogContent>
+                    <Grid container>
+                        <Grid item xs={4} alignItems={"center"} alignContent={"center"}>
+                            <Box mt={2}>
+                                키워드
+                            </Box>
+                        </Grid>
+                        <Grid item xs={8}>
+                            <TextField autoFocus={true}
+                                       value={createKeyword}
+                                       onChange={event => setCreateKeyword(event.target.value)}
+                            />
+                        </Grid>
+                    </Grid>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCreate} color="secondary">
+                        추가
+                    </Button>
+                    <Button autoFocus onClick={() => setCreateDialogOpen(false)} color="primary">
+                        취소
+                    </Button>
+
+                </DialogActions>
+            </Dialog>
+
+            <Dialog
+                open={deleteDialogOpen}
+                onClose={() => setDeleteDialogOpen(false)}
+            >
+                <DialogTitle style={{ cursor: 'move' }}>
+                    경고!
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        {selected.length} 선택하신 단어를 삭제하시겠습니까?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleDelete} color="secondary">
+                        삭제
+                    </Button>
+                    <Button autoFocus onClick={() => setDeleteDialogOpen(false)} color="primary">
+                        취소
+                    </Button>
+
+                </DialogActions>
+            </Dialog>
+
         </>
 
     )

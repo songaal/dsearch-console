@@ -3,14 +3,9 @@ import { SET_DICTIONARY_USER } from "../constants";
 
 const client = new Client()
 
-export const setDictionaryUser = (pageNum, rowSize, field, value) => dispatch => client.call({
+export const setDictionaryUser = (pageNum, rowSize, isMatch, value) => dispatch => client.call({
     uri: `/dictionaries/user`,
-    params: {
-        pageNum: pageNum,
-        rowSize: rowSize,
-        field: field,
-        value: value
-    }
+    params: {pageNum, rowSize, isMatch, value}
 }).then(response => dispatch({type: SET_DICTIONARY_USER, payload: response.data}))
     .catch(error => console.error(error))
 
@@ -24,3 +19,7 @@ export const downloadDictionaryUser = () => client.call({uri: `/dictionaries/use
         document.body.appendChild(link);
         link.click();
     })
+
+export const deleteDictionary = (type, id) => client.call({uri: `/dictionaries/${type}/${id}`,  method: "delete"})
+
+export const createDictionary = (type, data) => client.call({uri: `/dictionaries/${type}`,  method: "post", data: data})

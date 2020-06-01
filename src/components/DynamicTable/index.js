@@ -52,7 +52,7 @@ function DynamicTable({dataList, showCheckBox = false, onSelectClick}) {
                         {
                             !showCheckBox ? null :
                                 <TableCell padding="checkbox">
-                                    <Checkbox onChange={(event) => handleSelectAllClick(event.target.checked)}/>
+                                    <Checkbox defaultChecked={false} onChange={(event) => handleSelectAllClick(event.target.checked)}/>
                                 </TableCell>
                         }
                         {fields.map((field, index) => <TableCell key={index}>{field}</TableCell>)}
