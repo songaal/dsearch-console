@@ -26,7 +26,7 @@ import {
     LinearProgress 
 } from "@material-ui/core";
 import {palette, sizing, spacing} from "@material-ui/system";
-import {makeStyles} from "@material-ui/core/styles";
+import {lighten,makeStyles,withStyles} from "@material-ui/core/styles";
 import {connect} from "react-redux";
 import {pink, yellow} from '@material-ui/core/colors';
 import Brightness1Icon from '@material-ui/icons/Brightness1';
@@ -36,12 +36,27 @@ const useStyles = makeStyles((theme) => ({
     headerValue: {fontSize: '1.2em', fontWeight: "bold"},
     primaryShard: {border: "1px solid",},
     replicaShard: {border: "1px dashed", },
+    margin: {
+        margin: theme.spacing(1),
+      },
     paper: {
         padding: theme.spacing(2),
         textAlign: 'center',
         color: theme.palette.text.secondary,
       },
 }));
+
+const BorderLinearProgress = withStyles({
+    root: {
+      height: 10,
+      backgroundColor: lighten('#A9D0F5', 0.5),
+    },
+    bar: {
+      borderRadius: 20,
+      backgroundColor: '#013ADF',
+    },
+  })(LinearProgress);
+
 
 const Card = styled(MuiCard)(spacing, sizing);
 const Divider = styled(MuiDivider)(spacing, sizing);
@@ -71,8 +86,8 @@ const idxRunning = [
 
 
 const idxWarning = [
-    {status:"yellow", index:"shop-a", desc:"shard~~~"},
-    {status:"red", index:"prod", desc:"replica ~~~"}
+    {status:"yellow", index:"shop-a", desc:"레플리카 샤드 이상"},
+    {status:"red", index:"prod", desc:"프라이머리 샤드 이상"}
 ]
 
 const idxResult = [
@@ -152,7 +167,12 @@ function RunningIndex() {
                                 <TableCell>
                                     <Box display="flex" alignItems="center">
                                         <Box width="100%" mr={1}>
-                                            <LinearProgress variant="determinate" />
+                                        <BorderLinearProgress
+                                            className={classes.margin}
+                                            variant="determinate"
+                                            color="secondary"
+                                            value={`${Math.round((row.docs / row.exportDoc)*100)}`}
+                                        />
                                         </Box>
                                         <Box minWidth={15}>
                                             <Typography variant="body2" color="textSecondary">{`${Math.round((row.docs / row.exportDoc)*100)}%`}</Typography>
@@ -220,7 +240,7 @@ function BottomArea() {
                                     <TableCell>
                                         {
                                             row.status == 'success' ? <Brightness1Icon color="primary" /> : 
-                                            <Brightness1Icon style={{color:'red'}} /> 
+                                            <Brightness1Icon style={{color:'red'}} />  
                                         }
                                         {row.status}
                                     </TableCell>
