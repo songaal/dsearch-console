@@ -36,7 +36,8 @@ const Configuration = async(() => import("../pages/indices/configuration"));
 
 // Search components
 const QueryTest = async(() => import("../pages/search/queryTest"));
-const ReferenceUi = async(() => import("../pages/search/referenceUI"));
+const ReferenceUI = async(() => import("../pages/search/referenceUI"));
+const ReferenceSearch = async(() => import("../pages/search/referenceUI/referenceSearch"));
 
 // Management components
 const ServerManagement = async(() => import("../pages/management/serverManagement"));
@@ -85,7 +86,8 @@ const indicesRoutes = [
 
 const searchRoutes = [
     {header: "검색", id: "쿼리테스트", path: "/search/query-test", icon: <Icon.Search/>, component: QueryTest, children: null},
-    {id: "레퍼런스UI", path: "/search/reference-ui", icon: <Icon.Search/>, component: ReferenceUi, children: null},
+    {id: "레퍼런스UI", path: "/search/reference-ui", icon: <Icon.Search/>, component: ReferenceUI, children: null},
+    {id: "검색결과", path: "/search", icon: <Icon.Search/>, component: ReferenceSearch, children: null, hidden: true},
 ];
 
 const managementRoutes = [

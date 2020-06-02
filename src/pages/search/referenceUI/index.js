@@ -14,8 +14,8 @@ import {
     Card as MuiCard,
     CardContent as MuiCardContent,
     Hidden,
-    List,
-    ListItem,
+    List as MuiList,
+    ListItem as MuiListItem,
 } from "@material-ui/core";
 import {
 
@@ -43,25 +43,23 @@ const TextareaAutosize = styled(MuiTextareaAutosize)(spacing, palette, sizing, d
 const FormControl = styled(MuiFormControl)(spacing, palette, sizing, display, borders);
 const Card = styled(MuiCard)(spacing, palette, sizing, display, borders);
 const CardContent = styled(MuiCardContent)(spacing, palette, sizing, display, borders);
+const List = styled(MuiList)(spacing, palette, sizing, display, borders);
+const ListItem = styled(MuiListItem)(spacing, palette, sizing, display, borders);
 
 
 const useStyles = makeStyles(theme => ({
     warm: { backgroundColor: Color.yellow['500'] },
-    textarea: {width: "100%", minHeight: "200px"}
+    textarea: {width: "100%", minHeight: "200px"},
 }));
 
-function ReferenceUI() {
+
+
+
+function SearchFormPanel() {
     const classes = useStyles()
 
     return (
-        <React.Fragment>
-            <Helmet title="레퍼런스UI"/>
-            <Typography variant="h3" gutterBottom display="inline">
-                레퍼런스UI
-            </Typography>
-
-            <Divider my={6}/>
-            <br/>
+        <Box style={{width: '100%'}}>
             <Card>
                 <CardContent>
 
@@ -71,22 +69,39 @@ function ReferenceUI() {
                                 <Typography variant={"h6"} display={"inline"}> 영역이름 </Typography>
                             </Box>
                         </Grid>
-                        <Grid item xs={7} md={8} lg={9}>
+                        <Grid item xs={6} md={8} lg={8}>
                             <Box align={"left"}>
                                 <TextField style={{width: "70%"}} />
-                                <Box display={"inline"} ml={2}>
-                                    <IconButton>
-                                        <ArrowUpIcon />
-                                    </IconButton>
-                                    <IconButton>
-                                        <ArrowDownIcon />
-                                    </IconButton>
+                                <Box display={"inline"}>
+                                    <Hidden lgUp>
+                                        <IconButton size={"small"}>
+                                            <ArrowUpIcon />
+                                        </IconButton>
+                                        <IconButton size={"small"}>
+                                            <ArrowDownIcon />
+                                        </IconButton>
+                                    </Hidden>
+                                    <Hidden mdDown>
+                                        <IconButton>
+                                            <ArrowUpIcon />
+                                        </IconButton>
+                                        <IconButton>
+                                            <ArrowDownIcon />
+                                        </IconButton>
+                                    </Hidden>
                                 </Box>
                             </Box>
                         </Grid>
-                        <Grid item xs={2} md={2} lg={1}>
+                        <Grid item xs={3} md={2} lg={2}>
                             <Box align={"center"}>
-                                <Button className={classes.warm} variant={"contained"}>삭제</Button>
+                                <Hidden lgUp>
+                                    <Button size={"small"} color={"primary"} variant={"contained"}>저장</Button>
+                                    <Button size={"small"} className={classes.warm} variant={"contained"}>삭제</Button>
+                                </Hidden>
+                                <Hidden mdDown>
+                                    <Button color={"primary"} variant={"contained"}>저장</Button>
+                                    <Button className={classes.warm} variant={"contained"}>삭제</Button>
+                                </Hidden>
                             </Box>
                         </Grid>
                     </Grid>
@@ -273,6 +288,41 @@ function ReferenceUI() {
 
                 </CardContent>
             </Card>
+        </Box>
+    )
+}
+
+
+
+
+
+function ReferenceUI() {
+    const classes = useStyles()
+
+    return (
+        <React.Fragment>
+            <Helmet title="레퍼런스UI"/>
+            <Typography variant="h3" gutterBottom display="inline">
+                레퍼런스UI
+            </Typography>
+
+            <Divider my={6}/>
+            <br/>
+
+            <List>
+                <ListItem my={5} p={0}>
+                    <SearchFormPanel></SearchFormPanel>
+                </ListItem>
+                <ListItem my={5} p={0}>
+                    <SearchFormPanel></SearchFormPanel>
+                </ListItem>
+                <ListItem my={5} p={0}>
+                    <SearchFormPanel></SearchFormPanel>
+                </ListItem>
+
+            </List>
+
+
 
             <Grid container>
                 <Grid item xs={12}>
