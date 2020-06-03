@@ -48,7 +48,7 @@ const ListItem = styled(MuiListItem)(spacing, palette, sizing, display, borders)
 
 
 const useStyles = makeStyles(theme => ({
-    warm: { backgroundColor: Color.yellow['500'] },
+    warm: { backgroundColor: Color.orange['500'] },
     textarea: {width: "100%", minHeight: "200px"},
 }));
 
@@ -114,7 +114,7 @@ function SearchFormPanel() {
                         </Grid>
                         <Grid item xs={9} md={10}>
                             <Box align={"left"}>
-                                <TextareaAutosize className={classes.textarea} placeholder={"query:{}"}/>
+                                <TextareaAutosize className={classes.textarea} placeholder={""}/>
                             </Box>
                         </Grid>
                     </Grid>

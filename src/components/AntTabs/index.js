@@ -3,12 +3,13 @@ import React from "react";
 import PropTypes from 'prop-types';
 // Material components
 import {withStyles} from '@material-ui/core/styles';
-import {Box, Divider as MuiDivider, Tab as AntTab, Tabs, Typography, Card, CardContent} from "@material-ui/core";
+import {Box as MuiBox, Divider as MuiDivider, Tab as AntTab, Tabs, Typography, Card, CardContent} from "@material-ui/core";
 import styled from "styled-components";
 import {spacing} from "@material-ui/system";
 
 
 const Divider = styled(MuiDivider)(spacing);
+const Box = styled(MuiBox)(spacing);
 
 // const useStyles = makeStyles((theme) => ({
 //     root: {
@@ -54,8 +55,8 @@ function TabPanel(props) {
             id={`scrollable-auto-tabpanel-${index}`}
             aria-labelledby={`scrollable-auto-tab-${index}`}
         >
-            {value === index && <Box p={3}>
-                <children key={key}/>
+            {value === index && <Box >
+                <children key={key} />
             </Box>}
         </Typography>
     );
@@ -69,12 +70,15 @@ TabPanel.propTypes = {
 };
 
 
-function AntTabs({tabs, tabIndex = 0}) {
+function AntTabs({tabs, tabIndex = 0, onChange}) {
     const [state, setState] = React.useState({tabIndex: tabIndex});
     const handleChange = (event, tabIndex) => {
         setState({
             tabIndex: tabIndex
         })
+        if (typeof onChange === 'function') {
+            onChange(tabIndex)
+        }
     };
 
     return (
@@ -88,7 +92,7 @@ function AntTabs({tabs, tabIndex = 0}) {
             >
                 {tabs.map((tab, index) => <Tab key={index} id={index} icon={tab.icon} label={tab.label || ""}/>)}
             </Tabs>
-            <Divider/>
+            <Divider />
             {tabs.map((Tab, index) => {
                 return (
                     <Box key={index}
@@ -96,7 +100,7 @@ function AntTabs({tabs, tabIndex = 0}) {
                           hidden={state.tabIndex !== index}
                           id={`scrollable-auto-tabpanel-${index}`}
                           aria-labelledby={`scrollable-auto-tab-${index}`}>
-                        {index === state.tabIndex && Tab.component && <Box p={3}> <Tab.component tabs={Tab}/> </Box>}
+                        {index === state.tabIndex && Tab.component && <Box> <Tab.component tabs={Tab}/> </Box>}
                     </Box>
                 )
             })}

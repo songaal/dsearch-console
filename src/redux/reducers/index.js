@@ -8,6 +8,7 @@ import serverSummaryReducers from "./serverSummaryReducers";
 import apiManagementReducers from "./apiManagementReducers";
 import clusterInfoReducers from "./clusterInfoReducers";
 import indicesIndexDataReducers from "./indicesIndexDataReducers";
+import referenceSearchReducers from "./referenceSearchReducers";
 
 
 export default combineReducers({
@@ -19,4 +20,5 @@ export default combineReducers({
     apiManagementReducers,
     clusterInfoReducers,
     indicesIndexDataReducers,
+    referenceSearchReducers,
 });

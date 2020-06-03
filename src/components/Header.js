@@ -1,6 +1,6 @@
 import React, {Component, useState} from "react";
 import { useHistory } from "react-router-dom";
-import { connect, useDispatch, useSelector } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import styled, {withTheme} from "styled-components";
 import {darken} from "polished";
 
@@ -19,7 +19,7 @@ import {
 
 import {Menu as MenuIcon, ArrowDropDown } from "@material-ui/icons";
 
-import {Bell, MessageSquare, Search as SearchIcon, Home} from "react-feather";
+import {Search as SearchIcon, Home} from "react-feather";
 
 const AppBar = styled(MuiAppBar)`
   background: ${props => props.theme.header.background};
@@ -234,17 +234,25 @@ const MainHeader = ({theme, onDrawerToggle}) => (
     </React.Fragment>)
 
 const DashBoardHeader = ({theme, onDrawerToggle}) => {
-    const history = useHistory()
+    const [keyword, setKeyword] = useState("")
     const qs = new URLSearchParams(location.search)
-    const [keyword, setKeyword] = useState(qs.get("keyword") || "")
+    const dispatch = useDispatch()
+    const history = useHistory()
 
-    // const selector = useSelector()
-    // connect, useDispatch, useSelector
+    function handleSearch() {
+        history.push("/search")
+    }
 
-    function handleSearch(event) {
+    function handleKeyEvent(event) {
         if (event.keyCode === 13) {
-            history.push("/search?keyword=" + keyword)
+            handleSearch()
         }
+    }
+
+    if (qs.get("keyword") !== null && qs.get("keyword") !== keyword) {
+        console.log("Global Reference Search Keyword: ", qs.get("keyword"))
+        setKeyword(qs.get("keyword"))
+        handleSearch()
     }
 
     return (
@@ -269,9 +277,9 @@ const DashBoardHeader = ({theme, onDrawerToggle}) => {
                                     <SearchIcon/>
                                 </SearchIconWrapper>
                                 <Input placeholder="검색 (Enter 입력)"
+                                       onKeyUp={handleKeyEvent}
                                        value={keyword}
-                                       onChange={(event) => setKeyword(event.target.value)}
-                                       onKeyUp={handleSearch}
+                                       onChange={event => setKeyword(event.target.value)}
                                 />
                             </Search>
                         </Grid>
