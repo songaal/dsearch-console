@@ -1,11 +1,12 @@
 import React, {useEffect} from "react";
 import styled from "styled-components";
 import {
-    setClusterInfoActions,
-    setIndicesInfoActions,
-    setNodesInfoActions,
-    setShardsInfoActions
-} from '@actions/clusterInfoActions'
+    setIndexResultActions,
+    setRunningIndexActions,
+    setIndexStatusActions,
+    setIndexActions,
+    setIndexAliasActions
+} from '@actions/dashBoardActions'
 import Helmet from "react-helmet";
 
 import {
@@ -28,7 +29,7 @@ import {
 import {palette, sizing, spacing} from "@material-ui/system";
 import {lighten,makeStyles,withStyles} from "@material-ui/core/styles";
 import {connect} from "react-redux";
-import {pink, yellow} from '@material-ui/core/colors';
+import Async from "~/components/Async";
 import Brightness1Icon from '@material-ui/icons/Brightness1';
 
 const useStyles = makeStyles((theme) => ({
@@ -95,103 +96,141 @@ const idxResult = [
     {status:"fail", index:"shop-b", alias:"shop", lastSuccess:"56분전", elapsed:"1초", docs:0, storage:"10kb"},
 ]
 
+const untilTime = (time) => {
+
+    var date = new Date().getTime() - new Date(time * 1000).getTime();
+
+    var hours   = ((date / 3600) / 1000) * 60;
+
+    let h = Math.floor(hours / 60)
+    let m = Math.floor(hours % 60)
+    
+    // var minutes = Math.ceil(((date - (hours * 3600)) / 60)/ 1000);
+
+    if(h != 0 && m != 0) {
+        return h+'시간 ' + m+'분'
+    }else if(h != 0 && m == 0) {
+        return h+'시간'
+    }else{
+        return m+'분' 
+    }
+
+}
 
 
+function numberWithCommas(num) {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
 
-
-
-
-function WarningIndex() {
+function WarningIndex({status}) {
     const classes = useStyles();
+    console.log(status)
 
     return(
         <>
-               <Typography variant="h4" gutterBottom display="inline">
-                    주의할 인덱스
-                </Typography>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>
-                                인덱스
-                            </TableCell>
-                            <TableCell>
-                                작업
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {Object.values(idxWarning).map(row =>
-                            <TableRow>
+            <Typography variant="h4" gutterBottom display="inline">
+                주의할 인덱스
+            </Typography>
+            <br/><br/>
+            <Table>
+                <TableHead></TableHead>
+                <TableBody>
+                    {Object.values(status).map(row => {
+                        if(row.health != 'green') {
+                            return(
+                                <TableRow>
                                 <TableCell>
-                                <Brightness1Icon style={{color:row.status}} />
-                                   {row.index}
+                                    <Brightness1Icon style={{color:row.health}} />
+                                    {row.index}
                                 </TableCell>
                                 <TableCell>
-                                    {row.desc}
+                                    {row.health == 'yellow' ? <font color="orange"> 레플리카 샤드 이상 </font> :
+                                    <font color="red"> 프라이머리 샤드 이상 </font>}
                                 </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>      
-            </>
+                                    </TableRow>
+
+                            )
+                            
+                        }
+                    }
+                    )}
+                </TableBody>
+            </Table>      
+        </>
     );
 
 }
 
-function RunningIndex() {
+function RunningIndex({result, running, status}) {
     const classes = useStyles();
+    let indexMap = new Map()
+    let indexList = []
+    Object.values(running.hits.hits).forEach(row => {
+    
+        Object.values(result.hits.hits).forEach(row2 => {
+    
+            Object.values(status).forEach(row3 => {
+                if(row._source.index == row2._source.index && row2._source.index == row3.index){
+
+                    indexList.push ({
+                        index: row._source.index,
+                        startTime: row._source.startTime,
+                        currentDoc: row3['docs.count'],
+                        lastDoc: row2._source.docSize
+                    })
+
+                    indexMap.set(row._source.index, indexList)
+                }
+                
+            })
+        })
+    })
+
+    //running 돌면서 없는건 초기 셋팅
 
     return(
         <>
-               <Typography variant="h4" gutterBottom display="inline">
-                    전체색인 실행중
-                </Typography>
-                <Table>
-                    <TableHead>
+            <Typography variant="h4" gutterBottom display="inline">
+                전체색인 실행중
+            </Typography>
+            <br/><br/>
+            <Table>
+                <TableHead></TableHead>
+                <TableBody>
+                    {Object.values(indexList).map(row =>
                         <TableRow>
                             <TableCell>
-                                인덱스
+                                {row.index}
                             </TableCell>
                             <TableCell>
-                                작업
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {Object.values(idxRunning).map(row =>
-                            <TableRow>
-                                <TableCell>
-                                   {row.index}
-                                </TableCell>
-                                <TableCell>
-                                    <Box display="flex" alignItems="center">
-                                        <Box width="100%" mr={1}>
-                                        <BorderLinearProgress
-                                            className={classes.margin}
-                                            variant="determinate"
-                                            color="secondary"
-                                            value={`${Math.round((row.docs / row.exportDoc)*100)}`}
-                                        />
-                                        </Box>
-                                        <Box minWidth={15}>
-                                            <Typography variant="body2" color="textSecondary">{`${Math.round((row.docs / row.exportDoc)*100)}%`}</Typography>
-                                        </Box>
+                                <Box display="flex" alignItems="center">
+                                    <Box width="100%" mr={1}>
+                                    <BorderLinearProgress
+                                        className={classes.margin}
+                                        variant="determinate"
+                                        color="secondary"
+                                        //value={`${Math.round((125210 / row.lastDoc)*100)}`}
+                                        value={`${Math.round((row.currentDoc / row.lastDoc)*100)}`}
+                                    />
                                     </Box>
-                                    {row.docs} <br/>
-                                    {row.lastIndex} <br/>
-                                    {row.exportDoc} <br/>
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>      
-            </>
+                                    <Box minWidth={15}>
+                                        <Typography variant="body2" color="textSecondary">{`${Math.round((row.currentDoc / row.lastDoc)*100)}%`}</Typography>
+                                    </Box>
+                                </Box>
+                                {numberWithCommas(row.currentDoc)} 건 <br/>
+                                시작시간 {untilTime(row.startTime)} 전 시작 <br/>
+                                예상문서 약 {numberWithCommas(row.lastDoc)} 건<br/>
+                            </TableCell>
+                        </TableRow>
+                    )}
+                </TableBody>
+            </Table>      
+        </>
     );
 
 }
 
-function TopArea() {
+function TopArea({result, running, status}) {
     const classes = useStyles();
 
     return (
@@ -200,10 +239,10 @@ function TopArea() {
                 <CardContent>
                     <Grid container spacing={3}>
                         <Grid item xs={6}>
-                            <RunningIndex />
+                            <RunningIndex result={result} running={running} status={status}/>
                         </Grid>
                         <Grid item xs={6}>
-                            <WarningIndex />
+                            <WarningIndex status={status}/>
                         </Grid>
                     </Grid>
                 </CardContent>
@@ -212,9 +251,57 @@ function TopArea() {
     )
 }
 
-
-function BottomArea() {
+function BottomArea({result, alias}) {
    
+    const format = (time) => {
+        var date = new Date(time * 1000);
+        
+        return date.getFullYear() + '-' +
+        ('0' + (date.getMonth()+1)).slice(-2)+ '-' +  
+        ('0' + date.getDate()).slice(-2) + ' '+
+        ('0'+(date.getHours())).slice(-2)+ ':'+
+        ('0' + (date.getMinutes())).slice(-2)+ ':'+
+        ('0' + (date.getSeconds())).slice(-2)
+    }
+
+    const getElapsed = (time) => {
+        
+        var hours   = Math.floor(time / 3600);
+        var minutes = Math.ceil((time - (hours * 3600)) / 60);
+
+        if(hours != 0) {
+            return hours+'시간 ' + minutes+'분' 
+        }else{
+            return minutes+'분' 
+        }
+    }
+
+    console.log('alias : ', alias)
+    let resultList = []
+    Object.values(result.hits.hits).forEach(row => {
+
+        let aliasName = ""
+        Object.values(alias).forEach(row2 =>  {
+
+            if(row._source.index == row2.index) {
+                aliasName = row2.alias
+            }
+        })
+   
+        resultList.push(
+            {
+                index:row._source.index,
+                alias: aliasName,
+                status: row._source.status,
+                startTime: row._source.startTime,
+                endTime: row._source.endTime,
+                docSize: row._source.docSize,
+                storage: row._source.storage
+            }
+        )
+    })
+
+    console.log('list : ', resultList)
     return (
         <React.Fragment>
             <Typography variant="h4" gutterBottom display="inline">
@@ -235,29 +322,30 @@ function BottomArea() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {Object.values(idxResult).map(row =>
+                            {Object.values(resultList).map(row =>
                                 <TableRow>
                                     <TableCell>
                                         {
-                                            row.status == 'success' ? <Brightness1Icon color="primary" /> : 
+                                            row.status == 'SUCCESS' ? <Brightness1Icon color="primary" /> : 
                                             <Brightness1Icon style={{color:'red'}} />  
                                         }
                                         {row.status}
                                     </TableCell>
                                     <TableCell>
-                                        {row.index}
+                                       <a href> {row.index} </a>
                                     </TableCell>
                                     <TableCell>
                                         {row.alias}
                                     </TableCell>
                                     <TableCell>
-                                        {row.lastSuccess}
+                                        <b>{untilTime(row.endTime)} 전 </b><br/>
+                                        {format(row.endTime)}
                                     </TableCell>
                                     <TableCell>
-                                        {row.elapsed}
+                                       {getElapsed(row.endTime - row.startTime)}
                                     </TableCell>
                                     <TableCell>
-                                        {row.docs}
+                                        {numberWithCommas(row.docSize)}
                                     </TableCell>
                                     <TableCell>
                                         {row.storage}
@@ -272,8 +360,28 @@ function BottomArea() {
     );
 }
 
-function DashBoard() {
+function DashBoard({dispatch, result, running, status, alias}) {
     const classes = useStyles();
+
+    useEffect(() => {
+        dispatch(setIndexResultActions())
+        dispatch(setRunningIndexActions())
+        dispatch(setIndexStatusActions())
+        dispatch(setIndexAliasActions())
+    }, [])
+
+
+    // let runArr = []
+
+    // Object.values(running.hits.hits).forEach(row => {
+    //     console.log('row : ' + row._source.index)
+    //     runArr.push(row._source.index)
+
+    // })
+
+    // console.log('runArr : ' + runArr)
+    
+    //const Api = Async(() => import("./runningIndex"));
     
     return (
         <React.Fragment>
@@ -289,10 +397,13 @@ function DashBoard() {
 
             <Divider my={6}/>
 
-            <TopArea/>
+            <TopArea result={result} running={running} status={status}/>
 
             <br/>
-            <BottomArea/>
+            <BottomArea result={result} alias={alias}/>
+
+            <br/>
+            
                 </CardContent>
             </Card>
            
@@ -300,4 +411,9 @@ function DashBoard() {
     );
 }
 
-export default DashBoard;
+export default connect(store => ({
+    result: store.dashBoardReducers.result,
+    running: store.dashBoardReducers.running,
+    status: store.dashBoardReducers.status,
+    alias: store.dashBoardReducers.alias
+}))(DashBoard);
