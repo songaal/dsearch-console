@@ -1,6 +1,7 @@
-import React, {Component} from "react";
+import React, {Component, useState} from "react";
+import { useHistory } from "react-router-dom";
+import { connect, useDispatch } from "react-redux";
 import styled, {withTheme} from "styled-components";
-import {connect} from "react-redux";
 import {darken} from "polished";
 
 import {
@@ -18,7 +19,7 @@ import {
 
 import {Menu as MenuIcon, ArrowDropDown } from "@material-ui/icons";
 
-import {Bell, MessageSquare, Search as SearchIcon, Home} from "react-feather";
+import {Search as SearchIcon, Home} from "react-feather";
 
 const AppBar = styled(MuiAppBar)`
   background: ${props => props.theme.header.background};
@@ -232,45 +233,72 @@ const MainHeader = ({theme, onDrawerToggle}) => (
         </AppBar>
     </React.Fragment>)
 
-const DashBoardHeader = ({theme, onDrawerToggle}) => (
-    <React.Fragment>
-        <AppBar position="sticky" elevation={0}>
-            <Toolbar>
-                <Grid container alignItems="center">
-                    <Hidden mdUp>
-                        <Grid item>
-                            <IconButton
-                                color="inherit"
-                                aria-label="Open drawer"
-                                onClick={onDrawerToggle}
-                            >
-                                <MenuIcon/>
-                            </IconButton>
-                        </Grid>
-                    </Hidden>
-                    <Grid item>
-                        <Search>
-                            <SearchIconWrapper>
-                                <SearchIcon/>
-                            </SearchIconWrapper>
-                            <Input placeholder="검색"/>
-                        </Search>
-                    </Grid>
-                    <Grid item xs/>
+const DashBoardHeader = ({theme, onDrawerToggle}) => {
+    const [keyword, setKeyword] = useState("")
+    const qs = new URLSearchParams(location.search)
+    const dispatch = useDispatch()
+    const history = useHistory()
 
-                    <Grid item>
-                        <IconButton color="inherit"
-                                    onClick={() => location.href="/"}>
-                            <Home />
-                        </IconButton>
-                        <ClusterMenu theme={theme}/>
-                        <UserMenu theme={theme}/>
+    function handleSearch() {
+        history.push("/search")
+    }
+
+    function handleKeyEvent(event) {
+        if (event.keyCode === 13) {
+            handleSearch()
+        }
+    }
+
+    if (qs.get("keyword") !== null && qs.get("keyword") !== keyword) {
+        console.log("Global Reference Search Keyword: ", qs.get("keyword"))
+        setKeyword(qs.get("keyword"))
+        handleSearch()
+    }
+
+    return (
+        <React.Fragment>
+            <AppBar position="sticky" elevation={0}>
+                <Toolbar>
+                    <Grid container alignItems="center">
+                        <Hidden mdUp>
+                            <Grid item>
+                                <IconButton
+                                    color="inherit"
+                                    aria-label="Open drawer"
+                                    onClick={onDrawerToggle}
+                                >
+                                    <MenuIcon/>
+                                </IconButton>
+                            </Grid>
+                        </Hidden>
+                        <Grid item>
+                            <Search>
+                                <SearchIconWrapper>
+                                    <SearchIcon/>
+                                </SearchIconWrapper>
+                                <Input placeholder="검색 (Enter 입력)"
+                                       onKeyUp={handleKeyEvent}
+                                       value={keyword}
+                                       onChange={event => setKeyword(event.target.value)}
+                                />
+                            </Search>
+                        </Grid>
+                        <Grid item xs/>
+
+                        <Grid item>
+                            <IconButton color="inherit"
+                                        onClick={() => location.href="/"}>
+                                <Home />
+                            </IconButton>
+                            <ClusterMenu theme={theme}/>
+                            <UserMenu theme={theme}/>
+                        </Grid>
                     </Grid>
-                </Grid>
-            </Toolbar>
-        </AppBar>
-    </React.Fragment>
-)
+                </Toolbar>
+            </AppBar>
+        </React.Fragment>
+    )
+}
 
 
 const Header = ({theme, layout, onDrawerToggle}) => {
