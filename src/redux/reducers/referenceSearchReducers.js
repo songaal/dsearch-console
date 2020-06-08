@@ -1,7 +1,9 @@
 import * as types from '../constants';
 
 let initState = {
-    results: []
+    keyword: '',
+    templateList: [],
+    template: {}
 };
 
 export default function reducer(state = initState, actions) {
@@ -9,7 +11,17 @@ export default function reducer(state = initState, actions) {
         case types.SET_REFERENCE_SEARCH_KEYWORD:
             return {
                 ...state,
-                results: actions.payload
+                keyword: actions.payload
+            };
+        case types.SET_REFERENCE_TEMPLATE_LIST:
+            return {
+                ...state,
+                templateList: actions.payload
+            };
+        case types.SET_REFERENCE_TEMPLATE:
+            return {
+                ...state,
+                template: actions.payload
             };
         default:
             return state

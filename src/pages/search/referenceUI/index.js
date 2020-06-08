@@ -1,4 +1,5 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
+import {connect} from "react-redux";
 import styled from "styled-components";
 import Helmet from 'react-helmet';
 import {
@@ -17,9 +18,7 @@ import {
     List as MuiList,
     ListItem as MuiListItem,
 } from "@material-ui/core";
-import {
-
-} from "@material-ui/icons";
+import {} from "@material-ui/icons";
 
 import {
     ArrowUp as ArrowUpIcon,
@@ -28,9 +27,16 @@ import {
     MinusSquare as MinusSquareIcon,
 } from "react-feather";
 
-import { makeStyles } from "@material-ui/styles";
+import {makeStyles} from "@material-ui/styles";
 import {borders, display, palette, sizing, spacing} from "@material-ui/system";
 import * as Color from '@material-ui/core/colors';
+import {
+    addReferenceTemplate,
+    updateReferenceTemplate,
+    setReferenceTemplateList,
+    deleteReferenceTemplate, actionReferenceTemplate
+} from "../../../redux/actions/referenceSearchActions";
+import utils from '~/utils'
 
 const Box = styled(MuiBox)(spacing, palette, sizing, display, borders);
 const Divider = styled(MuiDivider)(spacing, palette, sizing, display, borders);
@@ -48,15 +54,86 @@ const ListItem = styled(MuiListItem)(spacing, palette, sizing, display, borders)
 
 
 const useStyles = makeStyles(theme => ({
-    warm: { backgroundColor: Color.orange['500'] },
+    warm: {backgroundColor: Color.orange['500']},
     textarea: {width: "100%", minHeight: "200px"},
 }));
 
+const placeholder = {
+    query: `{
+    "query": {
+        "match" : {
+            "message" : {
+                "query" : "$keyword"
+            }
+        }
+    },
+    “aggr”: {}
+}`
+}
 
-
-
-function SearchFormPanel() {
+function SearchFormPanel({template, templateIndex, lastTemplateIndex, onDelete, onSave, onUp, onDown, disabledSaveButton, disabledDeleteButton, disabledOrderButton}) {
     const classes = useStyles()
+    const [name, setName] = useState(template['name'] || '')
+    const [indices, setIndices] = useState(template['indices'] || '')
+    const [query, setQuery] = useState(template['query'] || '')
+    const [title, setTitle] = useState(template['title'] || '')
+    const [clickUrl, setClickUrl] = useState(template['clickUrl'] || '')
+    const [thumbnails, setThumbnails] = useState(template['thumbnails'] || '')
+    const [fields, setFields] = useState(template['fields'] && template['fields'].length !== 0 ? template['fields'] : [{}])
+    const [aggs, setAggs] = useState(template['aggs'] && template['aggs'].length !== 0 ? template['aggs'] : [{}])
+    const [editable, setEditable] = useState(false)
+
+    function handleChangeField(event, index, field) {
+        let clone = fields.slice()
+        clone[index][field] = event.target.value
+        setFields(clone)
+    }
+
+    function handleAddField(type, index) {
+        if (type === 'fields') {
+            setFields([].concat(fields.slice(0, index + 1), {label: '', value: ''}, fields.slice(index + 1)))
+        } else if (type === 'aggs') {
+            setAggs([].concat(aggs.slice(0, index + 1), {label: '', value: ''}, aggs.slice(index + 1)))
+        }
+    }
+
+    function handleRemoveField(type, index) {
+        if (type === 'fields') {
+            let tmp = [].concat(fields.slice(0, index), fields.slice(index + 1))
+            if (tmp.length === 0) {
+                tmp.push({label: '', value: ''})
+            }
+            setFields(tmp)
+        } else if (type === 'aggs') {
+            let tmp = [].concat(aggs.slice(0, index), aggs.slice(index + 1))
+            if (tmp.length === 0) {
+                tmp.push({label: '', value: ''})
+            }
+            setAggs(tmp)
+        }
+    }
+
+    function handleChangeAggs(event, index, field) {
+        let clone = aggs.slice()
+        clone[index][field] = event.target.value
+        setAggs(clone)
+    }
+
+    function handleSave() {
+        onSave({
+            name,
+            indices,
+            query,
+            title,
+            clickUrl,
+            thumbnails,
+            id: template.id,
+            order: template['order'],
+            fields: fields.filter(o => o['label'] && o['value']),
+            aggs: aggs.filter(o => o['label'] && o['value']),
+        })
+        setEditable(false)
+    }
 
     return (
         <Box style={{width: '100%'}}>
@@ -66,27 +143,37 @@ function SearchFormPanel() {
                     <Grid container my={5}>
                         <Grid item xs={3} md={2}>
                             <Box align={"center"} mt={2}>
-                                <Typography variant={"h6"} display={"inline"}> 영역이름 </Typography>
+                                <Typography variant={"h6"} display={"inline"}> 영역이름</Typography>
                             </Box>
                         </Grid>
                         <Grid item xs={6} md={8} lg={8}>
                             <Box align={"left"}>
-                                <TextField style={{width: "70%"}} />
+                                <TextField style={{width: "70%"}} value={name}
+                                           onChange={(event) => {setEditable(true);setName(event.target.value)}}/>
                                 <Box display={"inline"}>
                                     <Hidden lgUp>
-                                        <IconButton size={"small"}>
-                                            <ArrowUpIcon />
+                                        <IconButton size={"small"}
+                                                    onClick={onUp}
+                                                    disabled={disabledOrderButton || templateIndex === 0}
+                                        >
+                                            <ArrowUpIcon/>
                                         </IconButton>
-                                        <IconButton size={"small"}>
-                                            <ArrowDownIcon />
+                                        <IconButton size={"small"}
+                                                    onClick={onDown}
+                                                    disabled={disabledOrderButton || templateIndex === lastTemplateIndex}
+                                        >
+                                            <ArrowDownIcon/>
                                         </IconButton>
                                     </Hidden>
                                     <Hidden mdDown>
-                                        <IconButton>
-                                            <ArrowUpIcon />
+                                        <IconButton onClick={onUp}
+                                                    disabled={disabledOrderButton || templateIndex === 0}>
+                                            <ArrowUpIcon/>
                                         </IconButton>
-                                        <IconButton>
-                                            <ArrowDownIcon />
+                                        <IconButton onClick={onDown}
+                                                    disabled={disabledOrderButton || templateIndex === lastTemplateIndex}
+                                        >
+                                            <ArrowDownIcon/>
                                         </IconButton>
                                     </Hidden>
                                 </Box>
@@ -95,13 +182,47 @@ function SearchFormPanel() {
                         <Grid item xs={3} md={2} lg={2}>
                             <Box align={"center"}>
                                 <Hidden lgUp>
-                                    <Button size={"small"} color={"primary"} variant={"contained"}>저장</Button>
-                                    <Button size={"small"} className={classes.warm} variant={"contained"}>삭제</Button>
+                                    <Button size={"small"}
+                                            color={"primary"}
+                                            variant={editable ? "contained" : "outlined"}
+                                            onClick={handleSave}
+                                            disabled={disabledSaveButton || disabledDeleteButton}
+                                    >저장</Button>
+                                    <Button size={"small"}
+                                            className={classes.warm}
+                                            variant={"contained"}
+                                            onClick={onDelete}
+                                            disabled={disabledDeleteButton}
+                                    >삭제</Button>
                                 </Hidden>
                                 <Hidden mdDown>
-                                    <Button color={"primary"} variant={"contained"}>저장</Button>
-                                    <Button className={classes.warm} variant={"contained"}>삭제</Button>
+                                    <Button color={"primary"}
+                                            variant={editable ? "contained" : "outlined"}
+                                            onClick={handleSave}
+                                            disabled={disabledSaveButton || disabledDeleteButton}
+                                    >저장</Button>
+                                    <Button className={classes.warm}
+                                            variant={"contained"}
+                                            onClick={onDelete}
+                                            disabled={disabledDeleteButton}
+                                    >삭제</Button>
                                 </Hidden>
+                            </Box>
+                        </Grid>
+                    </Grid>
+
+                    <Grid container my={5}>
+                        <Grid item xs={3} md={2}>
+                            <Box align={"center"}>
+                                <Typography variant={"h6"} display={"inline"}> 인덱스 </Typography>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={9} md={10}>
+                            <Box align={"left"}>
+                                <TextField fullWidth
+                                           value={indices}
+                                           onChange={event => {setIndices(event.target.value); setEditable(true)}}
+                                />
                             </Box>
                         </Grid>
                     </Grid>
@@ -114,7 +235,12 @@ function SearchFormPanel() {
                         </Grid>
                         <Grid item xs={9} md={10}>
                             <Box align={"left"}>
-                                <TextareaAutosize className={classes.textarea} placeholder={""}/>
+                                <TextareaAutosize
+                                    className={classes.textarea}
+                                    placeholder={placeholder.query}
+                                    value={query}
+                                    onChange={event => {setQuery(event.target.value); setEditable(true)}}
+                                />
                             </Box>
                         </Grid>
                     </Grid>
@@ -128,7 +254,10 @@ function SearchFormPanel() {
                         </Grid>
                         <Grid item xs={9} md={10}>
                             <Box align={"left"}>
-                                <TextField fullWidth />
+                                <TextField fullWidth
+                                           value={title}
+                                           onChange={event => {setTitle(event.target.value); setEditable(true)}}
+                                />
                             </Box>
                         </Grid>
                     </Grid>
@@ -141,7 +270,10 @@ function SearchFormPanel() {
                         </Grid>
                         <Grid item xs={9} md={10}>
                             <Box align={"left"}>
-                                <TextField fullWidth />
+                                <TextField fullWidth
+                                           value={clickUrl}
+                                           onChange={event => {setClickUrl(event.target.value); setEditable(true)}}
+                                />
                             </Box>
                         </Grid>
                     </Grid>
@@ -154,7 +286,10 @@ function SearchFormPanel() {
                         </Grid>
                         <Grid item xs={9} md={10}>
                             <Box align={"left"}>
-                                <TextField fullWidth />
+                                <TextField fullWidth
+                                           value={thumbnails}
+                                           onChange={event => {setThumbnails(event.target.value); setEditable(true)}}
+                                />
                             </Box>
                         </Grid>
                     </Grid>
@@ -184,38 +319,53 @@ function SearchFormPanel() {
 
                             {/* Item List */}
                             <List>
-                                <ListItem>
-                                    <Grid container>
-                                        <Grid item xs={5}>
-                                            <Box px={1}>
-                                                <TextField fullWidth />
-                                            </Box>
-                                        </Grid>
-                                        <Grid item xs={5}>
-                                            <Box px={1}>
-                                                <TextField fullWidth />
-                                            </Box>
-                                        </Grid>
-                                        <Grid item xs={2}>
-                                            <Hidden lgUp>
-                                                <IconButton size={"small"}>
-                                                    <PlusSquareIcon />
-                                                </IconButton>
-                                                <IconButton size={"small"}>
-                                                    <MinusSquareIcon />
-                                                </IconButton>
-                                            </Hidden>
-                                            <Hidden mdDown>
-                                                <IconButton >
-                                                    <PlusSquareIcon />
-                                                </IconButton>
-                                                <IconButton>
-                                                    <MinusSquareIcon />
-                                                </IconButton>
-                                            </Hidden>
-                                        </Grid>
-                                    </Grid>
-                                </ListItem>
+                                {
+                                    fields.map((field, index) => {
+                                        return (
+                                            <ListItem key={index}>
+                                                <Grid container>
+                                                    <Grid item xs={5}>
+                                                        <Box px={1}>
+                                                            <TextField fullWidth
+                                                                       value={field['label'] || ''}
+                                                                       onChange={event => {handleChangeField(event, index, 'label'); setEditable(true)}}
+                                                            />
+                                                        </Box>
+                                                    </Grid>
+                                                    <Grid item xs={5}>
+                                                        <Box px={1}>
+                                                            <TextField fullWidth
+                                                                       value={field['value'] || ''}
+                                                                       onChange={event => {handleChangeField(event, index, 'value'); setEditable(true)}}
+                                                            />
+                                                        </Box>
+                                                    </Grid>
+                                                    <Grid item xs={2}>
+                                                        <Hidden lgUp>
+                                                            <IconButton size={"small"}
+                                                                        onClick={() => handleAddField('fields', index)}>
+                                                                <PlusSquareIcon/>
+                                                            </IconButton>
+                                                            <IconButton size={"small"}
+                                                                        onClick={() => handleRemoveField('fields', index)}>
+                                                                <MinusSquareIcon/>
+                                                            </IconButton>
+                                                        </Hidden>
+                                                        <Hidden mdDown>
+                                                            <IconButton onClick={() => handleAddField('fields', index)}>
+                                                                <PlusSquareIcon/>
+                                                            </IconButton>
+                                                            <IconButton
+                                                                onClick={() => handleRemoveField('fields', index)}>
+                                                                <MinusSquareIcon/>
+                                                            </IconButton>
+                                                        </Hidden>
+                                                    </Grid>
+                                                </Grid>
+                                            </ListItem>
+                                        )
+                                    })
+                                }
                             </List>
 
                         </Grid>
@@ -246,40 +396,56 @@ function SearchFormPanel() {
                             </Grid>
                             {/* item list */}
                             <List>
-                                <ListItem>
-                                    <Grid container>
-                                        <Grid item xs={5}>
-                                            <Box px={1}>
-                                                <TextField fullWidth />
-                                            </Box>
-                                        </Grid>
-                                        <Grid item xs={5}>
-                                            <Box px={1}>
-                                                <TextField fullWidth />
-                                            </Box>
-                                        </Grid>
-                                        <Grid item xs={2}>
-                                            <Box display={"inline"}>
-                                                <Hidden lgUp>
-                                                    <IconButton size={"small"}>
-                                                        <PlusSquareIcon />
-                                                    </IconButton>
-                                                    <IconButton size={"small"}>
-                                                        <MinusSquareIcon />
-                                                    </IconButton>
-                                                </Hidden>
-                                                <Hidden mdDown>
-                                                    <IconButton >
-                                                        <PlusSquareIcon />
-                                                    </IconButton>
-                                                    <IconButton>
-                                                        <MinusSquareIcon />
-                                                    </IconButton>
-                                                </Hidden>
-                                            </Box>
-                                        </Grid>
-                                    </Grid>
-                                </ListItem>
+                                {
+                                    aggs.map((agg, index) => {
+                                        return (
+                                            <ListItem key={index}>
+                                                <Grid container>
+                                                    <Grid item xs={5}>
+                                                        <Box px={1}>
+                                                            <TextField fullWidth
+                                                                       value={agg['label'] || ''}
+                                                                       onChange={event => {handleChangeAggs(event, index, 'label'); setEditable(true)}}
+                                                            />
+                                                        </Box>
+                                                    </Grid>
+                                                    <Grid item xs={5}>
+                                                        <Box px={1}>
+                                                            <TextField fullWidth
+                                                                       value={agg['value'] || ''}
+                                                                       onChange={event => {handleChangeAggs(event, index, 'value'); setEditable(true)}}
+                                                            />
+                                                        </Box>
+                                                    </Grid>
+                                                    <Grid item xs={2}>
+                                                        <Box display={"inline"}>
+                                                            <Hidden lgUp>
+                                                                <IconButton size={"small"}
+                                                                            onClick={() => handleAddField('aggs', index)}>
+                                                                    <PlusSquareIcon/>
+                                                                </IconButton>
+                                                                <IconButton size={"small"}
+                                                                            onClick={() => handleRemoveField('aggs', index)}>
+                                                                    <MinusSquareIcon/>
+                                                                </IconButton>
+                                                            </Hidden>
+                                                            <Hidden mdDown>
+                                                                <IconButton
+                                                                    onClick={() => handleAddField('aggs', index)}>
+                                                                    <PlusSquareIcon/>
+                                                                </IconButton>
+                                                                <IconButton
+                                                                    onClick={() => handleRemoveField('aggs', index)}>
+                                                                    <MinusSquareIcon/>
+                                                                </IconButton>
+                                                            </Hidden>
+                                                        </Box>
+                                                    </Grid>
+                                                </Grid>
+                                            </ListItem>
+                                        )
+                                    })
+                                }
                             </List>
 
 
@@ -292,12 +458,91 @@ function SearchFormPanel() {
     )
 }
 
+const sleep = 1000
 
-
-
-
-function ReferenceUI() {
+function ReferenceUI({dispatch}) {
     const classes = useStyles()
+    const [disabledAddPanelButton, setDisabledAddPanelButton] = useState(false)
+    const [disabledDeleteButton, setDisabledDeleteButton] = useState(false)
+    const [disabledSaveButton, setDisabledSaveButton] = useState(false)
+    const [disabledOrderButton, setDisabledOrderButton] = useState(false)
+    const [templateList, setTemplateList] = useState([])
+
+    useEffect(() => {
+        dispatch(setReferenceTemplateList())
+            .then(response => setTemplateList(response.payload))
+            .catch(error => console.error(error))
+    }, [])
+
+    function addTemplatePanel() {
+        setDisabledAddPanelButton(true)
+        let lastNum = 0
+        templateList.forEach(t => lastNum = Math.max(t['order'], lastNum))
+        dispatch(addReferenceTemplate({order: lastNum + 1}))
+            .then(() => utils.sleep(sleep))
+            .then(() => dispatch(setReferenceTemplateList()).then(response => setTemplateList(response.payload)))
+            .catch(error => console.error(error))
+            .finally(() => setDisabledAddPanelButton(false))
+    }
+
+    function handleDelete(id) {
+        setDisabledDeleteButton(true)
+        dispatch(deleteReferenceTemplate(id))
+            .then(() => utils.sleep(sleep))
+            .then(() => dispatch(setReferenceTemplateList()))
+            .then(response => setTemplateList(response.payload))
+            .catch(error => console.error(error))
+            .finally(() => setDisabledDeleteButton(false))
+    }
+
+    function handleSave(id, template, index) {
+        setDisabledSaveButton(true)
+        dispatch(updateReferenceTemplate(id, template))
+            .then(() => utils.sleep(sleep))
+            .finally(() => setDisabledSaveButton(false))
+    }
+
+    function handleUp(index) {
+        if (index === 0) {
+            return;
+        }
+        let tempList = templateList.slice()
+        let prev = tempList[index - 1]
+        let now = tempList[index]
+        setDisabledOrderButton(true)
+        dispatch(actionReferenceTemplate('orders', {
+            orders: [
+                {id: prev['id'], order: now['order']},
+                {id: now['id'], order: prev['order']},
+            ]
+        }))
+            .then(() => utils.sleep(sleep))
+            .then(() => dispatch(setReferenceTemplateList()))
+            .then(response => setTemplateList(response.payload))
+            .catch(error => console.error(error))
+            .finally(() => setDisabledOrderButton(false))
+    }
+
+    function handleDown(index) {
+        if (index >= templateList.length - 1) {
+            return;
+        }
+        let tempList = templateList.slice()
+        let prev = tempList[index]
+        let now = tempList[index + 1]
+        setDisabledOrderButton(true)
+        dispatch(actionReferenceTemplate('orders', {
+            orders: [
+                {id: prev['id'], order: now['order']},
+                {id: now['id'], order: prev['order']},
+            ]
+        }))
+            .then(() => utils.sleep(sleep))
+            .then(() => dispatch(setReferenceTemplateList()))
+            .then(response => setTemplateList(response.payload))
+            .catch(error => console.error(error))
+            .finally(() => setDisabledOrderButton(false))
+    }
 
     return (
         <React.Fragment>
@@ -307,27 +552,40 @@ function ReferenceUI() {
             </Typography>
 
             <Divider my={6}/>
-            <br/>
 
             <List>
-                <ListItem my={5} p={0}>
-                    <SearchFormPanel></SearchFormPanel>
-                </ListItem>
-                <ListItem my={5} p={0}>
-                    <SearchFormPanel></SearchFormPanel>
-                </ListItem>
-                <ListItem my={5} p={0}>
-                    <SearchFormPanel></SearchFormPanel>
-                </ListItem>
-
+                {
+                    templateList
+                        .sort((t1, t2) => Number(t1['order']) - Number(t2['order']))
+                        .map((template, index) => {
+                        return (
+                            <ListItem my={5} p={0} key={template['order']}>
+                                <SearchFormPanel template={template}
+                                                 templateIndex={index}
+                                                 disabledSaveButton={disabledSaveButton}
+                                                 disabledDeleteButton={disabledDeleteButton}
+                                                 disabledOrderButton={disabledOrderButton}
+                                                 lastTemplateIndex={templateList.length - 1}
+                                                 onUp={() => handleUp(index)}
+                                                 onDown={() => handleDown(index)}
+                                                 onDelete={() => handleDelete(template.id)}
+                                                 onSave={(template) => handleSave(template.id, template, index)}
+                                />
+                            </ListItem>
+                        )
+                    })
+                }
             </List>
-
 
 
             <Grid container>
                 <Grid item xs={12}>
-                    <Box align={"center"} mt={10}>
-                        <Button variant={"contained"} color={"primary"}>영역 추가</Button>
+                    <Box align={"center"} mt={5}>
+                        <Button variant={"contained"}
+                                color={"primary"}
+                                onClick={addTemplatePanel}
+                                disabled={disabledAddPanelButton}
+                        >영역 추가</Button>
                     </Box>
                 </Grid>
             </Grid>
@@ -336,4 +594,4 @@ function ReferenceUI() {
     );
 }
 
-export default ReferenceUI;
+export default connect(stroe => ({...stroe.referenceSearchReducers}))(ReferenceUI);
