@@ -276,7 +276,7 @@ function Result({resultList}) {
         label: result['template']['name'] || "이름 없음",
         component: () => SearchPanel(
             result['documents']['hits'],
-            result['documents']['aggregations'] || [],
+            result['documents']['aggregations'] || {},
             result['template'],
             {
                 id: result['template']['id'],

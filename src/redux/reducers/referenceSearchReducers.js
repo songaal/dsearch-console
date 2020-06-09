@@ -32,10 +32,11 @@ export default function reducer(state = initState, actions) {
             };
         case types.SET_REFERENCE_RESULT:
             let cloneResultList = state.resultList.slice()
-            // const index = cloneResultList.findIndex(result => result['template']['id'] === actions.id)
-            const index = 0
-            actions.payload['documents']['hits'] = cloneResultList[index]['documents']['hits'].concat(actions.payload['documents']['hits'])
-            cloneResultList[index] = actions.payload
+            const index = cloneResultList.findIndex(result => result['template']['id'] === actions.id)
+            if (index >= 0) {
+                actions.payload['documents']['hits'] = cloneResultList[index]['documents']['hits'].concat(actions.payload['documents']['hits'])
+                cloneResultList[index] = actions.payload
+            }
             return {
                 ...state,
                 resultList: cloneResultList
