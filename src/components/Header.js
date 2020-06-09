@@ -1,6 +1,6 @@
 import React, {Component, useState} from "react";
 import { useHistory } from "react-router-dom";
-import { connect, useDispatch } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
 import styled, {withTheme} from "styled-components";
 import {darken} from "polished";
 
@@ -20,6 +20,8 @@ import {
 import {Menu as MenuIcon, ArrowDropDown } from "@material-ui/icons";
 
 import {Search as SearchIcon, Home} from "react-feather";
+import {setReferenceResultAll, setReferenceSearchKeyword} from "../redux/actions/referenceSearchActions";
+import referenceSearchReducers from "../redux/reducers/referenceSearchReducers";
 
 const AppBar = styled(MuiAppBar)`
   background: ${props => props.theme.header.background};
@@ -234,12 +236,15 @@ const MainHeader = ({theme, onDrawerToggle}) => (
     </React.Fragment>)
 
 const DashBoardHeader = ({theme, onDrawerToggle}) => {
-    const [keyword, setKeyword] = useState("")
+    const references = useSelector(store => ({...store.referenceSearchReducers}))
+    const [keyword, setKeyword] = useState(references.keyword)
     const qs = new URLSearchParams(location.search)
     const dispatch = useDispatch()
     const history = useHistory()
 
     function handleSearch() {
+        dispatch(setReferenceSearchKeyword(keyword))
+        dispatch(setReferenceResultAll(keyword))
         history.push("/search")
     }
 
@@ -250,7 +255,6 @@ const DashBoardHeader = ({theme, onDrawerToggle}) => {
     }
 
     if (qs.get("keyword") !== null && qs.get("keyword") !== keyword) {
-        console.log("Global Reference Search Keyword: ", qs.get("keyword"))
         setKeyword(qs.get("keyword"))
         handleSearch()
     }

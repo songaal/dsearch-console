@@ -37,12 +37,11 @@ const Configuration = async(() => import("../pages/indices/configuration"));
 // Search components
 const QueryTest = async(() => import("../pages/search/queryTest"));
 const ReferenceUI = async(() => import("../pages/search/referenceUI"));
-const ReferenceSearch = async(() => import("../pages/search/referenceUI/referenceSearch"));
+const ReferenceUIResult = async(() => import("../pages/search/referenceUI/result"));
 
 // Management components
 const ServerManagement = async(() => import("../pages/management/serverManagement"));
 const ApiManagement = async(() => import("../pages/management/apiManagement"));
-const KibanaManagement = async(() => import("../pages/management/kibanaManagement"));
 const ConfigurationManagement = async(() => import("../pages/management/configurationManagement"));
 
 
@@ -87,13 +86,12 @@ const indicesRoutes = [
 const searchRoutes = [
     {header: "검색", id: "쿼리테스트", path: "/search/query-test", icon: <Icon.Search/>, component: QueryTest, children: null},
     {id: "레퍼런스UI", path: "/search/reference-ui", icon: <Icon.Search/>, component: ReferenceUI, children: null},
-    {id: "검색결과", path: "/search", icon: <Icon.Search/>, component: ReferenceSearch, children: null, hidden: true},
+    {id: "검색결과", path: "/search", icon: <Icon.Search/>, component: ReferenceUIResult, children: null, hidden: true},
 ];
 
 const managementRoutes = [
     {header: "관리", id: "서버", path: "/management/server", icon: <Icon.Memory/>, component: ServerManagement, children: null},
     {id: "API", path: "/management/api", icon: <Icon.Memory/>, component: ApiManagement, children: null},
-    {id: "Kibana", path: "/management/kibana", icon: <Icon.Memory/>, component: KibanaManagement, children: null},
     {id: "설정", path: "/management/configuration", icon: <Icon.Memory/>, component: ConfigurationManagement, children: null},
 ];
 

@@ -121,8 +121,8 @@ function WarningIndex() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {Object.values(idxWarning).map(row =>
-                            <TableRow>
+                        {Object.values(idxWarning).map((row, index) =>
+                            <TableRow key={index}>
                                 <TableCell>
                                 <Brightness1Icon style={{color:row.status}} />
                                    {row.index}

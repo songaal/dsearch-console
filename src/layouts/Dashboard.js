@@ -83,6 +83,7 @@ class Dashboard extends React.Component {
             // maTheme: /src/theme/variants.js 파일참조
             <MuiThemeProvider theme={maTheme[0]}>
                 <ThemeProvider theme={maTheme[0]}>
+
                     <Root>
                         <CssBaseline/>
                         <GlobalStyle/>

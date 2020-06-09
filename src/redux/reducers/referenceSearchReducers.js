@@ -1,9 +1,11 @@
 import * as types from '../constants';
+import {SET_REFERENCE_RESULT_ALL} from "../constants";
 
 let initState = {
     keyword: '',
     templateList: [],
-    template: {}
+    template: {},
+    resultList: []
 };
 
 export default function reducer(state = initState, actions) {
@@ -22,6 +24,21 @@ export default function reducer(state = initState, actions) {
             return {
                 ...state,
                 template: actions.payload
+            };
+        case types.SET_REFERENCE_RESULT_ALL:
+            return {
+                ...state,
+                resultList: actions.payload
+            };
+        case types.SET_REFERENCE_RESULT:
+            let cloneResultList = state.resultList.slice()
+            // const index = cloneResultList.findIndex(result => result['template']['id'] === actions.id)
+            const index = 0
+            actions.payload['documents']['hits'] = cloneResultList[index]['documents']['hits'].concat(actions.payload['documents']['hits'])
+            cloneResultList[index] = actions.payload
+            return {
+                ...state,
+                resultList: cloneResultList
             };
         default:
             return state
