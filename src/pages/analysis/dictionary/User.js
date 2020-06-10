@@ -293,7 +293,7 @@ function UserDictionary({dispatch, user}) {
                 </DialogTitle>
                 <DialogContent>
                     <Grid container>
-                        <Grid item xs={4} alignItems={"center"} alignContent={"center"}>
+                        <Grid item xs={4}>
                             <Box mt={2}>
                                 키워드
                             </Box>
