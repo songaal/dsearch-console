@@ -12,14 +12,14 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
-    Paper,
-    Draggable,
-    TextField
+    TextField,
+    Select,
+    FormControl,
+    MenuItem,
 } from "@material-ui/core";
 
-
 import DynamicTable from "~/components/DynamicTable";
-import {Language, Search} from "@material-ui/icons";
+import { Search } from "@material-ui/icons";
 import {makeStyles} from "@material-ui/core/styles";
 import {palette, sizing, spacing} from "@material-ui/system";
 import {
@@ -28,81 +28,49 @@ import {
     downloadDictionary,
     setDictionary
 } from "../../../redux/actions/dictionaryActions";
-import {setIndicesDataAction} from "../../../redux/actions/indicesIndexDataActions";
 import utils from "../../../utils";
 
 const Button = styled(MuiButton)(spacing, sizing, palette)
 const Box = styled(MuiBox)(spacing, sizing)
 
 const useStyles = makeStyles((theme) => ({
-    formControl: {
-        // margin: theme.spacing(1),
-        minWidth: 150,
-    },
-    form: {
-        padding: '2px 4px',
-        display: 'flex',
-        alignItems: 'center',
-        width: 300,
-        // borderBottom: "1px solid"
-    },
-    input: {
-        marginLeft: theme.spacing(1),
-        flex: 1,
-        borderBottom: "1px solid gray",
-        '&:hover': {
-            borderBottom: "2px solid black"
-        }
-    },
-    iconButton: {
-        padding: 5,
-    },
-    divider: {
-        height: 28,
-        margin: 4,
-    },
-    right: {
-        textAlign: "right"
-    }
+    formControl: { minWidth: 150 },
+    select: { minWidth: 80 },
+    form: { padding: '2px 4px', display: 'flex', alignItems: 'center', width: 500 },
+    input: { marginLeft: theme.spacing(1), flex: 1, borderBottom: "1px solid gray", '&:hover': { borderBottom: "2px solid black" } },
+    iconButton: {padding: 5,},
+    divider: { height: 28, margin: 4,},
+    right: { textAlign: "right"}
 }));
 
-// const sample = [
-//     {
-//         field: "단어",
-//         data: [ {id: 1, text: "1"}, {id: 2, text: "2"}, {id: 3, text: "3"}, {id: 4, text: "4"} ]
-//     }
-// ]
 let selected = []
-const TYPE = "unit"
-function UnitDictionary({dispatch, unit}) {
+const TYPE = "synonym"
+function SynonymDictionary({dispatch, synonym}) {
     const [keyword, setKeyword] = useState("");
     const [search, setSearch] = useState("");
     const [keywordMatched, setKeywordMatched] = useState(false);
     const [mode, setMode] = useState("view")  //view, edit
     const [pageNum, setPageNum] = useState(0);
-    const [rowSize, setRowSize] = useState(40);
+    const [rowSize, setRowSize] = useState(15);
     const [createKeyword, setCreateKeyword] = useState("");
-
+    const [field, setField] = useState("전체")
     const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
     const [createDialogOpen, setCreateDialogOpen] = React.useState(false);
 
     const classes = useStyles();
-    const lastPageNum = unit['lastPageNum']||0
-
-    function handleSelectClick(id, checked) {
-        console.log(id, checked)
-        selected = checked ? selected.concat(id) : selected.filter(select => select !== id)
-    }
+    const lastPageNum = synonym['lastPageNum']||0
 
     useEffect(() => {
         dispatch(setDictionary(TYPE, pageNum, rowSize))
     }, [])
 
-
+    function handleSelectClick(id, checked) {
+        console.log(id, checked)
+        selected = checked ? selected.concat(id) : selected.filter(select => select !== id)
+    }
     function handlePagination(pageNum) {
-        // selected = []
         setPageNum(pageNum)
-        dispatch(setDictionary(TYPE,pageNum, rowSize, keywordMatched, search))
+        dispatch(setDictionary(TYPE, pageNum, rowSize, keywordMatched, search))
     }
     function handleSearch() {
         selected = []
@@ -137,7 +105,6 @@ function UnitDictionary({dispatch, unit}) {
         await utils.sleep(1000);
         setKeyword(createKeyword)
         dispatch(setDictionary(TYPE,0, rowSize, keywordMatched, createKeyword))
-
     }
 
     return (
@@ -148,6 +115,14 @@ function UnitDictionary({dispatch, unit}) {
                     <Grid container>
                         <Grid item xs={6}>
                             <Box className={classes.form} display={"inline"}>
+                                <FormControl className={classes.select}>
+                                    <Select value={field} onChange={(event) => setField(event.target.value)}>
+                                        <MenuItem value={"전체"}>전체</MenuItem>
+                                        <MenuItem value={"1keyword.raw"}>KEYWORD</MenuItem>
+                                        <MenuItem value={"synonym.raw"}>SYNONYM</MenuItem>
+                                    </Select>
+                                </FormControl>
+
                                 <InputBase
                                     className={classes.input}
                                     placeholder="검색"
@@ -155,6 +130,7 @@ function UnitDictionary({dispatch, unit}) {
                                     onChange={event => setKeyword(event.target.value)}
                                     onKeyUp={handleSearchShortcut}
                                 />
+
                                 <IconButton type="submit"
                                             className={classes.iconButton}
                                             aria-label="search"
@@ -212,47 +188,15 @@ function UnitDictionary({dispatch, unit}) {
                     <br/>
 
                     <Grid container spacing={6}>
-                        <Grid item xs={3}>
-                            <DynamicTable dataList={[{
-                                field: "단어",
-                                data: (unit.hits||[])
-                                    .filter((hit, index) => index >=  0 && index < 10)
-                                    .map(hit => ({id: hit.id, text: hit['sourceAsMap']['keyword']}))
-                            }]}
+                        <Grid item xs={12}>
+                            <DynamicTable dataList={
+                                [
+                                    { field: "키워드", data: (synonym.hits || []).map(hit => ({id: hit.id, text: hit['sourceAsMap']['keyword']})) },
+                                    { field: "유사어", data: (synonym.hits || []).map(hit => ({id: hit.id, text: hit['sourceAsMap']['synonym']})) }
+                                ]
+                            }
                                           showCheckBox={mode === "edit"}
-                                          onSelectClick={handleSelectClick}
-                            />
-                        </Grid>
-                        <Grid item xs={3}>
-                            <DynamicTable dataList={[{
-                                field: "단어",
-                                data: (unit.hits || [])
-                                    .filter((hit, index) => index >= 10 && index < 20)
-                                    .map(hit => ({id: hit.id, text: hit['sourceAsMap']['keyword']}))
-                            }]}
-                                          showCheckBox={mode === "edit"}
-                                          onSelectClick={handleSelectClick}
-                            />
-                        </Grid>
-                        <Grid item xs={3}>
-                            <DynamicTable dataList={[{
-                                field: "단어",
-                                data: (unit.hits||[])
-                                    .filter((hit, index) => index >= 20 && index < 30)
-                                    .map(hit => ({id: hit.id, text: hit['sourceAsMap']['keyword']}))
-                            }]}
-                                          showCheckBox={mode === "edit"}
-                                          onSelectClick={handleSelectClick}
-                            />
-                        </Grid>
-                        <Grid item xs={3}>
-                            <DynamicTable dataList={[{
-                                field: "단어",
-                                data: (unit.hits||[])
-                                    .filter((hit, index) => index >= 30 && index < 40)
-                                    .map(hit => ({id: hit.id, text: hit['sourceAsMap']['keyword']}))
-                            }]}
-                                          showCheckBox={mode === "edit"}
+                                          isEdit={true}
                                           onSelectClick={handleSelectClick}
                             />
                         </Grid>
@@ -348,4 +292,4 @@ function UnitDictionary({dispatch, unit}) {
     )
 }
 
-export default connect(store => ({unit: store.dictionaryReducers.unit}))(UnitDictionary);
+export default connect(store => ({synonym: store.dictionaryReducers.synonym}))(SynonymDictionary);

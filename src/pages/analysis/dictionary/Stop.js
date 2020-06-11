@@ -12,8 +12,6 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
-    Paper,
-    Draggable,
     TextField
 } from "@material-ui/core";
 
@@ -73,8 +71,8 @@ const useStyles = makeStyles((theme) => ({
 //     }
 // ]
 let selected = []
-const TYPE = "unit"
-function UnitDictionary({dispatch, unit}) {
+const TYPE = "stop"
+function StopDictionary({dispatch, stop}) {
     const [keyword, setKeyword] = useState("");
     const [search, setSearch] = useState("");
     const [keywordMatched, setKeywordMatched] = useState(false);
@@ -87,7 +85,7 @@ function UnitDictionary({dispatch, unit}) {
     const [createDialogOpen, setCreateDialogOpen] = React.useState(false);
 
     const classes = useStyles();
-    const lastPageNum = unit['lastPageNum']||0
+    const lastPageNum = stop['lastPageNum']||0
 
     function handleSelectClick(id, checked) {
         console.log(id, checked)
@@ -215,9 +213,9 @@ function UnitDictionary({dispatch, unit}) {
                         <Grid item xs={3}>
                             <DynamicTable dataList={[{
                                 field: "단어",
-                                data: (unit.hits||[])
+                                data: (stop.hits||[])
                                     .filter((hit, index) => index >=  0 && index < 10)
-                                    .map(hit => ({id: hit.id, text: hit['sourceAsMap']['keyword']}))
+                                    .map(hit => ({id: hit.id, text: hit.sourceAsMap.keyword}))
                             }]}
                                           showCheckBox={mode === "edit"}
                                           onSelectClick={handleSelectClick}
@@ -226,9 +224,9 @@ function UnitDictionary({dispatch, unit}) {
                         <Grid item xs={3}>
                             <DynamicTable dataList={[{
                                 field: "단어",
-                                data: (unit.hits || [])
+                                data: (stop.hits || [])
                                     .filter((hit, index) => index >= 10 && index < 20)
-                                    .map(hit => ({id: hit.id, text: hit['sourceAsMap']['keyword']}))
+                                    .map(hit => ({id: hit.id, text: hit.sourceAsMap.keyword}))
                             }]}
                                           showCheckBox={mode === "edit"}
                                           onSelectClick={handleSelectClick}
@@ -237,9 +235,9 @@ function UnitDictionary({dispatch, unit}) {
                         <Grid item xs={3}>
                             <DynamicTable dataList={[{
                                 field: "단어",
-                                data: (unit.hits||[])
+                                data: (stop.hits||[])
                                     .filter((hit, index) => index >= 20 && index < 30)
-                                    .map(hit => ({id: hit.id, text: hit['sourceAsMap']['keyword']}))
+                                    .map(hit => ({id: hit.id, text: hit.sourceAsMap.keyword}))
                             }]}
                                           showCheckBox={mode === "edit"}
                                           onSelectClick={handleSelectClick}
@@ -248,9 +246,9 @@ function UnitDictionary({dispatch, unit}) {
                         <Grid item xs={3}>
                             <DynamicTable dataList={[{
                                 field: "단어",
-                                data: (unit.hits||[])
+                                data: (stop.hits||[])
                                     .filter((hit, index) => index >= 30 && index < 40)
-                                    .map(hit => ({id: hit.id, text: hit['sourceAsMap']['keyword']}))
+                                    .map(hit => ({id: hit.id, text: hit.sourceAsMap.keyword}))
                             }]}
                                           showCheckBox={mode === "edit"}
                                           onSelectClick={handleSelectClick}
@@ -348,4 +346,4 @@ function UnitDictionary({dispatch, unit}) {
     )
 }
 
-export default connect(store => ({unit: store.dictionaryReducers.unit}))(UnitDictionary);
+export default connect(store => ({stop: store.dictionaryReducers.stop}))(StopDictionary);

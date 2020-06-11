@@ -25,10 +25,10 @@ import {palette, sizing, spacing} from "@material-ui/system";
 import {
     createDictionary,
     deleteDictionary,
-    downloadDictionaryUser,
-    setDictionaryUser
+    downloadDictionary,
+    setDictionary
 } from "../../../redux/actions/dictionaryActions";
-import {setIndicesDataAction} from "../../../redux/actions/indicesIndexDataActions";
+
 import utils from "../../../utils";
 
 const Button = styled(MuiButton)(spacing, sizing, palette)
@@ -44,12 +44,14 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         alignItems: 'center',
         width: 300,
-        // borderBottom: "1px solid"
     },
     input: {
         marginLeft: theme.spacing(1),
         flex: 1,
-        borderBottom: "1px solid"
+        borderBottom: "1px solid gray",
+        '&:hover': {
+            borderBottom: "2px solid black"
+        }
     },
     iconButton: {
         padding: 5,
@@ -70,6 +72,7 @@ const useStyles = makeStyles((theme) => ({
 //     }
 // ]
 let selected = []
+const TYPE = "user"
 function UserDictionary({dispatch, user}) {
     const [keyword, setKeyword] = useState("");
     const [search, setSearch] = useState("");
@@ -91,27 +94,27 @@ function UserDictionary({dispatch, user}) {
     }
 
     useEffect(() => {
-        dispatch(setDictionaryUser(pageNum, rowSize))
+        dispatch(setDictionary(TYPE, pageNum, rowSize))
     }, [])
 
 
     function handlePagination(pageNum) {
         // selected = []
         setPageNum(pageNum)
-        dispatch(setDictionaryUser(pageNum, rowSize, keywordMatched, search))
+        dispatch(setDictionary(TYPE, pageNum, rowSize, keywordMatched, search))
     }
     function handleSearch() {
         selected = []
         setSearch(keyword)
         setPageNum(0)
-        dispatch(setDictionaryUser(0, rowSize, keywordMatched, keyword))
+        dispatch(setDictionary(TYPE, 0, rowSize, keywordMatched, keyword))
     }
     function handleCheckboxChange(event) {
         selected = []
         setSearch(keyword)
         setPageNum(0)
         setKeywordMatched(event.target.checked)
-        dispatch(setDictionaryUser(0, rowSize, event.target.checked, keyword))
+        dispatch(setDictionary(TYPE, 0, rowSize, event.target.checked, keyword))
     }
     function handleSearchShortcut(event) {
         if (event.keyCode === 13) {
@@ -120,21 +123,19 @@ function UserDictionary({dispatch, user}) {
     }
     async function handleDelete() {
         for (let i = 0; i < selected.length; i++) {
-            await deleteDictionary("USER", selected[i])
+            await deleteDictionary(TYPE, selected[i])
         }
         setDeleteDialogOpen(false);
         await utils.sleep(1000);
-        dispatch(setDictionaryUser(0, rowSize, keywordMatched, keyword))
+        dispatch(setDictionary(TYPE, 0, rowSize, keywordMatched, keyword))
     }
     async function handleCreate() {
-        createDictionary("USER", {
-            keyword: createKeyword
-        })
+        await createDictionary(TYPE, { keyword: createKeyword })
         setCreateKeyword("")
         setCreateDialogOpen(false);
         await utils.sleep(1000);
-        dispatch(setDictionaryUser(0, rowSize, keywordMatched, keyword))
-
+        setKeyword(createKeyword)
+        dispatch(setDictionary(TYPE,0, rowSize, keywordMatched, createKeyword))
     }
 
     return (
@@ -174,7 +175,7 @@ function UserDictionary({dispatch, user}) {
                                     <Button variant="outlined"
                                             color="primary"
                                             mx={1}
-                                            onClick={event => downloadDictionaryUser()}
+                                            onClick={event => downloadDictionary(TYPE)}
                                     >다운로드</Button>
                                 )
                                 :
@@ -214,7 +215,7 @@ function UserDictionary({dispatch, user}) {
                                 field: "단어",
                                 data: (user.hits||[])
                                     .filter((hit, index) => index >=  0 && index < 10)
-                                    .map(hit => ({id: hit.id, text: hit.sourceAsMap.keyword}))
+                                    .map(hit => ({id: hit.id, text: hit['sourceAsMap']['keyword']}))
                             }]}
                                           showCheckBox={mode === "edit"}
                                           onSelectClick={handleSelectClick}
@@ -225,7 +226,7 @@ function UserDictionary({dispatch, user}) {
                                 field: "단어",
                                 data: (user.hits || [])
                                     .filter((hit, index) => index >= 10 && index < 20)
-                                    .map(hit => ({id: hit.id, text: hit.sourceAsMap.keyword}))
+                                    .map(hit => ({id: hit.id, text: hit['sourceAsMap']['keyword']}))
                             }]}
                                           showCheckBox={mode === "edit"}
                                           onSelectClick={handleSelectClick}
@@ -236,7 +237,7 @@ function UserDictionary({dispatch, user}) {
                                 field: "단어",
                                 data: (user.hits||[])
                                     .filter((hit, index) => index >= 20 && index < 30)
-                                    .map(hit => ({id: hit.id, text: hit.sourceAsMap.keyword}))
+                                    .map(hit => ({id: hit.id, text: hit['sourceAsMap']['keyword']}))
                             }]}
                                           showCheckBox={mode === "edit"}
                                           onSelectClick={handleSelectClick}
@@ -247,7 +248,7 @@ function UserDictionary({dispatch, user}) {
                                 field: "단어",
                                 data: (user.hits||[])
                                     .filter((hit, index) => index >= 30 && index < 40)
-                                    .map(hit => ({id: hit.id, text: hit.sourceAsMap.keyword}))
+                                    .map(hit => ({id: hit.id, text: hit['sourceAsMap']['keyword']}))
                             }]}
                                           showCheckBox={mode === "edit"}
                                           onSelectClick={handleSelectClick}

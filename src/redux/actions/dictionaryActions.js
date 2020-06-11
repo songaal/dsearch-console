@@ -1,21 +1,20 @@
 import Client from '~/Client'
-import { SET_DICTIONARY_USER } from "../constants";
+import * as types from "../constants";
 
 const client = new Client()
 
-export const setDictionaryUser = (pageNum, rowSize, isMatch, value) => dispatch => client.call({
-    uri: `/dictionaries/user`,
+export const setDictionary = (type, pageNum, rowSize, isMatch, value) => dispatch => client.call({
+    uri: `/dictionaries/${type}`,
     params: {pageNum, rowSize, isMatch, value}
-}).then(response => dispatch({type: SET_DICTIONARY_USER, payload: response.data}))
+}).then(response => dispatch({type: types[`SET_DICTIONARY_${type.toUpperCase()}`], payload: response.data}))
     .catch(error => console.error(error))
 
-
-export const downloadDictionaryUser = () => client.call({uri: `/dictionaries/user/download`,  responseType: 'blob'})
+export const downloadDictionary = (type) => client.call({uri: `/dictionaries/${type}/download`,  responseType: 'blob'})
     .then(response => {
         const url = window.URL.createObjectURL(new Blob([response.data], { type: response.headers['content-type'] }));
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', 'user.txt');
+        link.setAttribute('download', `${type}.txt`);
         document.body.appendChild(link);
         link.click();
     })
