@@ -127,12 +127,18 @@ function MakerDictionary({dispatch, maker}) {
         dispatch(setDictionary(TYPE,0, rowSize, keywordMatched, createId, field))
     }
     async function handleDeleteButton(id) {
+        if (!confirm("해당 라인을 삭제 하시겠습니까?")) {
+            return false;
+        }
         selected = selected.filter(selectedId => selectedId !== id)
         await deleteDictionary(TYPE, id)
         await utils.sleep(1000);
         handlePagination(pageNum)
     }
     async function handleUpdateButton(id, row, fields) {
+        if (!confirm("해당 라인을 수정 하시겠습니까?")) {
+            return false;
+        }
         await updateDictionary(TYPE, id, {
             id: row[0],
             keyword: row[0],
