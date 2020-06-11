@@ -44,9 +44,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 let selected = []
-const TYPE = "category"
-let fieldKey = 'id,keyword,synonym'
-function CategoryDictionary({dispatch, category}) {
+const TYPE = "unit_synonym"
+function UnitSynonymDictionary({dispatch, unitSynonym}) {
     const [keyword, setKeyword] = useState("");
     const [search, setSearch] = useState("");
     const [keywordMatched, setKeywordMatched] = useState(false);
@@ -54,53 +53,39 @@ function CategoryDictionary({dispatch, category}) {
     const [pageNum, setPageNum] = useState(0);
     const [rowSize, setRowSize] = useState(15);
 
-    const [createId, setCreateId] = useState("");
-    const [createKeyword, setCreateKeyword] = useState("");
+    // const [createId, setCreateId] = useState("");
+    // const [createKeyword, setCreateKeyword] = useState("");
     const [createSynonym, setCreateSynonym] = useState("");
 
-    const [fieldNames, setFieldName] = useState("전체")
     const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
     const [createDialogOpen, setCreateDialogOpen] = React.useState(false);
 
     const classes = useStyles();
-    const lastPageNum = category['lastPageNum']||0
+    const lastPageNum = unitSynonym['lastPageNum']||0
 
     useEffect(() => {
-        let field = fieldNames === "전체" ? 'id,keyword,synonym' : fieldNames;
-        fieldKey = field
-        dispatch(setDictionary(TYPE, pageNum, rowSize, keywordMatched, keyword, field))
+        dispatch(setDictionary(TYPE, pageNum, rowSize, keywordMatched, keyword, "synonym"))
     }, [])
-
-    useEffect(() => {
-        let field = fieldNames === "전체" ? 'id,keyword,synonym' : fieldNames;
-        if (fieldKey !== field) {
-            fieldKey = field
-            dispatch(setDictionary(TYPE, 0, rowSize, keywordMatched, search, field))
-        }
-    }, [fieldNames])
 
     function handleSelectClick(id, checked) {
         selected = checked ? selected.concat(id) : selected.filter(select => select !== id)
     }
     function handlePagination(pageNum) {
         setPageNum(pageNum)
-        let field = fieldNames === "전체" ? 'id,keyword,synonym' : fieldNames;
-        dispatch(setDictionary(TYPE, pageNum, rowSize, keywordMatched, search, field))
+        dispatch(setDictionary(TYPE, pageNum, rowSize, keywordMatched, search, "synonym"))
     }
     function handleSearch() {
         selected = []
         setSearch(keyword)
         setPageNum(0)
-        let field = fieldNames === "전체" ? 'id,keyword,synonym' : fieldNames;
-        dispatch(setDictionary(TYPE,0, rowSize, keywordMatched, keyword, field))
+        dispatch(setDictionary(TYPE,0, rowSize, keywordMatched, keyword, "synonym"))
     }
     function handleCheckboxChange(event) {
         selected = []
         setSearch(keyword)
         setPageNum(0)
         setKeywordMatched(event.target.checked)
-        let field = fieldNames === "전체" ? 'id,keyword,synonym' : fieldNames;
-        dispatch(setDictionary(TYPE,0, rowSize, event.target.checked, keyword, field))
+        dispatch(setDictionary(TYPE,0, rowSize, event.target.checked, keyword, "synonym"))
     }
     function handleSearchShortcut(event) {
         if (event.keyCode === 13) {
@@ -116,15 +101,12 @@ function CategoryDictionary({dispatch, category}) {
         dispatch(setDictionary(TYPE,0, rowSize, keywordMatched, keyword))
     }
     async function handleCreate() {
-        await createDictionary(TYPE, { id: createId, keyword: createKeyword, synonym: createSynonym })
-        setCreateId("")
-        setCreateKeyword("")
+        await createDictionary(TYPE, { synonym: createSynonym })
         setCreateSynonym("")
         setCreateDialogOpen(false);
         await utils.sleep(1000);
-        setKeyword(createId)
-        let field = fieldNames === "전체" ? 'id,keyword,synonym' : fieldNames;
-        dispatch(setDictionary(TYPE,0, rowSize, keywordMatched, createId, field))
+        setKeyword(createSynonym)
+        dispatch(setDictionary(TYPE,0, rowSize, keywordMatched, createSynonym, "synonym"))
     }
     async function handleDeleteButton(id) {
         selected = selected.filter(selectedId => selectedId !== id)
@@ -133,11 +115,7 @@ function CategoryDictionary({dispatch, category}) {
         handlePagination(pageNum)
     }
     async function handleUpdateButton(id, row, fields) {
-        await updateDictionary(TYPE, id, {
-            id: row[0],
-            keyword: row[0],
-            synonym: row[1],
-        })
+        await updateDictionary(TYPE, id, { synonym: row[0] })
         await utils.sleep(1000);
         handlePagination(pageNum)
     }
@@ -150,17 +128,6 @@ function CategoryDictionary({dispatch, category}) {
                     <Grid container>
                         <Grid item xs={6}>
                             <Box className={classes.form} display={"inline"}>
-                                <FormControl className={classes.select}>
-                                    <Select value={fieldNames}
-                                            onChange={event => setFieldName(event.target.value)}
-                                    >
-                                        <MenuItem value={"전체"}>전체</MenuItem>
-                                        <MenuItem value={"id"}>ID</MenuItem>
-                                        <MenuItem value={"keyword"}>KEYWORD</MenuItem>
-                                        <MenuItem value={"synonym"}>VALUE</MenuItem>
-                                    </Select>
-                                </FormControl>
-
                                 <InputBase
                                     className={classes.input}
                                     placeholder="검색"
@@ -199,7 +166,7 @@ function CategoryDictionary({dispatch, category}) {
                                     <React.Fragment>
                                         <Button variant="outlined"
                                                 color="primary"
-                                                onClick={() => {setCreateKeyword('');setCreateDialogOpen(true);}}
+                                                onClick={() => {setCreateSynonym('');setCreateDialogOpen(true);}}
                                         >추가</Button>
                                         <Button variant="outlined"
                                                 color="primary"
@@ -229,9 +196,7 @@ function CategoryDictionary({dispatch, category}) {
                         <Grid item xs={12}>
                             <DynamicTable dataList={
                                 [
-                                    { field: "아이디", data: (category.hits || []).map(hit => ({id: hit.id, text: hit['sourceAsMap']['id']})) },
-                                    { field: "키워드", data: (category.hits || []).map(hit => ({id: hit.id, text: hit['sourceAsMap']['keyword']})) },
-                                    { field: "값", data: (category.hits || []).map(hit => ({id: hit.id, text: hit['sourceAsMap']['synonym']})) }
+                                    { field: "유사어", data: (unitSynonym.hits || []).map(hit => ({id: hit.id, text: hit['sourceAsMap']['synonym']})) }
                                 ]
                             }
                                           showCheckBox={mode === "edit"}
@@ -283,39 +248,12 @@ function CategoryDictionary({dispatch, category}) {
                     <Grid container>
                         <Grid item xs={4}>
                             <Box mt={2}>
-                                아이디
+                                유사어
                             </Box>
                         </Grid>
                         <Grid item xs={8}>
                             <TextField autoFocus={true}
-                                       value={createId}
-                                       onChange={event => setCreateId(event.target.value)}
-                            />
-                        </Grid>
-                    </Grid>
-
-                    <Grid container>
-                        <Grid item xs={4}>
-                            <Box mt={2}>
-                                키워드
-                            </Box>
-                        </Grid>
-                        <Grid item xs={8}>
-                            <TextField autoFocus={true}
-                                       value={createKeyword}
-                                       onChange={event => setCreateKeyword(event.target.value)}
-                            />
-                        </Grid>
-                    </Grid>
-
-                    <Grid container>
-                        <Grid item xs={4}>
-                            <Box mt={2}>
-                                값
-                            </Box>
-                        </Grid>
-                        <Grid item xs={8}>
-                            <TextField value={createSynonym}
+                                       value={createSynonym}
                                        onChange={event => setCreateSynonym(event.target.value)}
                             />
                         </Grid>
@@ -360,4 +298,4 @@ function CategoryDictionary({dispatch, category}) {
     )
 }
 
-export default connect(store => ({category: store.dictionaryReducers.category}))(CategoryDictionary);
+export default connect(store => ({unitSynonym: store.dictionaryReducers.unitSynonym}))(UnitSynonymDictionary);

@@ -26,7 +26,7 @@ import {
     createDictionary,
     deleteDictionary,
     downloadDictionary,
-    setDictionary
+    setDictionary, updateDictionary
 } from "../../../redux/actions/dictionaryActions";
 import utils from "../../../utils";
 
@@ -45,6 +45,7 @@ const useStyles = makeStyles((theme) => ({
 
 let selected = []
 const TYPE = "synonym"
+let fieldKey = 'keyword,synonym'
 function SynonymDictionary({dispatch, synonym}) {
     const [keyword, setKeyword] = useState("");
     const [search, setSearch] = useState("");
@@ -52,8 +53,12 @@ function SynonymDictionary({dispatch, synonym}) {
     const [mode, setMode] = useState("view")  //view, edit
     const [pageNum, setPageNum] = useState(0);
     const [rowSize, setRowSize] = useState(15);
+
+    // const [createId, setCreateId] = useState("");
     const [createKeyword, setCreateKeyword] = useState("");
-    const [field, setField] = useState("전체")
+    const [createSynonym, setCreateSynonym] = useState("");
+
+    const [fieldNames, setFieldName] = useState("전체")
     const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
     const [createDialogOpen, setCreateDialogOpen] = React.useState(false);
 
@@ -61,29 +66,41 @@ function SynonymDictionary({dispatch, synonym}) {
     const lastPageNum = synonym['lastPageNum']||0
 
     useEffect(() => {
-        dispatch(setDictionary(TYPE, pageNum, rowSize))
+        let field = fieldNames === "전체" ? 'keyword,synonym' : fieldNames;
+        fieldKey = field
+        dispatch(setDictionary(TYPE, pageNum, rowSize, keywordMatched, keyword, field))
     }, [])
 
+    useEffect(() => {
+        let field = fieldNames === "전체" ? 'keyword,synonym' : fieldNames;
+        if (fieldKey !== field) {
+            fieldKey = field
+            dispatch(setDictionary(TYPE, 0, rowSize, keywordMatched, search, field))
+        }
+    }, [fieldNames])
+
     function handleSelectClick(id, checked) {
-        console.log(id, checked)
         selected = checked ? selected.concat(id) : selected.filter(select => select !== id)
     }
     function handlePagination(pageNum) {
         setPageNum(pageNum)
-        dispatch(setDictionary(TYPE, pageNum, rowSize, keywordMatched, search))
+        let field = fieldNames === "전체" ? 'keyword,synonym' : fieldNames;
+        dispatch(setDictionary(TYPE, pageNum, rowSize, keywordMatched, search, field))
     }
     function handleSearch() {
         selected = []
         setSearch(keyword)
         setPageNum(0)
-        dispatch(setDictionary(TYPE,0, rowSize, keywordMatched, keyword))
+        let field = fieldNames === "전체" ? 'keyword,synonym' : fieldNames;
+        dispatch(setDictionary(TYPE,0, rowSize, keywordMatched, keyword, field))
     }
     function handleCheckboxChange(event) {
         selected = []
         setSearch(keyword)
         setPageNum(0)
         setKeywordMatched(event.target.checked)
-        dispatch(setDictionary(TYPE,0, rowSize, event.target.checked, keyword))
+        let field = fieldNames === "전체" ? 'keyword,synonym' : fieldNames;
+        dispatch(setDictionary(TYPE,0, rowSize, event.target.checked, keyword, field))
     }
     function handleSearchShortcut(event) {
         if (event.keyCode === 13) {
@@ -99,12 +116,28 @@ function SynonymDictionary({dispatch, synonym}) {
         dispatch(setDictionary(TYPE,0, rowSize, keywordMatched, keyword))
     }
     async function handleCreate() {
-        await createDictionary(TYPE, { keyword: createKeyword })
+        await createDictionary(TYPE, { keyword: createKeyword, synonym: createSynonym })
         setCreateKeyword("")
+        setCreateSynonym("")
         setCreateDialogOpen(false);
         await utils.sleep(1000);
         setKeyword(createKeyword)
-        dispatch(setDictionary(TYPE,0, rowSize, keywordMatched, createKeyword))
+        let field = fieldNames === "전체" ? 'keyword,synonym' : fieldNames;
+        dispatch(setDictionary(TYPE,0, rowSize, keywordMatched, createKeyword, field))
+    }
+    async function handleDeleteButton(id) {
+        selected = selected.filter(selectedId => selectedId !== id)
+        await deleteDictionary(TYPE, id)
+        await utils.sleep(1000);
+        handlePagination(pageNum)
+    }
+    async function handleUpdateButton(id, row, fields) {
+        await updateDictionary(TYPE, id, {
+            keyword: row[0],
+            synonym: row[1],
+        })
+        await utils.sleep(1000);
+        handlePagination(pageNum)
     }
 
     return (
@@ -116,10 +149,12 @@ function SynonymDictionary({dispatch, synonym}) {
                         <Grid item xs={6}>
                             <Box className={classes.form} display={"inline"}>
                                 <FormControl className={classes.select}>
-                                    <Select value={field} onChange={(event) => setField(event.target.value)}>
+                                    <Select value={fieldNames}
+                                            onChange={event => setFieldName(event.target.value)}
+                                    >
                                         <MenuItem value={"전체"}>전체</MenuItem>
-                                        <MenuItem value={"1keyword.raw"}>KEYWORD</MenuItem>
-                                        <MenuItem value={"synonym.raw"}>SYNONYM</MenuItem>
+                                        <MenuItem value={"keyword"}>KEYWORD</MenuItem>
+                                        <MenuItem value={"synonym"}>SYNONYM</MenuItem>
                                     </Select>
                                 </FormControl>
 
@@ -198,6 +233,8 @@ function SynonymDictionary({dispatch, synonym}) {
                                           showCheckBox={mode === "edit"}
                                           isEdit={true}
                                           onSelectClick={handleSelectClick}
+                                          onUpdate={handleUpdateButton}
+                                          onDelete={handleDeleteButton}
                             />
                         </Grid>
                     </Grid>
@@ -249,6 +286,18 @@ function SynonymDictionary({dispatch, synonym}) {
                             <TextField autoFocus={true}
                                        value={createKeyword}
                                        onChange={event => setCreateKeyword(event.target.value)}
+                            />
+                        </Grid>
+                    </Grid>
+                    <Grid container>
+                        <Grid item xs={4}>
+                            <Box mt={2}>
+                                유사어
+                            </Box>
+                        </Grid>
+                        <Grid item xs={8}>
+                            <TextField value={createSynonym}
+                                       onChange={event => setCreateSynonym(event.target.value)}
                             />
                         </Grid>
                     </Grid>

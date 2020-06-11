@@ -24,13 +24,13 @@ const useStyles = makeStyles((theme) => ({
     input: { border: "0px" },
 }));
 
-function DynamicTable({dataList, showCheckBox = false, onSelectClick, isEdit = false}) {
+function DynamicTable({dataList, showCheckBox = false, onSelectClick, isEdit = false, onUpdate = () => {}, onDelete = () => {}}) {
     const classes = useStyles();
     const [selected, setSelected] = useState([])
-    const [cloneDataList, setCloneDataList] = useState([])
+    const [array, setArray] = useState([])
 
     useEffect(() => {
-        setCloneDataList(dataList)
+        setArray([...dataList.map(data => data.data)])
     }, [dataList])
 
     useEffect(() => {
@@ -38,21 +38,21 @@ function DynamicTable({dataList, showCheckBox = false, onSelectClick, isEdit = f
     }, [showCheckBox])
 
 
-    const fields = cloneDataList.map(data => data.field);
+    const fields = dataList.map(data => data.field);
 
     let rowCount = 0;
-    cloneDataList.forEach(data => rowCount < data.data.length ? rowCount = data.data.length : rowCount);
+    dataList.forEach(data => rowCount < data.data.length ? rowCount = data.data.length : rowCount);
 
     let rows = [];
-    let array = [...cloneDataList.map(data => data.data)];
-
     for (let i = 0; i < rowCount; i++) {
         let cols = [];
         for (let j = 0; j < fields.length; j++) {
-            if (typeof array[j][i] !== 'object') {
-                cols.push({id: array[j][i], text: array[j][i]})
-            } else {
-                cols.push({id: array[j][i]['id'], text: array[j][i]['text']})
+            if (array[j]) {
+                if (typeof array[j][i] !== 'object') {
+                    cols.push({id: array[j][i], text: array[j][i]})
+                } else {
+                    cols.push({id: array[j][i]['id'], text: array[j][i]['text']})
+                }
             }
         }
         rows.push(cols)
@@ -70,12 +70,24 @@ function DynamicTable({dataList, showCheckBox = false, onSelectClick, isEdit = f
         onSelectClick(id, checked)
         checked ? setSelected(selected.concat(id)) : setSelected(selected.filter(select => select !== id))
     }
-    function handleEdit(id, index) {
-
+    function handleChange(event, id, colIdx, rowIdx) {
+        let cloneArray = array.slice()
+        cloneArray[colIdx][rowIdx]['text'] = event.target.value
+        setArray(cloneArray)
     }
-    function handleDelete(index) {
-
+    function handleEdit(id, rowIdx) {
+        let cols = []
+        let fields = []
+        for (let i = 0; i < array.length; i++) {
+            cols.push(array[i][rowIdx]['text'] || '')
+            fields.push(fields[i] || '')
+        }
+        onUpdate(id, cols, fields)
     }
+    function handleDelete(id) {
+        onDelete(id)
+    }
+
     return (
         <TableContainer component={Paper}>
             <Table size="small">
@@ -130,13 +142,16 @@ function DynamicTable({dataList, showCheckBox = false, onSelectClick, isEdit = f
                                                     <TableCell>
                                                         {
                                                             showCheckBox && isEdit ?
+                                                                // 수정 모드
                                                                 <InputBase className={classes.input}
-                                                                           value={col.text}
-                                                                           onChange={(event) => event.target.value}
+                                                                           value={col.text|| ''}
+                                                                           /*순서 주의 (colIdx, rowIdx)*/
+                                                                           onChange={(event) => handleChange(event, col.id, colIdx, rowIdx)}
                                                                            fullWidth
                                                                            b={0}
                                                                 />
                                                                 :
+                                                                // 조회 모드
                                                                 col.text
                                                         }
                                                     </TableCell>
@@ -156,7 +171,7 @@ function DynamicTable({dataList, showCheckBox = false, onSelectClick, isEdit = f
                                                     </IconButton>
                                                     <IconButton size={"small"}
                                                                 className={classes.iconButton}
-                                                                onClick={() => handleDelete(cols[0]['id'], rowIdx)}
+                                                                onClick={() => handleDelete(cols[0]['id'])}
                                                     >
                                                         <DeleteIcon/>
                                                     </IconButton>
