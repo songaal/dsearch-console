@@ -16,8 +16,8 @@ import {
 } from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import {
-    Edit as EditIcon,
-    Delete as DeleteIcon
+    Delete as DeleteIcon,
+    SaveAlt as SaveAltIcon,
 } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
@@ -167,7 +167,7 @@ function DynamicTable({dataList, showCheckBox = false, onSelectClick, isEdit = f
                                                                 className={classes.iconButton}
                                                                 onClick={() => handleEdit(cols[0]['id'], rowIdx)}
                                                     >
-                                                        <EditIcon/>
+                                                        <SaveAltIcon/>
                                                     </IconButton>
                                                     <IconButton size={"small"}
                                                                 className={classes.iconButton}

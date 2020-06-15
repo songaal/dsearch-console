@@ -40,9 +40,14 @@ function SearchPanel(documents, aggregations, template, pagination) {
 
     function appendResult() {
         setDisabledAppendButton(true)
-        window.scrollTo(0, 0)
+        window.scrollX = 0
+        window.scrollY = 0
         dispatch(addReferenceResult(pagination.id, pagination))
-            .then(() => setDisabledAppendButton(false))
+            .then(() => {
+                setDisabledAppendButton(false)
+                // window.scrollTo(scrollX, scrollY);
+                // console.log(scrollY, window.scrollY)
+            })
     }
 
     function replacePatternForSource(source, pattern) {
@@ -182,66 +187,6 @@ function SearchPanel(documents, aggregations, template, pagination) {
                             )
                         })
                     }
-                    {/*<Card mt={4} pl={2} style={{backgroundColor: Color.blueGrey['100'], width: '100%'}}>*/}
-                    {/*    <CardContent>*/}
-                    {/*        <Box>*/}
-                    {/*            <Typography  variant="h5" mt={1}> 제조사 </Typography>*/}
-                    {/*            <List>*/}
-                    {/*                <ListItem p={1}>*/}
-                    {/*                    <Box component={"span"}>*/}
-                    {/*                        - 사조대림*/}
-                    {/*                    </Box>*/}
-                    {/*                    <Box component={"span"} ml={2}>*/}
-                    {/*                        10*/}
-                    {/*                    </Box>*/}
-                    {/*                </ListItem>*/}
-                    {/*                <ListItem p={1}>*/}
-                    {/*                    <Box component={"span"}>*/}
-                    {/*                        - 냠냠식품*/}
-                    {/*                    </Box>*/}
-                    {/*                    <Box component={"span"} ml={2}>*/}
-                    {/*                        5*/}
-                    {/*                    </Box>*/}
-                    {/*                </ListItem>*/}
-                    {/*                <ListItem p={1}>*/}
-                    {/*                    <Box component={"span"}>*/}
-                    {/*                        - 바잇미*/}
-                    {/*                    </Box>*/}
-                    {/*                    <Box component={"span"} ml={2}>*/}
-                    {/*                        1*/}
-                    {/*                    </Box>*/}
-                    {/*                </ListItem>*/}
-                    {/*                <ListItem p={1}>*/}
-                    {/*                    <Box component={"span"}>*/}
-                    {/*                        - 힐링펫*/}
-                    {/*                    </Box>*/}
-                    {/*                    <Box component={"span"} ml={2}>*/}
-                    {/*                        1*/}
-                    {/*                    </Box>*/}
-                    {/*                </ListItem>*/}
-                    {/*            </List>*/}
-                    {/*        </Box>*/}
-                    {/*    </CardContent>*/}
-                    {/*</Card>*/}
-
-                    {/*<Card mt={4} pl={2} style={{backgroundColor: Color.blueGrey['100'], width: '100%'}}>*/}
-                    {/*    <CardContent>*/}
-                    {/*        <Box>*/}
-                    {/*            <Typography  variant="h5" mt={1}> 상품분류 </Typography>*/}
-                    {/*            <List>*/}
-                    {/*                <ListItem p={1}>*/}
-                    {/*                    <Box component={"span"}>*/}
-                    {/*                        - 닭고기*/}
-                    {/*                    </Box>*/}
-                    {/*                    <Box component={"span"} ml={2}>*/}
-                    {/*                        10*/}
-                    {/*                    </Box>*/}
-                    {/*                </ListItem>*/}
-                    {/*            </List>*/}
-                    {/*        </Box>*/}
-                    {/*    </CardContent>*/}
-                    {/*</Card>*/}
-
 
                 </Grid>
 
