@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import styled from "styled-components";
-import { connect } from "react-redux";
+import {connect, useDispatch} from "react-redux";
 import {
     Grid, IconButton, InputBase,
     Button as MuiButton,
@@ -43,107 +43,132 @@ const useStyles = makeStyles((theme) => ({
     right: { textAlign: "right"}
 }));
 
-let selected = []
-const TYPE = "compound"
-let fieldKey = 'keyword,synonym'
-function CompoundDictionary({dispatch, compound}) {
+let checkedList = []
+let searchedKeyword = ""
+function SynonymDictionary({dictionary, setting, dataSet}) {
+    const result = dataSet[dictionary] || {}
+    const dispatch = useDispatch()
+    const classes = useStyles()
+    const [searchColumns, setSearchColumns] = useState("id,keyword,value");
     const [keyword, setKeyword] = useState("");
-    const [search, setSearch] = useState("");
-    const [keywordMatched, setKeywordMatched] = useState(false);
+    const [isMatch, setMatch] = useState(false);
     const [mode, setMode] = useState("view")  //view, edit
     const [pageNum, setPageNum] = useState(0);
-    const [rowSize, setRowSize] = useState(15);
+    const [rowSize, setRowSize] = useState(20);
 
-    // const [createId, setCreateId] = useState("");
+    const [createId, setCreateId] = useState("");
     const [createKeyword, setCreateKeyword] = useState("");
-    const [createSynonym, setCreateSynonym] = useState("");
+    const [createValue, setCreateValue] = useState("");
 
-    const [fieldNames, setFieldName] = useState("전체")
     const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
     const [createDialogOpen, setCreateDialogOpen] = React.useState(false);
 
-    const classes = useStyles();
-    const lastPageNum = compound['lastPageNum']||0
 
     useEffect(() => {
-        let field = fieldNames === "전체" ? 'keyword,synonym' : fieldNames;
-        fieldKey = field
-        dispatch(setDictionary(TYPE, pageNum, rowSize, keywordMatched, keyword, field))
+        dispatch(setDictionary(dictionary, pageNum, rowSize, isMatch, keyword, searchColumns))
     }, [])
 
-    useEffect(() => {
-        let field = fieldNames === "전체" ? 'keyword,synonym' : fieldNames;
-        if (fieldKey !== field) {
-            fieldKey = field
-            dispatch(setDictionary(TYPE, 0, rowSize, keywordMatched, search, field))
-        }
-    }, [fieldNames])
-
-    function handleSelectClick(id, checked) {
-        selected = checked ? selected.concat(id) : selected.filter(select => select !== id)
+    function handleColumnChange(event) {
+        checkedList = []
+        setSearchColumns(event.target.value)
+        dispatch(setDictionary(dictionary, 0, rowSize, isMatch, keyword, event.target.value, searchColumns))
     }
+
+    function toggleCheckbox(id, checked) {
+        checkedList = checked ? checkedList.concat(id) : checkedList.filter(select => select !== id)
+    }
+
     function handlePagination(pageNum) {
         setPageNum(pageNum)
-        let field = fieldNames === "전체" ? 'keyword,synonym' : fieldNames;
-        dispatch(setDictionary(TYPE, pageNum, rowSize, keywordMatched, search, field))
+        dispatch(setDictionary(dictionary, pageNum, rowSize, isMatch, searchedKeyword, searchColumns))
     }
-    function handleSearch() {
-        selected = []
-        setSearch(keyword)
+
+    function handleSearchClick() {
+        checkedList = []
+        searchedKeyword = keyword
         setPageNum(0)
-        let field = fieldNames === "전체" ? 'keyword,synonym' : fieldNames;
-        dispatch(setDictionary(TYPE,0, rowSize, keywordMatched, keyword, field))
+        dispatch(setDictionary(dictionary, 0, rowSize, isMatch, keyword, searchColumns))
     }
+
     function handleCheckboxChange(event) {
-        selected = []
-        setSearch(keyword)
+        checkedList = []
+        searchedKeyword = keyword
         setPageNum(0)
-        setKeywordMatched(event.target.checked)
-        let field = fieldNames === "전체" ? 'keyword,synonym' : fieldNames;
-        dispatch(setDictionary(TYPE,0, rowSize, event.target.checked, keyword, field))
+        setMatch(event.target.checked)
+        dispatch(setDictionary(dictionary, 0, rowSize, event.target.checked, keyword, searchColumns))
     }
+
     function handleSearchShortcut(event) {
         if (event.keyCode === 13) {
-            handleSearch()
+            handleSearchClick()
         }
     }
-    async function handleDelete() {
-        for (let i = 0; i < selected.length; i++) {
-            await deleteDictionary(TYPE, selected[i])
+
+    async function handleDeleteData() {
+        for (let i = 0; i < checkedList.length; i++) {
+            await deleteDictionary(dictionary, checkedList[i])
         }
+        checkedList = []
         setDeleteDialogOpen(false);
         await utils.sleep(1000);
-        dispatch(setDictionary(TYPE,0, rowSize, keywordMatched, keyword))
+        dispatch(setDictionary(dictionary, 0, rowSize, isMatch, keyword, searchColumns))
     }
-    async function handleCreate() {
-        await createDictionary(TYPE, { keyword: createKeyword, synonym: createSynonym })
+
+    async function handleCreateData() {
+        await createDictionary(dictionary, {id: createId, keyword: createKeyword, value: createValue})
+        setCreateId("")
+        setCreateValue("")
         setCreateKeyword("")
-        setCreateSynonym("")
         setCreateDialogOpen(false);
         await utils.sleep(1000);
         setKeyword(createKeyword)
-        let field = fieldNames === "전체" ? 'keyword,synonym' : fieldNames;
-        dispatch(setDictionary(TYPE,0, rowSize, keywordMatched, createKeyword, field))
+        dispatch(setDictionary(dictionary, 0, rowSize, isMatch, createKeyword, searchColumns))
     }
+
     async function handleDeleteButton(id) {
         if (!confirm("해당 라인을 삭제 하시겠습니까?")) {
             return false;
         }
-        selected = selected.filter(selectedId => selectedId !== id)
-        await deleteDictionary(TYPE, id)
+        checkedList = checkedList.filter(checkedListId => checkedListId !== id)
+        await deleteDictionary(dictionary, id)
         await utils.sleep(1000);
         handlePagination(pageNum)
     }
-    async function handleUpdateButton(id, row, fields) {
+
+    async function handleUpdateButton(id, row, columns) {
         if (!confirm("해당 라인을 수정 하시겠습니까?")) {
             return false;
         }
-        await updateDictionary(TYPE, id, {
-            keyword: row[0],
-            synonym: row[1],
-        })
+
+        let data = columns.reduce((o, k, i) => {
+            return Object.assign( {[setting['columns'][i]['type']]: row[i]}, o)
+        }, {})
+
+        await updateDictionary(dictionary, id, data)
         await utils.sleep(1000);
         handlePagination(pageNum)
+    }
+
+    let dataList = setting['columns'].map(column => {
+        const hits = (result['hits'] || [])
+        return {
+            field: column['label'],
+            data: hits.map(hit => ({id: hit['id'], text: (hit['sourceAsMap'][column['type']] || '')}))
+        }
+    })
+
+    let createLabels = {}
+    const colId = setting['columns'].find(column => column['type'] === 'id')
+    const colKeyword = setting['columns'].find(column => column['type'] === 'keyword')
+    const colValue = setting['columns'].find(column => column['type'] === 'value')
+    if (colId) {
+        createLabels.id = colId['label']
+    }
+    if (colKeyword) {
+        createLabels.keyword = colKeyword['label']
+    }
+    if (colValue) {
+        createLabels.value = colValue['label']
     }
 
     return (
@@ -154,16 +179,22 @@ function CompoundDictionary({dispatch, compound}) {
                     <Grid container>
                         <Grid item xs={6}>
                             <Box className={classes.form} display={"inline"}>
-                                <FormControl className={classes.select}>
-                                    <Select value={fieldNames}
-                                            onChange={event => setFieldName(event.target.value)}
-                                    >
-                                        <MenuItem value={"전체"}>전체</MenuItem>
-                                        <MenuItem value={"keyword"}>KEYWORD</MenuItem>
-                                        <MenuItem value={"synonym"}>VALUE</MenuItem>
-                                    </Select>
-                                </FormControl>
-
+                                {
+                                    setting['columns'] && setting['columns'].length > 1 ?
+                                        <FormControl className={classes.select}>
+                                            <Select value={searchColumns}
+                                                    onChange={handleColumnChange}
+                                            >
+                                                <MenuItem value={"id,keyword,value"}>전체</MenuItem>
+                                                {
+                                                    (setting['columns'] || [])
+                                                        .map(column => <MenuItem key={column['type']} value={column['type']}>{column['label']}</MenuItem>)
+                                                }
+                                            </Select>
+                                        </FormControl>
+                                        :
+                                        null
+                                }
                                 <InputBase
                                     className={classes.input}
                                     placeholder="검색"
@@ -175,13 +206,13 @@ function CompoundDictionary({dispatch, compound}) {
                                 <IconButton type="submit"
                                             className={classes.iconButton}
                                             aria-label="search"
-                                            onClick={handleSearch}
+                                            onClick={handleSearchClick}
                                 >
                                     <Search />
                                 </IconButton>
 
                                 <Checkbox color="primary"
-                                          value={keywordMatched}
+                                          value={isMatch}
                                           onChange={handleCheckboxChange}
                                 /> 단어매칭
 
@@ -194,7 +225,7 @@ function CompoundDictionary({dispatch, compound}) {
                                     <Button variant="outlined"
                                             color="primary"
                                             mx={1}
-                                            onClick={event => downloadDictionary(TYPE)}
+                                            onClick={() => downloadDictionary(dictionary)}
                                     >다운로드</Button>
                                 )
                                 :
@@ -216,7 +247,7 @@ function CompoundDictionary({dispatch, compound}) {
                             <Button variant="outlined"
                                     color="primary"
                                     mx={1}
-                                    onClick={event => handlePagination(pageNum)}
+                                    onClick={() => handlePagination(pageNum)}
                             >새로고침</Button>
                             <Button variant="outlined"
                                     color="primary"
@@ -230,15 +261,10 @@ function CompoundDictionary({dispatch, compound}) {
 
                     <Grid container spacing={6}>
                         <Grid item xs={12}>
-                            <DynamicTable dataList={
-                                [
-                                    { field: "키워드", data: (compound.hits || []).map(hit => ({id: hit.id, text: hit['sourceAsMap']['keyword']})) },
-                                    { field: "값", data: (compound.hits || []).map(hit => ({id: hit.id, text: hit['sourceAsMap']['synonym']})) }
-                                ]
-                            }
+                            <DynamicTable dataList={dataList}
                                           showCheckBox={mode === "edit"}
                                           isEdit={true}
-                                          onSelectClick={handleSelectClick}
+                                          onSelectClick={toggleCheckbox}
                                           onUpdate={handleUpdateButton}
                                           onDelete={handleDeleteButton}
                             />
@@ -257,11 +283,11 @@ function CompoundDictionary({dispatch, compound}) {
                                     이전
                                 </Button>
                                 <Box component={"span"} m={3}>
-                                    {lastPageNum === 0 ? 0 : pageNum + 1} / {lastPageNum}
+                                    {(result['lastPageNum'] || 0) === 0 ? 0 : pageNum + 1} / {result['lastPageNum'] || 0}
                                 </Box>
                                 <Button variant={"outlined"}
                                         onClick={() => handlePagination(pageNum + 1)}
-                                        disabled={(pageNum + 1) === lastPageNum || lastPageNum === 0}
+                                        disabled={(pageNum + 1) === (result['lastPageNum'] || 0) || (result['lastPageNum'] || 0) === 0}
                                 >
                                     다음
                                 </Button>
@@ -282,34 +308,50 @@ function CompoundDictionary({dispatch, compound}) {
                     등록
                 </DialogTitle>
                 <DialogContent>
-                    <Grid container>
-                        <Grid item xs={4}>
-                            <Box mt={2}>
-                                키워드
-                            </Box>
-                        </Grid>
-                        <Grid item xs={8}>
-                            <TextField autoFocus={true}
-                                       value={createKeyword}
-                                       onChange={event => setCreateKeyword(event.target.value)}
-                            />
-                        </Grid>
-                    </Grid>
-                    <Grid container>
-                        <Grid item xs={4}>
-                            <Box mt={2}>
-                                값
-                            </Box>
-                        </Grid>
-                        <Grid item xs={8}>
-                            <TextField value={createSynonym}
-                                       onChange={event => setCreateSynonym(event.target.value)}
-                            />
-                        </Grid>
-                    </Grid>
+
+                    {
+                        createLabels.id ?
+                            <Grid container>
+                                <Grid item xs={4}>
+                                    <Box mt={2}> {createLabels.id} </Box>
+                                </Grid>
+                                <Grid item xs={8}>
+                                    <TextField autoFocus={true} value={createId} onChange={event => setCreateId(event.target.value)}/>
+                                </Grid>
+                            </Grid>
+                            :
+                            null
+                    }
+                    {
+                        createLabels.keyword ?
+                            <Grid container>
+                                <Grid item xs={4}>
+                                    <Box mt={2}> {createLabels.keyword} </Box>
+                                </Grid>
+                                <Grid item xs={8}>
+                                    <TextField autoFocus={true} value={createKeyword} onChange={event => setCreateKeyword(event.target.value)}/>
+                                </Grid>
+                            </Grid>
+                            :
+                            null
+                    }
+                    {
+                        createLabels.value ?
+                            <Grid container>
+                                <Grid item xs={4}>
+                                    <Box mt={2}> {createLabels.value} </Box>
+                                </Grid>
+                                <Grid item xs={8}>
+                                    <TextField autoFocus={true} value={createValue} onChange={event => setCreateValue(event.target.value)}/>
+                                </Grid>
+                            </Grid>
+                            :
+                            null
+                    }
+
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCreate} color="secondary">
+                    <Button onClick={handleCreateData} color="secondary">
                         추가
                     </Button>
                     <Button autoFocus onClick={() => setCreateDialogOpen(false)} color="primary">
@@ -328,11 +370,11 @@ function CompoundDictionary({dispatch, compound}) {
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        {selected.length} 선택하신 단어를 삭제하시겠습니까?
+                        {checkedList.length} 선택하신 단어를 삭제하시겠습니까?
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleDelete} color="secondary">
+                    <Button onClick={handleDeleteData} color="secondary">
                         삭제
                     </Button>
                     <Button autoFocus onClick={() => setDeleteDialogOpen(false)} color="primary">
@@ -347,4 +389,4 @@ function CompoundDictionary({dispatch, compound}) {
     )
 }
 
-export default connect(store => ({compound: store.dictionaryReducers.compound}))(CompoundDictionary);
+export default SynonymDictionary;

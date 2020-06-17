@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
     input: { border: "0px" },
 }));
 
-function DynamicTable({dataList, showCheckBox = false, onSelectClick, isEdit = false, onUpdate = () => {}, onDelete = () => {}}) {
+function DynamicTable({dataList, from = 0, limit = 100000, showCheckBox = false, onSelectClick, isEdit = false, onUpdate = () => {}, onDelete = () => {}}) {
     const classes = useStyles();
     const [selected, setSelected] = useState([])
     const [array, setArray] = useState([])
@@ -57,6 +57,7 @@ function DynamicTable({dataList, showCheckBox = false, onSelectClick, isEdit = f
         }
         rows.push(cols)
     }
+    rows = rows.splice(from, limit)
 
     function handleSelectAllClick(checked) {
         let ids = []
@@ -77,12 +78,13 @@ function DynamicTable({dataList, showCheckBox = false, onSelectClick, isEdit = f
     }
     function handleEdit(id, rowIdx) {
         let cols = []
-        let fields = []
+        let updateFields = []
         for (let i = 0; i < array.length; i++) {
             cols.push(array[i][rowIdx]['text'] || '')
-            fields.push(fields[i] || '')
+            console.log(fields[i])
+            updateFields.push(fields[i] || '')
         }
-        onUpdate(id, cols, fields)
+        onUpdate(id, cols, updateFields)
     }
     function handleDelete(id) {
         onDelete(id)

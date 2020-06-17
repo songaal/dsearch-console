@@ -3,24 +3,62 @@ import * as types from "../constants";
 
 const client = new Client()
 
-export const setDictionary = (type, pageNum, rowSize, isMatch, value, field='keyword') => dispatch => client.call({
-    uri: `/dictionaries/${type}`,
-    params: {pageNum, rowSize, isMatch, value, field}
-}).then(response => dispatch({type: types[`SET_DICTIONARY_${type.toUpperCase()}`], payload: response.data}))
-    .catch(error => console.error(error))
+export const setActiveSettingIndex = (activeIndex) => dispatch => dispatch({type: types.SET_ACTIVE_SETTING_INDEX, payload: activeIndex})
 
-export const downloadDictionary = (type) => client.call({uri: `/dictionaries/${type}/download`,  responseType: 'blob'})
-    .then(response => {
-        const url = window.URL.createObjectURL(new Blob([response.data], { type: response.headers['content-type'] }));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', `${type}.txt`);
-        document.body.appendChild(link);
-        link.click();
+export const setSettings = () => dispatch =>
+    client.call({
+        uri: `/dictionaries/settings`
+    })
+        .then(response => dispatch({type: types.SET_SETTING_DICTIONARIES, payload: response.data}))
+        .catch(error => console.error(error))
+
+export const setDictionary = (dictionary, pageNum, rowSize, isMatch, value, searchColumns) => dispatch =>
+    client.call({
+        uri: `/dictionaries/${dictionary}`,
+        params: {pageNum, rowSize, isMatch, value, searchColumns}
+    })
+        .then(response => dispatch({type: types.SET_DICTIONARY_DATASET, dictionary: dictionary, payload: response.data}))
+        .catch(error => console.error(error))
+
+export const downloadDictionary = (dictionary) =>
+    client.call({
+        uri: `/dictionaries/${dictionary}/download`,
+        responseType: 'blob'
+    })
+        .then(response => {
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(new Blob([response.data], {
+                type: response.headers['content-type']
+            }));
+            link.setAttribute('download', `${dictionary}.txt`);
+            document.body.appendChild(link);
+            link.click();
+        })
+
+export const deleteDictionary = (dictionary, id) =>
+    client.call({
+        uri: `/dictionaries/${dictionary}/${id}`,
+        method: "DELETE"
     })
 
-export const deleteDictionary = (type, id) => client.call({uri: `/dictionaries/${type}/${id}`,  method: "DELETE"})
+export const createDictionary = (dictionary, data) =>
+    client.call({
+        uri: `/dictionaries/${dictionary}`,
+        method: "POST",
+        data: data
+    })
+        .then(response => {
+            console.log(response)
+        })
+        .catch(error => console.error(error))
 
-export const createDictionary = (type, data) => client.call({uri: `/dictionaries/${type}`,  method: "POST", data: data})
-
-export const updateDictionary = (type, id, data) => client.call({uri: `/dictionaries/${type}/${id}`,  method: "PUT", data: data})
+export const updateDictionary = (dictionary, id, data) =>
+    client.call({
+        uri: `/dictionaries/${dictionary}/${id}`,
+        method: "PUT",
+        data: data
+    })
+        .then(response => {
+            console.log(response)
+        })
+        .catch(error => console.error(error))
