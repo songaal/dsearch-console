@@ -83,7 +83,7 @@ function SearchPanel(documents, aggregations, template, pagination) {
                     <List p={0} pt={4}>
 
                         {
-                            documents.map((data, index) => {
+                            (documents || []).map((data, index) => {
                                 const documentMap = data['sourceAsMap']
                                 const title = replacePatternForSource(documentMap, String(template['title']))
                                 const thumbnails = replacePatternForSource(documentMap, String(template['thumbnails']))

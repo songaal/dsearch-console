@@ -24,9 +24,10 @@ const Tools = async(() => import("../pages/analysis/tools"));
 const RankingTuning = async(() => import("../pages/analysis/rankingTuning"));
 
 // Indices components
-const Templates = async(() => import("../pages/indices/templates"));
-const TemplateEdit = async(() => import("../pages/indices/templates/edit"));
-const TemplateView = async(() => import("../pages/indices/templates/view"));
+const Templates = async(() => import("../pages/indices/indexTemplates"));
+const TemplateNew = async(() => import("../pages/indices/indexTemplates/new"));
+const TemplateEdit = async(() => import("../pages/indices/indexTemplates/edit"));
+const TemplateView = async(() => import("../pages/indices/indexTemplates/view"));
 
 const ClusterData = async(() => import("../pages/indices/cluster"));
 const IndexData = async(() => import("../pages/indices/indexData"));
@@ -74,9 +75,9 @@ const analysisRoutes = [
 const indicesRoutes = [
     {header: "인덱스", id: "설정", path: "/indices/configuration", icon: <Icon.Subject/>, component: Configuration, children: null},
     {id: "템플릿", path: "/indices/templates", icon: <Icon.Subject/>, component: Templates, children: null},
-    {id: "템플릿생성", path: "/indices/template/edit", component: TemplateEdit, hidden: true},
-    {id: "템플릿수정", path: "/indices/template/edit/*", component: TemplateEdit, hidden: true},
-    {id: "템플릿조회", path: "/indices/template/view/*", component: TemplateView, hidden: true},
+    {id: "템플릿생성", path: "/indices/template", component: TemplateNew, hidden: true},
+    {id: "템플릿수정", path: "/indices/templates/*/edit", component: TemplateEdit, hidden: true},
+    {id: "템플릿조회", path: "/indices/templates/*", component: TemplateView, hidden: true},
     {id: "데이터", path: "/indices/data", icon: <Icon.Subject/>, component: IndexData, children: null},
     {id: "수집소스", path: "/indices/source", icon: <Icon.Subject/>, component: DataSource, children: null},
     {id: "색인", path: "/indices/index", icon: <Icon.Subject/>, component: Index, children: null},
