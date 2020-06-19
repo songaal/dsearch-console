@@ -227,7 +227,7 @@ const MainHeader = ({theme, onDrawerToggle}) => (
                     <Grid item xs/>
 
                     <Grid item>
-                        <ClusterMenu theme={theme}/>
+                        {/*<ClusterMenu theme={theme}/>*/}
                         <UserMenu theme={theme}/>
                     </Grid>
                 </Grid>
