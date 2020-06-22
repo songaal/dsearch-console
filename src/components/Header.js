@@ -1,27 +1,27 @@
 import React, {Component, useState} from "react";
-import { useHistory } from "react-router-dom";
-import { connect, useDispatch, useSelector } from "react-redux";
+import {Link, useHistory} from "react-router-dom";
+import {connect, useDispatch, useSelector} from "react-redux";
 import styled, {withTheme} from "styled-components";
 import {darken} from "polished";
 
 import {
     AppBar as MuiAppBar,
-    Badge,
+    ButtonBase,
     Grid,
     Hidden,
     IconButton as MuiIconButton,
     InputBase,
     Menu,
     MenuItem,
-    Toolbar,
-    ButtonBase
+    Toolbar
 } from "@material-ui/core";
 
-import {Menu as MenuIcon, ArrowDropDown } from "@material-ui/icons";
+import {ArrowDropDown, Menu as MenuIcon} from "@material-ui/icons";
 
-import {Search as SearchIcon, Home} from "react-feather";
+import {Home, Search as SearchIcon} from "react-feather";
 import {setReferenceResultAll, setReferenceSearchKeyword} from "../redux/actions/referenceSearchActions";
-import referenceSearchReducers from "../redux/reducers/referenceSearchReducers";
+import {setFastcatxAuthUser, setFastcatxSignOut} from "../redux/actions/fastcatxActions";
+import {SET_FASTCATX_AUTH_USER} from "../redux/constants";
 
 const AppBar = styled(MuiAppBar)`
   background: ${props => props.theme.header.background};
@@ -33,13 +33,6 @@ const IconButton = styled(MuiIconButton)`
   svg {
     width: 22px;
     height: 22px;
-  }
-`;
-
-const Indicator = styled(Badge)`
-  .MuiBadge-badge {
-    background: ${props => props.theme.header.indicator.background};
-    color: ${props => props.theme.palette.common.white};
   }
 `;
 
@@ -94,13 +87,6 @@ const Button = styled(ButtonBase)`
   padding-right: ${props => props.theme.spacing(2)}px;
 `
 
-
-const Flag = styled.img`
-  border-radius: 50%;
-  width: 22px;
-  height: 22px;
-`;
-
 class ClusterMenu extends Component {
     state = {
         anchorMenu: null
@@ -125,7 +111,7 @@ class ClusterMenu extends Component {
                         variant={"outlined"}
                 >
                     운영클러스터
-                    <ArrowDropDown />
+                    <ArrowDropDown/>
                 </Button>
                 <Menu
                     id="menu-appbar"
@@ -153,57 +139,62 @@ class ClusterMenu extends Component {
     }
 }
 
-class UserMenu extends Component {
-    state = {
-        anchorMenu: null
-    };
-
-    toggleMenu = event => {
-        this.setState({anchorMenu: event.currentTarget});
-    };
-
-    closeMenu = () => {
-        this.setState({anchorMenu: null});
-    };
-
-    render() {
-        const {anchorMenu} = this.state;
-        const open = Boolean(anchorMenu);
-        return (
-            <React.Fragment>
-                <Button aria-owns={open ? "menu-appbar" : undefined}
-                        aria-haspopup="true"
-                        onClick={this.toggleMenu}
-                        variant={"outlined"}
-                >
-                    admin@danawa.com
-                    <ArrowDropDown />
-                </Button>
-
-                <Menu
-                    id="menu-appbar"
-                    anchorEl={anchorMenu}
-                    open={open}
-                    onClose={this.closeMenu}
-                >
-                    <MenuItem
-                        onClick={() => {
-                            this.closeMenu();
-                        }}
-                    >
-                        회원정보
-                    </MenuItem>
-                    <MenuItem
-                        onClick={() => {
-                            this.closeMenu();
-                        }}
-                    >
-                        로그아웃
-                    </MenuItem>
-                </Menu>
-            </React.Fragment>
-        );
+function UserMenu() {
+    const dispatch = useDispatch()
+    const authUser = useSelector(store => store.fastcatxReducers.authUser)
+    if (!authUser['sessionId']) {
+        dispatch(setFastcatxAuthUser()).catch(() => location.replace("/"))
     }
+    const [anchorMenu, setAnchorMenu] = useState(null)
+    const open = Boolean(anchorMenu);
+
+    function toggleMenu(event) {
+        setAnchorMenu(event.currentTarget)
+    }
+
+    function closeMenu() {
+        setAnchorMenu(null)
+    }
+
+    function signOut() {
+        localStorage.removeItem(SET_FASTCATX_AUTH_USER)
+        dispatch(setFastcatxSignOut())
+    }
+
+    return (
+        <React.Fragment>
+            <Button aria-owns={open ? "menu-appbar" : undefined}
+                    aria-haspopup="true"
+                    onClick={toggleMenu}
+                    variant={"outlined"}
+            >
+                {/*{(authUser['user'] || {})['username']}*/}
+                {(authUser['user'] || {})['email']}
+                <ArrowDropDown/>
+            </Button>
+
+            <Menu
+                id="menu-appbar"
+                anchorEl={anchorMenu}
+                open={open}
+                onClose={closeMenu}
+            >
+                <MenuItem
+                    component={Link}
+                    to={"/my"}
+                >
+                    정보수정
+                </MenuItem>
+                <MenuItem
+                    component={Link}
+                    onClick={signOut}
+                    to={"/"}
+                >
+                    로그아웃
+                </MenuItem>
+            </Menu>
+        </React.Fragment>
+    );
 }
 
 
@@ -223,7 +214,7 @@ const MainHeader = ({theme, onDrawerToggle}) => (
                             </IconButton>
                         </Grid>
                     </Hidden>
-                    <Grid item />
+                    <Grid item/>
                     <Grid item xs/>
 
                     <Grid item>
@@ -291,8 +282,8 @@ const DashBoardHeader = ({theme, onDrawerToggle}) => {
 
                         <Grid item>
                             <IconButton color="inherit"
-                                        onClick={() => location.href="/"}>
-                                <Home />
+                                        onClick={() => location.href = "/"}>
+                                <Home/>
                             </IconButton>
                             <ClusterMenu theme={theme}/>
                             <UserMenu theme={theme}/>
@@ -309,7 +300,7 @@ const Header = ({theme, layout, onDrawerToggle}) => {
     return layout === "main" ?
         <MainHeader theme={theme} onDrawerToggle={onDrawerToggle}/>
         :
-        <DashBoardHeader theme={theme} onDrawerToggle={onDrawerToggle} />
+        <DashBoardHeader theme={theme} onDrawerToggle={onDrawerToggle}/>
 }
 
 export default connect()(withTheme(Header));

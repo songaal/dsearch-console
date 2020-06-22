@@ -1,23 +1,30 @@
 import axios from 'axios'
+import {SET_FASTCATX_SERVER} from "./redux/constants";
 
 export default class Client {
     constructor(props) {
-        console.log("init")
         // const instance = axios.create({
         //     baseURL: 'https://api',
         //     timeout: 1000
         // })
-        this.server = process.env.REACT_APP_FASTCATX_SERVER_URL
+        const fastcatxServer = localStorage.getItem(SET_FASTCATX_SERVER)
+        if (fastcatxServer) {
+            this.server = fastcatxServer
+        }
     }
     call(config) {
         return new Promise(async (resolve, reject) => {
             try {
-                config.url = `${this.server}${config.uri}`
+                if (config.uri) {
+                    config.url = `${this.server}${config.uri}`
+                }
+                config.withCredentials = true
                 let response = await axios.request(config)
                 console.log('response >>> ', response)
                 resolve(response)
             } catch (err) {
                 console.error('API Fail', config, err)
+                console.log(err.statusCode)
                 reject(err)
             }
         })

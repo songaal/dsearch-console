@@ -1,4 +1,5 @@
-import React from "react";
+import React, {useEffect} from "react";
+import {connect} from 'react-redux';
 import styled from "styled-components";
 import Helmet from 'react-helmet';
 import {spacing} from "@material-ui/system";
@@ -39,6 +40,7 @@ import DraftsIcon from '@material-ui/icons/Drafts';
 import SendIcon from '@material-ui/icons/Send';
 import {ArrowDropDown} from "@material-ui/icons";
 import red from '@material-ui/core/colors/red';
+import {setRoleListAction} from "../../redux/actions/roleManagementActions";
 
 const Card = styled(MuiCard)(spacing);
 const Divider = styled(MuiDivider)(spacing);
@@ -78,17 +80,6 @@ const TextField = styled(TextFieldSpacing)`
   width: 100%;
 `;
 
-function createData( name ) {
-    return { name };
-}
-const rows = [
-    createData('관리자'),
-    createData('운영자'),
-    createData('사용자'),
-];
-
-
-
 const StyledMenu = withStyles({
     paper: {
         border: '1px solid #d3d4d5',
@@ -121,11 +112,16 @@ const StyledMenuItem = withStyles((theme) => ({
 }))(MenuItem);
 
 
-function Role() {
+function Role({ dispatch, roleList }) {
+
     const classes = useStyles();
     const [checked, setChecked] = React.useState(true);
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [open, setOpen] = React.useState(false);
+
+    useEffect(() => {
+        dispatch(setRoleListAction())
+    }, [])
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -204,7 +200,7 @@ function Role() {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {rows.map((row) => (
+                                        {roleList.map((row) => (
                                             <StyledTableRow key={row.name}>
                                                 <StyledTableCell component="th"
                                                                  scope="row"
@@ -333,4 +329,4 @@ function Role() {
     );
 }
 
-export default Role;
+export default connect(store => ({...store.roleManagementReducers}))(Role);

@@ -11,6 +11,8 @@ import indicesIndexDataReducers from "./indicesIndexDataReducers";
 import dashBoardReducers from "./dashBoardReducers";
 import referenceSearchReducers from "./referenceSearchReducers";
 import indexTemplateReducers from "./indexTemplateReducers";
+import fastcatxReducers from "./fastcatxReducers";
+import roleManagementReducers from "./roleManagementReducers";
 
 export default combineReducers({
     indicesReducers,
@@ -24,4 +26,6 @@ export default combineReducers({
     dashBoardReducers,
     referenceSearchReducers,
     indexTemplateReducers,
+    fastcatxReducers,
+    roleManagementReducers,
 });
