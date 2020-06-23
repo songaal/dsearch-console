@@ -8,7 +8,7 @@ export default class Client {
         //     timeout: 1000
         // })
         const fastcatxServer = localStorage.getItem(SET_FASTCATX_SERVER)
-        if (fastcatxServer) {
+        if (fastcatxServer !== undefined && fastcatxServer !== null && "" !== fastcatxServer) {
             this.server = fastcatxServer
         }
     }
@@ -16,6 +16,9 @@ export default class Client {
         return new Promise(async (resolve, reject) => {
             try {
                 if (config.uri) {
+                    if (typeof this.server === 'undefined') {
+                        location.href = "/"
+                    }
                     config.url = `${this.server}${config.uri}`
                 }
                 config.withCredentials = true
