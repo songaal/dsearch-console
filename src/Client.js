@@ -3,25 +3,21 @@ import {SET_FASTCATX_SERVER} from "./redux/constants";
 
 export default class Client {
     constructor(props) {
-        const fastcatxServer = localStorage.getItem(SET_FASTCATX_SERVER)
-        if (fastcatxServer) {
-            this.server = fastcatxServer
-        }
+        this.server = null
     }
     call(config) {
+        if (config.uri) {
+            const server = sessionStorage.getItem(SET_FASTCATX_SERVER)
+            if (server === null && location.pathname !== "/") {
+                location.href = "/"
+                return
+            } else {
+                config.url = `${server}${config.uri}`
+            }
+        }
+
         return new Promise(async (resolve, reject) => {
             try {
-                if (config.uri) {
-                    const registerFastcatxServer = localStorage.getItem(SET_FASTCATX_SERVER)
-                    if (this.server === undefined || this.server === null) {
-                        this.server = registerFastcatxServer
-                    }
-                    if ((this.server === undefined || this.server === null) && location.pathname !== "/") {
-                        location.href = "/"
-                        return
-                    }
-                    config.url = `${this.server}${config.uri}`
-                }
                 config.withCredentials = true
                 let response = await axios.request(config)
                 console.log('response >>> ', response)

@@ -24,9 +24,14 @@ export const setFastcatxAuthUser = () => dispatch => client.call({
     uri: `/auth`,
 }).then(response => {
     const authUser = response.data
-    sessionStorage.setItem(SET_FASTCATX_AUTH_USER, JSON.stringify(authUser))
-    dispatch({type: SET_FASTCATX_AUTH_USER, payload: authUser})
-    return authUser
+    if(authUser['sessionId']) {
+        sessionStorage.setItem(SET_FASTCATX_AUTH_USER, JSON.stringify(authUser))
+        dispatch({type: SET_FASTCATX_AUTH_USER, payload: authUser})
+        return authUser
+    } else {
+        console.error('error', response)
+        throw new Error()
+    }
 })
 
 export const setFastcatxSignIn = user => dispatch => client.call({
@@ -34,7 +39,6 @@ export const setFastcatxSignIn = user => dispatch => client.call({
     method: "post",
     data: user
 }).then(response => {
-    console.log('response', response.data)
     sessionStorage.setItem(SET_FASTCATX_AUTH_USER, JSON.stringify(response.data))
     dispatch({type: SET_FASTCATX_AUTH_USER, payload: response.data})
 })
@@ -44,7 +48,8 @@ export const setFastcatxSignOut = () => dispatch => client.call({
     method: "post"
 }).then(response => {
     dispatch({type: SET_FASTCATX_AUTH_USER, payload: {}})
-    sessionStorage.removeItem(SET_FASTCATX_AUTH_USER)
+    sessionStorage.removeItem(SET_FASTCATX_SERVER);
+    sessionStorage.removeItem(SET_FASTCATX_AUTH_USER);
 })
 
 export const editUserPassword = (id, updateUser) => dispatch => client.call({

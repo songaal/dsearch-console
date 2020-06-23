@@ -43,21 +43,22 @@ function SignIn({dispatch}) {
     useEffect(() => {
         const fastcatxServer = localStorage.getItem(SET_FASTCATX_SERVER)
         const hash = JSON.parse(localStorage.getItem(SET_FASTCATX_AUTH_USER) || "{}")
-        // is login
+        // 세선이 있을 경우
         dispatch(setFastcatxAuthUser())
             .then(response => {
                 console.log("authenticated")
+                sessionStorage.setItem(SET_FASTCATX_SERVER, localStorage.getItem(SET_FASTCATX_SERVER));
                 location.replace(authenticatedRoute)
             })
 
-        // auto login
+        // 자동로그인 (로컬 스토리지 정보 로그인 시도)
         if (hash['hash1']) {
             console.log("auto login")
             setLoginSave(hash['hash1'])
             signInProcess(atob(atob(atob(hash['hash2']))), atob(atob(atob(hash['hash3']))), atob(atob(atob(hash['hash4']))))
         }
 
-        // server
+        // 마지막 서버 접속 정보
         if (fastcatxServer) {
             setServer(fastcatxServer)
         }
@@ -80,6 +81,7 @@ function SignIn({dispatch}) {
     }
 
     function handleSignIn() {
+        // 자동로그인 (로컬 스토리지 정보 삭제)
         localStorage.removeItem(SET_FASTCATX_AUTH_USER)
         if (email.length === 0 || password.length === 0) {
             setInValid(true)
@@ -90,11 +92,13 @@ function SignIn({dispatch}) {
     }
 
     function signInProcess(server, email, password) {
+        sessionStorage.setItem(SET_FASTCATX_SERVER, localStorage.getItem(SET_FASTCATX_SERVER));
         dispatch(setFastcatxSignIn({server, email, password}))
             .then(response => {
                 console.log("sign in success")
                 setInValid(false)
                 if (loginSave) {
+                    // 자동로그인 (로컬 스토리지 추가)
                     localStorage.setItem(SET_FASTCATX_AUTH_USER, JSON.stringify({
                         hash1: loginSave,
                         hash2: btoa(btoa(btoa(server))),
