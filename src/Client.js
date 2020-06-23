@@ -12,7 +12,11 @@ export default class Client {
         return new Promise(async (resolve, reject) => {
             try {
                 if (config.uri) {
-                    if (location.pathname !== "/" && typeof this.server === 'undefined') {
+                    const registerFastcatxServer = localStorage.getItem(SET_FASTCATX_SERVER)
+                    if (this.server === undefined || this.server === null) {
+                        this.server = registerFastcatxServer
+                    }
+                    if ((this.server === undefined || this.server === null) && location.pathname !== "/") {
                         location.href = "/"
                         return
                     }

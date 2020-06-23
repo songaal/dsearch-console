@@ -73,7 +73,9 @@ function SignIn({dispatch}) {
             checkServer = "http://" + server
         }
         dispatch(setFastcatxServer(checkServer))
-            .then(response => response ? setServerError(false) : setServerError(true))
+            .then(response => {
+                response ? setServerError(false) : setServerError(true)
+            })
             .catch(error => setServerError(true))
     }
 
