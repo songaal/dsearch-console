@@ -3,12 +3,8 @@ import {SET_FASTCATX_SERVER} from "./redux/constants";
 
 export default class Client {
     constructor(props) {
-        // const instance = axios.create({
-        //     baseURL: 'https://api',
-        //     timeout: 1000
-        // })
         const fastcatxServer = localStorage.getItem(SET_FASTCATX_SERVER)
-        if (fastcatxServer !== undefined && fastcatxServer !== null && "" !== fastcatxServer) {
+        if (fastcatxServer) {
             this.server = fastcatxServer
         }
     }
@@ -18,6 +14,7 @@ export default class Client {
                 if (config.uri) {
                     if (location.pathname !== "/" && typeof this.server === 'undefined') {
                         location.href = "/"
+                        return
                     }
                     config.url = `${this.server}${config.uri}`
                 }
