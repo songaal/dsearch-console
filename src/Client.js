@@ -16,7 +16,7 @@ export default class Client {
         return new Promise(async (resolve, reject) => {
             try {
                 if (config.uri) {
-                    if (typeof this.server === 'undefined') {
+                    if (location.pathname !== "/" && typeof this.server === 'undefined') {
                         location.href = "/"
                     }
                     config.url = `${this.server}${config.uri}`
