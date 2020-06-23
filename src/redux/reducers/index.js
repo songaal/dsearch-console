@@ -13,6 +13,7 @@ import referenceSearchReducers from "./referenceSearchReducers";
 import indexTemplateReducers from "./indexTemplateReducers";
 import fastcatxReducers from "./fastcatxReducers";
 import roleManagementReducers from "./roleManagementReducers";
+import userManagementReducers from "./userManagementReducers";
 
 export default combineReducers({
     indicesReducers,
@@ -28,4 +29,5 @@ export default combineReducers({
     indexTemplateReducers,
     fastcatxReducers,
     roleManagementReducers,
+    userManagementReducers,
 });

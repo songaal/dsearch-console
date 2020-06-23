@@ -5,7 +5,7 @@ import * as Icon from "@material-ui/icons";
 
 // CLuster
 const Cluster = async(() => import("../pages/cluster"));
-const User = async(() => import("../pages/user"));
+const User = async(() => import("../pages/userManagement"));
 const Role = async(() => import("../pages/role"));
 
 // Dashboard components
@@ -17,7 +17,7 @@ const SignUp = async(() => import("../pages/auth/SignUp"));
 const ResetPassword = async(() => import("../pages/auth/ResetPassword"));
 const Page404 = async(() => import("../pages/auth/Page404"));
 const Page500 = async(() => import("../pages/auth/Page500"));
-const EditUser = async(() => import("../pages/user/EditUser"));
+const EditUser = async(() => import("../pages/userManagement/EditUser"));
 
 // Analysis components
 const Dictionary = async(() => import("../pages/analysis/dictionary"));

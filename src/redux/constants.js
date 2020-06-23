@@ -35,3 +35,7 @@ export const SET_FASTCATX_SERVER = 'SET_FASTCATX_SERVER';
 export const SET_FASTCATX_AUTH_USER = 'SET_FASTCATX_AUTH_USER';
 
 export const SET_ROLE_LIST = 'SET_ROLE_LIST';
+export const SET_ROLE = 'SET_ROLE';
+
+export const SET_USER_LIST = 'SET_USER_LIST';
+export const SET_USER = 'SET_USER';

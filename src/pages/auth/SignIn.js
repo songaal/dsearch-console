@@ -92,7 +92,10 @@ function SignIn({dispatch}) {
     }
 
     function signInProcess(server, email, password) {
-        sessionStorage.setItem(SET_FASTCATX_SERVER, localStorage.getItem(SET_FASTCATX_SERVER));
+        if (!server.startsWith("https://") && !server.startsWith("http://")) {
+            server = "http://" + server
+        }
+        sessionStorage.setItem(SET_FASTCATX_SERVER, server);
         dispatch(setFastcatxSignIn({server, email, password}))
             .then(response => {
                 console.log("sign in success")
