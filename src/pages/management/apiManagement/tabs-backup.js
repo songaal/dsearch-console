@@ -2966,7 +2966,7 @@ function ApiManagement() {
                                             "translog_ops_percent" : "100.0%"
                                         },
                                         {
-                                            "index" : ".apm-agent-configuration",
+                                            "index" : ".apm-agent-collection",
                                             "shard" : "0",
                                             "time" : "97ms",
                                             "type" : "existing_store",
@@ -2990,7 +2990,7 @@ function ApiManagement() {
                                             "translog_ops_percent" : "100.0%"
                                         },
                                         {
-                                            "index" : ".apm-agent-configuration",
+                                            "index" : ".apm-agent-collection",
                                             "shard" : "0",
                                             "time" : "88ms",
                                             "type" : "peer",

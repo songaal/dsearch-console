@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
+import { useHistory } from "react-router-dom";
 import {makeStyles, useTheme} from '@material-ui/core/styles';
 import styled from "styled-components";
 
@@ -294,6 +295,7 @@ function AddGuideCard(props) {
 }
 
 function Cluster({ dispatch, clusterList }) {
+    const history = useHistory()
     const classes = useStyles();
     const fullScreen = useMediaQuery(useTheme().breakpoints.down('sm'));
     const [openEditModal, setOpenEditModal] = useState(false);
@@ -451,6 +453,14 @@ function Cluster({ dispatch, clusterList }) {
             alert("실패")
         })
     }
+    function goDashboard(id) {
+        // const link = document.createElement('a');
+        // link.setAttribute("href", `${id}/dashboard`)
+        // link.setAttribute("target", "_blank")
+        // document.body.appendChild(link);
+        // link.click()
+        window.open(`${id}/dashboard`,'window',`location=no,directories=no,resizable=no,status=no,toolbar=no,menubar=no,left=0,top=0,scrollbars=yes,width=${window.outerWidth},height=${window.outerHeight}`)
+    }
 
     return (
         <React.Fragment>
@@ -462,7 +472,13 @@ function Cluster({ dispatch, clusterList }) {
 
             <Grid container spacing={6}>
 
-                {clusterList.map(cluster => <ClusterCard key={cluster['cluster']['id']}  cluster={cluster} classes={classes} onEditClick={() => toggleOpenEditModal(cluster)} onRemoveClick={() => toggleOpenRemoveModal(cluster['cluster']['id'])} />)}
+                {clusterList.map(cluster => <ClusterCard key={cluster['cluster']['id']}
+                                                         cluster={cluster}
+                                                         classes={classes}
+                                                         onEditClick={() => toggleOpenEditModal(cluster)}
+                                                         onRemoveClick={() => toggleOpenRemoveModal(cluster['cluster']['id'])}
+                                                         to={() => goDashboard(cluster['cluster']['id'])}
+                />)}
 
                 <AddClusterCard key={"add"}
                                 className={classes}

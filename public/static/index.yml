@@ -6790,7 +6790,7 @@ paths:
         type: string
       - in: body
         name: request
-        description: The configuration for the target index (`settings` and `aliases`)
+        description: The collection for the target index (`settings` and `aliases`)
         required: false
         schema:
           $ref: '#/definitions/CloneIndexRequest'
@@ -7176,7 +7176,7 @@ paths:
         type: string
       - in: body
         name: request
-        description: The configuration for the target index (`settings` and `aliases`)
+        description: The collection for the target index (`settings` and `aliases`)
         required: false
         schema:
           $ref: '#/definitions/ShrinkIndexRequest'
@@ -7256,7 +7256,7 @@ paths:
         type: string
       - in: body
         name: request
-        description: The configuration for the target index (`settings` and `aliases`)
+        description: The collection for the target index (`settings` and `aliases`)
         required: false
         schema:
           $ref: '#/definitions/SplitIndexRequest'

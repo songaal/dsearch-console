@@ -28,7 +28,7 @@ const TableContainer = styled(MuiTableContainer)(spacing)
 
 function ApiManagement({dispatch, cat}) {
     const classes = useStyles();
-    const [selected, setSelected] = React.useState(null);
+    const [selected, setSelected] = React.useState("master");
 
     useEffect(() => {
         if (selected !== null) {
