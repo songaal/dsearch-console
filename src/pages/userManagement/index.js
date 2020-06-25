@@ -5,6 +5,7 @@ import Helmet from 'react-helmet';
 import {spacing} from "@material-ui/system";
 import {makeStyles, useTheme, withStyles} from '@material-ui/core/styles';
 import {
+    Box,
     Button,
     Card as MuiCard,
     CardContent,
@@ -35,7 +36,12 @@ import InboxIcon from '@material-ui/icons/MoveToInbox';
 import DraftsIcon from '@material-ui/icons/Drafts';
 import SendIcon from '@material-ui/icons/Send';
 import {ArrowDropDown} from "@material-ui/icons";
-import {addUserAction, setUserListAction} from "../../redux/actions/userManagementActions";
+import {
+    addUserAction, removeUserAction,
+    resetPasswordAction,
+    setUserEditAction,
+    setUserListAction
+} from "../../redux/actions/userManagementActions";
 import red from "@material-ui/core/colors/red";
 import roleManagementReducers from "../../redux/reducers/roleManagementReducers";
 import {setRoleListAction} from "../../redux/actions/roleManagementActions";
@@ -117,7 +123,9 @@ function UserManagement({dispatch, userList, userRolesList, roleList}) {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const [openDropDown, setOpenDropDown] = useState(null);
+
     const [openUserAddModal, setOpenUserAddModal] = useState(null);
+    const [showPassword, setShowPassword] = useState(null)
 
     const [email, setEmail] = useState("")
     const [emailError, setEmailError] = useState(false)
@@ -125,6 +133,9 @@ function UserManagement({dispatch, userList, userRolesList, roleList}) {
     const [usernameError, setUsernameError] = useState(false)
     const [roleId, setRoleId] = useState("")
     const [roleIdError, setRoleIdError] = useState(false)
+
+    const [selectedUserId, setSelectedUserId] = useState("")
+    const [openUserEditModal, setOpenUserEditModal] = useState(null);
 
     useEffect(() => {
         dispatch(setRoleListAction())
@@ -141,9 +152,33 @@ function UserManagement({dispatch, userList, userRolesList, roleList}) {
 
     function toggleUserAddModal(event) {
         if (openUserAddModal === null) {
+            setShowPassword(null)
+            setEmail("")
+            setUsername("")
+            setRoleId("")
             setOpenUserAddModal(event.currentTarget);
         } else {
+            dispatch(setRoleListAction())
+            dispatch(setUserListAction())
+            setOpenDropDown(null);
             setOpenUserAddModal(null);
+        }
+    }
+
+    function toggleUserEditModal(event) {
+        setShowPassword(null)
+        if (openUserEditModal === null) {
+            const user = userList.find(user => user['id'] === selectedUserId)
+            const userRoles = userRolesList.find(userRoles => userRoles['userId'] === selectedUserId)
+            setEmail(user['email'])
+            setUsername(user['username'])
+            setRoleId(userRoles['roleId'])
+            setOpenUserEditModal(event.currentTarget);
+        } else {
+            dispatch(setRoleListAction())
+            dispatch(setUserListAction())
+            setOpenDropDown(null);
+            setOpenUserEditModal(null);
         }
     }
 
@@ -152,21 +187,58 @@ function UserManagement({dispatch, userList, userRolesList, roleList}) {
         setUsernameError(false)
         setRoleIdError(false)
 
-        if (email === "") {
+        const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (email === "" || !re.test(email)) {
             setEmailError(true)
+            return false
         }
         if (username === "") {
             setUsernameError(true)
+            return false
         }
         if (roleId === "") {
             setRoleIdError(true)
+            return false
         }
-
         dispatch(addUserAction({ email, username, roleId})).then(response => {
-            console.log(response.data)
+            setShowPassword(response.data['password'])
+        }).catch(error => {
+            console.log(error)
+            alert("사용자 추가를 실패하였습니다.")
         })
     }
 
+    function resetPassword() {
+        dispatch(resetPasswordAction(selectedUserId))
+            .then(response => {
+                setShowPassword(response.data['password'])
+            }).catch(error => {
+                alert("실패")
+                console.log(error)
+        })
+    }
+
+    function handleUserEditProcess() {
+        dispatch(setUserEditAction(selectedUserId, {
+            email, username, roleId
+        }))
+            .then(() => {
+                toggleUserEditModal()
+            }).catch(error => {
+            alert("실패")
+            console.log(error)
+        })
+    }
+
+    function handleRemoveUserProcess() {
+        dispatch(removeUserAction(selectedUserId))
+            .then(response => {
+                setSelectedUserId("")
+                setOpenDropDown(null);
+                dispatch(setRoleListAction())
+                dispatch(setUserListAction())
+            })
+    }
 
     return (
         <React.Fragment>
@@ -206,13 +278,15 @@ function UserManagement({dispatch, userList, userRolesList, roleList}) {
                                         </ListItemIcon>
                                         <ListItemText primary="추가" />
                                     </StyledMenuItem>
-                                    <StyledMenuItem>
+                                    <StyledMenuItem onClick={toggleUserEditModal}
+                                                    disabled={selectedUserId === ""}>
                                         <ListItemIcon>
                                             <SendIcon fontSize="small" />
                                         </ListItemIcon>
                                         <ListItemText primary="수정" />
                                     </StyledMenuItem>
-                                    <StyledMenuItem>
+                                    <StyledMenuItem onClick={handleRemoveUserProcess}
+                                                    disabled={selectedUserId === ""}>
                                         <ListItemIcon>
                                             <DraftsIcon fontSize="small" />
                                         </ListItemIcon>
@@ -234,18 +308,24 @@ function UserManagement({dispatch, userList, userRolesList, roleList}) {
                                     <TableBody>
                                         {userList.map((user) => {
                                             const userRoles = userRolesList.find(userRoles => userRoles['userId'] === user['id']);
-                                            const role = roleList.find(role => role['id'] === userRoles['roleId']);
+                                            let roleName = "";
+                                            if (userRoles) {
+                                                roleName = roleList.find(role => role['id'] === userRoles['roleId'])['name'] || ""
+                                            }
                                             return (
                                                 <StyledTableRow key={user['email']}>
                                                     <StyledTableCell component="th"
                                                                      scope="row"
                                                                      align="center"
                                                     >
-                                                        <Checkbox color="primary" />
+                                                        <Checkbox color="primary"
+                                                                  checked={selectedUserId === user['id']}
+                                                                  onChange={() => selectedUserId === user['id'] ? setSelectedUserId("") : setSelectedUserId(user['id'])}
+                                                        />
                                                     </StyledTableCell>
                                                     <StyledTableCell>{user['email']}</StyledTableCell>
                                                     <StyledTableCell>{user['username']}</StyledTableCell>
-                                                    <StyledTableCell align="center">{role['name']}</StyledTableCell>
+                                                    <StyledTableCell align="center">{roleName}</StyledTableCell>
                                                 </StyledTableRow>
                                             )
                                         })}
@@ -263,20 +343,89 @@ function UserManagement({dispatch, userList, userRolesList, roleList}) {
             >
                 <DialogTitle id="form-dialog-title">사용자 추가</DialogTitle>
                 <DialogContent>
+                    <Box display={showPassword ? "none" : "block"}>
+                        <Grid container>
+                            <Grid item xs={4}>
+                                <Box mt={2}>이메일</Box>
+                            </Grid>
+                            <Grid item xs={7}>
+                                <TextField value={email}
+                                           onChange={event => setEmail(event.target.value)}
+                                           error={emailError}
+                                />
+                            </Grid>
+                        </Grid>
+                        <br/>
+                        <Grid container>
+                            <Grid item xs={4}>
+                                <Box mt={2}>이름</Box>
+                            </Grid>
+                            <Grid item xs={7}>
+                                <TextField value={username}
+                                           onChange={event => setUsername(event.target.value)}
+                                           error={usernameError}
+                                />
+                            </Grid>
+                        </Grid>
+                        <br/>
+                        <Grid container>
+                            <Grid item xs={4}>
+                                <Box mt={2}>역할</Box>
+                            </Grid>
+                            <Grid item xs={7}>
+                                <Select value={roleId}
+                                        onChange={event => setRoleId(event.target.value)}
+                                        error={roleIdError}
+                                        style={{minWidth: "120px"}}
+                                >
+                                    { roleList.map(role => <MenuItem key={role['name']} value={role['id']}>{role['name']}</MenuItem>) }
+                                </Select>
+                            </Grid>
+                        </Grid>
+                    </Box>
+                    <Box display={showPassword ? "block" : "none" } align={"center"}>
+                        임시 비밀번호
+                        <Divider my={2} />
+                        {showPassword}
+                    </Box>
+                </DialogContent>
+                <DialogActions>
+                    <Box display={showPassword ? "none" : "block" }>
+                        <Button onClick={handleUserAddProcess}>
+                            추가
+                        </Button>
+                        <Button onClick={toggleUserAddModal}>
+                            취소
+                        </Button>
+                    </Box>
+                    <Box display={showPassword ? "block" : "none" }>
+                        <Button onClick={toggleUserAddModal}>
+                            확인
+                        </Button>
+                    </Box>
+                </DialogActions>
+            </Dialog>
+
+
+        {/*    수정       */}
+            <Dialog open={Boolean(openUserEditModal)}
+                    fullScreen={fullScreen}
+                    onClose={toggleUserEditModal}
+            >
+                <DialogTitle id="form-dialog-title">사용자 수정</DialogTitle>
+                <DialogContent>
                     <Grid container>
                         <Grid item xs={4}>
-                            이메일
+                            <Box mt={2}>이메일</Box>
                         </Grid>
                         <Grid item xs={7}>
-                            <TextField value={email}
-                                       onChange={event => setEmail(event.target.value)}
-                                       error={emailError}
-                            />
+                            <TextField value={email} disabled/>
                         </Grid>
                     </Grid>
+                    <br/>
                     <Grid container>
                         <Grid item xs={4}>
-                            이름
+                            <Box mt={2}>이름</Box>
                         </Grid>
                         <Grid item xs={7}>
                             <TextField value={username}
@@ -285,30 +434,49 @@ function UserManagement({dispatch, userList, userRolesList, roleList}) {
                             />
                         </Grid>
                     </Grid>
+                    <br/>
                     <Grid container>
                         <Grid item xs={4}>
-                            역할
+                            <Box mt={2}>역할</Box>
                         </Grid>
                         <Grid item xs={7}>
                             <Select value={roleId}
                                     onChange={event => setRoleId(event.target.value)}
                                     error={roleIdError}
+                                    style={{minWidth: "120px"}}
                             >
                                 { roleList.map(role => <MenuItem key={role['name']} value={role['id']}>{role['name']}</MenuItem>) }
                             </Select>
                         </Grid>
                     </Grid>
+                    <br/>
+                    <Grid container>
+                        <Grid item xs={4}>
+                            <Box mt={2}>비밀번호</Box>
+                        </Grid>
+                        <Grid item xs={7}>
+                            <Box display={showPassword ? "none" : "block"}>
+                                <Button variant={"contained"}
+                                        style={{backgroundColor: red["400"]}}
+                                        size={"small"}
+                                        onClick={resetPassword}
+                                >초기화</Button>
+                            </Box>
+                            <Box display={showPassword ? "block" : "none"} mt={2}>
+                                {showPassword}
+                            </Box>
+                        </Grid>
+                    </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleUserAddProcess}>
-                        추가
+                    <Button onClick={handleUserEditProcess}>
+                        저장
                     </Button>
-                    <Button onClick={toggleUserAddModal}>
+                    <Button onClick={toggleUserEditModal}>
                         취소
                     </Button>
                 </DialogActions>
             </Dialog>
-
 
 
 

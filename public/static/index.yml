@@ -13767,7 +13767,7 @@ paths:
     parameters:
       - in: query
         name: acknowledge
-        description: 'whether the userManagement has acknowledged acknowledge messages (default: false)'
+        description: 'whether the user has acknowledged acknowledge messages (default: false)'
         type: boolean
       - in: body
         name: request
@@ -13843,7 +13843,7 @@ paths:
     parameters:
       - in: query
         name: acknowledge
-        description: 'whether the userManagement has acknowledged acknowledge messages (default: false)'
+        description: 'whether the user has acknowledged acknowledge messages (default: false)'
         type: boolean
     post:
       responses:
@@ -13868,7 +13868,7 @@ paths:
         type: string
       - in: query
         name: acknowledge
-        description: 'whether the userManagement has acknowledged acknowledge messages (default: false)'
+        description: 'whether the user has acknowledged acknowledge messages (default: false)'
         type: boolean
     post:
       responses:
@@ -16144,7 +16144,7 @@ paths:
         - application/json
       parameters:
         - in: path
-          name: userManagement
+          name: user
           required: true
           description: Username
           type: string
@@ -16165,7 +16165,7 @@ paths:
         - application/json
       parameters:
         - in: path
-          name: userManagement
+          name: user
           required: true
           description: Username
           type: string
@@ -16391,7 +16391,7 @@ paths:
         format: refresh
       - in: body
         name: request
-        description: the new password for the userManagement
+        description: the new password for the user
         required: true
         schema:
           $ref: '#/definitions/ChangePasswordRequest'
@@ -16411,7 +16411,7 @@ paths:
         - in: path
           name: username
           required: true
-          description: The username of the userManagement to change the password for
+          description: The username of the user to change the password for
           type: string
           format: Name
       externalDocs:
@@ -16432,7 +16432,7 @@ paths:
         - in: path
           name: username
           required: true
-          description: The username of the userManagement to change the password for
+          description: The username of the user to change the password for
           type: string
           format: Name
       externalDocs:
@@ -16446,7 +16446,7 @@ paths:
         format: refresh
       - in: body
         name: request
-        description: the new password for the userManagement
+        description: the new password for the user
         required: true
         schema:
           $ref: '#/definitions/ChangePasswordRequest'
@@ -16489,7 +16489,7 @@ paths:
         format: refresh
       - in: body
         name: request
-        description: The userManagement to add
+        description: The user to add
         required: true
         schema:
           $ref: '#/definitions/PutUserRequest'
@@ -16513,7 +16513,7 @@ paths:
           type: string
           format: Name
       externalDocs:
-        url: 'https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-put-userManagement.html'
+        url: 'https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-put-user.html'
     post:
       responses:
         '200':
@@ -16534,7 +16534,7 @@ paths:
           type: string
           format: Name
       externalDocs:
-        url: 'https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-put-userManagement.html'
+        url: 'https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-put-user.html'
   '/_security/user/{username}/_disable':
     parameters:
       - in: query
@@ -16558,11 +16558,11 @@ paths:
         - in: path
           name: username
           required: true
-          description: The username of the userManagement to disable
+          description: The username of the user to disable
           type: string
           format: Name
       externalDocs:
-        url: 'https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-disable-userManagement.html'
+        url: 'https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-disable-user.html'
     post:
       responses:
         '200':
@@ -16579,11 +16579,11 @@ paths:
         - in: path
           name: username
           required: true
-          description: The username of the userManagement to disable
+          description: The username of the user to disable
           type: string
           format: Name
       externalDocs:
-        url: 'https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-disable-userManagement.html'
+        url: 'https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-disable-user.html'
   '/_security/user/{username}/_enable':
     parameters:
       - in: query
@@ -16607,11 +16607,11 @@ paths:
         - in: path
           name: username
           required: true
-          description: The username of the userManagement to enable
+          description: The username of the user to enable
           type: string
           format: Name
       externalDocs:
-        url: 'https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-enable-userManagement.html'
+        url: 'https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-enable-user.html'
     post:
       responses:
         '200':
@@ -16628,11 +16628,11 @@ paths:
         - in: path
           name: username
           required: true
-          description: The username of the userManagement to enable
+          description: The username of the user to enable
           type: string
           format: Name
       externalDocs:
-        url: 'https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-enable-userManagement.html'
+        url: 'https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-enable-user.html'
   /_security/oauth2/token:
     parameters:
       - in: body
@@ -16672,7 +16672,7 @@ paths:
         - application/json
       parameters: []
       externalDocs:
-        url: 'https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-userManagement.html'
+        url: 'https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-user.html'
   '/_slm/policy/{policy_id}':
     parameters:
       - in: body

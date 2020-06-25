@@ -1,5 +1,6 @@
 export const SET_INDEX = 'SET_INDEX';
 export const SET_INDICES = 'SET_INDICES';
+
 export const SET_CLUSTER = 'SET_CLUSTER';
 export const SET_CLUSTER_LIST = 'SET_CLUSTER_LIST';
 

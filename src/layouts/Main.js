@@ -1,17 +1,18 @@
-import React from "react";
+import React, {useState} from "react";
+import {connect} from "react-redux";
 import styled, {createGlobalStyle, ThemeProvider} from "styled-components";
 
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
-// import Footer from "../components/Footer";
-// import Settings from "../components/Settings";
-
 import {spacing} from "@material-ui/system";
 import {CssBaseline, Hidden, Paper as MuiPaper, withWidth} from "@material-ui/core";
 
 import {isWidthUp} from "@material-ui/core/withWidth";
 import maTheme from "../theme";
 import {ThemeProvider as MuiThemeProvider} from "@material-ui/styles";
+import {setFastcatxAuthUser} from "../redux/actions/fastcatxActions";
+// import Footer from "../components/Footer";
+// import Settings from "../components/Settings";
 
 
 const drawerWidth = 260;
@@ -70,56 +71,56 @@ const MainContent = styled(Paper)`
   }
 `;
 
-class Main extends React.Component {
-    state = {
-        mobileOpen: false
-    };
+function Main({dispatch,authUser, children, routes, width}) {
+    const [mobileOpen, setMobileOpen] = useState(false)
 
-    handleDrawerToggle = () => {
-        this.setState(state => ({mobileOpen: !state.mobileOpen}));
-    };
-
-    render() {
-        const {children, routes, width} = this.props;
-        return (
-            // maTheme: /src/theme/variants.js 파일참조
-            <MuiThemeProvider theme={maTheme[1]}>
-                <ThemeProvider theme={maTheme[1]}>
-                    <Root>
-                        <CssBaseline/>
-                        <GlobalStyle/>
-                        <Drawer>
-                            <Hidden mdUp implementation="js">
-                                <Sidebar
-                                    routes={routes}
-                                    PaperProps={{style: {width: drawerWidth}}}
-                                    variant="temporary"
-                                    open={this.state.mobileOpen}
-                                    onClose={this.handleDrawerToggle}
-                                    layout={"intro"}
-                                />
-                            </Hidden>
-                            <Hidden smDown implementation="css">
-                                <Sidebar
-                                    routes={routes}
-                                    PaperProps={{style: {width: drawerWidth}}}
-                                    layout={"intro"}
-                                />
-                            </Hidden>
-                        </Drawer>
-                        <AppContent>
-                            <Header layout={"main"} onDrawerToggle={this.handleDrawerToggle}/>
-                            <MainContent p={isWidthUp("lg", width) ? 10 : 5}>
-                                {children}
-                            </MainContent>
-                            {/*<Footer/>*/}
-                        </AppContent>
-                        {/*<Settings/>*/}
-                    </Root>
-                </ThemeProvider>
-            </MuiThemeProvider>
-        );
+    if (!authUser['sessionId']) {
+        dispatch(setFastcatxAuthUser()).catch(() => location.replace("/"))
+        return null
     }
+
+    function handleDrawerToggle() {
+        setMobileOpen(!mobileOpen)
+    };
+
+    return (
+        // maTheme: /src/theme/variants.js 파일참조
+        <MuiThemeProvider theme={maTheme[1]}>
+            <ThemeProvider theme={maTheme[1]}>
+                <Root>
+                    <CssBaseline/>
+                    <GlobalStyle/>
+                    <Drawer>
+                        <Hidden mdUp implementation="js">
+                            <Sidebar
+                                routes={routes}
+                                PaperProps={{style: {width: drawerWidth}}}
+                                variant="temporary"
+                                open={mobileOpen}
+                                onClose={handleDrawerToggle}
+                                layout={"intro"}
+                            />
+                        </Hidden>
+                        <Hidden smDown implementation="css">
+                            <Sidebar
+                                routes={routes}
+                                PaperProps={{style: {width: drawerWidth}}}
+                                layout={"intro"}
+                            />
+                        </Hidden>
+                    </Drawer>
+                    <AppContent>
+                        <Header layout={"main"} onDrawerToggle={handleDrawerToggle}/>
+                        <MainContent p={isWidthUp("lg", width) ? 10 : 5}>
+                            {children}
+                        </MainContent>
+                        {/*<Footer/>*/}
+                    </AppContent>
+                    {/*<Settings/>*/}
+                </Root>
+            </ThemeProvider>
+        </MuiThemeProvider>
+    );
 }
 
-export default withWidth()(Main);
+export default connect(store => ({...store.fastcatxReducers}))(withWidth()(Main));

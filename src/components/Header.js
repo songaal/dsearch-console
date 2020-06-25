@@ -142,9 +142,6 @@ class ClusterMenu extends Component {
 function UserMenu() {
     const dispatch = useDispatch()
     const authUser = useSelector(store => store.fastcatxReducers.authUser)
-    if (!authUser['sessionId']) {
-        dispatch(setFastcatxAuthUser()).catch(() => location.replace("/"))
-    }
     const [anchorMenu, setAnchorMenu] = useState(null)
     const open = Boolean(anchorMenu);
 
