@@ -81,19 +81,20 @@ function ClusterCard({classes, cluster, onEditClick, onRemoveClick, to}) {
         event.stopPropagation()
         setOpenMenu(event.currentTarget);
     };
-    const handleClose = () => {
+    const handleClose = (event) => {
+        event.stopPropagation()
         setOpenMenu(null);
     };
 
     const handleEdit = (event) => {
         event.stopPropagation()
         onEditClick(cluster)
-        handleClose()
+        handleClose(event)
     }
     const handleRemove = (event) => {
         event.stopPropagation()
         onRemoveClick(cluster)
-        handleClose()
+        handleClose(event)
     }
 
     return (
@@ -101,10 +102,6 @@ function ClusterCard({classes, cluster, onEditClick, onRemoveClick, to}) {
             <Card variant="outlined" style={{cursor: "pointer"}}>
                     <CardContent>
                         <Box style={{minHeight: "200px"}} onClick={to}>
-
-                            {/*<Button onClick={toggleMenu}>*/}
-                            {/*    <Settings />*/}
-                            {/*</Button>*/}
 
                             <Box className={classes.title} align={"center"}>
                                 {name}

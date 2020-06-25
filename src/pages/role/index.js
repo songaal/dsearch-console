@@ -265,7 +265,7 @@ function Role({dispatch, roleList, userRolesList}) {
                                         </ListItemIcon>
                                         <ListItemText primary="수정"/>
                                     </StyledMenuItem>
-                                    <StyledMenuItem disabled={selectedId === "" || userRolesList.find(userRoles => userRoles['roleId'] === selectedId)} onClick={handleRoleRemoveProcess}>
+                                    <StyledMenuItem disabled={selectedId === "" || userRolesList.find(userRoles => userRoles['roleId'] === selectedId) !== undefined } onClick={handleRoleRemoveProcess}>
                                         <ListItemIcon>
                                             <DraftsIcon fontSize="small"/>
                                         </ListItemIcon>
