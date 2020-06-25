@@ -74,7 +74,7 @@ const editUserRoutes = {id: "정보수정", path: "/my", component: EditUser, hi
 // 관리도구 라우트
 // const dashboardRoutes = {id: "대시보드", path: "/dashboard", icon: <Icon.Dashboard/>, component: Dashboard, children: null};
 const dashboardRoutes = {id: "대시보드", path: `${clusterContext}/dashboard`, icon: <Icon.Dashboard/>, component: Dashboard, children: null};
-console.log('>>>>>>>>', `${clusterContext}/dashboard`)
+
 const analysisRoutes = [
     {header: "분석", id: "사전", path: `${clusterContext}/analysis/dictionary`, icon: <Icon.Visibility/>, component: Dictionary, children: null},
     {id: "분석도구", path: `${clusterContext}/analysis/tools`, icon: <Icon.Visibility/>, component: Tools, children: null},

@@ -42,6 +42,7 @@ import {
     setRoleListAction
 } from "../../redux/actions/roleManagementActions";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
+import fastcatxReducers from "../../redux/reducers/fastcatxReducers";
 
 const Card = styled(MuiCard)(spacing);
 const Divider = styled(MuiDivider)(spacing);
@@ -113,7 +114,7 @@ const StyledMenuItem = withStyles((theme) => ({
     },
 }))(MenuItem);
 
-function Role({dispatch, roleList, userRolesList}) {
+function Role({dispatch, roleList, userRolesList, authUser}) {
     const classes = useStyles();
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -221,6 +222,8 @@ function Role({dispatch, roleList, userRolesList}) {
             })
     }
 
+    const isManager = authUser['role']['manage']
+
     return (
         <React.Fragment>
             <Helmet title="역할"/>
@@ -234,7 +237,7 @@ function Role({dispatch, roleList, userRolesList}) {
                 <Grid item xs={12}>
                     <Card>
                         <CardContent>
-                            <div align={"right"}>
+                            <div align={"right"} style={{display: isManager ? 'block' : 'none'}}>
                                 <Button
                                     aria-controls="customized-menu"
                                     aria-haspopup="true"
@@ -278,7 +281,12 @@ function Role({dispatch, roleList, userRolesList}) {
                                 <Table className={classes.table} aria-label="customized table">
                                     <TableHead>
                                         <TableRow>
-                                            <StyledTableCell align="center" style={{width: "10%"}}>#</StyledTableCell>
+                                            {
+                                                isManager ?
+                                                    <StyledTableCell align="center" style={{width: "10%"}}>#</StyledTableCell>
+                                                    :
+                                                    null
+                                            }
                                             <StyledTableCell align="center" style={{width: "40%"}}>역할</StyledTableCell>
                                             <StyledTableCell align="center" style={{width: "10%"}}>분석 권한</StyledTableCell>
                                             <StyledTableCell align="center" style={{width: "10%"}}>인덱스 권한</StyledTableCell>
@@ -290,15 +298,20 @@ function Role({dispatch, roleList, userRolesList}) {
                                     <TableBody>
                                         {roleList.map(row => (
                                             <StyledTableRow key={row['id']}>
-                                                <StyledTableCell component="th"
-                                                                 scope="row"
-                                                                 align="center"
-                                                >
-                                                    <Checkbox color="primary"
-                                                              checked={selectedId === row['id']}
-                                                              onChange={event => handleSelectCheckbox(row['id'], event.target.checked)}
-                                                    />
-                                                </StyledTableCell>
+                                                {
+                                                    isManager ?
+                                                        <StyledTableCell component="th"
+                                                                         scope="row"
+                                                                         align="center"
+                                                        >
+                                                            <Checkbox color="primary"
+                                                                      checked={selectedId === row['id']}
+                                                                      onChange={event => handleSelectCheckbox(row['id'], event.target.checked)}
+                                                            />
+                                                        </StyledTableCell>
+                                                        :
+                                                        null
+                                                }
                                                 <StyledTableCell align="center">
                                                     {row['name'] || ''}
                                                 </StyledTableCell>
@@ -549,4 +562,4 @@ function Role({dispatch, roleList, userRolesList}) {
     );
 }
 
-export default connect(store => ({...store.roleManagementReducers}))(Role);
+export default connect(store => ({...store.roleManagementReducers, ...store.fastcatxReducers}))(Role);

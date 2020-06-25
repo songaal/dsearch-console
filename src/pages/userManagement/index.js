@@ -118,7 +118,7 @@ const StyledMenuItem = withStyles((theme) => ({
     },
 }))(MenuItem);
 
-function UserManagement({dispatch, userList, userRolesList, roleList}) {
+function UserManagement({dispatch, userList, userRolesList, roleList, authUser}) {
     const classes = useStyles()
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -240,6 +240,8 @@ function UserManagement({dispatch, userList, userRolesList, roleList}) {
             })
     }
 
+    const isManager = authUser['role']['manage']
+
     return (
         <React.Fragment>
             <Helmet title="사용자"/>
@@ -253,7 +255,7 @@ function UserManagement({dispatch, userList, userRolesList, roleList}) {
                 <Grid item xs={12}>
                     <Card>
                         <CardContent>
-                            <div align={"right"}>
+                            <div align={"right"} style={{display: isManager ? 'block' : 'none'}}>
                                 <Button
                                     aria-controls="customized-menu"
                                     aria-haspopup="true"
@@ -299,7 +301,12 @@ function UserManagement({dispatch, userList, userRolesList, roleList}) {
                                 <Table className={classes.table} aria-label="customized table">
                                     <TableHead>
                                         <TableRow>
-                                            <StyledTableCell align="center">#</StyledTableCell>
+                                            {
+                                                isManager ?
+                                                    <StyledTableCell align="center">#</StyledTableCell>
+                                                    :
+                                                    null
+                                            }
                                             <StyledTableCell>이메일</StyledTableCell>
                                             <StyledTableCell>이름</StyledTableCell>
                                             <StyledTableCell align="center">역할</StyledTableCell>
@@ -314,15 +321,20 @@ function UserManagement({dispatch, userList, userRolesList, roleList}) {
                                             }
                                             return (
                                                 <StyledTableRow key={user['email']}>
-                                                    <StyledTableCell component="th"
-                                                                     scope="row"
-                                                                     align="center"
-                                                    >
-                                                        <Checkbox color="primary"
-                                                                  checked={selectedUserId === user['id']}
-                                                                  onChange={() => selectedUserId === user['id'] ? setSelectedUserId("") : setSelectedUserId(user['id'])}
-                                                        />
-                                                    </StyledTableCell>
+                                                    {
+                                                        isManager ?
+                                                            <StyledTableCell component="th"
+                                                                             scope="row"
+                                                                             align="center"
+                                                            >
+                                                                <Checkbox color="primary"
+                                                                          checked={selectedUserId === user['id']}
+                                                                          onChange={() => selectedUserId === user['id'] ? setSelectedUserId("") : setSelectedUserId(user['id'])}
+                                                                />
+                                                            </StyledTableCell>
+                                                            :
+                                                            null
+                                                    }
                                                     <StyledTableCell>{user['email']}</StyledTableCell>
                                                     <StyledTableCell>{user['username']}</StyledTableCell>
                                                     <StyledTableCell align="center">{roleName}</StyledTableCell>
@@ -485,4 +497,4 @@ function UserManagement({dispatch, userList, userRolesList, roleList}) {
     );
 }
 
-export default connect(store => ({...store.userManagementReducers, ...store.roleManagementReducers}))(UserManagement);
+export default connect(store => ({...store.userManagementReducers, ...store.roleManagementReducers, ...store.fastcatxReducers}))(UserManagement);

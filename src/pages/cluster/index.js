@@ -59,7 +59,7 @@ const useStyles = makeStyles({
 
 const ITEM_HEIGHT = 48;
 
-function ClusterCard({classes, cluster, onEditClick, onRemoveClick, to}) {
+function ClusterCard({classes, cluster, onEditClick, onRemoveClick, to, showMenu}) {
     const connection = cluster['status']['connection'] || false
     const name = cluster['cluster']['name']
     const seed = `${cluster['cluster']['scheme']}://${cluster['cluster']['host']}:${cluster['cluster']['port']}`
@@ -106,7 +106,7 @@ function ClusterCard({classes, cluster, onEditClick, onRemoveClick, to}) {
                             <Box className={classes.title} align={"center"}>
                                 {name}
 
-                                <Box style={{position: "relative", height: "0px", right: "-45%", top: "-25px"}}>
+                                <Box style={{position: "relative", height: "0px", right: "-45%", top: "-25px", display: showMenu ? "block" : "none"}}>
                                     <IconButton
                                         onClick={handleClick}
                                         size={"small"}
@@ -233,33 +233,36 @@ function ClusterCard({classes, cluster, onEditClick, onRemoveClick, to}) {
 
 function AddClusterCard(props) {
     const classes = props.className
+    const display = props.showButton ? "block" : "none"
     return (
-        <Grid item xs={12} md={6} lg={4} xl={3}>
-            <Card variant="outlined" style={{minHeight: "240px"}}>
-                <CardContent>
-                    <Box display="flex"
-                         justifyContent="center"
-                         m={1}
-                         mt={10}
-                         className={classes.title}
-                    >
-                        신규 클러스터 추가
-                    </Box>
-                    <Box display="flex"
-                         justifyContent="center"
-                         m={2}
-                         mt={5}
-                    >
-                        <Fab color="primary"
-                             aria-label="add"
-                             onClick={() => props.handleClick()}
+        <React.Fragment>
+            <Grid item xs={12} md={6} lg={4} xl={3} style={{display: display}}>
+                <Card variant="outlined" style={{minHeight: "240px"}}>
+                    <CardContent>
+                        <Box display="flex"
+                             justifyContent="center"
+                             m={1}
+                             mt={10}
+                             className={classes.title}
                         >
-                            <AddIcon />
-                        </Fab>
-                    </Box>
-                </CardContent>
-            </Card>
-        </Grid>
+                            신규 클러스터 추가
+                        </Box>
+                        <Box display="flex"
+                             justifyContent="center"
+                             m={2}
+                             mt={5}
+                        >
+                            <Fab color="primary"
+                                 aria-label="add"
+                                 onClick={() => props.handleClick()}
+                            >
+                                <AddIcon />
+                            </Fab>
+                        </Box>
+                    </CardContent>
+                </Card>
+            </Grid>
+        </React.Fragment>
     )
 }
 
@@ -291,7 +294,8 @@ function AddGuideCard(props) {
     )
 }
 
-function Cluster({ dispatch, clusterList }) {
+function Cluster({ dispatch, clusterList, authUser }) {
+    console.log(authUser)
     const history = useHistory()
     const classes = useStyles();
     const fullScreen = useMediaQuery(useTheme().breakpoints.down('sm'));
@@ -459,6 +463,8 @@ function Cluster({ dispatch, clusterList }) {
         window.open(`${id}/dashboard`,'window',`location=no,directories=no,resizable=no,status=no,toolbar=no,menubar=no,left=0,top=0,scrollbars=yes,width=${window.outerWidth},height=${window.outerHeight}`)
     }
 
+    const isManager = authUser['role']['manage']
+
     return (
         <React.Fragment>
             <Helmet title="클러스터"/>
@@ -475,11 +481,13 @@ function Cluster({ dispatch, clusterList }) {
                                                          onEditClick={() => toggleOpenEditModal(cluster)}
                                                          onRemoveClick={() => toggleOpenRemoveModal(cluster['cluster']['id'])}
                                                          to={() => goDashboard(cluster['cluster']['id'])}
+                                                         showMenu={isManager}
                 />)}
 
                 <AddClusterCard key={"add"}
                                 className={classes}
                                 handleClick={toggleOpenAddModal}
+                                showButton={isManager}
                 />
 
                 <AddGuideCard key={"guide"}
@@ -680,5 +688,5 @@ function Cluster({ dispatch, clusterList }) {
     );
 }
 
-export default connect(store => ({ ...store.clusterReducers }))(Cluster);
+export default connect(store => ({ ...store.clusterReducers, ...store.fastcatxReducers }))(Cluster);
 
