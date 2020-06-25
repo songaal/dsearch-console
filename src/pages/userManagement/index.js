@@ -204,7 +204,7 @@ function UserManagement({dispatch, userList, userRolesList, roleList}) {
             setShowPassword(response.data['password'])
         }).catch(error => {
             console.log(error)
-            alert("사용자 추가를 실패하였습니다.")
+            alert("실패")
         })
     }
 

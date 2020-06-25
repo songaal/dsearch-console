@@ -28,18 +28,26 @@ import {
     TextField,
     Typography
 } from "@material-ui/core";
-
+import IconButton from '@material-ui/core/IconButton';
+import MoreVertIcon from '@material-ui/icons/MoreVert'
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import {spacing} from "@material-ui/system";
-import {addCluster, setClusterList, setClusterStatus} from "../../redux/actions/clusterActions";
+import {
+    addCluster,
+    editCluster,
+    removeClusterAction,
+    setClusterList,
+    setClusterStatus
+} from "../../redux/actions/clusterActions";
+import {Edit as EditIcon, Settings} from "@material-ui/icons";
+import {red} from "@material-ui/core/colors";
 
 const Card = styled(MuiCard)(spacing);
 const Divider = styled(MuiDivider)(spacing);
 const Grid = styled(MuiGrid)(spacing);
 
 const useStyles = makeStyles({
-    cardRoot: {
-        minHeight: "200px"
-    },
     title: {
         fontWeight: "bold"
     },
@@ -48,7 +56,9 @@ const useStyles = makeStyles({
     }
 });
 
-function ClusterCard({classes, cluster}) {
+const ITEM_HEIGHT = 48;
+
+function ClusterCard({classes, cluster, onEditClick, onRemoveClick, to}) {
     const connection = cluster['status']['connection'] || false
     const name = cluster['cluster']['name']
     const seed = `${cluster['cluster']['scheme']}://${cluster['cluster']['host']}:${cluster['cluster']['port']}`
@@ -63,111 +73,161 @@ function ClusterCard({classes, cluster}) {
         store = cluster['status']['state']['store']
     }
 
-    function testDashboard() {
-        location.href="/dashboard"
+    const [openMenu, setOpenMenu] = React.useState(null);
+    const open = Boolean(openMenu);
+
+    const handleClick = (event) => {
+        event.stopPropagation()
+        setOpenMenu(event.currentTarget);
+    };
+    const handleClose = () => {
+        setOpenMenu(null);
+    };
+
+    const handleEdit = (event) => {
+        event.stopPropagation()
+        onEditClick(cluster)
+        handleClose()
     }
+    const handleRemove = (event) => {
+        event.stopPropagation()
+        onRemoveClick(cluster)
+        handleClose()
+    }
+
     return (
         <Grid item xs={12} md={6} lg={4} xl={3}>
-            <Card variant="outlined">
-                <CardActionArea className={classes.cardRoot} onClick={testDashboard}>
-                    <CardContent style={{paddingTop: "0px"}}>
-                        
-                        <Box className={classes.title} align={"center"}>
-                            {name}
+            <Card variant="outlined" style={{cursor: "pointer"}}>
+                    <CardContent>
+                        <Box style={{minHeight: "200px"}} onClick={to}>
+
+                            {/*<Button onClick={toggleMenu}>*/}
+                            {/*    <Settings />*/}
+                            {/*</Button>*/}
+
+                            <Box className={classes.title} align={"center"}>
+                                {name}
+
+                                <Box style={{position: "relative", height: "0px", right: "-45%", top: "-25px"}}>
+                                    <IconButton
+                                        onClick={handleClick}
+                                        size={"small"}
+                                    >
+                                        <MoreVertIcon />
+                                    </IconButton>
+                                    <Menu
+                                        id="long-menu"
+                                        anchorEl={openMenu}
+                                        keepMounted
+                                        open={open}
+                                        onClose={handleClose}
+                                        PaperProps={{
+                                            style: {
+                                                maxHeight: ITEM_HEIGHT * 4.5,
+                                                width: '20ch',
+                                            },
+                                        }}
+                                    >
+                                        <MenuItem onClick={handleEdit}> 수정 </MenuItem>
+                                        <MenuItem onClick={handleRemove}> 삭제 </MenuItem>
+                                    </Menu>
+                                </Box>
+
+                            </Box>
+
+
+                            <Divider my={2} />
+
+                            <Grid container mt={3}>
+                                <Grid item xs={4}>
+                                    <Box style={{whiteSpace: "nowrap"}}>
+                                        노드
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={8}>
+                                    <Box style={{whiteSpace: "nowrap"}}>
+                                        {seed}
+                                    </Box>
+                                </Grid>
+                            </Grid>
+
+                            <Grid container mt={1}>
+                                <Grid item xs={4}>
+                                    <Box style={{whiteSpace: "nowrap"}}>
+                                        노드 수
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={8}>
+                                    <Box style={{whiteSpace: "nowrap"}}>
+                                        {nodes}
+                                    </Box>
+                                </Grid>
+                            </Grid>
+
+                            <Grid container mt={1}>
+                                <Grid item xs={4}>
+                                    <Box style={{whiteSpace: "nowrap"}}>
+                                        인덱스
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={8}>
+                                    <Box style={{whiteSpace: "nowrap"}}>
+                                        {indices}
+                                    </Box>
+                                </Grid>
+                            </Grid>
+
+                            <Grid container mt={1}>
+                                <Grid item xs={4}>
+                                    <Box style={{whiteSpace: "nowrap"}}>
+                                        샤드
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={8}>
+                                    <Box style={{whiteSpace: "nowrap"}}>
+                                        {shards}
+                                    </Box>
+                                </Grid>
+                            </Grid>
+
+                            <Grid container mt={1}>
+                                <Grid item xs={4}>
+                                    <Box style={{whiteSpace: "nowrap"}}>
+                                        사용 용량
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={8}>
+                                    <Box style={{whiteSpace: "nowrap"}}>
+                                        {store}
+                                    </Box>
+                                </Grid>
+                            </Grid>
+
+                            <Grid container mt={1}>
+                                <Grid item xs={4}>
+                                    <Box style={{whiteSpace: "nowrap"}}>
+                                        연결상태
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={8}>
+                                    <Box style={{whiteSpace: "nowrap"}}>
+                                        {connection ?
+                                            <Box style={{
+                                                width: "16px", height: "16px",
+                                                backgroundColor: "green",
+                                                borderRadius: "90px"}}> </Box>
+                                            :
+                                            <Box style={{
+                                                width: "16px", height: "16px",
+                                                backgroundColor: "red",
+                                                borderRadius: "90px" }}> </Box>
+                                        }
+                                    </Box>
+                                </Grid>
+                            </Grid>
                         </Box>
 
-                        <Divider my={2} />
-
-                        <Grid container mt={3}>
-                            <Grid item xs={4}>
-                                <Box style={{whiteSpace: "nowrap"}}>
-                                    노드
-                                </Box>
-                            </Grid>
-                            <Grid item xs={8}>
-                                <Box style={{whiteSpace: "nowrap"}}>
-                                    {seed}
-                                </Box>
-                            </Grid>
-                        </Grid>
-
-                        <Grid container>
-                            <Grid item xs={4}>
-                                <Box style={{whiteSpace: "nowrap"}}>
-                                    노드 수
-                                </Box>
-                            </Grid>
-                            <Grid item xs={8}>
-                                <Box style={{whiteSpace: "nowrap"}}>
-                                    {nodes}
-                                </Box>
-                            </Grid>
-                        </Grid>
-
-                        <Grid container>
-                            <Grid item xs={4}>
-                                <Box style={{whiteSpace: "nowrap"}}>
-                                    인덱스
-                                </Box>
-                            </Grid>
-                            <Grid item xs={8}>
-                                <Box style={{whiteSpace: "nowrap"}}>
-                                    {indices}
-                                </Box>
-                            </Grid>
-                        </Grid>
-
-                        <Grid container>
-                            <Grid item xs={4}>
-                                <Box style={{whiteSpace: "nowrap"}}>
-                                    샤드
-                                </Box>
-                            </Grid>
-                            <Grid item xs={8}>
-                                <Box style={{whiteSpace: "nowrap"}}>
-                                    {shards}
-                                </Box>
-                            </Grid>
-                        </Grid>
-
-                        <Grid container>
-                            <Grid item xs={4}>
-                                <Box style={{whiteSpace: "nowrap"}}>
-                                    사용 용량
-                                </Box>
-                            </Grid>
-                            <Grid item xs={8}>
-                                <Box style={{whiteSpace: "nowrap"}}>
-                                    {store}
-                                </Box>
-                            </Grid>
-                        </Grid>
-
-                        <Grid container>
-                            <Grid item xs={4}>
-                                <Box style={{whiteSpace: "nowrap"}}>
-                                    연결상태
-                                </Box>
-                            </Grid>
-                            <Grid item xs={8}>
-                                <Box style={{whiteSpace: "nowrap"}}>
-                                    {connection ?
-                                        <Box style={{
-                                            width: "16px", height: "16px",
-                                            backgroundColor: "green",
-                                            borderRadius: "90px"}}> </Box>
-                                        :
-                                        <Box style={{
-                                            width: "16px", height: "16px",
-                                            backgroundColor: "red",
-                                            borderRadius: "90px" }}> </Box>
-                                    }
-                                </Box>
-                            </Grid>
-                        </Grid>
-
                     </CardContent>
-                </CardActionArea>
             </Card>
         </Grid>
     )
@@ -177,7 +237,7 @@ function AddClusterCard(props) {
     const classes = props.className
     return (
         <Grid item xs={12} md={6} lg={4} xl={3}>
-            <Card variant="outlined" className={classes.cardRoot}>
+            <Card variant="outlined" style={{minHeight: "240px"}}>
                 <CardContent>
                     <Box display="flex"
                          justifyContent="center"
@@ -190,6 +250,7 @@ function AddClusterCard(props) {
                     <Box display="flex"
                          justifyContent="center"
                          m={2}
+                         mt={5}
                     >
                         <Fab color="primary"
                              aria-label="add"
@@ -208,7 +269,7 @@ function AddGuideCard(props) {
     const classes = props.className
     return (
         <Grid item xs={12} md={6} lg={4} xl={3}>
-            <Card variant="outlined" className={classes.cardRoot}>
+            <Card variant="outlined" style={{minHeight: "240px"}}>
                 <CardContent>
                     <Box display="flex"
                          justifyContent="center"
@@ -235,7 +296,7 @@ function AddGuideCard(props) {
 function Cluster({ dispatch, clusterList }) {
     const classes = useStyles();
     const fullScreen = useMediaQuery(useTheme().breakpoints.down('sm'));
-    const [openAddModal, setOpenAddModal] = useState(false);
+    const [openEditModal, setOpenEditModal] = useState(false);
 
     const [scheme, setScheme] = useState("http")
     const [name, setName] = useState("")
@@ -245,8 +306,8 @@ function Cluster({ dispatch, clusterList }) {
     const [password, setPassword] = useState("")
     const [kibana, setKibana] = useState("")
     const [theme, setTheme] = useState(0)
-    const [addModalMessage, setAddModalMessage] = useState("")
-    const [addTest, setAddTest] = useState(false)
+    const [modalMessage, setModalMessage] = useState("")
+    const [connTest, setConnTest] = useState(false)
 
     const [nameError, setNameError] = useState(false)
     const [hostError, setHostError] = useState(false)
@@ -254,44 +315,53 @@ function Cluster({ dispatch, clusterList }) {
     const [usernameError, setUsernameError] = useState(false)
     const [passwordError, setPasswordError] = useState(false)
 
+    const [selectedClusterId, setSelectedClusterId] = useState("")
+    const [openRemoveModal, setOpenRemoveModal] = useState(false)
+
+    const [mode, setMode] = useState("ADD")
+
     useEffect(() => {
         dispatch(setClusterList())
     }, [])
 
     function toggleOpenAddModal() {
+        setMode("ADD")
         setNameError(false); setHostError(false); setPortError(false)
         setUsernameError(false); setPasswordError(false)
         setName(""); setScheme("http"); setHost(""); setPort("");
         setUsername(""); setPassword(""); setKibana("");
-        setTheme(0); setAddModalMessage("");
-        setAddTest(false)
-        setOpenAddModal(!openAddModal)
+        setTheme(0); setModalMessage("");
+        setConnTest(false)
+        setOpenEditModal(!openEditModal)
     }
     function handleClusterTestProcess() {
-        setAddTest(false)
-        setAddModalMessage("")
+        setConnTest(false)
+        setModalMessage("")
         dispatch(setClusterStatus({ name, host, port, scheme, username, password })).then(status => {
             if (!status['connection']) {
-                setAddTest(false)
-                setAddModalMessage("연결 실패")
+                setConnTest(false)
+                setModalMessage("연결 실패")
                 return
             }
-            setAddTest(true)
+            setConnTest(true)
             const nodeSize = Object.values(status['nodes']).map(node => {
                 const tmp = ((node['http'] || node['http']) || {})
                 return tmp['publish_address'] ? `${scheme}://${tmp['publish_address']}` : null
             }).filter(addr => addr !== null).length
-            setAddModalMessage("[연결 성공] 노드 수:" + nodeSize)
+            setModalMessage("[연결 성공] 노드 수:" + nodeSize)
         }).catch(error => {
-            setAddTest(false)
-            setAddModalMessage("")
-            setAddModalMessage("연결 실패")
+            setConnTest(false)
+            setModalMessage("")
+            setModalMessage("연결 실패")
             console.error(error)
         })
     }
-    function handleAddClusterProcess() {
+
+    function resetError() {
         setNameError(false); setHostError(false); setPortError(false)
         setUsernameError(false); setPasswordError(false)
+    }
+    function requireValidation() {
         if (name === "") { setNameError(true); return false }
         if (host === "") { setHostError(true); return false }
         if (port === "" || port === "0") { setPortError(true); return false }
@@ -299,7 +369,15 @@ function Cluster({ dispatch, clusterList }) {
             if (username === "") { setUsernameError(true); return false }
             if (password === "") { setPasswordError(true); return false }
         }
-        if (!addTest) { return false }
+        if (!connTest) { return false }
+        return true
+    }
+    function handleAddClusterProcess() {
+        resetError()
+        if(!requireValidation()) {
+            return false
+        }
+
         dispatch(addCluster({
             name, host, port, scheme,
             username, password,
@@ -309,10 +387,71 @@ function Cluster({ dispatch, clusterList }) {
             toggleOpenAddModal()
         }).catch(error => {
             console.log(error)
-            setAddModalMessage(error.message||"error")
+            setModalMessage(error.message||"error")
             alert("실패")
         })
     }
+
+    function handleEditClusterProcess() {
+        resetError()
+        if(!requireValidation()) {
+            return false
+        }
+
+        dispatch(editCluster(selectedClusterId, {
+            name, host, port, scheme,
+            username, password,
+            kibana, theme
+        })).then(cluster => {
+            dispatch(setClusterList())
+            toggleOpenEditModal()
+        }).catch(error => {
+            console.log(error)
+            setModalMessage(error.message||"error")
+            alert("실패")
+        })
+    }
+
+    function toggleOpenEditModal(cluster) {
+        setMode("EDIT")
+        console.log('edit', cluster)
+        setNameError(false); setHostError(false); setPortError(false)
+        setUsernameError(false); setPasswordError(false)
+        if (!openEditModal) {
+            // opening..
+            setSelectedClusterId(cluster['cluster']['id'])
+            setName(cluster['cluster']['name']);
+            setScheme(cluster['cluster']['scheme']);
+            setHost(cluster['cluster']['host']);
+            setPort(cluster['cluster']['port']);
+            setUsername(cluster['cluster']['username'] || "");
+            setPassword(cluster['cluster']['password'] || "");
+            setKibana(cluster['cluster']['kibana'] || "");
+            setTheme(cluster['cluster']['theme']);
+        } else {
+            setName(""); setScheme("http"); setHost(""); setPort("");
+            setUsername(""); setPassword(""); setKibana("");
+            setTheme(0);
+        }
+        setOpenEditModal(!openEditModal)
+    }
+
+    function toggleOpenRemoveModal(id) {
+        setSelectedClusterId(id)
+        setOpenRemoveModal(true)
+    }
+
+    function removeClusterProcess() {
+        dispatch(removeClusterAction(selectedClusterId)).then(cluster => {
+            dispatch(setClusterList())
+            setSelectedClusterId("")
+            setOpenRemoveModal(false)
+        }).catch(error => {
+            console.log(error)
+            alert("실패")
+        })
+    }
+
     return (
         <React.Fragment>
             <Helmet title="클러스터"/>
@@ -323,7 +462,7 @@ function Cluster({ dispatch, clusterList }) {
 
             <Grid container spacing={6}>
 
-                {clusterList.map(cluster => <ClusterCard key={cluster['cluster']['id']}  cluster={cluster} classes={classes} />)}
+                {clusterList.map(cluster => <ClusterCard key={cluster['cluster']['id']}  cluster={cluster} classes={classes} onEditClick={() => toggleOpenEditModal(cluster)} onRemoveClick={() => toggleOpenRemoveModal(cluster['cluster']['id'])} />)}
 
                 <AddClusterCard key={"add"}
                                 className={classes}
@@ -336,13 +475,15 @@ function Cluster({ dispatch, clusterList }) {
 
             </Grid>
 
+
+            {/*        추가         */}
             <Dialog
                 fullScreen={fullScreen}
-                open={openAddModal}
+                open={openEditModal}
                 onClose={toggleOpenAddModal}
             >
                 <DialogTitle>
-                    클러스터 추가
+                    클러스터 {mode === "ADD" ? "추가" : "수정"}
                 </DialogTitle>
                 <DialogContent aria-setsize={500}>
 
@@ -465,19 +606,30 @@ function Cluster({ dispatch, clusterList }) {
                         </Grid>
                     </Grid>
                     <br/>
-                    <Box display={addModalMessage === "" ? "none" : "block"}>
-                        {addModalMessage}
+                    <Box display={modalMessage === "" ? "none" : "block"}>
+                        {modalMessage}
                     </Box>
                 </DialogContent>
                 <DialogActions>
                     <Button variant={"outlined"} onClick={handleClusterTestProcess}> 연결테스트 </Button>
-                    <Button color="primary"
-                            variant="contained"
-                            disabled={!addTest}
-                            onClick={handleAddClusterProcess}
-                    >
-                        추가
-                    </Button>
+                    <Box display={mode === "ADD" ? "block" : "none"}>
+                        <Button color="primary"
+                                variant="contained"
+                                disabled={!connTest}
+                                onClick={handleAddClusterProcess}
+                        >
+                            추가
+                        </Button>
+                    </Box>
+                    <Box display={mode === "EDIT" ? "block" : "none"}>
+                        <Button color="primary"
+                                variant="contained"
+                                disabled={!connTest}
+                                onClick={handleEditClusterProcess}
+                        >
+                            저장
+                        </Button>
+                    </Box>
                     <Button onClick={toggleOpenAddModal}
                             variant="contained"
                     >
@@ -485,6 +637,31 @@ function Cluster({ dispatch, clusterList }) {
                     </Button>
                 </DialogActions>
             </Dialog>
+
+
+            {/*    삭제     */}
+
+            <Dialog open={openRemoveModal}>
+                <DialogTitle>클러스터 삭제</DialogTitle>
+             <DialogContent>
+                 <Box style={{color: red['500']}}> 선택하신 클러스터 삭제 하시겠습니까? </Box>
+             </DialogContent>
+                <DialogActions>
+                    <Button style={{backgroundColor: red['200']}}
+                            variant="contained"
+                            onClick={removeClusterProcess}
+                    >
+                        삭제
+                    </Button>
+                    <Button onClick={() => setOpenRemoveModal(false)}
+                            variant="contained"
+                    >
+                        취소
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+
 
         </React.Fragment>
     );
