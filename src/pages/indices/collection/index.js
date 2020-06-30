@@ -1,5 +1,6 @@
-import React, {useEffect} from "react";
+import React, { useState, useEffect} from "react";
 import { connect } from "react-redux";
+import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import Helmet from 'react-helmet';
 
@@ -21,7 +22,8 @@ import {
     DialogContent,
     DialogTitle,
     DialogActions,
-    Grid, TextField,
+    Grid as MuiGrid,
+    TextField,
 } from "@material-ui/core";
 import {makeStyles} from '@material-ui/core/styles';
 import {palette, positions, spacing} from "@material-ui/system";
@@ -32,6 +34,7 @@ const Typography = styled(MuiTypography)(spacing, positions);
 const Box = styled(MuiBox)(spacing, positions);
 const Card = styled(MuiCard)(spacing, positions);
 const Button = styled(MuiButton)(spacing, positions);
+const Grid = styled(MuiGrid)(spacing, positions);
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -43,16 +46,28 @@ const useStyles = makeStyles((theme) => ({
     },
     edit: {
         width: '100%'
+    },
+    link: {
+        cursor: "pointer"
     }
 }));
 
 function Collection() {
+    const history = useHistory();
     const classes = useStyles();
+    const [openAddModal, setOpenAddModal] = useState(false)
 
+    function toggleOpenAddModal() {
+        setOpenAddModal(!openAddModal)
+    }
+
+    function moveDetail(id) {
+        history.push(`./collections/${id}`)
+    }
 
     return (
         <React.Fragment>
-            <Helmet title="컬랙션"/>
+            <Helmet title="컬렉션"/>
 
             <br/>
 
@@ -60,14 +75,17 @@ function Collection() {
                         gutterBottom
                         display="inline"
             >
-                컬랙션
+                컬렉션
             </Typography>
 
             <Divider my={6}/>
 
             <Box align={'right'}>
-                <Link href="#" onClick={() => console.log(123)} color={"primary"} >
-                    컬랙션 생성
+                <Link className={classes.link}
+                      onClick={toggleOpenAddModal}
+                      color={"primary"}
+                >
+                    컬렉션 생성
                 </Link>
             </Box>
 
@@ -89,36 +107,36 @@ function Collection() {
                     <TableBody>
                         <TableRow>
                             <TableCell align="center">1</TableCell>
-                            <TableCell align="center"><Link href="#">검색상품</Link></TableCell>
-                            <TableCell align="center"><Link href="#">search-prod</Link></TableCell>
-                            <TableCell align="center"><Link href="#">search-prod-a</Link></TableCell>
+                            <TableCell align="center"><Link className={classes.link} onClick={() => moveDetail(1)}>검색상품</Link></TableCell>
+                            <TableCell align="center"><Link className={classes.link} onClick={() => moveDetail(1)}>search-prod</Link></TableCell>
+                            <TableCell align="center"><Link className={classes.link} >search-prod-a</Link></TableCell>
                             <TableCell align="center">P[3] R[6]</TableCell>
                             <TableCell align="center">1,234,561,345</TableCell>
                             <TableCell align="center">20gb</TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell align="center">2</TableCell>
-                            <TableCell align="center"><Link href="#">기준상품</Link></TableCell>
-                            <TableCell align="center"><Link href="#">vm</Link></TableCell>
-                            <TableCell align="center"><Link href="#">vm-a</Link></TableCell>
+                            <TableCell align="center"><Link className={classes.link} onClick={() => moveDetail(2)}>기준상품</Link></TableCell>
+                            <TableCell align="center"><Link className={classes.link} onClick={() => moveDetail(2)}>vm</Link></TableCell>
+                            <TableCell align="center"><Link className={classes.link} >vm-a</Link></TableCell>
                             <TableCell align="center">P[23] R[36]</TableCell>
                             <TableCell align="center">561,345</TableCell>
                             <TableCell align="center">220gb</TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell align="center">3</TableCell>
-                            <TableCell align="center"><Link href="#">기준상품</Link></TableCell>
-                            <TableCell align="center"><Link href="#">vm</Link></TableCell>
-                            <TableCell align="center"><Link href="#">vm-a</Link></TableCell>
+                            <TableCell align="center"><Link className={classes.link} onClick={() => moveDetail(3)}>기준상품</Link></TableCell>
+                            <TableCell align="center"><Link className={classes.link} onClick={() => moveDetail(3)}>vm</Link></TableCell>
+                            <TableCell align="center"><Link className={classes.link} >vm-a</Link></TableCell>
                             <TableCell align="center">P[55] R[6]</TableCell>
                             <TableCell align="center">561,345</TableCell>
                             <TableCell align="center">203gb</TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell align="center">4</TableCell>
-                            <TableCell align="center"><Link href="#">기준상품</Link></TableCell>
-                            <TableCell align="center"><Link href="#">vm</Link></TableCell>
-                            <TableCell align="center"><Link href="#">vm-a</Link></TableCell>
+                            <TableCell align="center"><Link className={classes.link} onClick={() => moveDetail(4)}>기준상품</Link></TableCell>
+                            <TableCell align="center"><Link className={classes.link} onClick={() => moveDetail(4)}>vm</Link></TableCell>
+                            <TableCell align="center"><Link className={classes.link} >vm-a</Link></TableCell>
                             <TableCell align="center">P[3] R[16]</TableCell>
                             <TableCell align="center">561,345</TableCell>
                             <TableCell align="center">208gb</TableCell>
@@ -128,38 +146,39 @@ function Collection() {
             </TableContainer>
 
 
-            <Dialog open={false} fullWidth>
+            <Dialog open={openAddModal}
+                    fullWidth
+                    onClose={toggleOpenAddModal}
+            >
                 <DialogTitle>
-                    컬랙션 추가
+                    컬렉션 추가
                 </DialogTitle>
                 <DialogContent>
-                    <Grid container>
-                        <Grid item xs={4}>
-                            <Box>
-                                컬랙션 이름
-                            </Box>
+                    <Grid container my={3}>
+                        <Grid item xs={4} mt={2}>
+                            컬렉션 이름
                         </Grid>
                         <Grid item xs={8}>
-                            <TextField />
+                            <TextField fullWidth />
                         </Grid>
                     </Grid>
-                    <Grid container>
-                        <Grid item xs={4}>
-                            컬랙션 아이디
+                    <Grid container my={3}>
+                        <Grid item xs={4} mt={2}>
+                            컬렉션 아이디
                         </Grid>
                         <Grid item xs={8}>
-                            <TextField />
+                            <TextField fullWidth />
                         </Grid>
                     </Grid>
-                    <Grid container>
+                    <Grid container my={3}>
                         <Grid item xs={4}>
                             인덱스 템플릿
                         </Grid>
                         <Grid item xs={8}>
-                            매칭되는 템플릿 목록
+                            test
                         </Grid>
                     </Grid>
-                    <Grid container>
+                    <Grid container my={3}>
                         <Grid item xs={4}>
                             인덱스 패턴
                         </Grid>
@@ -170,7 +189,7 @@ function Collection() {
                 </DialogContent>
                 <DialogActions>
                     <Button>추가</Button>
-                    <Button>취소</Button>
+                    <Button onClick={toggleOpenAddModal}>취소</Button>
                 </DialogActions>
             </Dialog>
 

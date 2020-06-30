@@ -35,6 +35,7 @@ const TemplateView = async(() => import("../pages/indices/indexTemplates/view"))
 const ClusterData = async(() => import("../pages/indices/cluster"));
 const Index = async(() => import("../pages/indices/index"));
 const Collection = async(() => import("../pages/indices/collection"));
+const CollectionDetail = async(() => import("../pages/indices/collection/Detail"));
 const Jdbc = async(() => import("../pages/indices/jdbc"));
 
 const IndexData = async(() => import("../pages/indices/indexData"));
@@ -84,7 +85,9 @@ const analysisRoutes = [
 const indicesRoutes = [
 
     {header: "인덱스", id: "클러스터", path: `${clusterContext}/indices/cluster`, icon: <Icon.Subject/>, component: ClusterData, children: null},
-    {id: "컬렉션", path: `${clusterContext}/indices/collection`, icon: <Icon.Subject/>, component: Collection, children: null},
+    {id: "컬렉션", path: `${clusterContext}/indices/collections`, icon: <Icon.Subject/>, component: Collection, children: null},
+    {id: "컬렉션상세", path: `${clusterContext}/indices/collections/*`, icon: <Icon.Subject/>, component: CollectionDetail, children: null},
+
     {id: "템플릿", path: `${clusterContext}/indices/templates`, icon: <Icon.Subject/>, component: Templates, children: null},
     {id: "템플릿생성", path: `${clusterContext}/indices/template`, component: TemplateNew, hidden: true},
     {id: "템플릿수정", path: `${clusterContext}/indices/templates/*/edit`, component: TemplateEdit, hidden: true},
