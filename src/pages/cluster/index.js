@@ -63,6 +63,7 @@ function ClusterCard({classes, cluster, onEditClick, onRemoveClick, to, showMenu
     const connection = cluster['status']['connection'] || false
     const name = cluster['cluster']['name']
     const seed = `${cluster['cluster']['scheme']}://${cluster['cluster']['host']}:${cluster['cluster']['port']}`
+    const theme = cluster['cluster']['theme']
     let nodes = "N/A"
     let indices = "N/A"
     let shards = "N/A"
@@ -107,6 +108,7 @@ function ClusterCard({classes, cluster, onEditClick, onRemoveClick, to, showMenu
                                 {name}
 
                                 <Box style={{position: "relative", height: "0px", right: "-45%", top: "-25px", display: showMenu ? "block" : "none"}}>
+
                                     <IconButton
                                         onClick={handleClick}
                                         size={"small"}
@@ -129,8 +131,8 @@ function ClusterCard({classes, cluster, onEditClick, onRemoveClick, to, showMenu
                                         <MenuItem onClick={handleEdit}> 수정 </MenuItem>
                                         <MenuItem onClick={handleRemove}> 삭제 </MenuItem>
                                     </Menu>
-                                </Box>
 
+                                </Box>
                             </Box>
 
 
@@ -204,21 +206,31 @@ function ClusterCard({classes, cluster, onEditClick, onRemoveClick, to, showMenu
                             <Grid container mt={1}>
                                 <Grid item xs={4}>
                                     <Box style={{whiteSpace: "nowrap"}}>
+                                        색상
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={8}>
+                                    <Box style={{ display: theme === "0" ? "block" : "none", backgroundColor: "rgb(27, 36, 48)", width: "16px", height: "16px", borderRadius: "90px"}}> </Box>
+                                    <Box style={{ display: theme === "1" ? "block" : "none", backgroundColor: "rgb(255, 255, 255)", width: "16px", height: "16px", borderRadius: "90px"}}> </Box>
+                                    <Box style={{ display: theme === "2" ? "block" : "none", backgroundColor: "rgb(25, 118, 210)", width: "16px", height: "16px", borderRadius: "90px"}}> </Box>
+                                    <Box style={{ display: theme === "3" ? "block" : "none", backgroundColor: "rgb(56, 142, 60)", width: "16px", height: "16px", borderRadius: "90px"}}> </Box>
+                                    <Box style={{ display: theme === "4" ? "block" : "none", backgroundColor: "rgb(57, 73, 171)", width: "16px", height: "16px", borderRadius: "90px"}}> </Box>
+                                    <Box style={{ display: theme === "5" ? "block" : "none", backgroundColor: "rgb(0, 121, 107)", width: "16px", height: "16px", borderRadius: "90px"}}> </Box>
+                                </Grid>
+                            </Grid>
+
+                            <Grid container mt={1}>
+                                <Grid item xs={4}>
+                                    <Box style={{whiteSpace: "nowrap"}}>
                                         연결상태
                                     </Box>
                                 </Grid>
                                 <Grid item xs={8}>
                                     <Box style={{whiteSpace: "nowrap"}}>
                                         {connection ?
-                                            <Box style={{
-                                                width: "16px", height: "16px",
-                                                backgroundColor: "green",
-                                                borderRadius: "90px"}}> </Box>
+                                            <Box component={"span"} style={{color: "green"}}>정상</Box>
                                             :
-                                            <Box style={{
-                                                width: "16px", height: "16px",
-                                                backgroundColor: "red",
-                                                borderRadius: "90px" }}> </Box>
+                                            <Box component={"span"} style={{color: "red"}}>실패</Box>
                                         }
                                     </Box>
                                 </Grid>
@@ -237,7 +249,7 @@ function AddClusterCard(props) {
     return (
         <React.Fragment>
             <Grid item xs={12} md={6} lg={4} xl={3} style={{display: display}}>
-                <Card variant="outlined" style={{minHeight: "240px"}}>
+                <Card variant="outlined" style={{minHeight: "245px"}}>
                     <CardContent>
                         <Box display="flex"
                              justifyContent="center"
@@ -270,7 +282,7 @@ function AddGuideCard(props) {
     const classes = props.className
     return (
         <Grid item xs={12} md={6} lg={4} xl={3}>
-            <Card variant="outlined" style={{minHeight: "240px"}}>
+            <Card variant="outlined" style={{minHeight: "245px"}}>
                 <CardContent>
                     <Box display="flex"
                          justifyContent="center"
@@ -295,7 +307,6 @@ function AddGuideCard(props) {
 }
 
 function Cluster({ dispatch, clusterList, authUser }) {
-    console.log(authUser)
     const history = useHistory()
     const classes = useStyles();
     const fullScreen = useMediaQuery(useTheme().breakpoints.down('sm'));
@@ -460,7 +471,13 @@ function Cluster({ dispatch, clusterList, authUser }) {
         // link.setAttribute("target", "_blank")
         // document.body.appendChild(link);
         // link.click()
-        window.open(`${id}/dashboard`,'window',`location=no,directories=no,resizable=no,status=no,toolbar=no,menubar=no,left=0,top=0,scrollbars=yes,width=${window.outerWidth},height=${window.outerHeight}`)
+        let width = window.outerWidth
+        let height = window.outerHeight
+
+        width = Math.ceil(width / 2) <= 1024 ? 1024 : Math.ceil(width / 2)
+        height = (Math.ceil(height / 2) <= 768 ? 768 : Math.ceil(height / 2)) - 150
+
+        window.open(`${id}/dashboard`,id,`location=no,directories=no,resizable=no,status=no,toolbar=no,menubar=no,left=${window.outerWidth / 5},top=50,scrollbars=yes,width=${width},height=${height}`)
     }
 
     const isManager = authUser['role']['manage']
@@ -502,6 +519,7 @@ function Cluster({ dispatch, clusterList, authUser }) {
                 fullScreen={fullScreen}
                 open={openEditModal}
                 onClose={toggleOpenAddModal}
+                fullWidth={true}
             >
                 <DialogTitle>
                     클러스터 {mode === "ADD" ? "추가" : "수정"}
@@ -662,7 +680,7 @@ function Cluster({ dispatch, clusterList, authUser }) {
 
             {/*    삭제     */}
 
-            <Dialog open={openRemoveModal}>
+            <Dialog open={openRemoveModal} fullWidth={true}>
                 <DialogTitle>클러스터 삭제</DialogTitle>
              <DialogContent>
                  <Box style={{color: red['500']}}> 선택하신 클러스터 삭제 하시겠습니까? </Box>

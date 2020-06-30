@@ -89,7 +89,7 @@ function Edit({ dispatch, template, templates}) {
     }, [template['settings']])
 
     function handleTemplateChange(template) {
-        history.pushState(null, null,`/indices/templates/${template}/edit`)
+        history.pushState(null, null,`../indices/templates/${template}/edit`)
         setSelectedTemplate(template)
     }
     function handleTabChane(index) {
@@ -104,7 +104,7 @@ function Edit({ dispatch, template, templates}) {
             settings: JSON.parse(settingsJson === "" ? "{}" : settingsJson),
             mappings: JSON.parse(mappingsJson === "" ? "{}" : mappingsJson)
         } )).then((response) => {
-            location.replace(`/indices/templates/${selectedTemplate}`)
+            location.replace(`../indices/templates/${selectedTemplate}`)
         }).catch(error => {
             if (typeof error === 'object') {
                 message = "[수정 실패]" + JSON.stringify(error)
@@ -150,7 +150,7 @@ function Edit({ dispatch, template, templates}) {
                                 onClick={handleSubmitClick}
                         >저장</Button>
                         <Button variant="outlined"
-                                onClick={() => location.href="/indices/templates"}
+                                onClick={() => location.href="../indices/templates"}
                                 ml={1}
                         >취소</Button>
                     </Box>
@@ -253,7 +253,7 @@ function Edit({ dispatch, template, templates}) {
                 }
             </Box>
 
-            <Dialog open={openMessage}>
+            <Dialog open={openMessage} fullWidth={true}>
                 <DialogTitle>오류</DialogTitle>
                 <DialogContent>
                     {message}

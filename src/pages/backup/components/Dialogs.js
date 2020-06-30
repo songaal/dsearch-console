@@ -65,6 +65,7 @@ class SimpleDialog extends React.Component {
 
         return (
             <Dialog
+                fullWidth={true}
                 onClose={this.handleClose}
                 aria-labelledby="simple-dialog-title"
                 open={true}
@@ -192,6 +193,7 @@ class AlertDialog extends React.Component {
                             Open alert dialog
                         </Button>
                         <Dialog
+                            fullWidth={true}
                             open={this.state.open}
                             onClose={this.handleClose}
                             aria-labelledby="alert-dialog-title"

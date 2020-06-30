@@ -74,7 +74,7 @@ function New({ dispatch }) {
             mappings: JSON.parse(mappingsJson === "" ? "{}" : mappingsJson)
         } )).then(async (response) => {
             await utils.sleep(500)
-            location.replace("/indices/templates/" + templateText)
+            location.replace("../indices/templates/" + templateText)
         }).catch(error => {
             if (typeof error === 'object') {
                 message = "[생성 실패]" + JSON.stringify(error)

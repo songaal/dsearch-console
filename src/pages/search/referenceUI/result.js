@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import {connect, useDispatch, useSelector, useStore} from "react-redux";
 import styled from "styled-components";
+import { useHistory } from "react-router-dom";
 import Helmet from 'react-helmet';
 import {
     Box as MuiBox,
@@ -214,8 +215,9 @@ function SearchPanel(documents, aggregations, template, pagination) {
     )
 }
 
-function Result({resultList}) {
+function Result({resultList, authUser}) {
     const keyword = useSelector(store => (store.referenceSearchReducers.keyword))
+    const history = useHistory()
 
     const tabs = resultList.map(result => ({
         label: result['template']['name'] || "이름 없음",
@@ -233,6 +235,10 @@ function Result({resultList}) {
             })
     }))
 
+    function moveSetting() {
+        history.push(`/${authUser['cluster']['id']}/search/reference-ui`)
+    }
+
     return (
         <React.Fragment>
             <Helmet title="검색결과"/>
@@ -246,7 +252,7 @@ function Result({resultList}) {
                 <Grid item xs={2}>
                     <Box align={"right"}>
                         <Button color={"default"} variant={"contained"}
-                                onClick={() => location.href = '/search/reference-ui'}>설정</Button>
+                                onClick={moveSetting}>설정</Button>
                     </Box>
                 </Grid>
             </Grid>
@@ -260,4 +266,4 @@ function Result({resultList}) {
     )
 }
 
-export default connect(store => ({...store.referenceSearchReducers}))(Result)
+export default connect(store => ({...store.referenceSearchReducers, ...store.fastcatxReducers}))(Result)

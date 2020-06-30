@@ -1,4 +1,4 @@
-import React, {Component, useState} from "react";
+import React, {Component, useEffect, useState} from "react";
 import {Link, useHistory} from "react-router-dom";
 import {connect, useDispatch, useSelector} from "react-redux";
 import styled, {withTheme} from "styled-components";
@@ -20,8 +20,9 @@ import {ArrowDropDown, Menu as MenuIcon} from "@material-ui/icons";
 
 import {Home, Search as SearchIcon} from "react-feather";
 import {setReferenceResultAll, setReferenceSearchKeyword} from "../redux/actions/referenceSearchActions";
-import {setFastcatxAuthUser, setFastcatxSignOut} from "../redux/actions/fastcatxActions";
+import { setFastcatxSignOut } from "../redux/actions/fastcatxActions";
 import {SET_FASTCATX_AUTH_USER} from "../redux/constants";
+import {setClusterList} from "../redux/actions/clusterActions";
 
 const AppBar = styled(MuiAppBar)`
   background: ${props => props.theme.header.background};
@@ -87,56 +88,61 @@ const Button = styled(ButtonBase)`
   padding-right: ${props => props.theme.spacing(2)}px;
 `
 
-class ClusterMenu extends Component {
-    state = {
-        anchorMenu: null
-    };
+function ClusterMenu() {
+    const dispatch = useDispatch()
+    const authUser = useSelector(store => store.fastcatxReducers)['authUser']
+    const clusterStore = useSelector(store => store.clusterReducers)
+    const [clusterListMenu, setClusterListMenu] = useState(null);
 
-    toggleMenu = event => {
-        this.setState({anchorMenu: event.currentTarget});
-    };
+    useEffect(() => {
+        dispatch(setClusterList())
+    }, [])
 
-    closeMenu = () => {
-        this.setState({anchorMenu: null});
-    };
-
-    render() {
-        const {anchorMenu} = this.state;
-        const open = Boolean(anchorMenu);
-        return (
-            <React.Fragment>
-                <Button aria-owns={open ? "menu-appbar" : undefined}
-                        aria-haspopup="true"
-                        onClick={this.toggleMenu}
-                        variant={"outlined"}
-                >
-                    운영클러스터
-                    <ArrowDropDown/>
-                </Button>
-                <Menu
-                    id="menu-appbar"
-                    anchorEl={anchorMenu}
-                    open={open}
-                    onClose={this.closeMenu}
-                >
-                    <MenuItem
-                        onClick={() => {
-                            this.closeMenu();
-                        }}
-                    >
-                        운영클러스터
-                    </MenuItem>
-                    <MenuItem
-                        onClick={() => {
-                            this.closeMenu();
-                        }}
-                    >
-                        개발클러스터
-                    </MenuItem>
-                </Menu>
-            </React.Fragment>
-        );
+    function toggleMenu(event) {
+        setClusterListMenu(event.currentTarget)
     }
+    function closeMenu() {
+        setClusterListMenu(null)
+    }
+
+    function changeCluster(clusterId) {
+        closeMenu()
+        if (authUser['cluster']['id'] === clusterId) {
+            return false
+        }
+        location.href = `/${clusterId }/dashboard`
+    }
+
+    const open = Boolean(clusterListMenu);
+    return (
+        <React.Fragment>
+            <Button aria-owns={open ? "menu-appbar" : undefined}
+                    aria-haspopup="true"
+                    onClick={toggleMenu}
+                    variant={"outlined"}
+            >
+                {authUser['cluster']['name']}
+                <ArrowDropDown/>
+            </Button>
+            <Menu
+                anchorEl={clusterListMenu}
+                open={open}
+                onClose={closeMenu}
+            >
+                {
+                    (clusterStore['clusterList']||[]).map(cluster => {
+                        return (
+                            <MenuItem key={cluster['cluster']['id']}
+                                      onClick={() => changeCluster(cluster['cluster']['id'])}
+                            >
+                                {cluster['cluster']['name']}
+                            </MenuItem>
+                        )
+                    })
+                }
+            </Menu>
+        </React.Fragment>
+    )
 }
 
 function UserMenu() {
@@ -225,6 +231,7 @@ const MainHeader = ({theme, onDrawerToggle}) => (
 
 const DashBoardHeader = ({theme, onDrawerToggle}) => {
     const references = useSelector(store => ({...store.referenceSearchReducers}))
+    const authUserStore = useSelector(store => ({...store.fastcatxReducers}))['authUser']
     const [keyword, setKeyword] = useState(references.keyword)
     const qs = new URLSearchParams(location.search)
     const dispatch = useDispatch()
@@ -233,7 +240,7 @@ const DashBoardHeader = ({theme, onDrawerToggle}) => {
     function handleSearch() {
         dispatch(setReferenceSearchKeyword(keyword))
         dispatch(setReferenceResultAll(keyword))
-        history.push("/search")
+        history.push(`/${authUserStore['cluster']['id']}/search`)
     }
 
     function handleKeyEvent(event) {
@@ -279,7 +286,21 @@ const DashBoardHeader = ({theme, onDrawerToggle}) => {
 
                         <Grid item>
                             <IconButton color="inherit"
-                                        onClick={() => location.href = "/"}>
+                                        onClick={() => {
+                                            try {
+                                                if (opener.document === document) {
+                                                    history.push("/cluster")
+                                                    return
+                                                }
+                                                const link = document.createElement('a');
+                                                link.href = "/cluster"
+                                                opener.document.body.appendChild(link);
+                                                link.click()
+                                                window.close()
+                                            } catch (error) {
+                                                history.push("/cluster")
+                                            }
+                                        } }>
                                 <Home/>
                             </IconButton>
                             <ClusterMenu theme={theme}/>

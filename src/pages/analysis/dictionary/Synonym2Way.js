@@ -301,6 +301,7 @@ function SynonymDictionary({dictionary, setting, dataSet}) {
 
 
             <Dialog
+                fullWidth={true}
                 open={createDialogOpen}
                 onClose={() => setCreateDialogOpen(false)}
             >
@@ -362,6 +363,7 @@ function SynonymDictionary({dictionary, setting, dataSet}) {
             </Dialog>
 
             <Dialog
+                fullWidth={true}
                 open={deleteDialogOpen}
                 onClose={() => setDeleteDialogOpen(false)}
             >

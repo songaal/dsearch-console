@@ -348,6 +348,7 @@ function Role({dispatch, roleList, userRolesList, authUser}) {
             <Dialog open={openAddModal}
                     onClose={toggleAddModal}
                     fullScreen={fullScreen}
+                    fullWidth={true}
             >
                 <DialogTitle id="form-dialog-title">역할 추가</DialogTitle>
                 <DialogContent>

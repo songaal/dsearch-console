@@ -69,7 +69,7 @@ function Templates({dispatch, templates}) {
             <Divider my={6}/>
 
             <Box align={'right'}>
-                <Link href={"/indices/template"} color={"primary"} >
+                <Link href={"../indices/template"} color={"primary"} >
                     템플릿 생성
                 </Link>
             </Box>
@@ -91,13 +91,13 @@ function Templates({dispatch, templates}) {
                             <TableRow key={row.name}>
                                 <TableCell component="th" scope="row" align="center">{i + 1}</TableCell>
                                 <TableCell align="center">
-                                    <Link href={`/indices/templates/${row.name}`}>
+                                    <Link href={`../indices/templates/${row.name}`}>
                                         {row.name}
                                     </Link>
                                 </TableCell>
                                 <TableCell align="center">{row.pattern}</TableCell>
                                 <TableCell align="center">
-                                    <Link href={`/indices/templates/${row.name}/edit`} color={"primary"}>수정</Link>
+                                    <Link href={`../indices/templates/${row.name}/edit`} color={"primary"}>수정</Link>
                                 </TableCell>
                             </TableRow>
                         ))}

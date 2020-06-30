@@ -82,8 +82,8 @@ function Dashboard({dispatch, authUser, children, routes, width}) {
 
     return (
         // maTheme: /src/theme/variants.js 파일참조
-        <MuiThemeProvider theme={maTheme[5]}>
-            <ThemeProvider theme={maTheme[5]}>
+        <MuiThemeProvider theme={maTheme[authUser['cluster']['theme']]}>
+            <ThemeProvider theme={maTheme[authUser['cluster']['theme']]}>
 
                 <Root>
                     <CssBaseline/>

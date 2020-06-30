@@ -43,7 +43,7 @@ function SignIn({dispatch}) {
     useEffect(() => {
         const fastcatxServer = localStorage.getItem(SET_FASTCATX_SERVER)
         const hash = JSON.parse(localStorage.getItem(SET_FASTCATX_AUTH_USER) || "{}")
-        // 세선이 있을 경우
+        // 서버의 세션 유무 체크.
         dispatch(setFastcatxAuthUser())
             .then(response => {
                 console.log("authenticated")

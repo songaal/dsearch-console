@@ -15,7 +15,12 @@ export default class Client {
                 config.url = `${server}${config.uri}`
             }
         }
-
+        if (location.pathname.split("/").length >= 3) {
+            const clusterId = location.pathname.substring(1, location.pathname.indexOf("/", 1))
+            config.headers = Object.assign(config.headers||{}, {
+                "cluster-id": clusterId
+            })
+        }
         return new Promise(async (resolve, reject) => {
             try {
                 config.withCredentials = true
@@ -24,7 +29,6 @@ export default class Client {
                 resolve(response)
             } catch (err) {
                 console.error('API Fail', config, err)
-                console.log(err.statusCode)
                 reject(err)
             }
         })

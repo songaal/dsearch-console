@@ -352,6 +352,7 @@ function UserManagement({dispatch, userList, userRolesList, roleList, authUser})
             <Dialog open={Boolean(openUserAddModal)}
                     fullScreen={fullScreen}
                     onClose={toggleUserAddModal}
+                    fullWidth={true}
             >
                 <DialogTitle id="form-dialog-title">사용자 추가</DialogTitle>
                 <DialogContent>

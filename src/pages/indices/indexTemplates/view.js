@@ -88,7 +88,7 @@ function View({ dispatch, template, templates}) {
     }, [template['settings']])
 
     function handleTemplateChange(template) {
-        history.pushState(null, null,`/indices/templates/${template}`)
+        history.pushState(null, null,`../indices/templates/${template}`)
         setSelectedTemplate(template)
     }
     function handleTabChane(index) {
@@ -225,7 +225,8 @@ function View({ dispatch, template, templates}) {
                 }
             </Box>
 
-            <Dialog open={openMessage}>
+            <Dialog open={openMessage}
+                    fullWidth={true}>
                 <DialogTitle>오류</DialogTitle>
                 <DialogContent>
                     {message}

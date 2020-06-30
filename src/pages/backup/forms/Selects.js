@@ -541,6 +541,7 @@ class DialogSelect extends React.Component {
                                 Open select dialog
                             </Button>
                             <Dialog
+                                fullWidth={true}
                                 disableBackdropClick
                                 disableEscapeKeyDown
                                 open={this.state.open}
