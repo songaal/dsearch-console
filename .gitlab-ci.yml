@@ -24,6 +24,7 @@ module install:
     - rm -rf yarn.lock
     - rm -rf package-lock.json
     - npm cache clean --force
+    - npm update
     - npm install
 
 build:
