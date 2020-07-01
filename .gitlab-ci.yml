@@ -23,8 +23,7 @@ module install:
     - rm -rf node_modules
     - rm -rf yarn.lock
     - npm cache clean --force
-    - yarn
-#    - npm install
+    - npm install
 
 build:
   stage: build
