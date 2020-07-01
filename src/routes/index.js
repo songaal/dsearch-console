@@ -95,9 +95,9 @@ const indicesRoutes = [
     {id: "템플릿조회", path: `${clusterContext}/indices/templates/*`, component: TemplateView, hidden: true},
 
     {id: "인덱스", path: `${clusterContext}/indices`, icon: <Icon.Subject/>, component: Index, children: null},
-    {id: "인덱스상세", path: `${clusterContext}/indices/*`, icon: <Icon.Subject/>, component: IndexDetail, children: null, hidden: true},
     {id: "JDBC", path: `${clusterContext}/indices/jdbc`, icon: <Icon.Subject/>, component: Jdbc, children: null},
-
+    {id: "인덱스상세", path: `${clusterContext}/indices/*`, icon: <Icon.Subject/>, component: IndexDetail, children: null, hidden: true},
+    
     // {id: "데이터", path: "/*/indices/data", icon: <Icon.Subject/>, component: IndexData, children: null},
     // {id: "수집소스", path: "/*/indices/source", icon: <Icon.Subject/>, component: DataSource, children: null},
     // {id: "색인", path: "/*/indices/index", icon: <Icon.Subject/>, component: Index, children: null},
