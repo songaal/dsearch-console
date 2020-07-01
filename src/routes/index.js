@@ -34,6 +34,7 @@ const TemplateView = async(() => import("../pages/indices/indexTemplates/view"))
 
 const ClusterData = async(() => import("../pages/indices/cluster"));
 const Index = async(() => import("../pages/indices/index"));
+const IndexDetail = async(() => import("../pages/indices/index/Detail"));
 const Collection = async(() => import("../pages/indices/collection"));
 const CollectionDetail = async(() => import("../pages/indices/collection/Detail"));
 const Jdbc = async(() => import("../pages/indices/jdbc"));
@@ -49,7 +50,7 @@ const ReferenceUIResult = async(() => import("../pages/search/referenceUI/result
 // Management components
 const ServerManagement = async(() => import("../pages/management/serverManagement"));
 const ApiManagement = async(() => import("../pages/management/apiManagement"));
-const ConfigurationManagement = async(() => import("../pages/management/configurationManagement"));
+const ClusterSettings = async(() => import("../pages/management/clusterSettings"));
 
 // 인트로 라우트
 
@@ -86,16 +87,16 @@ const indicesRoutes = [
 
     {header: "인덱스", id: "클러스터", path: `${clusterContext}/indices/cluster`, icon: <Icon.Subject/>, component: ClusterData, children: null},
     {id: "컬렉션", path: `${clusterContext}/indices/collections`, icon: <Icon.Subject/>, component: Collection, children: null},
-    {id: "컬렉션상세", path: `${clusterContext}/indices/collections/*`, icon: <Icon.Subject/>, component: CollectionDetail, children: null},
+    {id: "컬렉션상세", path: `${clusterContext}/indices/collections/*`, icon: <Icon.Subject/>, component: CollectionDetail, children: null, hidden: true},
 
     {id: "템플릿", path: `${clusterContext}/indices/templates`, icon: <Icon.Subject/>, component: Templates, children: null},
     {id: "템플릿생성", path: `${clusterContext}/indices/template`, component: TemplateNew, hidden: true},
     {id: "템플릿수정", path: `${clusterContext}/indices/templates/*/edit`, component: TemplateEdit, hidden: true},
     {id: "템플릿조회", path: `${clusterContext}/indices/templates/*`, component: TemplateView, hidden: true},
 
-    {id: "인덱스", path: `${clusterContext}/indices/index`, icon: <Icon.Subject/>, component: Index, children: null},
+    {id: "인덱스", path: `${clusterContext}/indices`, icon: <Icon.Subject/>, component: Index, children: null},
+    {id: "인덱스상세", path: `${clusterContext}/indices/*`, icon: <Icon.Subject/>, component: IndexDetail, children: null, hidden: true},
     {id: "JDBC", path: `${clusterContext}/indices/jdbc`, icon: <Icon.Subject/>, component: Jdbc, children: null},
-
 
     // {id: "데이터", path: "/*/indices/data", icon: <Icon.Subject/>, component: IndexData, children: null},
     // {id: "수집소스", path: "/*/indices/source", icon: <Icon.Subject/>, component: DataSource, children: null},
@@ -110,9 +111,9 @@ const searchRoutes = [
 ];
 
 const managementRoutes = [
-    {header: "관리", id: "서버", path: `${clusterContext}/management/server`, icon: <Icon.Memory/>, component: ServerManagement, children: null},
+    {header: "관리", id: "클러스터", path: `${clusterContext}/management/server`, icon: <Icon.Memory/>, component: ServerManagement, children: null},
     {id: "API", path: `${clusterContext}/management/api`, icon: <Icon.Memory/>, component: ApiManagement, children: null},
-    {id: "설정", path: `${clusterContext}/management/collection`, icon: <Icon.Memory/>, component: ConfigurationManagement, children: null},
+    {id: "클러스터설정", path: `${clusterContext}/management/settings`, icon: <Icon.Memory/>, component: ClusterSettings, children: null},
 ];
 
 // dashboard layout routing

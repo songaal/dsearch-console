@@ -63,7 +63,7 @@ function Source() {
     const [editModal, setEditModal] = useState(null)
     const [mode, setMode] = useState("VIEW")
     const [anchorEl, setAnchorEl] = React.useState(null);
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = React.useState(null);
     const [placement, setPlacement] = React.useState();
 
     function toggleMoreMenu(event) {

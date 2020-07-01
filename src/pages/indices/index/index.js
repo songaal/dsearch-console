@@ -1,73 +1,76 @@
 import React from "react";
 import styled from "styled-components";
-import {NavLink as RouterNavLink} from "react-router-dom";
-
+import {makeStyles} from '@material-ui/core/styles';
 import Helmet from 'react-helmet';
-
+import {useHistory} from "react-router-dom"
 import {
-    Breadcrumbs as MuiBreadcrumbs,
-    Card as MuiCard,
-    CardContent,
     Divider as MuiDivider,
-    Grid,
     Link,
-    Typography
+    Paper,
+    Table, TableBody, TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Typography,
+    Button,
 } from "@material-ui/core";
 
 import {spacing} from "@material-ui/system";
 
-const NavLink = React.forwardRef((props, ref) => (
-    <RouterNavLink innerRef={ref} {...props} />
-));
-
-const Card = styled(MuiCard)(spacing);
-
+const useStyles = makeStyles((theme) => ({}));
 const Divider = styled(MuiDivider)(spacing);
 
-const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
+function Index() {
+    const classes = useStyles();
+    const history = useHistory();
 
-function EmptyCard() {
-    return (
-        <Card mb={6}>
-            <CardContent>
-                <Typography variant="h6" gutterBottom>
-                    Empty card
-                </Typography>
-                <Typography variant="body2" gutterBottom>
-                    Empty card
-                </Typography>
-            </CardContent>
-        </Card>
-    );
-}
+    function moveDetail(id) {
+        history.push(`./indices/${id}`)
+    }
 
-function Blank() {
     return (
         <React.Fragment>
-            <Helmet title="Blank"/>
-            <Typography variant="h3" gutterBottom display="inline">
-                Blank
-            </Typography>
+            <Helmet title="인덱스"/>
 
-            <Breadcrumbs aria-label="Breadcrumb" mt={2}>
-                <Link component={NavLink} exact to="/">
-                    Dashboard
-                </Link>
-                <Link component={NavLink} exact to="/">
-                    Pages
-                </Link>
-                <Typography>Blank</Typography>
-            </Breadcrumbs>
+            <Typography variant="h3" gutterBottom display="inline">
+                인덱스
+            </Typography>
 
             <Divider my={6}/>
 
-            <Grid container spacing={6}>
-                <Grid item xs={12}>
-                    <EmptyCard/>
-                </Grid>
-            </Grid>
+            {/*<Box align={'right'}>*/}
+            {/*    <Link href={"../indices/template"} color={"primary"} >*/}
+            {/*        인덱스 생성*/}
+            {/*    </Link>*/}
+            {/*</Box>*/}
+
+            <br/>
+
+            <TableContainer component={Paper}>
+                <Table className={classes.table} aria-label="simple table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell align="center">#</TableCell>
+                            <TableCell align="center">이름</TableCell>
+                            <TableCell align="center">상태</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        <TableRow>
+                            <TableCell component="th" scope="row" align="center">1</TableCell>
+                            <TableCell align="center" >
+                                <Link style={{cursor: "pointer"}} onClick={() => moveDetail(1)}>
+                                    .fastcatx_dict
+                                </Link>
+                            </TableCell>
+                            <TableCell align="center">open</TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            </TableContainer>
+
         </React.Fragment>
     );
 }
 
-export default Blank;
+export default Index;
