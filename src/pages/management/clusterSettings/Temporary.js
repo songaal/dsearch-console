@@ -44,7 +44,7 @@ function Temporary() {
                                         thread_pool.fetch_shard_started_core
                                     </Box>
                                     <Box>
-                                        <TextareaAutosize rowsMax={2} value={"1\n1231\n23"} fullWidth disabled/>
+                                        <TextareaAutosize rowsMax={2} value={"1\n1231\n23"} style={{width: "100%"}} disabled/>
                                     </Box>
                                 </Box>
                             </Grid>

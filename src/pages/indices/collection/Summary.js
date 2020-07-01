@@ -108,7 +108,7 @@ function Summary() {
                 </Grid>
             </Grid>
 
-            <Box my={5}>
+            <Box mt={5}>
                 <Typography variant={"h5"}>
                     스왑 인덱스
                 </Typography>
@@ -116,7 +116,7 @@ function Summary() {
 
             <Grid container>
                 <Grid item xs={12} md={6}>
-                    <Box p={5}>
+                    <Box px={5} py={2}>
                         <Table>
                             <TableBody>
                                 <TableRow>
@@ -165,7 +165,7 @@ function Summary() {
                     </Box>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                    <Box p={5}>
+                    <Box px={5} py={2}>
                         <Table>
                             <TableBody>
                                 <TableRow>

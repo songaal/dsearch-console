@@ -22,12 +22,8 @@ module install:
   script:
     - rm -rf node_modules
     - rm -rf yarn.lock
-    - rm -rf package-lock.json
     - npm cache clean --force
-    - npm install -g yarn
-    - yarn
-#    - npm update
-#    - npm install
+    - npm install
 
 build:
   stage: build
