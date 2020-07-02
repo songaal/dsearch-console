@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function IndicesSelect({dispatch, indices, index}) {
+function IndicesSelect({dispatch, indices, index, enableSystem=true}) {
     const classes = useStyles()
     const handleChange = (event) => {
         dispatch(setIndexAction(event.target.value))
@@ -32,7 +32,8 @@ function IndicesSelect({dispatch, indices, index}) {
                         onChange={handleChange}
                     >
                         {
-                            indices.map((index, i) => (<MenuItem key={i} value={index}>{index}</MenuItem>))
+                            indices.filter(index => !enableSystem ? !index['index'].startsWith(".") : true )
+                                .map((index, i) => (<MenuItem key={i} value={index['index']}>{index['index']}</MenuItem>))
                         }
                     </Select>
                 </FormControl>

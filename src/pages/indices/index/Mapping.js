@@ -1,34 +1,29 @@
 import React from "react";
+import {connect} from "react-redux"
 import styled from "styled-components";
 
 import {
     Box as MuiBox,
-    Button as MuiButton,
     Card as MuiCard,
     CardContent,
-    Divider as MuiDivider,
     FormControl,
     FormControlLabel,
     Radio,
     RadioGroup,
-    TextareaAutosize,
-    Typography as MuiTypography
+    TextareaAutosize
 } from "@material-ui/core";
 
 import {makeStyles} from '@material-ui/core/styles';
-import {palette, positions, spacing} from "@material-ui/system";
-import AddIcon from "@material-ui/icons/Add";
+import {positions, spacing} from "@material-ui/system";
 import Json2html from "~/components/Json2Html"
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
-        // margin: theme.spacing(1),
         minWidth: 250,
     },
     root: {
         flexGrow: 1,
         width: '100%',
-        // backgroundColor: theme.palette.background.paper,
     },
     edit: {
         width: '100%'
@@ -41,167 +36,40 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const Divider = styled(MuiDivider)(spacing);
 const Box = styled(MuiBox)(spacing, positions);
 const Card = styled(MuiCard)(spacing);
-const Typography = styled(MuiTypography)(spacing, positions);
-const Button = styled(MuiButton)(spacing, positions, palette);
 
+function deserializer(parentKey, value, entries) {
+    if (typeof value === "object" && value.length > 0) {
+        // list
+        for (let i = 0; i < value.length; i++ ) {
+            entries = Object.assign(deserializer("[" + i + "]", value, entries), entries)
+        }
+    } else if (typeof value === "object") {
+        // object
 
-const json = {
-    "ADDDESCRIPTION": {
-        "type": "text",
-        "analyzer": "korean"
-    },
-    "CATEGORYCODE1": {
-        "type": "integer"
-    },
-    "TEST_OBJECT_TYPE": {
-        "properties": {
-            "age": {"type": "integer"},
-            "name": {
-                "properties": {
-                    "first": {"type": "text"},
-                    "last": {"type": "text"}
-                }
-            }
-        }
-    },
-    "TEST_NESTED_TYPE" : {
-        "type" : "nested",
-        "properties" : {
-            "last_name" : {
-                "type" : "text"
-            },
-            "vehicle" : {
-                "type" : "keyword"
-            }
-        },
-        "analyzer": "korean"
-    },
-    "TEST_NESTED_DEPTH_TYPE" : {
-        "type" : "nested",
-        "properties" : {
-            "last_name" : {
-                "type" : "text"
-            },
-            "vehicle" : {
-                "type" : "nested",
-                "properties" : {
-                    "make" : {
-                        "type" : "text"
-                    },
-                    "model" : {
-                        "type" : "text"
-                    }
-                }
-            }
-        },
-        "analyzer": "korean"
-    },
-    "CATEGORYCODE2": {
-        "type": "integer"
-    },
-    "CATEGORYCODE3": {
-        "type": "integer"
-    },
-    "CATEGORYCODE4": {
-        "type": "integer"
-    },
-    "DATASTAT": {
-        "type": "keyword"
-    },
-    "DELIVERYPRICE": {
-        "type": "integer"
-    },
-    "GROUPSEQ": {
-        "type": "integer"
-    },
-    "MOBILEPRICE": {
-        "type": "integer"
-    },
-    "PCPRICE": {
-        "type": "integer"
-    },
-    "POPULARITYSCORE": {
-        "type": "integer"
-    },
-    "PRODUCTCODE": {
-        "type": "keyword"
-    },
-    "PRODUCTIMAGEURL": {
-        "type": "keyword"
-    },
-    "PRODUCTMAKER": {
-        "type": "keyword"
-    },
-    "PRODUCTNAME": {
-        "type": "text",
-        "analyzer": "korean"
-    },
-    "REGISTERDATE": {
-        "type": "date"
-    },
-    "SHOPCODE": {
-        "type": "keyword"
-    },
-    "SHOPCOUPON": {
-        "type": "keyword"
-    },
-    "SHOPGIFT": {
-        "type": "keyword"
-    },
-    "SHOPPRODUCTCODE": {
-        "type": "keyword"
-    },
-    "SIMPRODMEMBERCNT": {
-        "type": "integer"
-    },
-    "host": {
-        "type": "text",
-        "fields": {
-            "keyword": {
-                "type": "keyword",
-                "ignore_above": 256
-            }
-        }
-    },
-    "message": {
-        "type": "text",
-        "fields": {
-            "keyword": {
-                "type": "keyword",
-                "ignore_above": 256
-            }
-        }
-    },
-    "path": {
-        "type": "text",
-        "fields": {
-            "keyword": {
-                "type": "keyword",
-                "ignore_above": 256
-            }
-        }
-    },
-    "tags": {
-        "type": "text",
-        "fields": {
-            "keyword": {
-                "type": "keyword",
-                "ignore_above": 256
-            }
-        }
+    } else {
+        // value
+        entries[parentKey] = value
     }
+    return entries
 }
 
 
 function FormCard({json}) {
+    const entries = {}
+    deserializer("", json, entries)
+    console.log(entries)
+
     return (
         <div>
             <Card>
                 <CardContent m={0}>
-                    {Json2html(json)}
+                    <table>
+                        <tbody>
+
+                        </tbody>
+                    </table>
                 </CardContent>
             </Card>
         </div>
@@ -216,7 +84,7 @@ function JsonCard({json}) {
                 <Box>
                     <TextareaAutosize rowsMin={50}
                                       className={classes.edit}
-                                      placeholder=""
+                                      disabled
                                       value={JSON.stringify(json, null, 4)}
                     />
                 </Box>
@@ -225,13 +93,15 @@ function JsonCard({json}) {
     </div>)
 }
 
-function Mapping() {
+function Mapping({mappings}) {
     const classes = useStyles();
     const [chk, setChk] = React.useState('form');
 
     function handleRadioChange(e) {
         setChk(e.target.value)
     }
+
+    console.log(mappings)
 
     return (
         <React.Fragment>
@@ -245,7 +115,7 @@ function Mapping() {
 
             <Box mt={2}>
                 {
-                    chk === "form" ? <FormCard json={JSON.stringify(json)} /> : <JsonCard json={json} />
+                    chk === "form" ? <FormCard json={mappings} /> : <JsonCard json={mappings} />
                 }
             </Box>
 
@@ -253,4 +123,4 @@ function Mapping() {
     );
 }
 
-export default Mapping;
+export default connect(store => ({...store.indicesReducers}))(Mapping);

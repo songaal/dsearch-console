@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import styled from "styled-components";
 import {makeStyles} from '@material-ui/core/styles';
 import Helmet from 'react-helmet';
@@ -16,16 +16,24 @@ import {
 } from "@material-ui/core";
 
 import {spacing} from "@material-ui/system";
+import {setIndexAction, setIndicesAction} from "../../../redux/actions/indicesActions";
+import {connect} from "react-redux";
 
 const useStyles = makeStyles((theme) => ({}));
 const Divider = styled(MuiDivider)(spacing);
 
-function Index() {
+function Index({dispatch, indices}) {
     const classes = useStyles();
     const history = useHistory();
 
-    function moveDetail(id) {
-        history.push(`./indices/${id}`)
+
+    useEffect(() => {
+        dispatch(setIndicesAction())
+    }, [])
+
+
+    function moveDetail(uuid) {
+        history.push(`./indices/${uuid}`)
     }
 
     return (
@@ -56,15 +64,21 @@ function Index() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        <TableRow>
-                            <TableCell component="th" scope="row" align="center">1</TableCell>
-                            <TableCell align="center" >
-                                <Link style={{cursor: "pointer"}} onClick={() => moveDetail(1)}>
-                                    .fastcatx_dict
-                                </Link>
-                            </TableCell>
-                            <TableCell align="center">open</TableCell>
-                        </TableRow>
+                        {
+                            indices.map((index, no) => {
+                                return (
+                                    <TableRow key={index['uuid']}>
+                                        <TableCell component="th" scope="row" align="center">{no + 1}</TableCell>
+                                        <TableCell align="center" >
+                                            <Link style={{cursor: "pointer"}} onClick={() => moveDetail(index['uuid'])}>
+                                                {index['index']}
+                                            </Link>
+                                        </TableCell>
+                                        <TableCell align="center">{index['status']}</TableCell>
+                                    </TableRow>
+                                )
+                            })
+                        }
                     </TableBody>
                 </Table>
             </TableContainer>
@@ -73,4 +87,6 @@ function Index() {
     );
 }
 
-export default Index;
+export default connect(store => ({
+    ...store.indicesReducers,
+}))(Index);

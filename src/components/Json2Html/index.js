@@ -24,7 +24,6 @@ function Json2html(json) {
                     && entry[1]['properties'] !== undefined ?
                         'object' : entry[1]['type'];
 
-
                     let etc = null
                     if (typeof value === 'object') {
                         etc = Object.entries(value)

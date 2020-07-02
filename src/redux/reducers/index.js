@@ -14,6 +14,7 @@ import indexTemplateReducers from "./indexTemplateReducers";
 import fastcatxReducers from "./fastcatxReducers";
 import roleManagementReducers from "./roleManagementReducers";
 import userManagementReducers from "./userManagementReducers";
+import clusterSettingsReducers from "./clusterSettingsReducers";
 
 export default combineReducers({
     indicesReducers,
@@ -30,4 +31,5 @@ export default combineReducers({
     fastcatxReducers,
     roleManagementReducers,
     userManagementReducers,
+    clusterSettingsReducers,
 });
