@@ -71,5 +71,12 @@
     "react-app-rewired": "^2.1.5",
     "react-hot-loader": "^4.12.20",
     "webpack-bundle-analyzer": "^3.7.0"
-  }
+  },
+  "main": "config-overrides.js",
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.danawa.com/fastcatx/fastcatx-console.git"
+  },
+  "keywords": [],
+  "license": "ISC"
 }

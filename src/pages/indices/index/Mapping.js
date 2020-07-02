@@ -39,20 +39,28 @@ const useStyles = makeStyles((theme) => ({
 const Box = styled(MuiBox)(spacing, positions);
 const Card = styled(MuiCard)(spacing);
 
-function deserializer(parentKey, value, entries) {
-    if (typeof value === "object" && value.length > 0) {
-        // list
-        for (let i = 0; i < value.length; i++ ) {
-            entries = Object.assign(deserializer("[" + i + "]", value, entries), entries)
+function deserializer(data) {
+    let result = {};
+    function recurse (cur, prop) {
+        if (Object(cur) !== cur) {
+            result[prop] = cur;
+        } else if (Array.isArray(cur)) {
+            for(let i=0, l=cur.length; i<l; i++)
+                recurse(cur[i], prop + "[" + i + "]");
+            if (l === 0)
+                result[prop] = [];
+        } else {
+            let isEmpty = true;
+            for (let p in cur) {
+                isEmpty = false;
+                recurse(cur[p], prop ? prop+"."+p : p);
+            }
+            if (isEmpty && prop)
+                result[prop] = {};
         }
-    } else if (typeof value === "object") {
-        // object
-
-    } else {
-        // value
-        entries[parentKey] = value
     }
-    return entries
+    recurse(data, "");
+    return result;
 }
 
 
