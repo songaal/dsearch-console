@@ -7,7 +7,6 @@ import indicesMappingReducers from "./indicesMappingReducers";
 import serverSummaryReducers from "./serverSummaryReducers";
 import apiManagementReducers from "./apiManagementReducers";
 import clusterInfoReducers from "./clusterInfoReducers";
-import indicesIndexDataReducers from "./indicesIndexDataReducers";
 import dashBoardReducers from "./dashBoardReducers";
 import referenceSearchReducers from "./referenceSearchReducers";
 import indexTemplateReducers from "./indexTemplateReducers";
@@ -24,7 +23,6 @@ export default combineReducers({
     serverSummaryReducers,
     apiManagementReducers,
     clusterInfoReducers,
-    indicesIndexDataReducers,
     dashBoardReducers,
     referenceSearchReducers,
     indexTemplateReducers,

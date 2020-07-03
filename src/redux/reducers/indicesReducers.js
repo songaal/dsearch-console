@@ -1,5 +1,4 @@
 import * as types from '../constants';
-import {SET_INDEX_INFO, SET_INDEX_MAPPINGS} from "../constants";
 
 let initState = {
     index: "",
@@ -9,6 +8,8 @@ let initState = {
     aliases: [],
     settings: {},
     mappings: {},
+    indexState: {},
+    documents: {}
 };
 
 export default function reducer(state = initState, actions) {
@@ -56,6 +57,16 @@ export default function reducer(state = initState, actions) {
             return {
                 ...state,
                 settings: actions.payload
+            };
+        case types.SET_INDEX_STATE:
+            return {
+                ...state,
+                indexState: actions.payload
+            };
+        case types.SET_INDEX_DOCUMENTS:
+            return {
+                ...state,
+                documents: actions.payload
             };
         default:
             return state

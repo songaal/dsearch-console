@@ -5,13 +5,13 @@ let initState = {
 };
 
 export default function reducer(state = initState, actions) {
-    switch (actions.type) {
-        case types.SET_INDICES_DATA:
-            return {
-                ...state,
-                indicesData: actions.payload
-            };
-        default:
-            return state
-    }
+    // switch (actions.type) {
+    //     case types.SET_INDICES_DATA:
+    //         return {
+    //             ...state,
+    //             indicesData: actions.payload
+    //         };
+    //     default:
+    //         return state
+    // }
 }

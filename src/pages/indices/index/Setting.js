@@ -6,7 +6,7 @@ import {
     Box as MuiBox,
     Button as MuiButton,
     Card as MuiCard,
-    CardContent,
+    CardContent, Dialog, DialogActions, DialogContent, DialogTitle,
     Divider as MuiDivider,
     FormControl,
     FormControlLabel,
@@ -18,12 +18,14 @@ import {
     TableCell,
     TableHead,
     TableRow,
-    TextareaAutosize,
+    TextareaAutosize, TextField,
     Typography as MuiTypography,
 } from "@material-ui/core";
 
 import {makeStyles} from '@material-ui/core/styles';
 import {palette, positions, spacing} from "@material-ui/system";
+import {flatten} from "flat";
+import {editDynamicQueryAction} from "../../../redux/actions/indicesActions";
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -50,7 +52,12 @@ const Card = styled(MuiCard)(spacing);
 const Typography = styled(MuiTypography)(spacing, positions);
 const Button = styled(MuiButton)(spacing, positions, palette);
 
-function FormCard() {
+function FormCard({settings}) {
+    if (settings['settings'] === undefined) {
+        return null
+    }
+
+    const flatMap = flatten(settings['defaults'])
 
     return (
         <React.Fragment>
@@ -69,9 +76,9 @@ function FormCard() {
                         </TableHead>
                         <TableBody>
                             <TableRow>
-                                <TableCell>5</TableCell>
-                                <TableCell>3</TableCell>
-                                <TableCell>1s</TableCell>
+                                <TableCell>{settings['settings']['index']['number_of_shards']}</TableCell>
+                                <TableCell>{settings['settings']['index']['number_of_replicas']}</TableCell>
+                                <TableCell>{settings['defaults']['index']['refresh_interval']}</TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>
@@ -91,18 +98,16 @@ function FormCard() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            <TableRow>
-                                <TableCell>index.shard.check_on_startup</TableCell>
-                                <TableCell>false</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell>index.codec</TableCell>
-                                <TableCell>bast_compression</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell>index.hidden</TableCell>
-                                <TableCell>true</TableCell>
-                            </TableRow>
+                            {
+                                Object.keys(flatMap).map(key => {
+                                    return (
+                                        <TableRow key={key}>
+                                            <TableCell>{key}</TableCell>
+                                            <TableCell>{flatMap[key]}</TableCell>
+                                        </TableRow>
+                                    )
+                                })
+                            }
                         </TableBody>
                     </Table>
                 </CardContent>
@@ -128,15 +133,30 @@ function JsonCard({json}) {
     </div>)
 }
 
-
-function Setting({ settings }) {
+function Setting({ dispatch, index, settings }) {
     const classes = useStyles();
     const [chk, setChk] = React.useState('form');
-
+    const [modal, setModal] = React.useState(false)
+    const [query, setQuery] = React.useState("")
+    const [message, setMessage] = React.useState(null)
     function handleRadioChange(e) {
         setChk(e.target.value)
     }
-    console.log(settings)
+    function toggleModal() {
+        setQuery("")
+        setMessage(null)
+        setModal(!modal)
+    }
+    function processQuery() {
+        dispatch(editDynamicQueryAction(index, query))
+            .then(response => {
+                setMessage("업데이트 성공")
+            })
+            .catch(error => {
+                setMessage("업데이트 실패"+ error)
+            })
+    }
+
     return (
         <React.Fragment>
 
@@ -151,17 +171,50 @@ function Setting({ settings }) {
                 </Grid>
                 <Grid item xs={2}>
                     <Box align={"right"} mt={2}>
-                        <Button size={"small"} variant={"contained"} color={"primary"}>동적변경</Button>
+                        <Button size={"small"}
+                                variant={"contained"}
+                                color={"primary"}
+                                onClick={toggleModal}
+                        >동적변경</Button>
                     </Box>
                 </Grid>
             </Grid>
 
             <Box mt={2}>
                 {
-                    chk === "form" ? <FormCard json={settings} /> : <JsonCard json={settings} />
+                    chk === "form" ? <FormCard settings={settings} /> : <JsonCard json={settings} />
                 }
             </Box>
 
+
+            <Dialog open={modal}
+                    fullWidth
+                    onClose={toggleModal}
+            >
+                <DialogTitle>
+                    동적변경
+                </DialogTitle>
+                <DialogContent>
+                    <TextareaAutosize value={query}
+                                      onChange={(event) => setQuery(event.target.value)}
+                                      style={{width: "100%", height: "300px", overflow: "auto"}}
+                                      placeholder={`{
+   "settings" : {
+      "index" : {
+        "number_of_replicas" : "5"
+      }
+    }
+}`}
+                    />
+                    <Box style={{display: message ? "block": "none"}}>
+                        {message}
+                    </Box>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={processQuery}>추가</Button>
+                    <Button onClick={toggleModal}>취소</Button>
+                </DialogActions>
+            </Dialog>
 
         </React.Fragment>
     );

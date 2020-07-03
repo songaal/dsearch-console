@@ -13,7 +13,7 @@ import {
     setIndexAction,
     setIndexAliasesAction,
     setIndexInfoListAction, setIndexMappingsAction,
-    setIndexSettingsAction
+    setIndexSettingsAction, setIndexStateAction
 } from "../../../redux/actions/indicesActions";
 
 const useStyles = makeStyles((theme) => ({}));
@@ -47,6 +47,7 @@ function Index() {
             dispatch(setIndexInfoListAction(index))
             dispatch(setIndexSettingsAction(index))
             dispatch(setIndexMappingsAction(index))
+            dispatch(setIndexStateAction(index))
         }
     }, [index])
 
@@ -60,7 +61,7 @@ function Index() {
 
             <Divider my={6} />
 
-            <AntTabs tabs={tabs} tabIndex={1}/>
+            <AntTabs tabs={tabs} tabIndex={4} />
 
         </React.Fragment>
     );
