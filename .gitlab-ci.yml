@@ -23,9 +23,9 @@ module install:
     - npm install -g npm
     - rm -rf yarn.lock
     - rm -rf package-lock.json
-    - rm -rf node_modules/*/.git/
-    - npm cache clean -f
-    - rm -rf node_modules
+#    - rm -rf node_modules/*/.git/
+#    - npm cache clean -f
+#    - rm -rf node_modules
     - npm install
 
 build:
