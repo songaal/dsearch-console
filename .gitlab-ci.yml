@@ -20,9 +20,10 @@ module install:
   stage: install
   when: manual
   script:
-    - rm -rf node_modules
+    - npm install -g npm
     - rm -rf yarn.lock
-    - npm cache clean --force
+    - npm cache clean -f
+    - rm -rf node_modules
     - npm install
 
 build:
