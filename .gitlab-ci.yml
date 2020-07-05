@@ -22,6 +22,7 @@ module install:
   script:
     - npm install -g npm
     - rm -rf yarn.lock
+    - rm -rf package-lock.json
     - npm cache clean -f
     - rm -rf node_modules
     - npm install
