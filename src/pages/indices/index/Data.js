@@ -15,7 +15,7 @@ import {
     TableHead,
     TableRow
 } from "@material-ui/core";
-import MaterialTable from 'material-table';
+// import MaterialTable from 'material-table';
 import {spacing} from "@material-ui/system";
 
 import AddBox from '@material-ui/icons/AddBox';
@@ -108,35 +108,37 @@ function EditTable() {
         ],
     });
     return (
-        <MaterialTable
-            icons={tableIcons}
-            title=""
-            columns={state.columns}
-            data={state.data}
-            editable={{
-                onRowAdd: (newData) =>
-                    new Promise((resolve) => {
-                        setTimeout(() => {
-                            resolve();
-
-                        }, 600);
-                    }),
-                onRowUpdate: (newData, oldData) =>
-                    new Promise((resolve) => {
-                        setTimeout(() => {
-                            resolve();
-
-                        }, 600);
-                    }),
-                onRowDelete: (oldData) =>
-                    new Promise((resolve) => {
-                        setTimeout(() => {
-                            resolve();
-
-                        }, 600);
-                    }),
-            }}
-        />
+        <>
+        </>
+        // <MaterialTable
+        //     icons={tableIcons}
+        //     title=""
+        //     columns={state.columns}
+        //     data={state.data}
+        //     editable={{
+        //         onRowAdd: (newData) =>
+        //             new Promise((resolve) => {
+        //                 setTimeout(() => {
+        //                     resolve();
+        //
+        //                 }, 600);
+        //             }),
+        //         onRowUpdate: (newData, oldData) =>
+        //             new Promise((resolve) => {
+        //                 setTimeout(() => {
+        //                     resolve();
+        //
+        //                 }, 600);
+        //             }),
+        //         onRowDelete: (oldData) =>
+        //             new Promise((resolve) => {
+        //                 setTimeout(() => {
+        //                     resolve();
+        //
+        //                 }, 600);
+        //             }),
+        //     }}
+        // />
     )
 }
 function IndexedData() {
