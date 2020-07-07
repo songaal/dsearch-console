@@ -87,7 +87,7 @@ const indicesRoutes = [
 
     {header: "인덱스", id: "클러스터", path: `${clusterContext}/indices/cluster`, icon: <Icon.Subject/>, component: ClusterData, children: null},
     {id: "컬렉션", path: `${clusterContext}/indices/collections`, icon: <Icon.Subject/>, component: Collection, children: null},
-    {id: "컬렉션상세", path: `${clusterContext}/indices/collections/*`, icon: <Icon.Subject/>, component: CollectionDetail, children: null, hidden: true},
+    {id: "컬렉션상세", path: `${clusterContext}/indices/collections/*`, icon: <Icon.Subject/>, component: CollectionDetail, children: null, hidden: true, active: "컬렉션"},
 
     {id: "템플릿", path: `${clusterContext}/indices/templates`, icon: <Icon.Subject/>, component: Templates, children: null},
     {id: "템플릿생성", path: `${clusterContext}/indices/template`, component: TemplateNew, hidden: true},

@@ -715,11 +715,12 @@ function parsing(object) {
 
 
 function FormCard({json}) {
+    let dataMap = {}
     // const flatMap = flatten(testJson['properties'] ? testJson['properties'] : testJson)
-    const flatMap = flatten(json['properties'] ? json['properties'] : json)
-    console.log(">>>>>parsing>>>>>>>>")
-    const dataMap = parsing(flatMap)
-    console.log(dataMap)
+    if (json) {
+        dataMap = parsing(flatten(json['properties'] ? json['properties'] : json))
+    }
+
     return (
         <div>
             <Card>
