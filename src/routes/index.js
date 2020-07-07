@@ -111,7 +111,7 @@ const searchRoutes = [
 ];
 
 const managementRoutes = [
-    {header: "관리", id: "클러스터", path: `${clusterContext}/management/server`, icon: <Icon.Memory/>, component: ServerManagement, children: null},
+    {header: "관리", id: "서버", path: `${clusterContext}/management/server`, icon: <Icon.Memory/>, component: ServerManagement, children: null},
     {id: "API", path: `${clusterContext}/management/api`, icon: <Icon.Memory/>, component: ApiManagement, children: null},
     {id: "클러스터설정", path: `${clusterContext}/management/settings`, icon: <Icon.Memory/>, component: ClusterSettings, children: null},
 ];
