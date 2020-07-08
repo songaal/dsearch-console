@@ -15,6 +15,9 @@ import roleManagementReducers from "./roleManagementReducers";
 import userManagementReducers from "./userManagementReducers";
 import clusterSettingsReducers from "./clusterSettingsReducers";
 import collectionReducers from "./collectionReducers";
+import toolsReducers from "./toolsReducers";
+import rankingTuningReducers from "./rankingTuningReducers"
+import jdbcReducers from "./jdbcReducers"
 
 export default combineReducers({
     indicesReducers,
@@ -32,4 +35,7 @@ export default combineReducers({
     userManagementReducers,
     clusterSettingsReducers,
     collectionReducers,
+    toolsReducers,
+    rankingTuningReducers,
+    jdbcReducers,
 });
