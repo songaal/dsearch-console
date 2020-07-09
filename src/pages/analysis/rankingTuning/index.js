@@ -11,7 +11,7 @@ import "ace-builds/src-noconflict/theme-xcode";
 import { setDocumentList } from '@actions/rankingTuningActions'
 import MuiAlert from '@material-ui/lab/Alert';
 import {
-    Box, Snackbar,
+    Box, Snackbar, Link,
     FormGroup, FormControlLabel, Checkbox,
     Table as MuiTable, TableRow, TableCell, TableHead, TableBody,
     TextField as MuiTextField,
@@ -180,6 +180,18 @@ function RankingTuningCard({dispatch, result, index}) {
     const [expand, setExpand] = useState([]);
     const [alert, setAlert] = useState(false);
 
+    const handleExpandAll = (event) =>{
+        var changeExpand = [];    
+        for (var i = 1; i <= ids; i++)
+            changeExpand.push(i);
+        setExpand(changeExpand)
+    }
+
+    const handleFoldAll = (event) =>{
+        setExpand([])
+    }
+
+
     const handleExpandChange = (event) => {
         if(checked){
             setExpand([])
@@ -260,10 +272,14 @@ function RankingTuningCard({dispatch, result, index}) {
                             <Grid item xs={12} md={8}>
                                 <Box display="flex" alignItems="center" justifyContent="space-between" mx={3}>
                                 <Typography >총 {result.Total.value ? result.Total.value : "0"}건의 검색결과</Typography>
-                                <FormControlLabel 
+                                <Box display="flex">
+                                    <Link href="#" onClick={handleExpandAll}> 점수 펼치기 </Link>
+                                    <Link href="#" onClick={handleFoldAll}> 점수 접기 </Link>
+                                </Box>
+                                {/* <FormControlLabel 
                                     control={<Checkbox checked={checked} onChange={handleExpandChange} name="selected" />}
                                     label="펼치기"
-                                />
+                                /> */}
                                 </Box>
                             </Grid>
                         </Grid>

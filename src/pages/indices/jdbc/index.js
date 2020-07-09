@@ -333,6 +333,7 @@ function JdbcCard({dispatch, JdbcList, JdbcAccessTest, JdbcAddResult, JdbcDelete
             <CardContent>
                 <Link href="#" onClick={handleSourceDialogOpen}> <Box display="flex" alignItems="center" justifyContent="left"><AddCircleOutlineIcon /> <Typography>  JDBC 추가  </Typography> </Box></Link> 
                 <JdbcTable dispatch={dispatch} JdbcList={JdbcList} JdbcAccessTest={JdbcAccessTest} JdbcAddResult={JdbcAddResult}  JdbcDeleteResult={JdbcDeleteResult}></JdbcTable>
+                
                 <Dialog open={jdbcSourceDialogOpen} onClose={handleSourceDialogClose} >
                     <DialogTitle id="dialog-title">JDBC 소스</DialogTitle>
                     <DialogContent style={{width:"100%"}}>
@@ -353,7 +354,7 @@ function JdbcCard({dispatch, JdbcList, JdbcAccessTest, JdbcAddResult, JdbcDelete
                          />
                     </DialogContent>
                     <DialogActions>
-                        <Button variant="contained" color="default">닫기</Button>
+                        <Button variant="contained" color="default" onClick={handleSourceDialogClose}>닫기</Button>
                         <Button variant="contained" color="default" onClick={handleAccessTest}>연결테스트</Button>
                         <Button disabled={jdbcAccessTest} variant="contained" color="primary" onClick={handleJdbcSouceAdd}>추가</Button>
                     </DialogActions>
