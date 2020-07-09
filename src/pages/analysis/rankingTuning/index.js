@@ -6,13 +6,12 @@ import { spacing } from "@material-ui/system";
 import AceEditor from "react-ace";
 import { connect } from "react-redux";
 import "ace-builds/src-noconflict/mode-json";
-import "ace-builds/src-noconflict/theme-xcode";
+import "ace-builds/src-noconflict/theme-kuroir";
 
 import { setDocumentList } from '@actions/rankingTuningActions'
 import MuiAlert from '@material-ui/lab/Alert';
 import {
     Box, Snackbar, Link,
-    FormGroup, FormControlLabel, Checkbox,
     Table as MuiTable, TableRow, TableCell, TableHead, TableBody,
     TextField as MuiTextField,
     TextareaAutosize as MuiTextareaAutosize,
@@ -60,7 +59,7 @@ const getTreeItemsFromData = treeItems => {
   };
   
 
-function ScoreTreeView({details, expand, nodeToggle}) {
+function ScoreTreeView({details, expand, nodeToggle, description}) {
     return (
         <TreeView
             defaultExpanded
@@ -71,7 +70,9 @@ function ScoreTreeView({details, expand, nodeToggle}) {
             defaultCollapseIcon={<ExpandMoreIcon />}
             defaultExpandIcon={<ChevronRightIcon />}
         >
-            {getTreeItemsFromData(details)}
+            <TreeItem key={ids} nodeId={ids++} label={description}>
+                {getTreeItemsFromData(details)}
+            </TreeItem>
         </TreeView>
     );
 }
@@ -97,17 +98,17 @@ function ResultDocument({result, item, expand, nodeToggle}) {
                 <TableRow>
                     <TableCell style={{ width: '100px' }}>제조사</TableCell>
                     <TableCell > {item.PRODUCTMAKER} </TableCell>
-                    <TableCell > {productMaker.map((token) => {return token + ", "})} </TableCell>
+                    <TableCell > {productMaker.map((token, index) => { return (index === 0 ? token : ", "+ token)}) } </TableCell>
                 </TableRow>
                 <TableRow>
                     <TableCell style={{ width: '100px' }}>상품명</TableCell>
                     <TableCell >{item.PRODUCTNAME} </TableCell>
-                    <TableCell >{productName.map((token) => {return token + ", "})} </TableCell>
+                    <TableCell >{productName.map((token, index) => {return (index === 0 ? token : ", "+ token)})} </TableCell>
                 </TableRow>
                 <TableRow>
                     <TableCell style={{ width: '100px' }}>간략설명</TableCell>
-                    <TableCell > {item._explanation.description} </TableCell>
-                    <TableCell > {item._explanation.description} </TableCell>
+                    <TableCell > {item.ADDDESCRIPTION} </TableCell>
+                    <TableCell > {item.ADDDESCRIPTION} </TableCell>
                 </TableRow>
                 <TableRow>
                     <TableCell style={{ width: '100px' }}>묶음명</TableCell>
@@ -116,27 +117,24 @@ function ResultDocument({result, item, expand, nodeToggle}) {
                 </TableRow>
                 <TableRow>
                     <TableCell style={{ width: '100px' }}>관련키워드</TableCell>
-                    <TableCell> </TableCell>
+                    <TableCell></TableCell>
                     <TableCell></TableCell>
                 </TableRow>
                 <TableRow>
                     <TableCell style={{ width: '100px' }}>카테고리</TableCell>
-                    <TableCell> {item.CATEGORYCODE1} > {item.CATEGORYCODE2} > {item.CATEGORYCODE3}</TableCell>
-                    <TableCell> {item.CATEGORYCODE1} > {item.CATEGORYCODE2} > {item.CATEGORYCODE3} </TableCell>
+                    <TableCell> {item.CATEGORYCODE1} {">"} {item.CATEGORYCODE2} {">"} {item.CATEGORYCODE3}</TableCell>
+                    <TableCell> {item.CATEGORYCODE1} {">"} {item.CATEGORYCODE2} {">"} {item.CATEGORYCODE3} </TableCell>
                 </TableRow>
                 <TableRow>
                     <TableCell >점수</TableCell>
                     <TableCell colSpan={2} >
-                        <ScoreTreeView details={item._explanation.details} expand={expand} nodeToggle={nodeToggle}></ScoreTreeView> 
+                        <ScoreTreeView description={item._explanation.description} details={item._explanation.details} expand={expand} nodeToggle={nodeToggle}></ScoreTreeView> 
                     </TableCell>
                 </TableRow>
             </TableBody>
         </Table>
     );
-
 }
-
-
 
 function RankingTuningResults({pageNum, result, expand, nodeToggle}) {
     ids = 1;
@@ -151,7 +149,7 @@ function RankingTuningResults({pageNum, result, expand, nodeToggle}) {
             <TableBody>
                 {result.SearchResponse.length > 0 ? 
                     result.SearchResponse.map((item, index) => {
-                        var number = index + (pageNum*10) + 1;
+                        var number = index + ((pageNum-1)*10) + 1;
                         return (<TableRow >
                             <TableCell align="right">{number}</TableCell>
                             <TableCell >
@@ -171,12 +169,10 @@ function RankingTuningResults({pageNum, result, expand, nodeToggle}) {
     );
 }
 
-
-
 function RankingTuningCard({dispatch, result, index}) {
     var aceEditor = useRef("");
     const [pageNum, setPageNum] = useState(0);
-    const [checked, setChecked] = useState(false);
+    // const [checked, setChecked] = useState(false);
     const [expand, setExpand] = useState([]);
     const [alert, setAlert] = useState(false);
 
@@ -191,19 +187,18 @@ function RankingTuningCard({dispatch, result, index}) {
         setExpand([])
     }
 
-
-    const handleExpandChange = (event) => {
-        if(checked){
-            setExpand([])
-        } else {
-            var changeExpand = [];    
-            for (var i = 1; i <= ids; i++)
-                changeExpand.push(i);
-            console.log(changeExpand)
-            setExpand(changeExpand)
-        }
-        setChecked(!checked);
-    }
+    // const handleExpandChange = (event) => {
+    //     if(checked){
+    //         setExpand([])
+    //     } else {
+    //         var changeExpand = [];    
+    //         for (var i = 1; i <= ids; i++)
+    //             changeExpand.push(i);
+    //         console.log(changeExpand)
+    //         setExpand(changeExpand)
+    //     }
+    //     setChecked(!checked);
+    // }
 
     function isJson(str) {
         try {
@@ -228,7 +223,10 @@ function RankingTuningCard({dispatch, result, index}) {
         var data = {};
         data.index = index;
         data.text = JSON.stringify(jsonData);
-        dispatch(setDocumentList(data));
+        dispatch(setDocumentList(data)).then((result) => {
+            if( result.payload.Total.value > 0 ) setPageNum(1);
+            else setPageNum(0);
+        })
     }
 
     const handleSnackBarClose = (event) =>{
@@ -248,7 +246,7 @@ function RankingTuningCard({dispatch, result, index}) {
 
         var jsonData = JSON.parse(aceEditor.current.editor.getValue());
         jsonData.explain = true;
-        jsonData.from = pageNum * 10;
+        jsonData.from = (pageNum - 1) * 10;
         jsonData.size = 10;
 
         var data = {};
@@ -270,11 +268,12 @@ function RankingTuningCard({dispatch, result, index}) {
                                 </Box>
                             </Grid>
                             <Grid item xs={12} md={8}>
-                                <Box display="flex" alignItems="center" justifyContent="space-between" mx={3}>
-                                <Typography >총 {result.Total.value ? result.Total.value : "0"}건의 검색결과</Typography>
+                            {/* justifyContent="space-between" */}
+                                <Box display="flex" alignItems="center"  justifyContent="space-between" mx={3}>
+                                <Typography variant="h6">총 {result.Total.value ? result.Total.value : "0"}건의 검색결과</Typography>
                                 <Box display="flex">
-                                    <Link href="#" onClick={handleExpandAll}> 점수 펼치기 </Link>
-                                    <Link href="#" onClick={handleFoldAll}> 점수 접기 </Link>
+                                    <Box m={2}><Link href="#" onClick={handleExpandAll} > + 점수 펼치기 </Link></Box>
+                                    <Box m={2}><Link href="#" onClick={handleFoldAll}> - 점수 접기 </Link></Box>
                                 </Box>
                                 {/* <FormControlLabel 
                                     control={<Checkbox checked={checked} onChange={handleExpandChange} name="selected" />}
@@ -294,7 +293,7 @@ function RankingTuningCard({dispatch, result, index}) {
                                         ref={aceEditor}
                                         id="aceEditor"
                                         mode="json"
-                                        theme="xcode"
+                                        theme="kuroir"
                                         name="ace-editor"
                                         fontSize="15px"
                                         height="600px"
@@ -323,23 +322,6 @@ function RankingTuningCard({dispatch, result, index}) {
                                 </Snackbar>
                             </Grid>
 
-                            {/* <Box align={"center"}>
-                                <Button variant={"outlined"}
-                                        onClick={() => handlePagination(pageNum - 1)}
-                                        disabled={pageNum === 0}
-                                >
-                                    이전
-                                </Button>
-                                <Box component={"span"} m={3}>
-                                    {(result['lastPageNum'] || 0) === 0 ? 0 : pageNum + 1} / {result['lastPageNum'] || 0}
-                                </Box>
-                                <Button variant={"outlined"}
-                                        onClick={() => handlePagination(pageNum + 1)}
-                                        disabled={(pageNum + 1) === (result['lastPageNum'] || 0) || (result['lastPageNum'] || 0) === 0}
-                                >
-                                    다음
-                                </Button>
-                            </Box> */}
                             <Grid item xs={12} md={8}>
                                 <Box align="center" mx={3} mt={3}>
                                     <Button 
@@ -349,13 +331,13 @@ function RankingTuningCard({dispatch, result, index}) {
                                         disabled={pageNum === 0}
                                         > 이전 </Button>
                                     <Box component={"span"} m={3}>
-                                        {(result['lastPageNum'] || 0) === 0 ? 0 : pageNum + 1} / {result['lastPageNum'] || 0}
+                                        {pageNum} / {result.Total.value ? ( Math.ceil(Number(result.Total.value) / 10)) : "0" }
                                     </Box>
                                     <Button 
                                         variant="outlined" 
                                         color="primary"
                                         onClick={() => handlePagination(pageNum + 1)}
-                                        disabled={(pageNum + 1) === (result['lastPageNum'] || 0) || (result['lastPageNum'] || 0) === 0}
+                                        disabled={pageNum === 0? true : Math.ceil(Number(result.Total.value) / 10) === pageNum ? true : false}
                                         > 다음 </Button>
                                 </Box>
                             </Grid>

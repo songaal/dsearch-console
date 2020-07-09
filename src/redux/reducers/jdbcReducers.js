@@ -1,12 +1,13 @@
 import * as types from '../constants';
 
 let initState = {
+    JdbcIndex: {},
     JdbcList: {
         hits:{
             hits: []
         }
     },
-    JdbcAccessTest: {},
+    JdbcAccessTest: { message : false},
     JdbcDeleteResult:{},
     JdbcAddResult:{}
 };
@@ -32,6 +33,11 @@ export default function reducer(state = initState, actions) {
             return {
                 ...state,
                 JdbcDeleteResult: actions.payload
+            }
+        case types.SET_JDBC_INDEX:
+            return {
+                ...state,
+                JdbcIndex: actions.payload
             }
         default:
             return state

@@ -614,7 +614,7 @@ function Cluster({ dispatch, clusterList, authUser }) {
 
                     <Grid container>
                         <Grid item xs={4}>
-                            <Box align={"center"} mt={4}>색성</Box>
+                            <Box align={"center"} mt={4}>색상</Box>
                         </Grid>
                         <Grid item xs={8}>
                             <Box mt={2}>

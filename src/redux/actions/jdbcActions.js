@@ -1,15 +1,23 @@
-import {SET_JDBC_LIST, SET_JDBC_ACCESS_TEST, SET_JDBC_ADD_RESULT, SET_JDBC_DELETE_RESULT, SET_JDBC_UPDATE_RESULT} from "../constants";
+import {SET_JDBC_INDEX, SET_JDBC_LIST, SET_JDBC_ACCESS_TEST, SET_JDBC_ADD_RESULT, SET_JDBC_DELETE_RESULT, SET_JDBC_UPDATE_RESULT} from "../constants";
 import Client from '~/Client'
 
 const client = new Client()
+
+export const createJDBCIndex = (data) => dispatch => client.call({
+    uri: "/elasticsearch/fastcatx_jdbc",
+    method: "PUT",
+    data: data
+}).then(response => dispatch({type: SET_JDBC_INDEX, payload: response.data }))
 
 export const setJDBCList = () => dispatch => client.call({
     uri: "/elasticsearch/fastcatx_jdbc/_search",
     method: "GET"
 }).then(response => dispatch({type: SET_JDBC_LIST, payload: response.data}))
 
-export const setJDBCAccessTest = () => dispatch => client.call({
-    uri: "/elasticsearch/_all/_settings",
+export const setJDBCAccessTest = (data) => dispatch => client.call({
+    uri: "/jdbc/",
+    method: "POST",
+    data: data
 }).then(response => dispatch({type:SET_JDBC_ACCESS_TEST , payload: response.data}))
 
 export const addJdbcIndex = (data) => dispatch => client.call({

@@ -8,7 +8,6 @@ import { setAnalyzerList, setPluginList, actionAnalyzer, actionPlugin } from '@a
 
 import {
     Box, Button,
-    Breadcrumbs as MuiBreadcrumbs,
     Card as MuiCard,
     CardContent,
     Divider as MuiDivider,
@@ -39,8 +38,6 @@ const Card = styled(MuiCard)(spacing);
 
 const Divider = styled(MuiDivider)(spacing);
 
-const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
-
 const TextField = styled(MuiTextField)(spacing);
 
 
@@ -56,13 +53,20 @@ function BriefResult({resultBrief}){
     }
     
     return <Table>
-                {total.length > 0 ? 
-                    total.map((listItem)=> {
-                        return (<TableRow hover> 
-                            {listItem.map( (item)=> { return <TableCell> {item}</TableCell>}) }
+                <colgroup>
+                    <col width="20%" />
+                    <col width="20%" />
+                    <col width="20%" />
+                    <col width="20%" />
+                    <col width="20%" />
+                </colgroup>
+                {total.length > 0 ?
+                    total.map((listItem) => {
+                        return (<TableRow hover>
+                            {listItem.map((item) => { return <TableCell> {item}</TableCell> })}
                         </TableRow>)
                     })
-                : <TableRow hover> <TableCell> 검색된 결과가 없습니다 </TableCell></TableRow>}
+                    : <TableRow hover> <TableCell> 검색된 결과가 없습니다 </TableCell></TableRow>}
         </Table>;
 }
 
@@ -75,6 +79,7 @@ function DetailResult({resultDetail}){
         </Table>
     }
 
+    console.log(resultDetail);
     return (<Table>
         <TableRow hover>
             <TableCell>
