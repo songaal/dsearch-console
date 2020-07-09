@@ -44,7 +44,7 @@ const tabs = [
     {label: "히스토리", component: Async(() => import("./History"))},
 ]
 
-function Detail({dispatch}) {
+function Detail({dispatch, collection}) {
     const classes = useStyles();
     const location = useLocation();
 
@@ -53,6 +53,10 @@ function Detail({dispatch}) {
         dispatch(setCollection(collectionId))
         dispatch(setCollectionIndexSuffix())
     }, [])
+
+    if (Object.keys(collection).length === 0) {
+        return null
+    }
 
     return (
         <React.Fragment>
@@ -64,9 +68,8 @@ function Detail({dispatch}) {
                 컬렉션
             </Typography>
 
-
             <Typography variant="h4" mt={2}>
-                searc-prod
+                {collection['baseId']}
             </Typography>
 
             <Divider my={6}/>

@@ -475,7 +475,7 @@ function Cluster({ dispatch, clusterList, authUser }) {
         let height = window.outerHeight
 
         width = Math.ceil(width / 2) <= 1500 ? 1500 : Math.ceil(width / 2)
-        height = (Math.ceil(height / 2) <= 800 ? 800 : Math.ceil(height / 2)) - 100
+        height = (Math.ceil(height / 2) <= 900 ? 900 : Math.ceil(height / 2))
 
         window.open(`${id}/dashboard`,id,`location=no,directories=no,resizable=no,status=no,toolbar=no,menubar=no,left=${window.outerWidth / 5},top=50,scrollbars=yes,width=${width},height=${height}`)
     }

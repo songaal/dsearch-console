@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import {connect} from "react-redux";
+import {useHistory} from "react-router-dom"
 import styled from "styled-components";
 import Helmet from 'react-helmet';
 
@@ -17,6 +19,7 @@ import {positions, spacing} from "@material-ui/system";
 import AntTabs from "~/components/AntTabs"
 import SearchIcon from "@material-ui/icons/Search";
 import {ArrowDropDown, Check} from "@material-ui/icons";
+import {deleteCollectionAction, setCollectionList} from "../../../redux/actions/collectionActions";
 
 const Divider = styled(MuiDivider)(spacing, positions);
 const Typography = styled(MuiTypography)(spacing, positions);
@@ -38,7 +41,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function Summary() {
+function Summary({dispatch, collection}) {
+    const history = useHistory();
     const classes = useStyles();
     const [moreMenu, setMoreMenu] = useState(null)
 
@@ -46,6 +50,19 @@ function Summary() {
         setMoreMenu(moreMenu === null ? event.currentTarget : null)
     }
 
+    function handleDeleteCollection(event) {
+        dispatch(deleteCollectionAction(collection['id'])).then(response => {
+            toggleMoreMenu(event)
+            dispatch(setCollectionList())
+            setTimeout(() => history.push("../collections"), 500)
+        }).catch(error => {
+            console.log(error)
+        })
+    }
+
+    const indexA = collection['indexA']
+    const indexB = collection['indexB']
+    console.log(collection, indexA, indexB, Object.keys(indexB['aliases']||{}).find(o => o === collection['baseId']))
     return (
         <React.Fragment>
             <br/>
@@ -58,7 +75,7 @@ function Summary() {
                                     <b>컬렉션 이름</b>
                                 </Grid>
                                 <Grid item xs={9}>
-                                    검색상품
+                                    {collection['name']}
                                 </Grid>
                             </Grid>
                             <Grid container my={3}>
@@ -66,7 +83,7 @@ function Summary() {
                                     <b>컬렉션 아이디</b>
                                 </Grid>
                                 <Grid item xs={9}>
-                                    search-prod
+                                    {collection['baseId']}
                                 </Grid>
                             </Grid>
                             <Grid container my={3}>
@@ -74,8 +91,15 @@ function Summary() {
                                     <b>인덱스 템플릿</b>
                                 </Grid>
                                 <Grid item xs={9}>
-                                    <Link>
-                                        search-prod
+                                    <Link style={{cursor: "pointer"}}
+                                          onClick={() => {history.push(`../templates/${collection['indexA']['index']}`)}}
+                                    >
+                                        {collection['indexA']['index']}
+                                    </Link>,
+                                    <Link style={{cursor: "pointer"}}
+                                          onClick={() => {history.push(`../templates/${collection['indexB']['index']}`)}}
+                                    >
+                                        {collection['indexB']['index']}
                                     </Link>
                                 </Grid>
                             </Grid>
@@ -84,9 +108,25 @@ function Summary() {
                                     <b>인덱스 패턴</b>
                                 </Grid>
                                 <Grid item xs={9}>
-                                    <Link>search-prod-a</Link>
+                                    <Link style={{cursor: "pointer", display: collection['indexA']['uuid'] ? "inline" : "none"}}
+                                          onClick={() => {history.push(`../indices/${collection['indexA']['uuid']}`)}}
+                                    >
+                                        {collection['indexA']['index']}
+                                    </Link>
+                                    <Box component={"span"}
+                                         style={{display: collection['indexA']['uuid'] ? "none" : "inline"}}>
+                                        {collection['indexA']['index']}
+                                    </Box>
                                     ,
-                                    <Link>search-prod-b</Link>
+                                    <Link style={{display: collection['indexB']['uuid'] ? "inline" : "none"}}
+                                          onClick={() => {history.push(`../indices/${collection['indexB']['uuid']}`)}}
+                                    >
+                                        {collection['indexB']['index']}
+                                    </Link>
+                                    <Box component={"span"}
+                                         style={{display: collection['indexB']['uuid'] ? "none" : "inline"}}>
+                                        {collection['indexB']['index']}
+                                    </Box>
                                 </Grid>
                             </Grid>
 
@@ -103,7 +143,7 @@ function Summary() {
                                 open={Boolean(moreMenu)}
                                 onClose={toggleMoreMenu}
                             >
-                                <MenuItem onClick={toggleMoreMenu}>
+                                <MenuItem onClick={handleDeleteCollection}>
                                     컬렉션 삭제
                                 </MenuItem>
                             </Menu>
@@ -123,44 +163,64 @@ function Summary() {
                                     <TableBody>
                                         <TableRow>
                                             <TableCell  variant={"head"} component={"th"} colSpan={4} style={{fontSize: "1.2em"}} align={"center"}>
-                                                search-prod-a
-                                                <Box component={"span"} style={{marginLeft: "20px"}}>
-                                                    <Chip color="primary" icon={<Check />} label={"사용"}/>
+                                                {indexA['index']}
+
+                                                {
+                                                    Object.keys(indexA['aliases']||{}).find(o => o === collection['baseId']) ?
+                                                        <Box component={"span"} style={{marginLeft: "20px"}}>
+                                                            <Chip color="primary" icon={<Check />} label={"사용"}/>
+                                                        </Box>
+                                                        :
+                                                        null
+                                                }
+
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow style={{display: indexA['uuid'] ? "none" : "table-row"}}>
+                                            <TableCell colSpan={4} >
+                                                <Box align={"center"}>
+                                                    아직 인덱스가 생성되지 않았습니다.
                                                 </Box>
                                             </TableCell>
                                         </TableRow>
-                                        <TableRow>
+
+                                        <TableRow style={{display: indexA['uuid'] ? "table-row" : "none"}}>
                                             <TableCell variant={"head"} component={"th"}>상태</TableCell>
+
                                             <TableCell>
-                                                <Box style={{backgroundColor: "green", width: "20px", height: "20px", borderRadius: "90px", float: "left"}}> </Box>
+                                                <Box style={{backgroundColor: indexA['health'], width: "20px", height: "20px", borderRadius: "90px", float: "left"}}> </Box>
                                                 <Box style={{marginLeft: "30px"}}>
-                                                    정상
+                                                    { indexA['health'] === "green" ? "정상" : indexA['health'] === "yellow" ? "주의" : "에러" }
                                                 </Box>
                                             </TableCell>
                                             <TableCell></TableCell>
                                             <TableCell></TableCell>
                                         </TableRow>
-                                        <TableRow>
+                                        <TableRow style={{display: indexA['uuid'] ? "table-row" : "none"}}>
                                             <TableCell variant={"head"} component={"th"}>프라이머리</TableCell>
-                                            <TableCell>1</TableCell>
+                                            <TableCell>{indexA['pri']}</TableCell>
                                             <TableCell variant={"head"} component={"th"}>레플리카</TableCell>
-                                            <TableCell>2</TableCell>
+                                            <TableCell>{indexA['rep']}</TableCell>
                                         </TableRow>
-                                        <TableRow>
+                                        <TableRow style={{display: indexA['uuid'] ? "table-row" : "none"}}>
                                             <TableCell variant={"head"} component={"th"}>문서 수</TableCell>
-                                            <TableCell>123123</TableCell>
+                                            <TableCell>{indexA['docsCount']}</TableCell>
                                             <TableCell variant={"head"} component={"th"}>삭제문서 수</TableCell>
-                                            <TableCell>23</TableCell>
+                                            <TableCell>{indexA['docsDeleted']}</TableCell>
                                         </TableRow>
-                                        <TableRow>
+                                        <TableRow style={{display: indexA['uuid'] ? "table-row" : "none"}}>
                                             <TableCell variant={"head"} component={"th"}>스토리지 용량</TableCell>
-                                            <TableCell>1.5mb</TableCell>
+                                            <TableCell>{indexA['storeSize']}</TableCell>
                                             <TableCell variant={"head"} component={"th"}>프라이머리 <br/> 스토리지용량</TableCell>
-                                            <TableCell>33mb</TableCell>
+                                            <TableCell>{indexA['priStoreSize']}</TableCell>
                                         </TableRow>
-                                        <TableRow>
+                                        <TableRow style={{display: indexA['uuid'] ? "table-row" : "none"}}>
                                             <TableCell variant={"head"} component={"th"}>별칭</TableCell>
-                                            <TableCell>search-prod</TableCell>
+                                            <TableCell>
+                                                {
+                                                    Object.keys(indexA['aliases']||{}).join(",")
+                                                }
+                                            </TableCell>
                                             <TableCell></TableCell>
                                             <TableCell></TableCell>
                                         </TableRow>
@@ -174,42 +234,65 @@ function Summary() {
                                 <Table>
                                     <TableBody>
                                         <TableRow>
-                                            <TableCell colSpan={4} style={{fontSize: "1.2em"}} align={"center"}>
-                                                search-prod-b
+                                            <TableCell  variant={"head"} component={"th"} colSpan={4} style={{fontSize: "1.2em"}} align={"center"}>
+                                                {indexB['index']}
+
+                                                {
+                                                    Object.keys(indexB['aliases']||{}).find(o => o === collection['baseId']) ?
+                                                        <Box component={"span"} style={{marginLeft: "20px"}}>
+                                                            <Chip color="primary" icon={<Check />} label={"사용"}/>
+                                                        </Box>
+                                                        :
+                                                        null
+                                                }
+
                                             </TableCell>
                                         </TableRow>
-                                        <TableRow>
+                                        <TableRow style={{display: indexB['uuid'] ? "none" : "table-row"}}>
+                                            <TableCell colSpan={4} >
+                                                <Box align={"center"}>
+                                                    아직 인덱스가 생성되지 않았습니다.
+                                                </Box>
+                                            </TableCell>
+                                        </TableRow>
+
+                                        <TableRow style={{display: indexB['uuid'] ? "table-row" : "none"}}>
                                             <TableCell variant={"head"} component={"th"}>상태</TableCell>
+
                                             <TableCell>
-                                                <Box style={{backgroundColor: "green", width: "20px", height: "20px", borderRadius: "90px", float: "left"}}> </Box>
+                                                <Box style={{backgroundColor: indexB['health'], width: "20px", height: "20px", borderRadius: "90px", float: "left"}}> </Box>
                                                 <Box style={{marginLeft: "30px"}}>
-                                                    정상
+                                                    { indexB['health'] === "green" ? "정상" : indexB['health'] === "yellow" ? "주의" : "에러" }
                                                 </Box>
                                             </TableCell>
                                             <TableCell></TableCell>
                                             <TableCell></TableCell>
                                         </TableRow>
-                                        <TableRow>
+                                        <TableRow style={{display: indexB['uuid'] ? "table-row" : "none"}}>
                                             <TableCell variant={"head"} component={"th"}>프라이머리</TableCell>
-                                            <TableCell>1</TableCell>
+                                            <TableCell>{indexB['pri']}</TableCell>
                                             <TableCell variant={"head"} component={"th"}>레플리카</TableCell>
-                                            <TableCell>2</TableCell>
+                                            <TableCell>{indexB['rep']}</TableCell>
                                         </TableRow>
-                                        <TableRow>
+                                        <TableRow style={{display: indexB['uuid'] ? "table-row" : "none"}}>
                                             <TableCell variant={"head"} component={"th"}>문서 수</TableCell>
-                                            <TableCell>123123</TableCell>
+                                            <TableCell>{indexB['docsCount']}</TableCell>
                                             <TableCell variant={"head"} component={"th"}>삭제문서 수</TableCell>
-                                            <TableCell>23</TableCell>
+                                            <TableCell>{indexB['docsDeleted']}</TableCell>
                                         </TableRow>
-                                        <TableRow>
+                                        <TableRow style={{display: indexB['uuid'] ? "table-row" : "none"}}>
                                             <TableCell variant={"head"} component={"th"}>스토리지 용량</TableCell>
-                                            <TableCell>1.5mb</TableCell>
+                                            <TableCell>{indexB['storeSize']}</TableCell>
                                             <TableCell variant={"head"} component={"th"}>프라이머리 <br/> 스토리지용량</TableCell>
-                                            <TableCell>33mb</TableCell>
+                                            <TableCell>{indexB['priStoreSize']}</TableCell>
                                         </TableRow>
-                                        <TableRow>
+                                        <TableRow style={{display: indexB['uuid'] ? "table-row" : "none"}}>
                                             <TableCell variant={"head"} component={"th"}>별칭</TableCell>
-                                            <TableCell>search-prod</TableCell>
+                                            <TableCell>
+                                                {
+                                                    Object.keys(indexB['aliases']||{}).join(",")
+                                                }
+                                            </TableCell>
                                             <TableCell></TableCell>
                                             <TableCell></TableCell>
                                         </TableRow>
@@ -224,4 +307,4 @@ function Summary() {
     );
 }
 
-export default Summary;
+export default connect(store => ({...store.collectionReducers}))(Summary);

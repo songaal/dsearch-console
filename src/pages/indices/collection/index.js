@@ -183,9 +183,12 @@ function Collection({dispatch, indexSuffixA, indexSuffixB, collectionList}) {
                                 const indexA = collection['indexA']||{}
                                 const indexB = collection['indexB']||{}
 
-                                const isActiveA = indexA['aliases'] && Object.keys(indexA['aliases']).find(alias => alias === baseId)
-                                const isActiveB = indexB['aliases'] && Object.keys(indexB['aliases']).find(alias => alias === baseId)
+                                const indexAAlias = indexA['aliases'] && Object.keys(indexA['aliases']).find(alias => alias === baseId)
+                                const isActiveA = indexAAlias !== undefined && indexAAlias !== null
 
+                                const indexBAlias = indexB['aliases'] && Object.keys(indexB['aliases']).find(alias => alias === baseId)
+                                const isActiveB = indexBAlias !== undefined && indexBAlias !== null
+                                console.log(isActiveA, isActiveB)
                                 return (
                                     <TableRow key={collection['id']}>
                                         <TableCell align="center">{num + 1}</TableCell>
@@ -196,40 +199,42 @@ function Collection({dispatch, indexSuffixA, indexSuffixB, collectionList}) {
                                             <Link className={classes.link} onClick={() => moveDetail(id)}>{baseId}</Link>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Link style={{display: isActiveA === null ? "none" : "block"}}
+                                            <Link style={{display: isActiveA ? "block" : "none"}}
                                                   onClick={() => moveIndex(indexA['uuid'])}
                                                   className={classes.link} >{indexA['index']}</Link>
-                                            <Link style={{display: isActiveB === null ? "none" : "block"}}
+                                            <Link style={{display: isActiveB ? "block": "none"}}
                                                   onClick={() => moveIndex(indexB['uuid'])}
                                                   className={classes.link} >{indexB['index']}</Link>
-                                            <Box style={{dispatch: isActiveA === null && isActiveB === null ? "block" : "none"}}> - </Box>
+
+                                            <Box style={{display: isActiveA === false && isActiveB === false ? "block" : "none"}}> - </Box>
+
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Box style={{display: isActiveA === null ? "none" : "block"}}>
+                                            <Box style={{display: isActiveA ? "block" : "none"}}>
                                                 P[{indexA['pri']||'-'}] R[{indexA['rep']||'-'}]
                                             </Box>
-                                            <Box style={{display: isActiveB === null ? "none" : "block"}}>
+                                            <Box style={{display: isActiveB ? "block" : "none"}}>
                                                 P[{indexB['pri']||'-'}] R[{indexB['rep']||'-'}]
                                             </Box>
-                                            <Box style={{dispatch: isActiveA === null && isActiveB === null ? "block" : "none"}}> - </Box>
+                                            <Box style={{display: isActiveA === false && isActiveB === false ? "block" : "none"}}> - </Box>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Box style={{display: isActiveA === null ? "none" : "block"}}>
+                                            <Box style={{display: isActiveA ? "block" : "none"}}>
                                                 {indexA['docsCount']||'-'}
                                             </Box>
-                                            <Box style={{display: isActiveB === null ? "none" : "block"}}>
+                                            <Box style={{display: isActiveB ? "block" : "none"}}>
                                                 {indexB['docsCount']||'-'}
                                             </Box>
-                                            <Box style={{dispatch: isActiveA === null && isActiveB === null ? "block" : "none"}}> - </Box>
+                                            <Box style={{display: isActiveA === false && isActiveB === false ? "block" : "none"}}> - </Box>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Box style={{display: isActiveA === null ? "none" : "block"}}>
+                                            <Box style={{display: isActiveA ? "block" : "none"}}>
                                                 {indexA['storeSize']||'-'}
                                             </Box>
-                                            <Box style={{display: isActiveB === null ? "none" : "block"}}>
+                                            <Box style={{display: isActiveB ? "block" : "none"}}>
                                                 {indexB['storeSize']||'-'}
                                             </Box>
-                                            <Box style={{dispatch: isActiveA === null && isActiveB === null ? "block" : "none"}}> - </Box>
+                                            <Box style={{display: isActiveA === false && isActiveB === false ? "block" : "none"}}> - </Box>
                                         </TableCell>
                                     </TableRow>
                                 )
@@ -289,7 +294,7 @@ function Collection({dispatch, indexSuffixA, indexSuffixB, collectionList}) {
                             {createBaseId !== "" ? createBaseId + indexSuffixB : ""}
                         </Grid>
                     </Grid>
-                    <Grid container my={3} style={{display: modalMessage === null ? "none" : "block", color: "red", textAlign: "center"}}>
+                    <Grid container my={3} style={{display: modalMessage ? "none" : "block", color: "red", textAlign: "center"}}>
                         <Grid item xs={12}>
                             {modalMessage}
                         </Grid>

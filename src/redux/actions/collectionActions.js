@@ -23,3 +23,8 @@ export const setCollectionIndexSuffix = () => dispatch => client.call({
 export const setCollection = id => dispatch => client.call({
     uri: `/collections/${id}`
 }).then(response => dispatch({type: SET_COLLECTION, payload: response.data}))
+
+export const deleteCollectionAction = id => dispatch => client.call({
+    uri: `/collections/${id}`,
+    method: "delete"
+})
