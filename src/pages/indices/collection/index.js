@@ -188,7 +188,6 @@ function Collection({dispatch, indexSuffixA, indexSuffixB, collectionList}) {
 
                                 const indexBAlias = indexB['aliases'] && Object.keys(indexB['aliases']).find(alias => alias === baseId)
                                 const isActiveB = indexBAlias !== undefined && indexBAlias !== null
-                                console.log(isActiveA, isActiveB)
                                 return (
                                     <TableRow key={collection['id']}>
                                         <TableCell align="center">{num + 1}</TableCell>
@@ -259,6 +258,7 @@ function Collection({dispatch, indexSuffixA, indexSuffixB, collectionList}) {
                         </Grid>
                         <Grid item xs={8}>
                             <TextField fullWidth
+                                       autoFocus
                                        value={createName}
                                        onChange={event => {setCreateNameError(false); setCreateName(event.target.value)}}
                                        error={createNameError}

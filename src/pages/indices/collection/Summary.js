@@ -51,8 +51,8 @@ function Summary({dispatch, collection}) {
     }
 
     function handleDeleteCollection(event) {
+        toggleMoreMenu(event)
         dispatch(deleteCollectionAction(collection['id'])).then(response => {
-            toggleMoreMenu(event)
             dispatch(setCollectionList())
             setTimeout(() => history.push("../collections"), 500)
         }).catch(error => {

@@ -32,7 +32,7 @@ import {positions, spacing} from "@material-ui/system";
 import AntTabs from "~/components/AntTabs"
 import SearchIcon from "@material-ui/icons/Search";
 import {ArrowDropDown} from "@material-ui/icons";
-
+import {connect} from "react-redux";
 const Divider = styled(MuiDivider)(spacing, positions);
 const Typography = styled(MuiTypography)(spacing, positions);
 const Box = styled(MuiBox)(spacing, positions);
@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function Source() {
+function Source({dispatch, collection}) {
     const classes = useStyles();
     const [moreMenu, setMoreMenu] = useState(null)
     const [editModal, setEditModal] = useState(null)
@@ -77,6 +77,13 @@ function Source() {
         setOpen((prev) => placement !== newPlacement || !prev);
         setPlacement(newPlacement);
     }
+
+
+
+    console.log('collection', collection)
+
+
+
     return (
         <React.Fragment>
 
@@ -282,4 +289,4 @@ function Source() {
     );
 }
 
-export default Source;
+export default connect(store => ({...store.collectionReducers}))(Source);
