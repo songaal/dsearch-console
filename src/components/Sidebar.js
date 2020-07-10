@@ -1,4 +1,5 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
+import {connect, useDispatch, useSelector} from "react-redux";
 import styled from "styled-components";
 import {darken, rgba} from "polished";
 
@@ -27,6 +28,7 @@ import {ExpandLess, ExpandMore} from "@material-ui/icons";
 import {dashboard as dashboardRoutes, intro as introRoutes} from "../routes/index";
 
 import {Layers} from "react-feather";
+import fastcatxReducers from "../redux/reducers/fastcatxReducers";
 
 const NavLink = React.forwardRef((props, ref) => (
     <RouterNavLink innerRef={ref} {...props} />
@@ -271,32 +273,13 @@ function SidebarLink({name, to, badge}) {
     );
 }
 
-class Sidebar extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {};
-    }
+function Sidebar(props) {
+    const [active, setActive] = useState({})
 
-    toggle = index => {
-        // Collapse all elements
-        Object.keys(this.state).forEach(
-            item =>
-                this.state[index] ||
-                this.setState(() => ({
-                    [item]: false
-                }))
-        );
-
-        // Toggle selected element
-        this.setState(state => ({
-            [index]: !state[index]
-        }));
-    };
-
-    UNSAFE_componentWillMount() {
+    useEffect(() => {
         /* Open collapse element that matches current url */
-        const pathName = this.props.location.pathname;
-        const {layout} = this.props;
+        const pathName = props.location.pathname;
+        const {layout} = props;
         let routes = [];
         if (layout === 'dashboard') {
             routes = dashboardRoutes
@@ -309,111 +292,132 @@ class Sidebar extends React.Component {
             const isOpen = route.open;
             const isHome = route.containsHome && pathName === "/" ? true : false;
 
-            this.setState(() => ({
+            setActive({
                 [index]: isActive || isOpen || isHome
-            }));
+            })
+            // this.setState(() => ({
+            //     [index]: isActive || isOpen || isHome
+            // }));
         });
-    }
+    }, [])
 
-    render() {
-        const {classes, layout, staticContext, ...other} = this.props;
-        let routes = [];
-        if (layout === 'dashboard') {
-            routes = dashboardRoutes
-        } else {
-            routes = introRoutes
-        }
-
-        routes = routes.filter(route => route.hidden === undefined || route.hidden === null || route.hidden === false)
-
-        return (
-            <Drawer variant="permanent" {...other}>
-                <Brand>
-                    <BrandIcon/>
-                    <Box ml={1}>Fastcat X
-                        {/* <BrandChip label="X" /> */}
-                    </Box>
-                </Brand>
-                <Scrollbar>
-                    <List disablePadding>
-                        <Items>
-                            {routes.map((category, index) => (
-                                <React.Fragment key={index}>
-                                    {category.header ? (
-                                        <SidebarSection>{category.header}</SidebarSection>
-                                    ) : null}
-
-                                    {category.children && category.children.filter(c => c.hidden !== true).length > 0 ? (
-                                        <React.Fragment key={index}>
-                                            <SidebarCategory
-                                                isOpen={!this.state[index]}
-                                                isCollapsable={true}
-                                                name={category.id}
-                                                icon={category.icon}
-                                                button={true}
-                                                onClick={() => this.toggle(index)}
-                                            />
-
-                                            <Collapse
-                                                in={this.state[index]}
-                                                timeout="auto"
-                                                unmountOnExit
-                                            >
-                                                {category.children.filter(c => c.hidden !== true).map((route, index) => (
-                                                    <SidebarLink
-                                                        key={index}
-                                                        name={route.name}
-                                                        to={route.path}
-                                                        icon={route.icon}
-                                                        badge={route.badge}
-                                                    />
-                                                ))}
-                                            </Collapse>
-                                        </React.Fragment>
-                                    ) : (
-                                        <SidebarCategory
-                                            isCollapsable={false}
-                                            name={category.id}
-                                            to={category.path}
-                                            activeClassName="active"
-                                            component={NavLink}
-                                            icon={category.icon}
-                                            exact
-                                            badge={category.badge}
-                                        />
-                                    )}
-                                </React.Fragment>
-                            ))}
-                        </Items>
-                    </List>
-                </Scrollbar>
-                {/*<SidebarFooter>*/}
-                {/*    <Grid container spacing={2}>*/}
-                {/*        <Grid item>*/}
-                {/*            <StyledBadge*/}
-                {/*                overlap="circle"*/}
-                {/*                anchorOrigin={{*/}
-                {/*                    vertical: 'bottom',*/}
-                {/*                    horizontal: 'right',*/}
-                {/*                }}*/}
-                {/*                variant="dot"*/}
-                {/*            >*/}
-                {/*                <Avatar alt="Lucy Lavender" src="/static/img/avatars/avatar-1.jpg"/>*/}
-                {/*            </StyledBadge>*/}
-                {/*        </Grid>*/}
-                {/*        <Grid item>*/}
-                {/*            <SidebarFooterText variant="body2">*/}
-                {/*                Lucy Lavender*/}
-                {/*            </SidebarFooterText>*/}
-                {/*            <SidebarFooterSubText variant="caption">*/}
-                {/*                UX Designer*/}
-                {/*            </SidebarFooterSubText>*/}
-                {/*        </Grid>*/}
-                {/*    </Grid>*/}
-                {/*</SidebarFooter>*/}
-            </Drawer>
+    function toggle(index) {
+        // Collapse all elements
+        Object.keys(active).forEach(
+            item =>
+                active[index] ||
+                setActive({
+                    ...active,
+                    [item]: false
+                })
         );
+
+        // Toggle selected element
+        setActive({
+            [index]: !active[index]
+        })
+        // this.setState(state => ({
+        //     [index]: !state[index]
+        // }));
     }
+
+    const {classes, layout, staticContext, ...other} = props;
+    let routes = [];
+    if (layout === 'dashboard') {
+        routes = dashboardRoutes
+    } else {
+        routes = introRoutes
+    }
+
+    routes = routes.filter(route => route.hidden === undefined || route.hidden === null || route.hidden === false)
+
+    return (
+        <Drawer variant="permanent" {...other}>
+            <Brand>
+                <BrandIcon/>
+                <Box ml={1}>Fastcat X
+                    {/* <BrandChip label="X" /> */}
+                </Box>
+            </Brand>
+            <Scrollbar>
+                <List disablePadding>
+                    <Items>
+                        {routes.map((category, index) => (
+                            <React.Fragment key={index}>
+                                {category.header ? (
+                                    <SidebarSection>{category.header}</SidebarSection>
+                                ) : null}
+
+                                {category.children && category.children.filter(c => c.hidden !== true).length > 0 ? (
+                                    <React.Fragment key={index}>
+                                        <SidebarCategory
+                                            isOpen={!active[index]}
+                                            isCollapsable={true}
+                                            name={category.id}
+                                            icon={category.icon}
+                                            button={true}
+                                            onClick={() => toggle(index)}
+                                        />
+
+                                        <Collapse
+                                            in={active[index]}
+                                            timeout="auto"
+                                            unmountOnExit
+                                        >
+                                            {category.children.filter(c => c.hidden !== true).map((route, index) => (
+                                                <SidebarLink
+                                                    key={index}
+                                                    name={route.name}
+                                                    to={route.path}
+                                                    icon={route.icon}
+                                                    badge={route.badge}
+                                                />
+                                            ))}
+                                        </Collapse>
+                                    </React.Fragment>
+                                ) : (
+                                    <SidebarCategory
+                                        isCollapsable={false}
+                                        name={category.id}
+                                        to={category.path}
+                                        activeClassName="active"
+                                        component={NavLink}
+                                        icon={category.icon}
+                                        exact
+                                        badge={category.badge}
+                                    />
+                                )}
+                            </React.Fragment>
+                        ))}
+                    </Items>
+                </List>
+            </Scrollbar>
+            {/*<SidebarFooter>*/}
+            {/*    <Grid container spacing={2}>*/}
+            {/*        <Grid item>*/}
+            {/*            <StyledBadge*/}
+            {/*                overlap="circle"*/}
+            {/*                anchorOrigin={{*/}
+            {/*                    vertical: 'bottom',*/}
+            {/*                    horizontal: 'right',*/}
+            {/*                }}*/}
+            {/*                variant="dot"*/}
+            {/*            >*/}
+            {/*                <Avatar alt="Lucy Lavender" src="/static/img/avatars/avatar-1.jpg"/>*/}
+            {/*            </StyledBadge>*/}
+            {/*        </Grid>*/}
+            {/*        <Grid item>*/}
+            {/*            <SidebarFooterText variant="body2">*/}
+            {/*                Lucy Lavender*/}
+            {/*            </SidebarFooterText>*/}
+            {/*            <SidebarFooterSubText variant="caption">*/}
+            {/*                UX Designer*/}
+            {/*            </SidebarFooterSubText>*/}
+            {/*        </Grid>*/}
+            {/*    </Grid>*/}
+            {/*</SidebarFooter>*/}
+        </Drawer>
+    )
 }
 
 export default withRouter(Sidebar);
