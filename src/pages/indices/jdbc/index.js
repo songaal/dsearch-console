@@ -112,7 +112,6 @@ function JdbcTable({dispatch, JdbcList, JdbcAddResult, JdbcDeleteResult}){
     }
 
     const handleDeleteJdbcSource = (event) => {
-        /* To Do : 삭제 함수 */
         var JdbcSource = JdbcList.hits.hits[jdbcListIndex];
         console.log(JdbcSource._id)
         dispatch(deleteJdbcSource(JdbcSource._id));
@@ -235,7 +234,7 @@ function JdbcSource({jdbcId, jdbcName, jdbcDriver, jdbcAddr, jdbcPort, jdbcDB, j
         <Box fullWidth p={2}>
             <Box display="flex" m={3}  alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>아이디</Typography>
-                <TextField error={true} id="jdbcSourceId" size="small" placeholder="ID" fullWidth variant="outlined"  inputRef={jdbcId} />
+                <TextField id="jdbcSourceId" size="small" placeholder="ID" fullWidth variant="outlined"  inputRef={jdbcId} />
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>이름</Typography>
@@ -279,7 +278,7 @@ function JdbcSource({jdbcId, jdbcName, jdbcDriver, jdbcAddr, jdbcPort, jdbcDB, j
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>URL</Typography>
-                <TextField id="jdbcSourceURL" size="small" placeholder="jdbc:mysql://localhost:3306/" fullWidth variant="outlined" inputRef={jdbcURL}/>
+                <TextField id="jdbcSourceURL" size="small" placeholder="jdbc:mysql://" fullWidth variant="outlined" inputRef={jdbcURL}/>
             </Box>
         </Box>
     );
@@ -287,16 +286,13 @@ function JdbcSource({jdbcId, jdbcName, jdbcDriver, jdbcAddr, jdbcPort, jdbcDB, j
 
 function AccessTestSuccess({JdbcAccessTest}){
     return <Snackbar open={JdbcAccessTest.message} autoHideDuration={5000} onClose={() => {JdbcAccessTest.message = false;}}>
-                    <MuiAlert elevation={6} variant="filled" severity="info">
-                                연결테스트 성공
-                            </MuiAlert>:
-                        </Snackbar>
+                <MuiAlert elevation={6} variant="filled" severity="info"> 연결테스트 성공 </MuiAlert>
+            </Snackbar>
 }
 
 function JdbcCard({dispatch, JdbcList, JdbcAccessTest, JdbcAddResult, JdbcDeleteResult}) {
     const [jdbcSourceDialogOpen, setjdbcSourceDialogOpenAction] = useState(false)
     const [jdbcProvider, setJdbcProvider] = useState("");
-    const [flag, setFlag] = useState(false)
 
     var jdbcId = useRef("");
     var jdbcName = useRef("");
@@ -445,6 +441,6 @@ export default connect(store => ({
     JdbcList: store.jdbcReducers.JdbcList,
     JdbcAccessTest: store.jdbcReducers.JdbcAccessTest,
     JdbcDeleteResult: store.jdbcReducers.JdbcDeleteResult,
-    JdbcAddResult: store.jdbcReducers.JdbcAddResult,
+    JdbcAddResult: store.jdbcReducers.JdbcAddResult
 }))(JDBC);
 

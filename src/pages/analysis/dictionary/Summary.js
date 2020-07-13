@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import {
     Box,
@@ -10,29 +10,15 @@ import {
     TableRow,
     TableCell,
     TableBody,
-    Checkbox
+    Checkbox, Snackbar
 } from "@material-ui/core";
+import MuiAlert from '@material-ui/lab/Alert';
 import {setSummary, applyDictionary} from "../../../redux/actions/dictionaryActions";
-import { StorefrontRounded } from "@material-ui/icons";
-
-// 수정시간, 저장시간은 인덱스에 있는지 보고 없으면 필드 추가 
-// 현재 .fastcatx_dict 생성시간을 수정시간 및 저장시간에 배치.
-// 추후 수정시간 저장시간 필드가 생기면 교체 예정.
 
 function SummaryTable({summary}){
-    console.log(summary)
     if(summary.dictionaryInfo === undefined || summary.dictionaryTimes === undefined || summary.dictionarySettings === undefined) return <></>;
 
-
-    console.log(summary.infoDict);
-    console.log(summary.time);
-    console.log(summary.settingList);
-
     var infoDict = JSON.parse(summary.dictionaryInfo).dictionary;
-    // var date = summary.time;
-    // var updatedTime = new Date(date.hits.hits[0].sourceAsMap.updatedTime);
-    // var appliedTime = new Date(date.hits.hits[0].sourceAsMap.appliedTime);
-    
     var times = summary.dictionaryTimes.hits.hits;
     var settings = summary.dictionarySettings;
     var tableInfo = [];
@@ -82,6 +68,7 @@ function SummaryTable({summary}){
 
 
  function Summary({dispatch, summary}) {
+     const [applyDict, setApplyDict ] = useState(false);
     useEffect(() => {
         dispatch(setSummary())
     }, [])
@@ -92,6 +79,7 @@ function SummaryTable({summary}){
         data.exportFile= true
         data.distribute= true
         dispatch(applyDictionary(data))
+        setApplyDict(true);
     }
         
     return (
@@ -105,6 +93,9 @@ function SummaryTable({summary}){
                         <Button variant={"contained"} color={"primary"} onClick={clickApplyDictionary}>사전적용</Button>
                     </Box>
                     <Box>
+                        <Snackbar open={applyDict} autoHideDuration={5000} onClose={() => { setApplyDict(false) }}>
+                            <MuiAlert elevation={6} variant="filled" severity="info"> 사전 적용 성공 </MuiAlert>
+                        </Snackbar>
                         <Table>
                             <TableHead>
                                 <TableRow>

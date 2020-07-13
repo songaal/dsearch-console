@@ -70,35 +70,12 @@ export const searchDictionaries = (data) => dispatch => client.call({
     data: data
 }).then(response => dispatch({type: types.SET_DICTIONARY_SEARCH_LIST , payload: response.data}))
 
-
-
 export const setSummary = () => dispatch => client.call({
     uri: "/dictionaries/summary",
 }).then(response => dispatch({type: types.SET_SUMMARY , payload: response.data}))
-
-// export const setDictionaryIndexSettings = () => dispatch => client.call({
-//     uri: "/elasticsearch/.fastcatx_dict/_settings",
-// }).then(response => dispatch({type: types.SET_DICTIONARY_INDEX_SETTINGS , payload: response.data}))
-
-
-// export const setInfoDict = () => dispatch => client.call({
-//     uri: "/elasticsearch/_analysis-product-name/info-dict"
-// }).then(response => dispatch({type: types.SET_DICTIONARY_INFO , payload: response.data.dictionary}))
-
 
 export const applyDictionary = (data) => dispatch => client.call({
     uri: "/elasticsearch/_analysis-product-name/compile-dict",
     method: "POST",
     data: data
-}).then(response => dispatch({type: types.SET_DICTIONARY}))
-
-// export const setDictionaryIndexDate =() => dispatch => client.call({
-//     uri: "/elasticsearch/.fastcatx_dict/_search",
-//     method: "POST",
-//     data: {
-//         "size": 1,
-//         "sort": [
-//               { "updatedTime": "desc" }
-//           ]
-//       }
-// }).then(response => dispatch({type: types.SET_DICTIONARY_INDEX_DATE , payload: response.data}))
+}).then(response => dispatch({type: types.SET_DICTIONARY, payload: response.data}))

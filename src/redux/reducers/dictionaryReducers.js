@@ -1,11 +1,8 @@
 import * as types from '../constants';
+import { updateDictionary } from '../actions/dictionaryActions';
 
 let initState = {
-    summary: { 
-        infoDict:{},
-        time: {},
-        settingList : []
-    },
+    
     activeIndex: 0,
     settings: [],
     dataSet: {},
@@ -14,13 +11,8 @@ let initState = {
             {type: "SYSTEM", posTag: "N", prob:"0"}
         ]
     },
-    indexSettings: {},
-    infoDict: {},
-    date: {
-        hits :{
-            hits: []
-        }
-    }
+    update: { },
+    summary: { }
 };
 
 export default function reducer(state = initState, actions) {
@@ -34,12 +26,8 @@ export default function reducer(state = initState, actions) {
         }
         case types.SET_DICTIONARY_SEARCH_LIST:
             return {...state, searchResult: actions.payload}
-        case types.SET_DICTIONARY_INFO:
-            return {...state, infoDict: actions.payload}
-        case types.SET_DICTIONARY_INDEX_SETTINGS:
-            return {...state, indexSettings: actions.payload}
-        case types.SET_DICTIONARY_INDEX_DATE:
-            return {...state, date: actions.payload}
+        case types.SET_DICTIONARY:
+            return {...state, update: actions.payload}
         case types.SET_SUMMARY:                 return { ...state, summary: actions.payload }
         default: return state
     }
