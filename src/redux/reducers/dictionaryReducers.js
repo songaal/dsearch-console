@@ -1,7 +1,11 @@
 import * as types from '../constants';
 
 let initState = {
-    summary: {},
+    summary: { 
+        infoDict:{},
+        time: {},
+        settingList : []
+    },
     activeIndex: 0,
     settings: [],
     dataSet: {},
@@ -36,8 +40,7 @@ export default function reducer(state = initState, actions) {
             return {...state, indexSettings: actions.payload}
         case types.SET_DICTIONARY_INDEX_DATE:
             return {...state, date: actions.payload}
-        case types.SET_SUMMARY:
-            return {...state, summary : actions.payload}
+        case types.SET_SUMMARY:                 return { ...state, summary: actions.payload }
         default: return state
     }
 }
