@@ -24,4 +24,4 @@ yarn-error.log*
 
 *.bat
 
-*-lock.json
+package-lock.json
