@@ -238,15 +238,22 @@ function JdbcSource({jdbcId, jdbcName, jdbcDriver, jdbcAddr, jdbcPort, jdbcDB, j
     );
 }
 
-function AccessTestSuccess({JdbcAccessTest}){
-    return <Snackbar open={JdbcAccessTest.message} autoHideDuration={5000} onClose={() => {JdbcAccessTest.message = false;}}>
-                <MuiAlert elevation={6} variant="filled" severity="info"> 연결테스트 성공 </MuiAlert>
+function AccessTestSuccess({JdbcAccessTest, accessFlag, handleAccessFlag}){
+
+    return <Snackbar open={accessFlag} autoHideDuration={3000} onClose={() => {handleAccessFlag(); JdbcAccessTest.message = false; }}>
+                {JdbcAccessTest.message ? 
+                    <MuiAlert elevation={6} variant="filled" severity="info"> 연결테스트 성공 </MuiAlert> : <MuiAlert elevation={6} variant="filled" severity="error"> 연결테스트 실패 </MuiAlert>}
             </Snackbar>
+
+    // return <Snackbar open={JdbcAccessTest.message} autoHideDuration={5000} onClose={() => {JdbcAccessTest.message = false;}}>
+    //             <MuiAlert elevation={6} variant="filled" severity="info"> 연결테스트 성공 </MuiAlert>
+    //         </Snackbar>
 }
 
 function JdbcCard({dispatch, JdbcList, JdbcAccessTest, JdbcAddResult, JdbcDeleteResult}) {
     const [jdbcSourceDialogOpen, setjdbcSourceDialogOpenAction] = useState(false)
     const [jdbcProvider, setJdbcProvider] = useState("");
+    const [accessFlag, setAccessFlag] = useState(false);
 
     var jdbcId = useRef("");
     var jdbcName = useRef("");
@@ -259,6 +266,9 @@ function JdbcCard({dispatch, JdbcList, JdbcAccessTest, JdbcAddResult, JdbcDelete
     var jdbcParams = useRef("");
     var jdbcURL = useRef("");
 
+    function handleAccessFlag(){
+        setAccessFlag(false)
+    }
     function setProvider(event, index){
         console.log(index.props.value);
         setJdbcProvider(index.props.value);
@@ -296,6 +306,7 @@ function JdbcCard({dispatch, JdbcList, JdbcAccessTest, JdbcAddResult, JdbcDelete
         jdbcdSourceObj.params = jdbcParams.current.value;
         jdbcdSourceObj.url = jdbcURL.current.value;
 
+        setAccessFlag(true);
         dispatch(setJDBCAccessTest(jdbcdSourceObj));
     }
 
@@ -353,7 +364,7 @@ function JdbcCard({dispatch, JdbcList, JdbcAccessTest, JdbcAddResult, JdbcDelete
                             jdbcParams = {jdbcParams}
                             jdbcURL = {jdbcURL}
                          />
-                        <AccessTestSuccess JdbcAccessTest={JdbcAccessTest} />
+                        <AccessTestSuccess accessFlag={accessFlag} JdbcAccessTest={JdbcAccessTest} handleAccessFlag={handleAccessFlag}/>
                     </DialogContent>
                     <DialogActions>
                         <Button variant="contained" color="default" onClick={handleSourceDialogClose}>닫기</Button>
