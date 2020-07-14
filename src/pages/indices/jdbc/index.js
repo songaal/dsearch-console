@@ -9,7 +9,6 @@ import {
     Box, Button,
     Dialog, DialogTitle,
     Table, TableRow, TableCell, TableHead, TableBody,
-    Breadcrumbs as MuiBreadcrumbs,
     Card as MuiCard,
     CardContent,
     Divider as MuiDivider,
@@ -37,51 +36,6 @@ const Card = styled(MuiCard)(spacing);
 const Divider = styled(MuiDivider)(spacing);
 
 const TextField = styled(MuiTextField)(spacing);
-
-const fastcatx_jdbc = {
-    "settings": {
-    },
-    "mappings": {
-      "properties": {
-        "ID" : {
-            "type" : "text"
-          },
-          "NAME" : {
-            "type" : "text"
-          },
-          "PROVIDER" : {
-            "type" : "text"
-          },
-          "DRIVER" : {
-            "type" : "text"
-          },
-          "ADDRESS" : {
-            "type" : "text"
-          },
-          "PORT" : {
-            "type" : "text"
-          },
-          "DB_NAME" : {
-            "type" : "text"
-          },
-          "USER" : {
-            "type" : "text"
-          },
-          "PASSWORD" : {
-            "type" : "text"
-          },
-          "PARAMS" : {
-            "type" : "text"
-          },
-          "URL" : {
-            "type" : "text"
-          }
-        
-      }
-    }
-  }
-  
-
 
 function JdbcTable({dispatch, JdbcList, JdbcAddResult, JdbcDeleteResult}){
     const [jdbcSourceEditDialogOpen, setJdbcSourceEditDialogOpenAction] = useState(false)
@@ -415,10 +369,6 @@ function JdbcCard({dispatch, JdbcList, JdbcAccessTest, JdbcAddResult, JdbcDelete
 function JDBC({dispatch, JdbcList, JdbcAccessTest, JdbcAddResult, JdbcDeleteResult}) {
     useEffect(() => {
         dispatch(setJDBCList())
-            .then(() => {console.log("조회됨")})
-            .catch((error) => {
-                dispatch(createJDBCIndex(fastcatx_jdbc))
-            })
     }, [])
     
     return (

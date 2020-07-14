@@ -84,9 +84,7 @@ function SummaryTable({summary}){
         
     return (
         <React.Fragment>
-
             <br/>
-
             <Card>
                 <CardContent>
                     <Box>
