@@ -15,24 +15,28 @@ const useStyles = makeStyles((theme) => ({
     right: { textAlign: "right"}
 }));
 
+const DictionaryIndex = ".fastcatx_dict";
+
+
+
 
 function SearchResultList({settings, result}){
     return (
         <> 
-            {/* 기초 사전 */}
-            {result.result.map((item) => {
-                if("SYSTEM" == item.type) return <li key={item.type}> {item.posTag} {" : "} {item.prob} </li>;
-                return <></>;
-            })}
-
             {/* 사용자 사전 */}
             {settings.map((setting) => {
                 var flag = true;
                 var str = "Not Found";
                 for(var i in result.result){
                     if(setting.id == result.result[i].type){
-                        if(flag) { str = result.result[i].keyword; flag = false; }
-                        else str += ", " + result.result[i].keyword
+                        if(result.result[i].keyword === undefined) continue;
+
+                        if(flag) {
+                            str = result.result[i].keyword; 
+                            flag = false; 
+                        } else {
+                            str += ", " + result.result[i].keyword
+                        }
                     }
                 }
                 return <li key={setting.id}> {setting.name} {" : "} {str}</li>;
@@ -54,12 +58,12 @@ function DictionarySearch ({dispatch, settings, result}) {
 
     const handleEnterPress = (event) => {
         if (event.key === 'Enter'){
-            dispatch(searchDictionaries({index: ".fastcatx_dict" , word:searchInput.current.value}))
+            dispatch(searchDictionaries({index: DictionaryIndex , word:searchInput.current.value}))
             setShowSearchInput(searchInput.current.value);
         }
     }
     const handleSearchIcon = (event) => {
-        dispatch(searchDictionaries({index: ".fastcatx_dict" , word:searchInput.current.value}))
+        dispatch(searchDictionaries({index: DictionaryIndex , word:searchInput.current.value}))
         setShowSearchInput(searchInput.current.value);
     }
 
@@ -89,6 +93,12 @@ function DictionarySearch ({dispatch, settings, result}) {
                             {showSearchInput === "" ? "현재 입력된 내용이 없습니다." : showSearchInput}
                         </Typography>
                         <ul>
+                            {/* 기초 사전 */}
+                            {result.result.map((item) => {
+                                if("SYSTEM" == item.type) return <li key={item.type}> {item.posTag} {" : "} {item.prob} </li>;
+                                return <></>;
+                            })}
+
                             <SearchResultList settings={settings} result={result} />
                         </ul>
                         {/* <ul>

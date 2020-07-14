@@ -31,6 +31,12 @@ const JdbcDrivers = {
     "Oracle": "oracle.jdbc.driver.OracleDriver",
     "Mysql":"com.mysql.cj.jdbc.Driver"
 }
+const JdbcDriversURL = {
+    "Altibase": "jdbc:Altibase://",
+    "Oracle": "jdbc:oracle:thin:@",
+    "Mysql":"jdbc:mysql://"
+}
+
 
 const NavLink = React.forwardRef((props, ref) => (
     <RouterNavLink innerRef={ref} {...props} />
@@ -249,7 +255,7 @@ function JdbcSource({jdbcId, jdbcName, jdbcDriver, jdbcAddr, jdbcPort, jdbcDB, j
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>URL</Typography>
-                <TextField id="jdbcSourceURL" size="small" placeholder="jdbc:mysql://" fullWidth variant="outlined" inputRef={jdbcURL}/>
+                <TextField disabled={true} id="jdbcSourceURL" size="small" placeholder="jdbc:mysql://" fullWidth variant="outlined" inputRef={jdbcURL}/>
             </Box>
         </Box>
     );
@@ -287,9 +293,9 @@ function JdbcCard({dispatch, authUser, JdbcList, JdbcAccessTest, JdbcAddResult, 
         setAccessFlag(false)
     }
     function setProvider(event, index, next){
-        console.log(JdbcDrivers[event.target.value])
         setJdbcProvider(index.props.value);
         jdbcDriver.current.value = JdbcDrivers[event.target.value]
+        jdbcURL.current.value = JdbcDriversURL[event.target.value]
     }
     
     const handleSourceDialogClose = (event) => {
@@ -301,7 +307,6 @@ function JdbcCard({dispatch, authUser, JdbcList, JdbcAccessTest, JdbcAddResult, 
     };
 
     const accessTest = (event) => {
-        
         if( jdbcId.current.value.length === 0 
             || jdbcName.current.value.length === 0
             || jdbcDriver.current.value.length === 0
@@ -323,7 +328,7 @@ function JdbcCard({dispatch, authUser, JdbcList, JdbcAccessTest, JdbcAddResult, 
         jdbcdSourceObj.password = jdbcPassword.current.value;
         jdbcdSourceObj.params = jdbcParams.current.value;
         // jdbcdSourceObj.url = jdbcURL.current.value
-        jdbcdSourceObj.url = jdbcURL.current.value + jdbcAddr.current.value + ":"+ jdbcPort.current.value + jdbcParams.current.value;
+        jdbcdSourceObj.url = jdbcURL.current.value + jdbcAddr.current.value + ":"+ jdbcPort.current.value + "/" + jdbcDB.current.value + jdbcParams.current.value;
 
         setAccessFlag(true);
         dispatch(setJDBCAccessTest(jdbcdSourceObj));
@@ -342,6 +347,7 @@ function JdbcCard({dispatch, authUser, JdbcList, JdbcAccessTest, JdbcAddResult, 
             || jdbcURL.current.value.length === 0) {
                 return;
         }
+        
         var addJdbcSource = {};
         addJdbcSource.id = jdbcId.current.value
         addJdbcSource.name =  jdbcName.current.value
@@ -353,7 +359,7 @@ function JdbcCard({dispatch, authUser, JdbcList, JdbcAccessTest, JdbcAddResult, 
         addJdbcSource.user = jdbcUser.current.value;
         addJdbcSource.password = jdbcPassword.current.value;
         addJdbcSource.params = jdbcParams.current.value;
-        addJdbcSource.url = jdbcURL.current.value + jdbcAddr.current.value + ":"+ jdbcPort.current.value + jdbcParams.current.value;
+        addJdbcSource.url = jdbcURL.current.value + jdbcAddr.current.value + ":"+ jdbcPort.current.value + "/" + jdbcDB.current.value + jdbcParams.current.value;
         
         dispatch(addJdbcIndex(addJdbcSource));
         utils.sleep(1000).then(()=>{dispatch(setJDBCList());});
@@ -365,8 +371,15 @@ function JdbcCard({dispatch, authUser, JdbcList, JdbcAccessTest, JdbcAddResult, 
             <CardContent>
                 
                 <Box style={{width: "90px"}}>
-                    {authUser.role.index ? <Box><Link href="#" onClick={handleSourceDialogOpen}> <Box  display="flex" alignItems="center" justifyContent="left"><AddCircleOutlineIcon /> <Typography>  JDBC 추가  </Typography></Box></Link></Box> : <></>}
-                    {/* <Link href="#" onClick={handleSourceDialogOpen}> <Box display="flex" alignItems="center" justifyContent="left"><AddCircleOutlineIcon /><Typography>  JDBC 추가  </Typography> </Box></Link>  */}
+                    {authUser.role.index ? 
+                        <Box>
+                            <Link href="#" onClick={handleSourceDialogOpen}> 
+                                <Box display="flex" alignItems="center" justifyContent="left">
+                                    <AddCircleOutlineIcon /> <Typography> JDBC 추가 </Typography>
+                                </Box>
+                            </Link>
+                        </Box> 
+                    : <></>}
                 </Box>
                 <JdbcTable dispatch={dispatch} authUser={authUser} JdbcList={JdbcList} JdbcAccessTest={JdbcAccessTest} JdbcAddResult={JdbcAddResult}  JdbcDeleteResult={JdbcDeleteResult}></JdbcTable>
                 <Dialog open={jdbcSourceDialogOpen} onClose={handleSourceDialogClose} >
