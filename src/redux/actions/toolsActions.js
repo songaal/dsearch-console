@@ -21,11 +21,12 @@ export const actionAnalyzer = (index, data) => dispatch => client.call({
 /* 
     플러그인 이름과 그에 따른 URI규칙이 달라 현재는 이렇게 진행. 
     URI명이 바뀌면 위처럼 바뀔 예정.
-    그렇다면 만약에 다른 플러그인이 있다면...?
+    다른 플러그인이 있다면 ?...
 */
+
 export const actionPlugin = (plugin, data) => dispatch => client.call({
-    // uri: "/elasticsearch/" + plugin + "/analyze",
-    uri: "/elasticsearch/_product-name-analysis/analyze-text",
+    uri: "/elasticsearch/_" + plugin + "/analyze",
+    // uri: "/elasticsearch/_product-name-analysis/analyze-text",
     method: 'POST',
     data: data
 }).then(response => dispatch({type: SET_TOOLS_ANALYZE_DETAIL_RESULT, payload: response.data}))

@@ -11,7 +11,7 @@ import "ace-builds/src-noconflict/theme-kuroir";
 import { setDocumentList } from '@actions/rankingTuningActions'
 import MuiAlert from '@material-ui/lab/Alert';
 import {
-    Box, Snackbar, Link,
+    Box, Snackbar, Link, CircularProgress,useScrollTrigger,
     Table as MuiTable, TableRow, TableCell, TableHead, TableBody,
     TextField as MuiTextField,
     TextareaAutosize as MuiTextareaAutosize,
@@ -20,7 +20,8 @@ import {
     Divider as MuiDivider,
     Grid,
     Button,
-    Typography
+    Typography,
+    Zoom
 } from "@material-ui/core";
 
 import { TreeView, TreeItem, ToggleButton } from '@material-ui/lab';
@@ -172,9 +173,16 @@ function RankingTuningResults({pageNum, result, expand, nodeToggle}) {
 function RankingTuningCard({dispatch, result, index}) {
     var aceEditor = useRef("");
     const [pageNum, setPageNum] = useState(0);
-    // const [checked, setChecked] = useState(false);
+    const [progress, setProgress] = useState(false);
     const [expand, setExpand] = useState([]);
+    // const [searchFlag, setSearchFlag] = useState(false)
     const [alert, setAlert] = useState(false);
+
+    
+    const trigger = useScrollTrigger({
+        disableHysteresis: true,
+        threshold: 100
+      });
 
     const handleExpandAll = (event) =>{
         var changeExpand = [];    
@@ -186,19 +194,6 @@ function RankingTuningCard({dispatch, result, index}) {
     const handleFoldAll = (event) =>{
         setExpand([])
     }
-
-    // const handleExpandChange = (event) => {
-    //     if(checked){
-    //         setExpand([])
-    //     } else {
-    //         var changeExpand = [];    
-    //         for (var i = 1; i <= ids; i++)
-    //             changeExpand.push(i);
-    //         console.log(changeExpand)
-    //         setExpand(changeExpand)
-    //     }
-    //     setChecked(!checked);
-    // }
 
     function isJson(str) {
         try {
@@ -214,7 +209,7 @@ function RankingTuningCard({dispatch, result, index}) {
             setAlert(true);
             return;
         }
-
+        setProgress(true);
         var jsonData = JSON.parse(aceEditor.current.editor.getValue());
         jsonData.explain = true;
         jsonData.from = 0;
@@ -226,6 +221,7 @@ function RankingTuningCard({dispatch, result, index}) {
         dispatch(setDocumentList(data)).then((result) => {
             if( result.payload.Total.value > 0 ) setPageNum(1);
             else setPageNum(0);
+            setProgress(false);
         })
     }
 
@@ -238,12 +234,13 @@ function RankingTuningCard({dispatch, result, index}) {
     }
 
     function handlePagination(pageNum) {
+        
         ids = 1;
         if(!isJson(aceEditor.current.editor.getValue())){
             setAlert(true);
             return;
         }
-
+        setProgress(true);
         var jsonData = JSON.parse(aceEditor.current.editor.getValue());
         jsonData.explain = true;
         jsonData.from = (pageNum - 1) * 10;
@@ -252,7 +249,9 @@ function RankingTuningCard({dispatch, result, index}) {
         var data = {};
         data.index = index;
         data.text = JSON.stringify(jsonData);
-        dispatch(setDocumentList(data));
+        dispatch(setDocumentList(data)).then(() => {
+            setProgress(false);
+        });
         setPageNum(pageNum)
     }
 
@@ -304,7 +303,9 @@ function RankingTuningCard({dispatch, result, index}) {
                             </Grid>
                             <Grid item xs="12" md="8" >
                                 <Box style={{overflow: "scroll", height: "600px", border: "1px solid silver"}} mx={3}>
-                                    <RankingTuningResults pageNum={pageNum} result={result} expand={expand} nodeToggle={nodeToggle}/>
+                                    <Zoom in={trigger}>
+                                        <RankingTuningResults pageNum={pageNum} result={result} expand={expand} nodeToggle={nodeToggle}/>
+                                    </Zoom>
                                 </Box>
                             </Grid>
                         </Grid>
@@ -313,9 +314,9 @@ function RankingTuningCard({dispatch, result, index}) {
                     <Grid container>
                             <Grid item xs={12} md={4}>
                                 <Box align="right" mx={3} mt={3}>
-                                    <Button variant="outlined" color="primary" onClick={handleSearchQuery}>검색</Button>
+                                    {progress? <CircularProgress /> : <Button variant="outlined" color="primary" onClick={handleSearchQuery}>검색</Button>}
                                 </Box>
-                                <Snackbar open={alert} autoHideDuration={10000} onClose={handleSnackBarClose}>
+                                <Snackbar open={alert} autoHideDuration={5000} onClose={handleSnackBarClose}>
                                     <MuiAlert elevation={6} variant="filled" severity="error">
                                         올바른 형식의 JSON이 아닙니다.
                                     </MuiAlert>

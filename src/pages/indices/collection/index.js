@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function Collection({dispatch, indexSuffixA, indexSuffixB, collectionList}) {
+function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionList}) {
     const history = useHistory();
     const classes = useStyles();
     const [openAddModal, setOpenAddModal] = useState(false)
@@ -151,12 +151,12 @@ function Collection({dispatch, indexSuffixA, indexSuffixB, collectionList}) {
             <Divider my={6}/>
 
             <Box align={'right'}>
-                <Link className={classes.link}
+                {authUser.role.index ? <Link className={classes.link}
                       onClick={toggleOpenAddModal}
                       color={"primary"}
                 >
                     컬렉션 생성
-                </Link>
+                </Link> : <></>}
             </Box>
 
             <br/>
@@ -321,4 +321,8 @@ function Collection({dispatch, indexSuffixA, indexSuffixB, collectionList}) {
     );
 }
 
-export default connect(store => ({...store.collectionReducers, ...store.indexTemplateReducers}))(Collection);
+export default connect(store => ({
+    authUser: store.fastcatxReducers.authUser,
+    ...store.collectionReducers, 
+    ...store.indexTemplateReducers
+}))(Collection);

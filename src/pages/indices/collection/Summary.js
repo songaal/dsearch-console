@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function Summary({dispatch, collection}) {
+function Summary({dispatch, authUser, collection}) {
     const history = useHistory();
     const classes = useStyles();
     const [moreMenu, setMoreMenu] = useState(null)
@@ -61,6 +61,7 @@ function Summary({dispatch, collection}) {
     }
     const indexA = collection['indexA']
     const indexB = collection['indexB']
+    // authUser.role.index =false;
     return (
         <React.Fragment>
             <br/>
@@ -147,9 +148,10 @@ function Summary({dispatch, collection}) {
                                 open={Boolean(moreMenu)}
                                 onClose={toggleMoreMenu}
                             >
-                                <MenuItem onClick={handleDeleteCollection}>
+                                {authUser.role.index ? <MenuItem onClick={handleDeleteCollection}>
                                     컬렉션 삭제
-                                </MenuItem>
+                                </MenuItem> : <></>}
+                                
                             </Menu>
                         </Grid>
                     </Grid>
@@ -311,4 +313,7 @@ function Summary({dispatch, collection}) {
     );
 }
 
-export default connect(store => ({...store.collectionReducers}))(Summary);
+export default connect(store => ({
+    authUser: store.fastcatxReducers.authUser,
+    ...store.collectionReducers
+}))(Summary);

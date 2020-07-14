@@ -43,16 +43,16 @@ function createData(name, pattern) {
     return { name, pattern};
 }
 
-function Templates({dispatch, templates}) {
+function Templates({dispatch, authUser, templates}) {
     const classes = useStyles();
+    console.log(authUser)
 
     useEffect(() => {
         dispatch(setIndexTemplatesAction())
     }, [])
 
-
     const rows = templates.map(template => createData(template['name'], template['index_patterns']));
-
+    // authUser.role.index = false;
     return (
         <React.Fragment>
             <Helmet title="템플릿"/>
@@ -69,9 +69,9 @@ function Templates({dispatch, templates}) {
             <Divider my={6}/>
 
             <Box align={'right'}>
-                <Link href={"../indices/template"} color={"primary"} >
+                {authUser.role.index ? <Link href={"../indices/template"} color={"primary"} >
                     템플릿 생성
-                </Link>
+                </Link> : <></>}
             </Box>
 
             <br/>
@@ -97,17 +97,18 @@ function Templates({dispatch, templates}) {
                                 </TableCell>
                                 <TableCell align="center">{row.pattern}</TableCell>
                                 <TableCell align="center">
-                                    <Link href={`../indices/templates/${row.name}/edit`} color={"primary"}>수정</Link>
+                                    {authUser.role.index ? <Link href={`../indices/templates/${row.name}/edit`} color={"primary"}>수정</Link> :<></>}
                                 </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
             </TableContainer>
-
-
         </React.Fragment>
     );
 }
 
-export default connect(store => ({ ...store.indexTemplateReducers }) )(Templates)
+export default connect(store => ({ 
+    authUser: store.fastcatxReducers.authUser,
+    ...store.indexTemplateReducers 
+}))(Templates)

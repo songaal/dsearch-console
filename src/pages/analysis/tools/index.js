@@ -22,6 +22,7 @@ import {
 } from "@material-ui/core";
 
 import { spacing } from "@material-ui/system";
+import { CollectionsBookmarkOutlined } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -85,42 +86,48 @@ function DetailResult({resultDetail}){
             <TableCell>
                 <Typography variant="h4">1. {resultDetail.resutl[2].key}</Typography>
                     <br />
-                    {resultDetail.resutl[2].value.replace(/(<([^>]+)>)/ig,"")}
+                    <div dangerouslySetInnerHTML={ {__html: resultDetail.resutl[2].value} }></div>
+                    {/* {resultDetail.resutl[2].value.replace(/(<([^>]+)>)/ig,"")} */}
                 </TableCell>
         </TableRow>
         <TableRow hover>
             <TableCell>
                 <Typography variant="h4" >2. {resultDetail.resutl[3].key}</Typography>
                 <br />
-                {resultDetail.resutl[3].value.replace(/(<([^>]+)>)/ig,"")}
+                <div dangerouslySetInnerHTML={ {__html: resultDetail.resutl[3].value} }></div>
+                {/* {resultDetail.resutl[3].value.replace(/(<([^>]+)>)/ig,"")} */}
             </TableCell>
         </TableRow>
         <TableRow hover>
             <TableCell>
                 <Typography variant="h4">3. {resultDetail.resutl[4].key}</Typography>
                 <br />
-                {resultDetail.resutl[4].value.replace(/(<([^>]+)>)/ig,"")}
+                <div dangerouslySetInnerHTML={ {__html: resultDetail.resutl[4].value} }></div>
+                {/* {resultDetail.resutl[4].value.replace(/(<([^>]+)>)/ig,"")} */}
             </TableCell>
         </TableRow>
         <TableRow hover>
             <TableCell>
             <Typography variant="h4">4. {resultDetail.resutl[5].key}</Typography>
             <br />
-                {resultDetail.resutl[5].value.replace(/(<([^>]+)>)/ig,"")}
+                {/* {resultDetail.resutl[5].value.replace(/(<([^>]+)>)/ig,"")} */}
+                <div dangerouslySetInnerHTML={ {__html: resultDetail.resutl[5].value} }></div>
             </TableCell>
         </TableRow>
         <TableRow hover>
             <TableCell>
                 <Typography variant="h4">5. {resultDetail.resutl[6].key}</Typography>
                 <br />
-                {resultDetail.resutl[6].value.replace(/(<([^>]+)>)/ig,"")}
+                {/* {resultDetail.resutl[6].value.replace(/(<([^>]+)>)/ig,"")} */}
+                <div dangerouslySetInnerHTML={ {__html: resultDetail.resutl[6].value} }></div>
             </TableCell>
         </TableRow>
         <TableRow hover>
             <TableCell>
                 <Typography variant="h4">6. {resultDetail.resutl[7].key}</Typography>
                 <br />
-                {resultDetail.resutl[7].value.replace(/(<([^>]+)>)/ig,"")}
+                <div dangerouslySetInnerHTML={ {__html: resultDetail.resutl[7].value} }></div>
+                {/* {resultDetail.resutl[7].value.replace(/(<([^>]+)>)/ig,"")} */}
             </TableCell>
         </TableRow>
     </Table>
@@ -187,7 +194,6 @@ function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetai
             var analyzer = split[1].replace(' ', '');
             data.text = analyzer_contents.value;
             data.analyzer = analyzer
-            console.log(data);
             dispatch(actionAnalyzer(index, data));
         }else {
             var plugin = analyzer_select.innerHTML
@@ -196,7 +202,6 @@ function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetai
             data.detail = true;
             data.useForQuery = true;
             data.text = analyzer_contents.value;
-            console.log(data);
             dispatch(actionPlugin(plugin, data));
         }
     }

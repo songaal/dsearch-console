@@ -32,7 +32,7 @@ export const deleteJdbcSource = (id) => dispatch => client.call({
 }).then(response => dispatch({type: SET_JDBC_DELETE_RESULT, payload: response.data}))
 
 export const updateJdbcSource = (id, data) => dispatch => client.call({
-    uri: "/elasticsearch/.fastcatx_jdbc/_doc/" + id,
-    method: 'PUT',
+    uri: "/elasticsearch/.fastcatx_jdbc/_update/" + id,
+    method: 'POST',
     data: data
 }).then(response => dispatch({type: SET_JDBC_UPDATE_RESULT, payload: response.data}))
