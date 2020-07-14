@@ -9,7 +9,8 @@ let initState = {
     settings: {},
     mappings: {},
     indexState: {},
-    documents: {}
+    documents: {},
+    documentSourceResponse: {}
 };
 
 export default function reducer(state = initState, actions) {
@@ -67,6 +68,11 @@ export default function reducer(state = initState, actions) {
             return {
                 ...state,
                 documents: actions.payload
+            };
+        case types.SET_INDEX_DOCUMENT_SOURCE_RESPONSE:
+            return {
+                ...state,
+                documentSourceResponse: actions.payload
             };
         default:
             return state

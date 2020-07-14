@@ -50,6 +50,7 @@ export const setFastcatxSignOut = () => dispatch => client.call({
     dispatch({type: SET_FASTCATX_AUTH_USER, payload: {}})
     sessionStorage.removeItem(SET_FASTCATX_SERVER);
     sessionStorage.removeItem(SET_FASTCATX_AUTH_USER);
+    return response.data
 })
 
 export const editUserPassword = (id, updateUser) => dispatch => client.call({

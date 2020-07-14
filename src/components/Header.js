@@ -145,7 +145,7 @@ function ClusterMenu() {
     )
 }
 
-function UserMenu() {
+function UserMenu({ signOutClose = false }) {
     const dispatch = useDispatch()
     const authUser = useSelector(store => store.fastcatxReducers.authUser)
     const [anchorMenu, setAnchorMenu] = useState(null)
@@ -161,7 +161,26 @@ function UserMenu() {
 
     function signOut() {
         localStorage.removeItem(SET_FASTCATX_AUTH_USER)
-        dispatch(setFastcatxSignOut())
+        dispatch(setFastcatxSignOut()).then(response => {
+            if (signOutClose) {
+                try {
+                    opener.location.href="/"
+                } catch(error) {
+                    // ignore
+                }
+                window.close()
+            }
+        }).catch(error => {
+            console.error('error', error)
+            if (signOutClose) {
+                try {
+                    opener.location.href="/"
+                } catch(error) {
+                    // ignore
+                }
+                window.close()
+            }
+        })
     }
 
     return (
@@ -304,7 +323,7 @@ const DashBoardHeader = ({theme, onDrawerToggle}) => {
                                 <Home/>
                             </IconButton>
                             <ClusterMenu theme={theme}/>
-                            <UserMenu theme={theme}/>
+                            <UserMenu theme={theme} signOutClose={true}/>
                         </Grid>
                     </Grid>
                 </Toolbar>

@@ -1,7 +1,7 @@
 import Client from '~/Client'
 import {
     SET_INDEX,
-    SET_INDEX_ALIASES,
+    SET_INDEX_ALIASES, SET_INDEX_DOCUMENT_SOURCE_LIST, SET_INDEX_DOCUMENT_SOURCE_RESPONSE,
     SET_INDEX_DOCUMENTS,
     SET_INDEX_INFO_LIST,
     SET_INDEX_MAPPINGS,
@@ -98,3 +98,33 @@ export const setIndexDocumentsAction = ({index, pageNum, rowSize, id, analysis})
     type: SET_INDEX_DOCUMENTS,
     payload: response.data,
 })).catch(err => console.error(err))
+
+
+export const setIndexDocumentSourceListAction = ({index, from, size, id}) => dispatch => client.call({
+    uri: `/elasticsearch/${index}/_search`,
+    method: 'post',
+    data: id === undefined || id === null || id === "" ?
+        { from, size: 10000, "sort": [{ "_id": { "order": "desc" } }] }
+        :
+        { "query": { "match": { "_id": id } }, from, size: 10000, "sort": [{ "_id": { "order": "desc" } }] }
+}).then(response => {
+    dispatch({ type: SET_INDEX_DOCUMENT_SOURCE_RESPONSE, payload: response.data })
+    return response.data;
+})
+
+export const editIndexDocumentSourceAction = ({index, id, body}) => dispatch => client.call({
+    uri: `/elasticsearch/${index}/_doc/${id}`,
+    method: 'post',
+    data: body
+}).then(response => response.data)
+
+export const addIndexDocumentSourceAction = ({index, body}) => dispatch => client.call({
+    uri: `/elasticsearch/${index}/_doc`,
+    method: 'post',
+    data: body
+}).then(response => response.data)
+
+export const deleteIndexDocumentSourceAction = ({index, id}) => dispatch => client.call({
+    uri: `/elasticsearch/${index}/_doc/${id}`,
+    method: 'DELETE',
+}).then(response => response.data)
