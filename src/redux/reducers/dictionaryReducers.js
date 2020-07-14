@@ -1,9 +1,18 @@
 import * as types from '../constants';
+import { updateDictionary } from '../actions/dictionaryActions';
 
 let initState = {
+    
     activeIndex: 0,
     settings: [],
-    dataSet: {}
+    dataSet: {},
+    searchResult: {
+        result: [
+            {type: "SYSTEM", posTag: "N", prob:"0"}
+        ]
+    },
+    update: { },
+    summary: { }
 };
 
 export default function reducer(state = initState, actions) {
@@ -15,6 +24,11 @@ export default function reducer(state = initState, actions) {
             cloneDataSet[actions.dictionary] = actions.payload
             return { ...state, dataSet: cloneDataSet};
         }
+        case types.SET_DICTIONARY_SEARCH_LIST:
+            return {...state, searchResult: actions.payload}
+        case types.SET_DICTIONARY:
+            return {...state, update: actions.payload}
+        case types.SET_SUMMARY:                 return { ...state, summary: actions.payload }
         default: return state
     }
 }

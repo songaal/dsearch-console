@@ -1,7 +1,9 @@
-import React from "react";
-import {Box, Card, CardContent, Checkbox, IconButton, InputBase, TextField, Typography} from "@material-ui/core";
+import React, {useState, useEffect, useRef} from "react";
+import {Box, Card, CardContent, IconButton, InputBase,  Typography} from "@material-ui/core";
 import {Search} from "@material-ui/icons";
 import {makeStyles} from "@material-ui/core/styles";
+import { connect } from "react-redux";
+import {setSettings, searchDictionaries} from "../../../redux/actions/dictionaryActions";
 
 const useStyles = makeStyles((theme) => ({
     formControl: { minWidth: 150 },
@@ -14,8 +16,52 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function () {
+function SearchResultList({settings, result}){
+    return (
+        <> 
+            {/* 기초 사전 */}
+            {result.result.map((item) => {
+                if("SYSTEM" == item.type) return <li key={item.type}> {item.posTag} {" : "} {item.prob} </li>;
+                return <></>;
+            })}
+
+            {/* 사용자 사전 */}
+            {settings.map((setting) => {
+                var flag = true;
+                var str = "Not Found";
+                for(var i in result.result){
+                    if(setting.id == result.result[i].type){
+                        if(flag) { str = result.result[i].keyword; flag = false; }
+                        else str += ", " + result.result[i].keyword
+                    }
+                }
+                return <li key={setting.id}> {setting.name} {" : "} {str}</li>;
+            })}
+        </>
+    );
+}
+
+
+function DictionarySearch ({dispatch, settings, result}) {
     const classes = useStyles()
+
+    useEffect(() => {
+        dispatch(setSettings())
+    }, [])
+
+    const [showSearchInput, setShowSearchInput] = useState("")
+    const searchInput = useRef("");
+
+    const handleEnterPress = (event) => {
+        if (event.key === 'Enter'){
+            dispatch(searchDictionaries({index: ".fastcatx_dict" , word:searchInput.current.value}))
+            setShowSearchInput(searchInput.current.value);
+        }
+    }
+    const handleSearchIcon = (event) => {
+        dispatch(searchDictionaries({index: ".fastcatx_dict" , word:searchInput.current.value}))
+        setShowSearchInput(searchInput.current.value);
+    }
 
     return (
         <React.Fragment>
@@ -24,27 +70,33 @@ export default function () {
                 <CardContent>
                     <Box>
                         <InputBase
+                            inputRef={searchInput}
                             className={classes.input}
                             placeholder="검색"
+                            onKeyPress={handleEnterPress}
                         />
                         <IconButton type="submit"
                                     className={classes.iconButton}
                                     aria-label="search"
+                                    onClick={handleSearchIcon}
                         >
-                            <Search/>
+                            <Search />
                         </IconButton>
                     </Box>
                     <br/>
                     <Box>
-                        <Typography variant="h5">
-                            노트북
+                        <Typography variant="h4">
+                            {showSearchInput === "" ? "현재 입력된 내용이 없습니다." : showSearchInput}
                         </Typography>
                         <ul>
+                            <SearchResultList settings={settings} result={result} />
+                        </ul>
+                        {/* <ul>
                             <li>N[-5.0]</li>
                             <li>사용자사전: FOUND</li>
                             <li>유사어사전: notebook, laptop, 랩탑, 노트북용</li>
                             <li>카테고리키워드사전: FOUND</li>
-                        </ul>
+                        </ul> */}
                     </Box>
                 </CardContent>
             </Card>
@@ -53,3 +105,8 @@ export default function () {
         </React.Fragment>
     )
 }
+
+export default connect(store => ({ 
+    settings: store.dictionaryReducers.settings,
+    result: store.dictionaryReducers.searchResult
+}))(DictionarySearch)

@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
 import {
     Box,
     Card,
@@ -9,10 +10,78 @@ import {
     TableRow,
     TableCell,
     TableBody,
-    Checkbox
+    Checkbox, Snackbar
 } from "@material-ui/core";
+import MuiAlert from '@material-ui/lab/Alert';
+import {setSummary, applyDictionary} from "../../../redux/actions/dictionaryActions";
 
-export default function () {
+function SummaryTable({summary}){
+    if(summary.dictionaryInfo === undefined || summary.dictionaryTimes === undefined || summary.dictionarySettings === undefined) return <></>;
+
+    var infoDict = JSON.parse(summary.dictionaryInfo).dictionary;
+    var times = summary.dictionaryTimes.hits.hits;
+    var settings = summary.dictionarySettings;
+    var tableInfo = [];
+
+    for(var i in infoDict){
+        if(infoDict[i].type == "SYSTEM"){
+            var info = infoDict[i];
+            info.name = "시스템 사전";
+            tableInfo.push(info);
+            break;
+        }
+    }
+
+    for(var i in settings){
+        var info = settings[i];
+        for(var j in infoDict){
+            if(settings[i].id == infoDict[j].type){
+                info.count = infoDict[j].count;
+                info.words = infoDict[j].words;
+                info.indexCount = infoDict[j].indexCount;
+                break;
+            }
+        }
+
+        for(var j in times){
+            if(settings[i].id == times[j].sourceAsMap.id){
+                if(times[j].sourceAsMap.updatedTime === undefined && times[j].sourceAsMap.appliedTime === undefined) continue;
+                info.updatedTime = new Date(times[j].sourceAsMap.updatedTime).toLocaleString();
+                info.appliedTime = new Date(times[j].sourceAsMap.appliedTime).toLocaleString();
+                break;
+            }
+        }
+        tableInfo.push(info);
+    }
+    return tableInfo.map((info) => { return  <TableRow key={info.id}>
+        <TableCell><Checkbox /></TableCell>
+        <TableCell>{info.name}</TableCell>
+        <TableCell>{info.type}</TableCell>
+        <TableCell>{info.indexCount ? info.indexCount : "-"}</TableCell>
+        <TableCell> {info.updatedTime ? info.updatedTime : "-"} </TableCell>
+        <TableCell>{info.count}</TableCell>
+        <TableCell> {info.appliedTime ? info.appliedTime : "-"} </TableCell>
+        <TableCell> {info.tokenType ? info.tokenType : "-"} </TableCell>
+        <TableCell> {info.ignoreCase ? info.ignoreCase ? "Y": "N" : "-"} </TableCell>
+        </TableRow> });
+}
+
+
+ function Summary({dispatch, summary}) {
+     const [applyDict, setApplyDict ] = useState(false);
+    useEffect(() => {
+        dispatch(setSummary())
+    }, [])
+
+    const clickApplyDictionary = (event) => {
+        var data = {};
+        data.index=".fastcatx_dict"
+        data.exportFile= true
+        data.distribute= true
+        dispatch(applyDictionary(data))
+        setApplyDict(true);
+    }
+        
     return (
         <React.Fragment>
 
@@ -21,9 +90,12 @@ export default function () {
             <Card>
                 <CardContent>
                     <Box>
-                        <Button variant={"contained"} color={"primary"}>사전적용</Button>
+                        <Button variant={"contained"} color={"primary"} onClick={clickApplyDictionary}>사전적용</Button>
                     </Box>
                     <Box>
+                        <Snackbar open={applyDict} autoHideDuration={5000} onClose={() => { setApplyDict(false) }}>
+                            <MuiAlert elevation={6} variant="filled" severity="info"> 사전 적용 성공 </MuiAlert>
+                        </Snackbar>
                         <Table>
                             <TableHead>
                                 <TableRow>
@@ -39,127 +111,7 @@ export default function () {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                <TableRow>
-                                    <TableCell><Checkbox /></TableCell>
-                                    <TableCell>기초사전</TableCell>
-                                    <TableCell>SYSTEM</TableCell>
-                                    <TableCell>581454</TableCell>
-                                    <TableCell> - </TableCell>
-                                    <TableCell>581454</TableCell>
-                                    <TableCell> - </TableCell>
-                                    <TableCell>NONE</TableCell>
-                                    <TableCell>Y</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell><Checkbox /></TableCell>
-                                    <TableCell>사용자사전</TableCell>
-                                    <TableCell>SYSTEM</TableCell>
-                                    <TableCell>581454</TableCell>
-                                    <TableCell> - </TableCell>
-                                    <TableCell>581454</TableCell>
-                                    <TableCell> - </TableCell>
-                                    <TableCell>NONE</TableCell>
-                                    <TableCell>Y</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell><Checkbox /></TableCell>
-                                    <TableCell>유사어사전</TableCell>
-                                    <TableCell>SYSTEM</TableCell>
-                                    <TableCell>581454</TableCell>
-                                    <TableCell> - </TableCell>
-                                    <TableCell>581454</TableCell>
-                                    <TableCell> - </TableCell>
-                                    <TableCell>NONE</TableCell>
-                                    <TableCell>Y</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell><Checkbox /></TableCell>
-                                    <TableCell>불용어사전</TableCell>
-                                    <TableCell>SYSTEM</TableCell>
-                                    <TableCell>581454</TableCell>
-                                    <TableCell> - </TableCell>
-                                    <TableCell>581454</TableCell>
-                                    <TableCell> - </TableCell>
-                                    <TableCell>NONE</TableCell>
-                                    <TableCell>Y</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell><Checkbox /></TableCell>
-                                    <TableCell>복합명사사전</TableCell>
-                                    <TableCell>SYSTEM</TableCell>
-                                    <TableCell>581454</TableCell>
-                                    <TableCell> - </TableCell>
-                                    <TableCell>581454</TableCell>
-                                    <TableCell> - </TableCell>
-                                    <TableCell>NONE</TableCell>
-                                    <TableCell>Y</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell><Checkbox /></TableCell>
-                                    <TableCell>단위명사전</TableCell>
-                                    <TableCell>SYSTEM</TableCell>
-                                    <TableCell>581454</TableCell>
-                                    <TableCell> - </TableCell>
-                                    <TableCell>581454</TableCell>
-                                    <TableCell> - </TableCell>
-                                    <TableCell>NONE</TableCell>
-                                    <TableCell>Y</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell><Checkbox /></TableCell>
-                                    <TableCell>단위명동의어사전</TableCell>
-                                    <TableCell>SYSTEM</TableCell>
-                                    <TableCell>581454</TableCell>
-                                    <TableCell> - </TableCell>
-                                    <TableCell>581454</TableCell>
-                                    <TableCell> - </TableCell>
-                                    <TableCell>NONE</TableCell>
-                                    <TableCell>Y</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell><Checkbox /></TableCell>
-                                    <TableCell>제조사명사전</TableCell>
-                                    <TableCell>SYSTEM</TableCell>
-                                    <TableCell>581454</TableCell>
-                                    <TableCell> - </TableCell>
-                                    <TableCell>581454</TableCell>
-                                    <TableCell> - </TableCell>
-                                    <TableCell>NONE</TableCell>
-                                    <TableCell>Y</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell><Checkbox /></TableCell>
-                                    <TableCell>브랜드명사전</TableCell>
-                                    <TableCell>SYSTEM</TableCell>
-                                    <TableCell>581454</TableCell>
-                                    <TableCell> - </TableCell>
-                                    <TableCell>581454</TableCell>
-                                    <TableCell> - </TableCell>
-                                    <TableCell>NONE</TableCell>
-                                    <TableCell>Y</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell><Checkbox /></TableCell>
-                                    <TableCell>카테고리키워드사전</TableCell>
-                                    <TableCell>SYSTEM</TableCell>
-                                    <TableCell>581454</TableCell>
-                                    <TableCell> - </TableCell>
-                                    <TableCell>581454</TableCell>
-                                    <TableCell> - </TableCell>
-                                    <TableCell>NONE</TableCell>
-                                    <TableCell>Y</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell><Checkbox /></TableCell>
-                                    <TableCell>영단어사전</TableCell>
-                                    <TableCell>SYSTEM</TableCell>
-                                    <TableCell>581454</TableCell>
-                                    <TableCell> - </TableCell>
-                                    <TableCell>581454</TableCell>
-                                    <TableCell> - </TableCell>
-                                    <TableCell>NONE</TableCell>
-                                    <TableCell>Y</TableCell>
-                                </TableRow>
+                                <SummaryTable summary={summary} />
                             </TableBody>
                         </Table>
                     </Box>
@@ -168,3 +120,12 @@ export default function () {
         </React.Fragment>
     )
 }
+
+
+export default connect(store => ({ 
+    summary: store.dictionaryReducers.summary
+    // settings: store.dictionaryReducers.settings,
+    // infoDict: store.dictionaryReducers.infoDict
+    // indexSettings :  store.dictionaryReducers.indexSettings,
+    // date : store.dictionaryReducers.date
+}))(Summary)

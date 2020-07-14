@@ -4,6 +4,7 @@ import {NavLink as RouterNavLink} from "react-router-dom";
 import { connect } from "react-redux";
 import Helmet from 'react-helmet';
 import utils from "../../../utils";
+import MuiAlert from '@material-ui/lab/Alert';
 import {
     Box, Button,
     Dialog, DialogTitle,
@@ -18,15 +19,14 @@ import {
     Typography,
     TextField as MuiTextField,
     DialogContent,
-    DialogActions
+    DialogActions,
+    Snackbar
 } from "@material-ui/core";
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import {spacing} from "@material-ui/system";
 import { createJDBCIndex, setJDBCList, setJDBCAccessTest, addJdbcIndex, deleteJdbcSource, updateJdbcSource } from '@actions/jdbcActions'
 
-
 const drivers = ["Altibase", "Oracle", "Mysql"];
-
 
 const NavLink = React.forwardRef((props, ref) => (
     <RouterNavLink innerRef={ref} {...props} />
@@ -112,7 +112,6 @@ function JdbcTable({dispatch, JdbcList, JdbcAddResult, JdbcDeleteResult}){
     }
 
     const handleDeleteJdbcSource = (event) => {
-        /* To Do : 삭제 함수 */
         var JdbcSource = JdbcList.hits.hits[jdbcListIndex];
         console.log(JdbcSource._id)
         dispatch(deleteJdbcSource(JdbcSource._id));
@@ -279,17 +278,21 @@ function JdbcSource({jdbcId, jdbcName, jdbcDriver, jdbcAddr, jdbcPort, jdbcDB, j
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>URL</Typography>
-                <TextField id="jdbcSourceURL" size="small" placeholder="jdbc:mysql://localhost:3306/" fullWidth variant="outlined" inputRef={jdbcURL}/>
+                <TextField id="jdbcSourceURL" size="small" placeholder="jdbc:mysql://" fullWidth variant="outlined" inputRef={jdbcURL}/>
             </Box>
         </Box>
     );
 }
 
+function AccessTestSuccess({JdbcAccessTest}){
+    return <Snackbar open={JdbcAccessTest.message} autoHideDuration={5000} onClose={() => {JdbcAccessTest.message = false;}}>
+                <MuiAlert elevation={6} variant="filled" severity="info"> 연결테스트 성공 </MuiAlert>
+            </Snackbar>
+}
 
 function JdbcCard({dispatch, JdbcList, JdbcAccessTest, JdbcAddResult, JdbcDeleteResult}) {
     const [jdbcSourceDialogOpen, setjdbcSourceDialogOpenAction] = useState(false)
     const [jdbcProvider, setJdbcProvider] = useState("");
-    const [jdbSource, setJdbcSource] = useState({})
 
     var jdbcId = useRef("");
     var jdbcName = useRef("");
@@ -315,7 +318,8 @@ function JdbcCard({dispatch, JdbcList, JdbcAccessTest, JdbcAddResult, JdbcDelete
         setjdbcSourceDialogOpenAction(true)
     };
 
-    const handleAccessTest = (event) => {
+    const accessTest = (event) => {
+        
         if( jdbcId.current.value.length === 0 
             || jdbcName.current.value.length === 0
             || jdbcDriver.current.value.length === 0
@@ -338,16 +342,22 @@ function JdbcCard({dispatch, JdbcList, JdbcAccessTest, JdbcAddResult, JdbcDelete
         jdbcdSourceObj.params = jdbcParams.current.value;
         jdbcdSourceObj.url = jdbcURL.current.value;
 
-        console.log(jdbcdSourceObj);
         dispatch(setJDBCAccessTest(jdbcdSourceObj));
-        setJdbcSource(jdbcdSourceObj)
     }
 
-    const handleJdbcSouceAdd = (event) => {
-        if(!JdbcAccessTest.message){
-            return;
-        }
 
+    /* 연결테스트를 하지 않아도 추가할 수 있어야 함*/
+    const addJdbcSouce = (event) => {
+        if( jdbcId.current.value.length === 0 
+            || jdbcName.current.value.length === 0
+            || jdbcDriver.current.value.length === 0
+            || jdbcAddr.current.value.length === 0
+            || jdbcPort.current.value.length === 0
+            || jdbcUser.current.value.length === 0
+            || jdbcPassword.current.value.length === 0
+            || jdbcURL.current.value.length === 0) {
+                return;
+        }
         var addJdbcSource = {};
         addJdbcSource.id = jdbcId.current.value
         addJdbcSource.name =  jdbcName.current.value
@@ -361,19 +371,8 @@ function JdbcCard({dispatch, JdbcList, JdbcAccessTest, JdbcAddResult, JdbcDelete
         addJdbcSource.params = jdbcParams.current.value;
         addJdbcSource.url = jdbcURL.current.value;
         
-        /* 추가 하기 전 연결테스트 내용과 같은지 확인 */
-        var keyList = Object.keys(jdbSource);
-        var flag = true;
-        for(var key of keyList){
-            if(jdbSource[key]  != addJdbcSource[key]){
-                flag = false;
-                break;
-            }
-        }
-        if(flag) {
-            dispatch(addJdbcIndex(addJdbcSource));
-            utils.sleep(1000).then(()=>{dispatch(setJDBCList());});
-        }
+        dispatch(addJdbcIndex(addJdbcSource));
+        utils.sleep(1000).then(()=>{dispatch(setJDBCList());});
         setjdbcSourceDialogOpenAction(false);
     }
 
@@ -382,12 +381,11 @@ function JdbcCard({dispatch, JdbcList, JdbcAccessTest, JdbcAddResult, JdbcDelete
             <CardContent>
                 <Link href="#" onClick={handleSourceDialogOpen}> <Box display="flex" alignItems="center" justifyContent="left"><AddCircleOutlineIcon /> <Typography>  JDBC 추가  </Typography> </Box></Link> 
                 <JdbcTable dispatch={dispatch} JdbcList={JdbcList} JdbcAccessTest={JdbcAccessTest} JdbcAddResult={JdbcAddResult}  JdbcDeleteResult={JdbcDeleteResult}></JdbcTable>
-                
                 <Dialog open={jdbcSourceDialogOpen} onClose={handleSourceDialogClose} >
                     <DialogTitle id="dialog-title">JDBC 소스</DialogTitle>
                     <DialogContent style={{width:"100%"}}>
                         <label>설정</label>
-                        <Divider></Divider>
+                        <Divider />
                         <JdbcSource 
                             jdbcId={jdbcId}
                             jdbcName={jdbcName}
@@ -401,11 +399,12 @@ function JdbcCard({dispatch, JdbcList, JdbcAccessTest, JdbcAddResult, JdbcDelete
                             jdbcParams = {jdbcParams}
                             jdbcURL = {jdbcURL}
                          />
+                        <AccessTestSuccess JdbcAccessTest={JdbcAccessTest} />
                     </DialogContent>
                     <DialogActions>
                         <Button variant="contained" color="default" onClick={handleSourceDialogClose}>닫기</Button>
-                        <Button variant="outlined" onClick={handleAccessTest}>연결테스트</Button>
-                        <Button disabled={!JdbcAccessTest.message} variant="contained" color="primary" onClick={handleJdbcSouceAdd}>추가</Button>
+                        <Button variant="outlined" onClick={accessTest}>연결테스트</Button>
+                        <Button variant="contained" color="primary" onClick={addJdbcSouce}>추가</Button>
                     </DialogActions>
                 </Dialog>
             </CardContent>
@@ -428,9 +427,7 @@ function JDBC({dispatch, JdbcList, JdbcAccessTest, JdbcAddResult, JdbcDeleteResu
             <Typography variant="h3" gutterBottom display="inline">
                 JDBC
             </Typography>
-
             <Divider my={6}/>
-
             <Grid container spacing={6}>
                 <Grid item xs={12}>
                     <JdbcCard dispatch={dispatch} JdbcList={JdbcList} JdbcAccessTest={JdbcAccessTest} JdbcAddResult={JdbcAddResult}  JdbcDeleteResult={JdbcDeleteResult}/>
@@ -444,6 +441,6 @@ export default connect(store => ({
     JdbcList: store.jdbcReducers.JdbcList,
     JdbcAccessTest: store.jdbcReducers.JdbcAccessTest,
     JdbcDeleteResult: store.jdbcReducers.JdbcDeleteResult,
-    JdbcAddResult: store.jdbcReducers.JdbcAddResult,
+    JdbcAddResult: store.jdbcReducers.JdbcAddResult
 }))(JDBC);
 
