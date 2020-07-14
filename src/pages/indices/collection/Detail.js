@@ -17,6 +17,7 @@ import {makeStyles} from '@material-ui/core/styles';
 import {positions, spacing} from "@material-ui/system";
 import AntTabs from "~/components/AntTabs"
 import {setCollection, setCollectionIndexSuffix} from "../../../redux/actions/collectionActions";
+import {setJDBCList} from "../../../redux/actions/jdbcActions";
 
 const Divider = styled(MuiDivider)(spacing, positions);
 const Typography = styled(MuiTypography)(spacing, positions);
@@ -52,10 +53,16 @@ function Detail({dispatch, collection}) {
         const collectionId = location.pathname.substring(location.pathname.lastIndexOf("/") + 1)
         dispatch(setCollection(collectionId))
         dispatch(setCollectionIndexSuffix())
+        dispatch(setJDBCList())
     }, [])
 
     if (Object.keys(collection).length === 0) {
         return null
+    }
+
+    function handleChange() {
+        const collectionId = location.pathname.substring(location.pathname.lastIndexOf("/") + 1)
+        dispatch(setCollection(collectionId))
     }
 
     return (
@@ -76,7 +83,7 @@ function Detail({dispatch, collection}) {
 
             <Grid container spacing={6}>
                 <Grid item xs={12}>
-                    <AntTabs tabs={tabs} />
+                    <AntTabs tabs={tabs} tabIndex={0} onChange={handleChange}/>
                 </Grid>
             </Grid>
 

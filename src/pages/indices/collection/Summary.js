@@ -59,10 +59,8 @@ function Summary({dispatch, collection}) {
             console.log(error)
         })
     }
-
     const indexA = collection['indexA']
     const indexB = collection['indexB']
-    console.log(collection, indexA, indexB, Object.keys(indexB['aliases']||{}).find(o => o === collection['baseId']))
     return (
         <React.Fragment>
             <br/>
@@ -91,12 +89,12 @@ function Summary({dispatch, collection}) {
                                     <b>인덱스 템플릿</b>
                                 </Grid>
                                 <Grid item xs={9}>
-                                    <Link style={{cursor: "pointer"}}
+                                    <Link style={{cursor: "pointer", marginLeft: "5px", marginRight: "5px"}}
                                           onClick={() => {history.push(`../templates/${collection['indexA']['index']}`)}}
                                     >
                                         {collection['indexA']['index']}
                                     </Link>,
-                                    <Link style={{cursor: "pointer"}}
+                                    <Link style={{cursor: "pointer", marginLeft: "5px", marginRight: "5px"}}
                                           onClick={() => {history.push(`../templates/${collection['indexB']['index']}`)}}
                                     >
                                         {collection['indexB']['index']}
@@ -108,7 +106,10 @@ function Summary({dispatch, collection}) {
                                     <b>인덱스 패턴</b>
                                 </Grid>
                                 <Grid item xs={9}>
-                                    <Link style={{cursor: "pointer", display: collection['indexA']['uuid'] ? "inline" : "none"}}
+                                    <Link mx={1} style={{cursor: "pointer",
+                                        display: collection['indexA']['uuid'] ? "inline" : "none",
+                                        marginLeft: "5px", marginRight: "5px"
+                                    }}
                                           onClick={() => {history.push(`../indices/${collection['indexA']['uuid']}`)}}
                                     >
                                         {collection['indexA']['index']}
@@ -118,7 +119,10 @@ function Summary({dispatch, collection}) {
                                         {collection['indexA']['index']}
                                     </Box>
                                     ,
-                                    <Link style={{display: collection['indexB']['uuid'] ? "inline" : "none"}}
+                                    <Link mx={1} style={{cursor: "pointer",
+                                        display: collection['indexB']['uuid'] ? "inline" : "none",
+                                        marginLeft: "5px", marginRight: "5px"
+                                    }}
                                           onClick={() => {history.push(`../indices/${collection['indexB']['uuid']}`)}}
                                     >
                                         {collection['indexB']['index']}

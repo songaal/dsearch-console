@@ -334,11 +334,14 @@ function Cluster({ dispatch, clusterList, authUser }) {
 
     const [mode, setMode] = useState("ADD")
 
+    const [isProcess, setProcess] = useState(false)
+
     useEffect(() => {
         dispatch(setClusterList())
     }, [])
 
     function toggleOpenAddModal() {
+        setProcess(false)
         setMode("ADD")
         setNameError(false); setHostError(false); setPortError(false)
         setUsernameError(false); setPasswordError(false)
@@ -387,6 +390,7 @@ function Cluster({ dispatch, clusterList, authUser }) {
         return true
     }
     function handleAddClusterProcess() {
+        setProcess(true)
         resetError()
         if(!requireValidation()) {
             return false
@@ -397,9 +401,11 @@ function Cluster({ dispatch, clusterList, authUser }) {
             username, password,
             kibana, theme
         })).then(cluster => {
+            setProcess(false)
             dispatch(setClusterList())
             toggleOpenAddModal()
         }).catch(error => {
+            setProcess(false)
             console.log(error)
             setModalMessage(error.message||"error")
             alert("실패")
@@ -654,7 +660,7 @@ function Cluster({ dispatch, clusterList, authUser }) {
                     <Box display={mode === "ADD" ? "block" : "none"}>
                         <Button color="primary"
                                 variant="contained"
-                                disabled={!connTest}
+                                disabled={!connTest || isProcess}
                                 onClick={handleAddClusterProcess}
                         >
                             추가

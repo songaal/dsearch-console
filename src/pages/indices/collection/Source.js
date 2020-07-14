@@ -1,21 +1,25 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
+import {useHistory} from "react-router-dom";
 import styled from "styled-components";
-import Helmet from 'react-helmet';
 
+import ButtonGroup from '@material-ui/core/ButtonGroup';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import {
     Box as MuiBox,
     Button as MuiButton,
-    Card as MuiCard, CardContent,
+    Card as MuiCard,
+    CardContent,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
     Divider as MuiDivider,
     Fade,
-    Grid as MuiGrid,
+    Grid as MuiGrid, Grow,
     Link,
     Menu,
-    MenuItem,
+    MenuItem, MenuList,
     Paper,
     Popper,
     Select,
@@ -23,16 +27,20 @@ import {
     Table,
     TableBody,
     TableCell,
-    TableRow,
+    TableRow, TextareaAutosize,
     TextField,
     Typography as MuiTypography,
 } from "@material-ui/core";
 import {makeStyles} from '@material-ui/core/styles';
 import {positions, spacing} from "@material-ui/system";
-import AntTabs from "~/components/AntTabs"
-import SearchIcon from "@material-ui/icons/Search";
 import {ArrowDropDown} from "@material-ui/icons";
 import {connect} from "react-redux";
+import {
+    editCollectionScheduleAction,
+    editCollectionSourceAction,
+    setCollection
+} from "../../../redux/actions/collectionActions";
+
 const Divider = styled(MuiDivider)(spacing, positions);
 const Typography = styled(MuiTypography)(spacing, positions);
 const Box = styled(MuiBox)(spacing, positions);
@@ -57,7 +65,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function Source({dispatch, collection}) {
+function Source({dispatch, collection, JdbcList}) {
+    const history = useHistory();
     const classes = useStyles();
     const [moreMenu, setMoreMenu] = useState(null)
     const [editModal, setEditModal] = useState(null)
@@ -66,23 +75,141 @@ function Source({dispatch, collection}) {
     const [open, setOpen] = React.useState(null);
     const [placement, setPlacement] = React.useState();
 
-    function toggleMoreMenu(event) {
-        setMoreMenu(moreMenu === null ? event.currentTarget : null)
-    }
+    const [sourceName, setSourceName] = useState("")
+    const [launcher, setLauncher] = useState("")
+    const [launcherYaml, setLauncherYaml] = useState("")
+    const [host, setHost] = useState("")
+    const [port, setPort] = useState("")
+    const [jdbcId, setJdbcId] = useState("")
+    const [cron, setCron] = useState("")
+
+    const [invalid, setInvalid] = useState({})
+
+    const [actionOpen, setActionOpen] = React.useState(false);
+    const actionAnchorRef = React.useRef(null);
+    const [isScheduled, setSchedule] = useState(false)
+
+    useEffect(() => {
+        setInvalid({})
+        if (collection['sourceName'] === undefined || collection['sourceName'] === null || collection['sourceName'] === "") {
+            setMode("FORCE_EDIT");
+        } else {
+            setSourceName(collection['sourceName']);
+            setLauncher((collection['launcher']||{})['path']||"");
+            setLauncherYaml((collection['launcher']||{})['yaml']||"");
+            setHost((collection['launcher']||{})['host']||"");
+            setPort((collection['launcher']||{})['port']||"");
+            setJdbcId(collection['jdbcId']);
+            setCron(collection['cron']);
+            setSchedule(Boolean(collection['scheduled']));
+        }
+    }, [])
+
+    // function toggleMoreMenu(event) {
+    //     setMoreMenu(moreMenu === null ? event.currentTarget : null)
+    // }
+
     function toggleEditModal(event) {
         setEditModal(editModal === null ? event.currentTarget : null)
     }
+
     const handleClick = (newPlacement) => (event) => {
         setAnchorEl(event.currentTarget);
         setOpen((prev) => placement !== newPlacement || !prev);
         setPlacement(newPlacement);
     }
 
+    function handleSaveProcess() {
+        setInvalid({})
+        let invalidCheck = {}
+        if (sourceName.trim() === "") {
+            invalidCheck['sourceName'] = true
+        }
+        if (launcher.trim() === "") {
+            invalidCheck['launcher'] = true
+        }
+        if (host.trim() === "" || !/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/gi.test(host)) {
+            invalidCheck['host'] = true
+        }
+        if (port === "") {
+            invalidCheck['port'] = true
+        }
+        if (jdbcId === "") {
+            invalidCheck['jdbcId'] = true
+        }
+        if (cron === "" || !/(@(annually|yearly|monthly|weekly|daily|hourly|reboot))|(@every (\d+(ns|us|µs|ms|s|m|h))+)|((((\d+,)+\d+|(\d+(\/|-)\d+)|\d+|\*) ?){5,7})/gi.test(cron)) {
+            invalidCheck['cron'] = true
+        }
+
+        if (Object.keys(invalidCheck).length > 0) {
+            setInvalid(invalidCheck)
+            return false
+        }
+
+        dispatch(editCollectionSourceAction(collection['id'], {
+            sourceName,
+            cron,
+            jdbcId,
+            launcher: {
+                path: launcher,
+                yaml: launcherYaml,
+                host,
+                port,
+            }
+        })).then(response => {
+            dispatch(setCollection(collection['id']))
+            setMode("VIEW")
+        }).catch(error => {
+            console.log(error)
+            alert(error)
+        })
+    }
 
 
-    console.log('collection', collection)
 
+    const handleMenuItemClick = (event, index) => {
+        setActionOpen(false);
+    };
+    const handleToggle = () => {
+        setActionOpen((prevOpen) => !prevOpen);
+    };
+    const handleClose = (event) => {
+        if (actionAnchorRef.current && actionAnchorRef.current.contains(event.target)) {
+            return;
+        }
 
+        setActionOpen(false);
+    };
+
+    function handleEditSchedule(event) {
+        const tmpSchedule = !isScheduled
+        setSchedule(tmpSchedule)
+        dispatch(editCollectionScheduleAction(collection['id'], tmpSchedule)).then(response => {
+            setSchedule(tmpSchedule)
+        }).catch(error => {
+            setSchedule(!tmpSchedule)
+        })
+    }
+
+    const jdbcHitList = JdbcList['hits']['hits']
+    if (jdbcHitList.length === 0) {
+        return (
+            <React.Fragment>
+                <br/><br/>
+                <Box>
+                    JDBC 등록 후 진행해주세요.
+                    <Button variant={"text"}
+                            color={"primary"}
+                            onClick={() => history.push("../jdbc")}
+                    >
+                        JDBC 이동하기.
+                    </Button>
+                </Box>
+            </React.Fragment>
+        )
+    }
+
+    const options = ['연속실행', '색인실행', '전파실행', '교체실행'];
 
     return (
         <React.Fragment>
@@ -99,48 +226,64 @@ function Source({dispatch, collection}) {
                                         <Box style={{fontWeight: "bold"}}>스케쥴</Box>
                                     </Grid>
                                     <Grid item xs={9}>
-                                        <Switch />
+                                        <Switch checked={isScheduled}
+                                                onChange={handleEditSchedule}
+                                        />
                                     </Grid>
                                 </Grid>
 
                                 <Grid container my={3}>
                                     <Grid item xs={3} mt={2}>
                                         <b>상태</b>
-                                        <Box>대기</Box>
                                     </Grid>
                                     {/*<Grid item xs={2} mt={2}>*/}
                                     {/*    */}
                                     {/*</Grid>*/}
                                     <Grid item xs={9}>
-                                        <Button variant={"outlined"}
-                                                onClick={toggleMoreMenu}
-                                        >
-                                            실행
-                                            <ArrowDropDown/>
-                                        </Button>
-                                        <Menu
-                                            anchorEl={moreMenu}
-                                            open={Boolean(moreMenu)}
-                                            onClose={toggleMoreMenu}
-                                        >
-                                            <MenuItem onClick={toggleMoreMenu}>
-                                                연속실행
-                                            </MenuItem>
-                                            <MenuItem onClick={toggleMoreMenu}>
-                                                1.색인실행
-                                            </MenuItem>
-                                            <MenuItem onClick={toggleMoreMenu}>
-                                                2.전파실행
-                                            </MenuItem>
-                                            <MenuItem onClick={toggleMoreMenu}>
-                                                3.교체실행
-                                            </MenuItem>
-                                        </Menu>
+
+                                        <ButtonGroup variant="contained" color="primary" ref={actionAnchorRef}>
+                                            {/*<Button >{options[selectedIndex]}</Button>*/}
+                                            <Button disabled={true} style={{minWidth: "100px", color: "black"}}> 대기 </Button>
+                                            <Button
+                                                color="primary"
+                                                size="small"
+                                                onClick={handleToggle}
+                                            >
+                                                <ArrowDropDownIcon/>
+                                            </Button>
+                                        </ButtonGroup>
+                                        <Popper open={actionOpen} anchorEl={actionAnchorRef.current} role={undefined}
+                                                transition disablePortal>
+                                            {({TransitionProps, placement}) => (
+                                                <Grow
+                                                    {...TransitionProps}
+                                                    style={{
+                                                        transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
+                                                    }}
+                                                >
+                                                    <Paper>
+                                                        <ClickAwayListener onClickAway={handleClose}>
+                                                            <MenuList id="split-button-menu">
+                                                                {options.map((option, index) => (
+                                                                    <MenuItem
+                                                                        key={option}
+                                                                        onClick={(event) => handleMenuItemClick(event, index)}
+                                                                    >
+                                                                        {option}
+                                                                    </MenuItem>
+                                                                ))}
+                                                            </MenuList>
+                                                        </ClickAwayListener>
+                                                    </Paper>
+                                                </Grow>
+                                            )}
+                                        </Popper>
+
                                     </Grid>
                                 </Grid>
                             </Grid>
                             <Grid item xs={2} align={"right"}>
-                                <Button variant={"outlined"} onClick={() => setMode("EDIT")}>
+                                <Button mx={1} variant={"outlined"} onClick={() => setMode("EDIT")}>
                                     수정
                                 </Button>
                             </Grid>
@@ -153,23 +296,39 @@ function Source({dispatch, collection}) {
                                         <TableBody>
                                             <TableRow>
                                                 <TableCell variant={"head"} component={"th"}>런처</TableCell>
-                                                <TableCell>dbIndexer.jar
-                                                    <Link style={{cursor: "pointer"}}
+                                                <TableCell>
+                                                    {(collection['launcher'] || {})['path']}
+                                                    <Link style={{cursor: "pointer", marginLeft: "5px"}}
                                                           onClick={toggleEditModal}
                                                     >수집설정</Link>
                                                 </TableCell>
                                             </TableRow>
                                             <TableRow>
+                                                <TableCell variant={"head"} component={"th"}>실행호스트</TableCell>
+                                                <TableCell>{(collection['launcher'] || {})['host']}</TableCell>
+                                            </TableRow>
+                                            <TableRow>
                                                 <TableCell variant={"head"} component={"th"}>실행포트</TableCell>
-                                                <TableCell>30100</TableCell>
+                                                <TableCell>{(collection['launcher'] || {})['port'] === 0 ? "" : (collection['launcher'] || {})['port']}</TableCell>
                                             </TableRow>
                                             <TableRow>
                                                 <TableCell variant={"head"} component={"th"}>JDBC</TableCell>
-                                                <TableCell>market-dev</TableCell>
+                                                <TableCell>
+                                                    {
+                                                        jdbcHitList.filter(jdbcObj => collection['jdbcId'] === jdbcObj['_id'])
+                                                            .map(jdbcObj => {
+                                                                return (
+                                                                    <React.Fragment key={jdbcObj['_source']['name']}>
+                                                                        {jdbcObj['_source']['name']}
+                                                                    </React.Fragment>
+                                                                )
+                                                            })
+                                                    }
+                                                </TableCell>
                                             </TableRow>
                                             <TableRow>
                                                 <TableCell variant={"head"} component={"th"}>크론주기</TableCell>
-                                                <TableCell>0분 5시 *일 *월 *요일</TableCell>
+                                                <TableCell> {collection['cron']} </TableCell>
                                             </TableRow>
                                         </TableBody>
                                     </Table>
@@ -177,15 +336,22 @@ function Source({dispatch, collection}) {
                             </Grid>
                         </Grid>
                     </Box>
-                    <Box style={{display: mode === "EDIT" ? "block" : "none"}}>
 
+
+                    {/*======================================= EDIT MODE  ===========================================*/}
+
+                    <Box style={{display: mode === "EDIT" || mode === "FORCE_EDIT" ? "block" : "none"}}>
                         <Grid container>
                             <Grid item xs={10}>
 
                             </Grid>
                             <Grid item xs={2} align={"right"}>
-                                <Button variant={"outlined"} onClick={() => setMode("VIEW")}>
+                                <Button mx={1} variant={"outlined"} onClick={handleSaveProcess}>
                                     저장
+                                </Button>
+                                <Button style={{display: mode === 'EDIT' ? "inline" : "none"}} mx={1}
+                                        variant={"outlined"} onClick={() => setMode("VIEW")}>
+                                    취소
                                 </Button>
                             </Grid>
                         </Grid>
@@ -197,28 +363,74 @@ function Source({dispatch, collection}) {
                                             <TableRow>
                                                 <TableCell variant={"head"} component={"th"}>이름</TableCell>
                                                 <TableCell>
-                                                    <TextField value={"기준상품 전체색인 수집"} fullWidth/>
+                                                    <TextField value={sourceName}
+                                                               onChange={event => setSourceName(event.target.value)}
+                                                               fullWidth
+                                                               error={invalid['sourceName']||false}
+                                                    />
                                                 </TableCell>
                                             </TableRow>
                                             <TableRow>
                                                 <TableCell variant={"head"} component={"th"}>런처</TableCell>
                                                 <TableCell>
-                                                    <TextField value={"dbIndexer.jar"} fullWidth/>
+                                                    <TextField value={launcher}
+                                                               onChange={event => setLauncher(event.target.value)}
+                                                               fullWidth
+                                                               error={invalid['launcher']||false}
+                                                    />
+                                                </TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell variant={"head"} component={"th"}>런처 YAML</TableCell>
+                                                <TableCell>
+                                                    <TextareaAutosize value={launcherYaml}
+                                                                      onChange={event => setLauncherYaml(event.target.value)}
+                                                                      style={{width: "100%", minHeight: "200px"}}
+                                                    />
+                                                </TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell variant={"head"} component={"th"}>실행호스트</TableCell>
+                                                <TableCell>
+                                                    <TextField value={host}
+                                                               onChange={event => setHost(event.target.value)}
+                                                               fullWidth
+                                                               placeholder={"127.0.0.1"}
+                                                               error={invalid['host']||false}
+                                                    />
                                                 </TableCell>
                                             </TableRow>
                                             <TableRow>
                                                 <TableCell variant={"head"} component={"th"}>실행포트</TableCell>
                                                 <TableCell>
-                                                    <TextField value={"30100"} fullWidth/>
+                                                    <TextField value={port}
+                                                               onChange={event => setPort(event.target.value)}
+                                                               fullWidth
+                                                               placeholder={"30100"}
+                                                               type={"number"}
+                                                               error={invalid['port']||false}
+                                                    />
                                                 </TableCell>
                                             </TableRow>
                                             <TableRow>
                                                 <TableCell variant={"head"} component={"th"}>JDBC</TableCell>
                                                 <TableCell>
-                                                    <Select value={"market-dev"}>
-                                                        <MenuItem value={"market-dev"}>market-dev</MenuItem>
-                                                        <MenuItem value={"market-dev1"}>market-dev1</MenuItem>
-                                                        <MenuItem value={"market-dev2"}>market-dev2</MenuItem>
+                                                    <Select value={jdbcId}
+                                                            onChange={event => setJdbcId(event.target.value)}
+                                                            style={{minWidth: "100%"}}
+                                                            error={invalid['jdbcId']||false}
+                                                    >
+                                                        {
+                                                            jdbcHitList.map((jdbcObj, index) => {
+                                                                return (
+                                                                    <MenuItem key={jdbcObj['_id']}
+                                                                              value={jdbcObj['_id']}
+                                                                    >
+                                                                        {jdbcObj['_source']['name']}
+                                                                    </MenuItem>
+                                                                )
+                                                            })
+                                                        }
                                                     </Select>
                                                 </TableCell>
                                             </TableRow>
@@ -227,12 +439,18 @@ function Source({dispatch, collection}) {
                                                 <TableCell>
                                                     <Grid container>
                                                         <Grid item xs={11}>
-                                                            <TextField value={"30 0 2 * * *"} fullWidth placeholder={"분 시 일 월 요일"}/>
+                                                            <TextField value={cron}
+                                                                       onChange={event => setCron(event.target.value)}
+                                                                       fullWidth
+                                                                       placeholder={"분 시 일 월 요일"}
+                                                                       error={invalid['cron']||false}
+                                                            />
                                                         </Grid>
                                                         <Grid item xs={1}>
                                                             <Link onMouseOver={handleClick('top')}>예제</Link>
-                                                            <Popper open={open} anchorEl={anchorEl} placement={placement} transition>
-                                                                {({ TransitionProps }) => (
+                                                            <Popper open={Boolean(open)} anchorEl={anchorEl}
+                                                                    placement={placement} transition>
+                                                                {({TransitionProps}) => (
                                                                     <Fade {...TransitionProps} timeout={350}>
                                                                         <Paper>
                                                                             <Typography className={classes.typography}>
@@ -240,7 +458,8 @@ function Source({dispatch, collection}) {
                                                                                 */5 * * * * : 5분마다 한 번씩<br/>
                                                                                 */5 * * * * : 5분마다 한 번씩<br/>
                                                                                 0 5 1 * * : 매달 1일 새벽 5시에 실행.<br/>
-                                                                                0 5,11 * * 0,3 : 매주 일요일과 수요일 새벽 5시와 밤 11시.<br/>
+                                                                                0 5,11 * * 0,3 : 매주 일요일과 수요일 새벽 5시와 밤
+                                                                                11시.<br/>
                                                                                 0 5,11 * * * : 새벽 5시와 밤 11시
                                                                             </Typography>
                                                                         </Paper>
@@ -260,7 +479,7 @@ function Source({dispatch, collection}) {
                 </CardContent>
             </Card>
 
-            <Dialog open={editModal}
+            <Dialog open={Boolean(editModal)}
                     fullWidth
                     onClose={toggleEditModal}
             >
@@ -269,15 +488,7 @@ function Source({dispatch, collection}) {
                 </DialogTitle>
                 <DialogContent>
                     <pre>
-                        limit: 1000<br/>
-                        bulk: 1000<br/>
-                        sql: |<br/>
-                        SELECT /*+ USE_NL(TPC,TPD) USE_NL(TPC, TP) USE_NL(TP,TPM) USE_NL(TPM,TPCDAT) USE_NL(TPCDAT,TPR) USE_NL(TPR,TPB) USE_NL(TPM,TPD)  USE_NL(TSP, TUP) USE_NL(TKFS, TSP) USE_NL(TKFS,TPB) USE_NL(TPDD, TPIP) USE_NL(TPDD,TUP) USE_NL(TPIP,TPBC) USE_NL(TPBC,TPEV) USE_NL(TPEV, TPMP) USE_NL(TPMP, TFDS) USE_NL(TFDS, TSS) */<br/>
-                        tP.prod_c as ID,<br/>
-                        tP.prod_c as productCode,<br/>
-                        'dna' as shopCode,<br/>
-                        tP.prod_n as productName,<br/>
-                        NVL(tPM.maker_n ,'') as productMaker,<br/>
+                        {(collection['launcher'] || {})['yaml']}
                     </pre>
                 </DialogContent>
                 <DialogActions>
@@ -289,4 +500,4 @@ function Source({dispatch, collection}) {
     );
 }
 
-export default connect(store => ({...store.collectionReducers}))(Source);
+export default connect(store => ({...store.collectionReducers, ...store.jdbcReducers}))(Source);

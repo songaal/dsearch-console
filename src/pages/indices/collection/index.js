@@ -115,7 +115,7 @@ function Collection({dispatch, indexSuffixA, indexSuffixB, collectionList}) {
             setCreateNameError(true)
             return false
         }
-        if (createBaseId === "" || createBaseId.startsWith(".")) {
+        if (createBaseId === "" || createBaseId.startsWith(".") || !/[a-z0-9]/gi.test(createBaseId)) {
             setCreateBaseIdError(true)
             return false
         }
@@ -188,6 +188,7 @@ function Collection({dispatch, indexSuffixA, indexSuffixB, collectionList}) {
 
                                 const indexBAlias = indexB['aliases'] && Object.keys(indexB['aliases']).find(alias => alias === baseId)
                                 const isActiveB = indexBAlias !== undefined && indexBAlias !== null
+
                                 return (
                                     <TableRow key={collection['id']}>
                                         <TableCell align="center">{num + 1}</TableCell>
@@ -261,6 +262,7 @@ function Collection({dispatch, indexSuffixA, indexSuffixB, collectionList}) {
                                        autoFocus
                                        value={createName}
                                        onChange={event => {setCreateNameError(false); setCreateName(event.target.value)}}
+                                       placeholder={"상품컬렉션"}
                                        error={createNameError}
                             />
                         </Grid>
@@ -273,6 +275,7 @@ function Collection({dispatch, indexSuffixA, indexSuffixB, collectionList}) {
                             <TextField fullWidth
                                        value={createBaseId}
                                        onChange={handleChangeBaseId}
+                                       placeholder={"product-collection"}
                                        error={createBaseIdError}
                             />
                         </Grid>

@@ -1,33 +1,27 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
+import {connect} from "react-redux";
 import styled from "styled-components";
-import Helmet from 'react-helmet';
 
 import {
     Box as MuiBox,
     Button as MuiButton,
-    Card as MuiCard, CardContent,
+    Card as MuiCard,
+    CardContent,
     Divider as MuiDivider,
-    Fade,
     Grid as MuiGrid,
-    Link,
     Menu,
     MenuItem,
-    Paper,
-    Popper,
-    Select,
-    Switch,
     Table,
     TableBody,
-    TableCell, TableHead,
+    TableCell,
+    TableHead,
     TableRow,
-    TextField,
     Typography as MuiTypography,
 } from "@material-ui/core";
 import {makeStyles} from '@material-ui/core/styles';
 import {positions, spacing} from "@material-ui/system";
-import AntTabs from "~/components/AntTabs"
-import SearchIcon from "@material-ui/icons/Search";
 import {ArrowDropDown} from "@material-ui/icons";
+import {deleteIndexHistoryList, setIndexHistoryList} from "../../../redux/actions/collectionActions";
 
 const Divider = styled(MuiDivider)(spacing, positions);
 const Typography = styled(MuiTypography)(spacing, positions);
@@ -49,14 +43,82 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
+function rpad(str, padLen, padStr) {
+    if (padStr.length > padLen) {
+        return str + "";
+    }
+    str += ""; // 문자로
+    padStr += ""; // 문자로
+    while (str.length < padLen)
+        str += padStr;
+    str = str.length >= padLen ? str.substring(0, padLen) : str;
+    return str;
+}
 
-function History() {
+const paginationSize = 2
+
+function History({dispatch, collection, history}) {
     const classes = useStyles();
     const [moreMenu, setMoreMenu] = useState(null)
+    const [from, setFrom] = useState(0)
 
     function toggleMoreMenu(event) {
         setMoreMenu(moreMenu === null ? event.currentTarget : null)
     }
+
+    useEffect(() => {
+        dispatch(setIndexHistoryList({
+            indexA: collection['indexA']['index'],
+            indexB: collection['indexB']['index'],
+            size: paginationSize,
+            from,
+        }))
+    }, [])
+
+    function handleSetIndexHistoryList(editFrom) {
+        setFrom(editFrom)
+        dispatch(setIndexHistoryList({
+            indexA: collection['indexA']['index'],
+            indexB: collection['indexB']['index'],
+            size: paginationSize,
+            from: editFrom,
+        }))
+    }
+
+    function handleIndexHistoryList(date) {
+        dispatch(deleteIndexHistoryList({
+            indexA: collection['indexA']['index'],
+            indexB: collection['indexB']['index'],
+            time: String(date.getTime()).substring(0, 10)
+        })).then(response => {
+            setFrom(0)
+            setTimeout(() => {
+                dispatch(setIndexHistoryList({
+                    indexA: collection['indexA']['index'],
+                    indexB: collection['indexB']['index'],
+                    size: paginationSize,
+                    from: 0,
+                }))
+            }, 1000)
+            toggleMoreMenu()
+        }).catch(error => {
+            console.log(error)
+            alert(error)
+            toggleMoreMenu()
+        })
+
+    }
+
+    if (!history['hits']) {
+        return null;
+    }
+
+    console.log('collection', collection)
+    console.log('hits >> ', history['hits'])
+
+    // 색인: index, 전파 : spread, 교체: transform
+    const lastPage = Math.ceil(history['hits']['total']['value'] / paginationSize)
+    const nowPage = Math.ceil(from / paginationSize) + 1
 
     return (
         <React.Fragment>
@@ -79,56 +141,45 @@ function History() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                <TableRow>
-                                    <TableCell>5</TableCell>
-                                    <TableCell>전파</TableCell>
-                                    <TableCell>성공</TableCell>
-                                    <TableCell>45,233</TableCell>
-                                    <TableCell>수동</TableCell>
-                                    <TableCell>2020-06-22 14:00:40</TableCell>
-                                    <TableCell>2020-06-22 15:00:40</TableCell>
-                                    <TableCell>1h</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>4</TableCell>
-                                    <TableCell>색인</TableCell>
-                                    <TableCell>성공</TableCell>
-                                    <TableCell>45,233</TableCell>
-                                    <TableCell>수동</TableCell>
-                                    <TableCell>2020-06-22 14:00:40</TableCell>
-                                    <TableCell>2020-06-22 15:00:40</TableCell>
-                                    <TableCell>1h</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>3</TableCell>
-                                    <TableCell>색인</TableCell>
-                                    <TableCell>성공</TableCell>
-                                    <TableCell>45,233</TableCell>
-                                    <TableCell>수동</TableCell>
-                                    <TableCell>2020-06-22 14:00:40</TableCell>
-                                    <TableCell>2020-06-22 15:00:40</TableCell>
-                                    <TableCell>1h</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>2</TableCell>
-                                    <TableCell>전파</TableCell>
-                                    <TableCell>성공</TableCell>
-                                    <TableCell>45,233</TableCell>
-                                    <TableCell>수동</TableCell>
-                                    <TableCell>2020-06-22 14:00:40</TableCell>
-                                    <TableCell>2020-06-22 15:00:40</TableCell>
-                                    <TableCell>1h</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>1</TableCell>
-                                    <TableCell>색인</TableCell>
-                                    <TableCell>성공</TableCell>
-                                    <TableCell>45,233</TableCell>
-                                    <TableCell>수동</TableCell>
-                                    <TableCell>2020-06-22 14:00:40</TableCell>
-                                    <TableCell>2020-06-22 15:00:40</TableCell>
-                                    <TableCell>1h</TableCell>
-                                </TableRow>
+                                {
+                                    ((history['hits']||{})['hits']||[]).map((hit, index) => {
+                                        const sourceAsMap = hit['_source']
+
+                                        const jobTypeName = sourceAsMap['jobType'] === "index" ? '색인' : sourceAsMap['jobType'] === "spread" ? "전파" : "교체"
+                                        const autoRun = sourceAsMap['autoRun'] ? "자동" : "수동"
+                                        let st = new Date();
+                                        let et = new Date();
+                                        let time = '';
+                                        let formatDocSize = sourceAsMap['docSize'];
+
+                                        try {
+                                            formatDocSize = Number(sourceAsMap['docSize']).toLocaleString()
+                                            st.setTime(rpad(sourceAsMap['startTime'], 13, '0'))
+                                            et.setTime(rpad(sourceAsMap['endTime'], 13, '0'))
+                                            let diff = et.getTime() - st.getTime()
+                                            let H = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                            let m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                                            let s = Math.floor((diff % (1000 * 60)) / 1000);
+                                            time = `${H}시 ${m}분 ${s}초`
+                                        } catch (err) {
+                                            console.error('err', err)
+                                            st = ''
+                                            et = ''
+                                        }
+                                        return (
+                                            <TableRow key={hit['_id']}>
+                                                <TableCell>{from + index + 1}</TableCell>
+                                                <TableCell>{jobTypeName}</TableCell>
+                                                <TableCell>{sourceAsMap['status']}</TableCell>
+                                                <TableCell>{formatDocSize}</TableCell>
+                                                <TableCell>{autoRun}</TableCell>
+                                                <TableCell>{st.toLocaleString()}</TableCell>
+                                                <TableCell>{et.toLocaleString()}</TableCell>
+                                                <TableCell>{time}</TableCell>
+                                            </TableRow>
+                                        )
+                                    })
+                                }
                             </TableBody>
                         </Table>
                     </Box>
@@ -139,13 +190,19 @@ function History() {
                         <Grid item xs={8}>
                             <Box align={"center"}>
                                 <Box align={"center"}>
-                                    <Button variant={"outlined"}>
+                                    <Button variant={"outlined"}
+                                            disabled={nowPage === 1}
+                                            onClick={() => handleSetIndexHistoryList(((nowPage - 1) * paginationSize) - paginationSize)}
+                                    >
                                         이전
                                     </Button>
                                     <Box component={"span"} m={3}>
-                                        1 / 3
+                                        {nowPage} / {lastPage === 0 ? 1 : lastPage}
                                     </Box>
-                                    <Button variant={"outlined"}>
+                                    <Button variant={"outlined"}
+                                            disabled={nowPage === lastPage}
+                                            onClick={() => handleSetIndexHistoryList(nowPage * paginationSize)}
+                                    >
                                         다음
                                     </Button>
                                 </Box>
@@ -164,10 +221,10 @@ function History() {
                                     open={Boolean(moreMenu)}
                                     onClose={toggleMoreMenu}
                                 >
-                                    <MenuItem>
+                                    <MenuItem onClick={() => handleIndexHistoryList(new Date())}>
                                         초가화
                                     </MenuItem>
-                                    <MenuItem>
+                                    <MenuItem onClick={() => {let d = new Date(); d.setDate(d.getDate() - 7); handleIndexHistoryList(d)}}>
                                         7일이전 모두 삭제
                                     </MenuItem>
                                 </Menu>
@@ -181,4 +238,4 @@ function History() {
     );
 }
 
-export default History;
+export default connect(store => ({...store.collectionReducers}))(History);

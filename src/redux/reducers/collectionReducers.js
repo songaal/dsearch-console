@@ -5,7 +5,8 @@ let initState = {
     indexSuffixB: "",
     collection: {},
     collectionList: [],
-    matchedIndexTemplates: []
+    matchedIndexTemplates: [],
+    history: {}
 };
 
 export default function reducer(state = initState, actions) {
@@ -25,6 +26,11 @@ export default function reducer(state = initState, actions) {
             return {
                 ...state,
                 collectionList: actions.payload['list']
+            };
+        case types.SET_COLLECTION_INDEX_HISTORY_LIST:
+            return {
+                ...state,
+                history: actions.payload
             };
         default:
             return state
