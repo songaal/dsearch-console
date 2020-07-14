@@ -17,29 +17,26 @@ const useStyles = makeStyles((theme) => ({
 
 const DictionaryIndex = ".fastcatx_dict";
 
-
-
-
 function SearchResultList({settings, result}){
     return (
         <> 
             {/* 사용자 사전 */}
-            {settings.map((setting) => {
+            {settings.map((setting, idx) => {
                 var flag = true;
-                var str = "Not Found";
+                var str = "";
+                
                 for(var i in result.result){
                     if(setting.id == result.result[i].type){
-                        if(result.result[i].keyword === undefined) continue;
-
                         if(flag) {
-                            str = result.result[i].keyword; 
+                            str = result.result[i].value; 
                             flag = false; 
                         } else {
-                            str += ", " + result.result[i].keyword
+                            str += ", " + result.result[i].value
                         }
                     }
                 }
-                return <li key={setting.id}> {setting.name} {" : "} {str}</li>;
+                if(flag) console.log(setting.name + " : " + str);
+                return flag ? <></> : <li id={idx} key={idx}> {setting.name} {" : "} {str}</li>;
             })}
         </>
     );
@@ -53,16 +50,22 @@ function DictionarySearch ({dispatch, settings, result}) {
         dispatch(setSettings())
     }, [])
 
+    console.log(settings);
+    console.log(result);
     const [showSearchInput, setShowSearchInput] = useState("")
     const searchInput = useRef("");
 
     const handleEnterPress = (event) => {
         if (event.key === 'Enter'){
+            if(searchInput.current.value.length === 0) return;
+            result = [];
             dispatch(searchDictionaries({index: DictionaryIndex , word:searchInput.current.value}))
             setShowSearchInput(searchInput.current.value);
         }
     }
     const handleSearchIcon = (event) => {
+        if(searchInput.current.value.length === 0) return;
+        result = [];
         dispatch(searchDictionaries({index: DictionaryIndex , word:searchInput.current.value}))
         setShowSearchInput(searchInput.current.value);
     }
@@ -92,21 +95,16 @@ function DictionarySearch ({dispatch, settings, result}) {
                         <Typography variant="h4">
                             {showSearchInput === "" ? "현재 입력된 내용이 없습니다." : showSearchInput}
                         </Typography>
+                        
                         <ul>
                             {/* 기초 사전 */}
-                            {result.result.map((item) => {
+                            {result.result.length === 0 ? <li> N : 0 </li> : result.result.map((item) => {
                                 if("SYSTEM" == item.type) return <li key={item.type}> {item.posTag} {" : "} {item.prob} </li>;
                                 return <></>;
                             })}
 
-                            <SearchResultList settings={settings} result={result} />
+                            {result.result.length === 0? <></> : <SearchResultList settings={settings} result={result} />}
                         </ul>
-                        {/* <ul>
-                            <li>N[-5.0]</li>
-                            <li>사용자사전: FOUND</li>
-                            <li>유사어사전: notebook, laptop, 랩탑, 노트북용</li>
-                            <li>카테고리키워드사전: FOUND</li>
-                        </ul> */}
                     </Box>
                 </CardContent>
             </Card>
