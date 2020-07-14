@@ -57,7 +57,7 @@ function rpad(str, padLen, padStr) {
 
 const paginationSize = 2
 
-function History({dispatch, collection, history}) {
+function History({dispatch, authUser, collection, history}) {
     const classes = useStyles();
     const [moreMenu, setMoreMenu] = useState(null)
     const [from, setFrom] = useState(0)
@@ -210,7 +210,7 @@ function History({dispatch, collection, history}) {
                         </Grid>
                         <Grid item xs={2}>
                             <Box align={'right'}>
-                                <Button variant={"outlined"}
+                                {authUser.role.index ? <><Button variant={"outlined"}
                                         onClick={toggleMoreMenu}
                                 >
                                     더보기
@@ -222,12 +222,12 @@ function History({dispatch, collection, history}) {
                                     onClose={toggleMoreMenu}
                                 >
                                     <MenuItem onClick={() => handleIndexHistoryList(new Date())}>
-                                        초가화
+                                        초기화
                                     </MenuItem>
                                     <MenuItem onClick={() => {let d = new Date(); d.setDate(d.getDate() - 7); handleIndexHistoryList(d)}}>
                                         7일이전 모두 삭제
                                     </MenuItem>
-                                </Menu>
+                                </Menu> </> : <></>}
                             </Box>
                         </Grid>
                     </Grid>
@@ -238,4 +238,7 @@ function History({dispatch, collection, history}) {
     );
 }
 
-export default connect(store => ({...store.collectionReducers}))(History);
+export default connect(store => ({
+    authUser: store.fastcatxReducers.authUser,
+    ...store.collectionReducers
+}))(History);

@@ -67,7 +67,7 @@ function SummaryTable({summary}){
 }
 
 
- function Summary({dispatch, summary}) {
+ function Summary({dispatch, authUser, summary}) {
      const [applyDict, setApplyDict ] = useState(false);
     useEffect(() => {
         dispatch(setSummary())
@@ -81,14 +81,16 @@ function SummaryTable({summary}){
         dispatch(applyDictionary(data))
         setApplyDict(true);
     }
-        
+    // authUser.role.analysis = false;
     return (
         <React.Fragment>
             <br/>
             <Card>
                 <CardContent>
                     <Box>
-                        <Button variant={"contained"} color={"primary"} onClick={clickApplyDictionary}>사전적용</Button>
+                        {authUser.role.analysis ? 
+                            <Button variant={"contained"} color={"primary"} onClick={clickApplyDictionary}>사전적용</Button> 
+                            : <></>}
                     </Box>
                     <Box>
                         <Snackbar open={applyDict} autoHideDuration={5000} onClose={() => { setApplyDict(false) }}>
@@ -109,7 +111,7 @@ function SummaryTable({summary}){
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                <SummaryTable summary={summary} />
+                                <SummaryTable authUser={authUser} summary={summary} />
                             </TableBody>
                         </Table>
                     </Box>
@@ -121,9 +123,6 @@ function SummaryTable({summary}){
 
 
 export default connect(store => ({ 
+    authUser: store.fastcatxReducers.authUser,
     summary: store.dictionaryReducers.summary
-    // settings: store.dictionaryReducers.settings,
-    // infoDict: store.dictionaryReducers.infoDict
-    // indexSettings :  store.dictionaryReducers.indexSettings,
-    // date : store.dictionaryReducers.date
 }))(Summary)

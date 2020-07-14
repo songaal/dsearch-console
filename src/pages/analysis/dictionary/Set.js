@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {useDispatch, useSelector} from 'react-redux';
+import {connect, useDispatch, useSelector} from 'react-redux';
 import styled from "styled-components";
 import {
     Box as MuiBox,
@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
 
 let checkedList = []
 let searchedKeyword = ""
-function Set({ dictionary, setting, dataSet }) {
+function Set({ dictionary, authUser, setting, dataSet }) {
     const result = dataSet[dictionary] || {}
     const dispatch = useDispatch()
     const classes = useStyles()
@@ -66,6 +66,9 @@ function Set({ dictionary, setting, dataSet }) {
     const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
     const [createDialogOpen, setCreateDialogOpen] = React.useState(false);
 
+    // console.log("Set", authUser)
+    // authUser.role.analysis = false;
+    
     useEffect(() => {
         dispatch(setDictionary(dictionary, pageNum, rowSize, isMatch, keyword, searchColumns))
     }, [])
@@ -232,11 +235,12 @@ function Set({ dictionary, setting, dataSet }) {
                                     mx={1}
                                     onClick={() => handlePagination(pageNum)}
                             >새로고침</Button>
-                            <Button variant="outlined"
+                            {authUser.role.analysis ? <Button variant="outlined"
                                     color="primary"
                                     onClick={() => setMode(mode === "view" ? "edit" : "view")}
                                     mx={1}
                             >{mode === "view" ? "수정" : "보기"}</Button>
+                            : <></> }
                         </Grid>
                     </Grid>
 
@@ -392,4 +396,6 @@ function Set({ dictionary, setting, dataSet }) {
     )
 }
 
-export default Set
+export default connect(store => ({ 
+    authUser: store.fastcatxReducers.authUser
+}))(Set)

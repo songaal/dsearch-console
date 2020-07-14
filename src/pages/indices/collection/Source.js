@@ -65,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function Source({dispatch, collection, JdbcList}) {
+function Source({dispatch, authUser, collection, JdbcList}) {
     const history = useHistory();
     const classes = useStyles();
     const [moreMenu, setMoreMenu] = useState(null)
@@ -210,7 +210,8 @@ function Source({dispatch, collection, JdbcList}) {
     }
 
     const options = ['연속실행', '색인실행', '전파실행', '교체실행'];
-
+    // authUser.role.index = false;
+    console.log(authUser);
     return (
         <React.Fragment>
 
@@ -244,13 +245,13 @@ function Source({dispatch, collection, JdbcList}) {
                                         <ButtonGroup variant="contained" color="primary" ref={actionAnchorRef}>
                                             {/*<Button >{options[selectedIndex]}</Button>*/}
                                             <Button disabled={true} style={{minWidth: "100px", color: "black"}}> 대기 </Button>
-                                            <Button
+                                            {authUser.role.index ? <Button
                                                 color="primary"
                                                 size="small"
                                                 onClick={handleToggle}
                                             >
                                                 <ArrowDropDownIcon/>
-                                            </Button>
+                                            </Button> : <></> }
                                         </ButtonGroup>
                                         <Popper open={actionOpen} anchorEl={actionAnchorRef.current} role={undefined}
                                                 transition disablePortal>
@@ -283,9 +284,9 @@ function Source({dispatch, collection, JdbcList}) {
                                 </Grid>
                             </Grid>
                             <Grid item xs={2} align={"right"}>
-                                <Button mx={1} variant={"outlined"} onClick={() => setMode("EDIT")}>
+                                {authUser.role.index ? <Button mx={1} variant={"outlined"} onClick={() => setMode("EDIT")}>
                                     수정
-                                </Button>
+                                </Button> : <></>}
                             </Grid>
                         </Grid>
 
@@ -500,4 +501,8 @@ function Source({dispatch, collection, JdbcList}) {
     );
 }
 
-export default connect(store => ({...store.collectionReducers, ...store.jdbcReducers}))(Source);
+export default connect(store => ({
+    authUser: store.fastcatxReducers.authUser,
+    ...store.collectionReducers, 
+    ...store.jdbcReducers
+}))(Source);

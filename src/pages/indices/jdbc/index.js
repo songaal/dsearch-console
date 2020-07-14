@@ -26,6 +26,11 @@ import {spacing} from "@material-ui/system";
 import { createJDBCIndex, setJDBCList, setJDBCAccessTest, addJdbcIndex, deleteJdbcSource, updateJdbcSource } from '@actions/jdbcActions'
 
 const drivers = ["Altibase", "Oracle", "Mysql"];
+const JdbcDrivers = {
+    "Altibase": "Altibase.jdbc.driver.AltibaseDriver",
+    "Oracle": "oracle.jdbc.driver.OracleDriver",
+    "Mysql":"com.mysql.cj.jdbc.Driver"
+}
 
 const NavLink = React.forwardRef((props, ref) => (
     <RouterNavLink innerRef={ref} {...props} />
@@ -37,7 +42,7 @@ const Divider = styled(MuiDivider)(spacing);
 
 const TextField = styled(MuiTextField)(spacing);
 
-function JdbcTable({dispatch, JdbcList, JdbcAddResult, JdbcDeleteResult}){
+function JdbcTable({dispatch, authUser, JdbcList, JdbcAddResult, JdbcDeleteResult}){
     const [jdbcSourceEditDialogOpen, setJdbcSourceEditDialogOpenAction] = useState(false)
     const [jdbcListIndex, setJdbcListIndex] = useState(-1)
 
@@ -56,10 +61,11 @@ function JdbcTable({dispatch, JdbcList, JdbcAddResult, JdbcDeleteResult}){
         editJdbcSource.name = editName.current.value;
         editJdbcSource.driver = editDriver.current.value;
         editJdbcSource.user = editUser.current.value;
-        editJdbcSource.password = editPassword.current.value;
+        if(editPassword.current.value.length !== 0 ) editJdbcSource.password = editPassword.current.value;
         editJdbcSource.url = editURL.current.value;
-        
-        dispatch(updateJdbcSource(JdbcSource._id, editJdbcSource));
+        var doc = {}
+        doc.doc = editJdbcSource;
+        dispatch(updateJdbcSource(JdbcSource._id, doc));
         setJdbcSourceEditDialogOpenAction(false);
         utils.sleep(1000).then(()=>{dispatch(setJDBCList());});
         
@@ -109,7 +115,15 @@ function JdbcTable({dispatch, JdbcList, JdbcAddResult, JdbcDeleteResult}){
                     <TableBody>
                         {JdbcList.hits.hits.length > 0 ?  (
                             JdbcList.hits.hits.map((item, index)=>{
+                                var password = item._source.password;
+                                console.log(password);
+                                var star = "";
                                 
+                                for(var i = 0; i < password.length-3; i++){
+                                    star += "*";
+                                }
+
+                                password = password.substring(0, 2) + star + password.substring(password.length-1, password.length);
                                 return <TableRow>
                                     <TableCell>{index + 1}</TableCell>
                                     <TableCell>{item._source.id}</TableCell>
@@ -117,8 +131,9 @@ function JdbcTable({dispatch, JdbcList, JdbcAddResult, JdbcDeleteResult}){
                                     <TableCell>{item._source.driver}</TableCell>
                                     <TableCell>{item._source.url}</TableCell>
                                     <TableCell>{item._source.user}</TableCell>
-                                    <TableCell>{item._source.password}</TableCell>
-                                    <TableCell><Link id={index} href="#" onClick={handleEditDialogOpen}> 수정 </Link></TableCell>
+                                    <TableCell>{password}</TableCell>
+                                    {/* <TableCell>{item._source.password}</TableCell> */}
+                                    {authUser.role.index ? <TableCell><Link id={index} href="#" onClick={handleEditDialogOpen}> 수정 </Link></TableCell> : <TableCell></TableCell>}
                                 </TableRow>
                             })
                          ) : (<TableRow> <TableCell align="center" colSpan={8} > 현재 등록된 JDBC가 없습니다.</TableCell></TableRow> )}
@@ -153,6 +168,7 @@ function JdbcTable({dispatch, JdbcList, JdbcAddResult, JdbcDeleteResult}){
 
 function JdbcSourceEdit({JdbcList, JdbcListIndex, editId, editName, editDriver, editURL, editUser, editPassword}){
     var JdbcSource = JdbcList.hits.hits[JdbcListIndex];
+
     return(
         <Box fullWidth p={2}>
             <Box display="flex" m={3}  alignItems="center" justifyContent="right">
@@ -169,7 +185,7 @@ function JdbcSourceEdit({JdbcList, JdbcListIndex, editId, editName, editDriver, 
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>URL</Typography>
-                <TextField placeholder="jdbc:Altibase://.3306/" fullWidth variant="outlined" defaultValue={JdbcSource._source.url} inputRef={editURL}/>
+                <TextField placeholder="jdbc:Altibase://localhost:3306/" fullWidth variant="outlined" defaultValue={JdbcSource._source.url} inputRef={editURL}/>
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>사용자</Typography>
@@ -177,7 +193,8 @@ function JdbcSourceEdit({JdbcList, JdbcListIndex, editId, editName, editDriver, 
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>비밀번호</Typography>
-                <TextField placeholder="PASSWORD" fullWidth variant="outlined" defaultValue={JdbcSource._source.password} inputRef={editPassword}/>
+                {/* defaultValue={JdbcSource._source.password} */}
+                <TextField placeholder="PASSWORD (LEAVE BLANK IF YOU DON'T WANT CHANGE)" fullWidth variant="outlined"  inputRef={editPassword}/>
             </Box>
         </Box>
     );
@@ -250,7 +267,7 @@ function AccessTestSuccess({JdbcAccessTest, accessFlag, handleAccessFlag}){
     //         </Snackbar>
 }
 
-function JdbcCard({dispatch, JdbcList, JdbcAccessTest, JdbcAddResult, JdbcDeleteResult}) {
+function JdbcCard({dispatch, authUser, JdbcList, JdbcAccessTest, JdbcAddResult, JdbcDeleteResult}) {
     const [jdbcSourceDialogOpen, setjdbcSourceDialogOpenAction] = useState(false)
     const [jdbcProvider, setJdbcProvider] = useState("");
     const [accessFlag, setAccessFlag] = useState(false);
@@ -269,9 +286,10 @@ function JdbcCard({dispatch, JdbcList, JdbcAccessTest, JdbcAddResult, JdbcDelete
     function handleAccessFlag(){
         setAccessFlag(false)
     }
-    function setProvider(event, index){
-        console.log(index.props.value);
+    function setProvider(event, index, next){
+        console.log(JdbcDrivers[event.target.value])
         setJdbcProvider(index.props.value);
+        jdbcDriver.current.value = JdbcDrivers[event.target.value]
     }
     
     const handleSourceDialogClose = (event) => {
@@ -304,7 +322,8 @@ function JdbcCard({dispatch, JdbcList, JdbcAccessTest, JdbcAddResult, JdbcDelete
         jdbcdSourceObj.user = jdbcUser.current.value;
         jdbcdSourceObj.password = jdbcPassword.current.value;
         jdbcdSourceObj.params = jdbcParams.current.value;
-        jdbcdSourceObj.url = jdbcURL.current.value;
+        // jdbcdSourceObj.url = jdbcURL.current.value
+        jdbcdSourceObj.url = jdbcURL.current.value + jdbcAddr.current.value + ":"+ jdbcPort.current.value + jdbcParams.current.value;
 
         setAccessFlag(true);
         dispatch(setJDBCAccessTest(jdbcdSourceObj));
@@ -334,7 +353,7 @@ function JdbcCard({dispatch, JdbcList, JdbcAccessTest, JdbcAddResult, JdbcDelete
         addJdbcSource.user = jdbcUser.current.value;
         addJdbcSource.password = jdbcPassword.current.value;
         addJdbcSource.params = jdbcParams.current.value;
-        addJdbcSource.url = jdbcURL.current.value;
+        addJdbcSource.url = jdbcURL.current.value + jdbcAddr.current.value + ":"+ jdbcPort.current.value + jdbcParams.current.value;
         
         dispatch(addJdbcIndex(addJdbcSource));
         utils.sleep(1000).then(()=>{dispatch(setJDBCList());});
@@ -344,8 +363,12 @@ function JdbcCard({dispatch, JdbcList, JdbcAccessTest, JdbcAddResult, JdbcDelete
     return (
         <Card mb={6}>
             <CardContent>
-                <Link href="#" onClick={handleSourceDialogOpen}> <Box display="flex" alignItems="center" justifyContent="left"><AddCircleOutlineIcon /> <Typography>  JDBC 추가  </Typography> </Box></Link> 
-                <JdbcTable dispatch={dispatch} JdbcList={JdbcList} JdbcAccessTest={JdbcAccessTest} JdbcAddResult={JdbcAddResult}  JdbcDeleteResult={JdbcDeleteResult}></JdbcTable>
+                
+                <Box style={{width: "90px"}}>
+                    {authUser.role.index ? <Box><Link href="#" onClick={handleSourceDialogOpen}> <Box  display="flex" alignItems="center" justifyContent="left"><AddCircleOutlineIcon /> <Typography>  JDBC 추가  </Typography></Box></Link></Box> : <></>}
+                    {/* <Link href="#" onClick={handleSourceDialogOpen}> <Box display="flex" alignItems="center" justifyContent="left"><AddCircleOutlineIcon /><Typography>  JDBC 추가  </Typography> </Box></Link>  */}
+                </Box>
+                <JdbcTable dispatch={dispatch} authUser={authUser} JdbcList={JdbcList} JdbcAccessTest={JdbcAccessTest} JdbcAddResult={JdbcAddResult}  JdbcDeleteResult={JdbcDeleteResult}></JdbcTable>
                 <Dialog open={jdbcSourceDialogOpen} onClose={handleSourceDialogClose} >
                     <DialogTitle id="dialog-title">JDBC 소스</DialogTitle>
                     <DialogContent style={{width:"100%"}}>
@@ -377,11 +400,11 @@ function JdbcCard({dispatch, JdbcList, JdbcAccessTest, JdbcAddResult, JdbcDelete
     );
 }
 
-function JDBC({dispatch, JdbcList, JdbcAccessTest, JdbcAddResult, JdbcDeleteResult}) {
+function JDBC({dispatch, authUser, JdbcList, JdbcAccessTest, JdbcAddResult, JdbcDeleteResult}) {
     useEffect(() => {
         dispatch(setJDBCList())
     }, [])
-    
+
     return (
         <React.Fragment>
             <Helmet title="Blank"/>
@@ -391,7 +414,7 @@ function JDBC({dispatch, JdbcList, JdbcAccessTest, JdbcAddResult, JdbcDeleteResu
             <Divider my={6}/>
             <Grid container spacing={6}>
                 <Grid item xs={12}>
-                    <JdbcCard dispatch={dispatch} JdbcList={JdbcList} JdbcAccessTest={JdbcAccessTest} JdbcAddResult={JdbcAddResult}  JdbcDeleteResult={JdbcDeleteResult}/>
+                    <JdbcCard dispatch={dispatch} authUser={authUser} JdbcList={JdbcList} JdbcAccessTest={JdbcAccessTest} JdbcAddResult={JdbcAddResult}  JdbcDeleteResult={JdbcDeleteResult}/>
                 </Grid>
             </Grid>
         </React.Fragment>
@@ -399,6 +422,7 @@ function JDBC({dispatch, JdbcList, JdbcAccessTest, JdbcAddResult, JdbcDeleteResu
 }
 
 export default connect(store => ({
+    authUser: store.fastcatxReducers.authUser,
     JdbcList: store.jdbcReducers.JdbcList,
     JdbcAccessTest: store.jdbcReducers.JdbcAccessTest,
     JdbcDeleteResult: store.jdbcReducers.JdbcDeleteResult,

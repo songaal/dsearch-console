@@ -133,7 +133,7 @@ function JsonCard({json}) {
     </div>)
 }
 
-function Setting({ dispatch, index, settings }) {
+function Setting({ dispatch, index, authUser, settings }) {
     const classes = useStyles();
     const [chk, setChk] = React.useState('form');
     const [modal, setModal] = React.useState(false)
@@ -171,11 +171,11 @@ function Setting({ dispatch, index, settings }) {
                 </Grid>
                 <Grid item xs={2}>
                     <Box align={"right"} mt={2}>
-                        <Button size={"small"}
+                        {authUser.role.index ? <Button size={"small"}
                                 variant={"contained"}
                                 color={"primary"}
                                 onClick={toggleModal}
-                        >동적변경</Button>
+                        >동적변경</Button> : <></>}
                     </Box>
                 </Grid>
             </Grid>
@@ -220,4 +220,8 @@ function Setting({ dispatch, index, settings }) {
     );
 }
 
-export default connect(store => ({...store.indicesReducers}))(Setting);
+export default connect(store => ({
+    authUser: store.fastcatxReducers.authUser,
+    ...store.indicesReducers
+
+}))(Setting);

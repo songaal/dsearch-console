@@ -22,6 +22,7 @@ import {
 } from "@material-ui/core";
 
 import { spacing } from "@material-ui/system";
+import { CollectionsBookmarkOutlined } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
     formControl: {

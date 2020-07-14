@@ -22,7 +22,7 @@ const firstTabs = [
     {label: "개요", component: Async(() => import("./Summary"))},
 ]
 
-function Dictionary({dispatch, settings, active}) {
+function Dictionary({dispatch, authUser, settings, active}) {
     let dictTabs = firstTabs.concat(settings.map(dictionary => ({label: dictionary.name, component: Async(() =>  import("./WrapperTabPanel") )})))
 
     useEffect(() => {
@@ -42,11 +42,14 @@ function Dictionary({dispatch, settings, active}) {
             <Divider my={6}/>
             <Grid container spacing={6}>
                 <Grid item xs={12}>
-                    <AntTabs tabs={dictTabs} tabIndex={active} onChange={handleTabChange}/>
+                    <AntTabs authUser={authUser} tabs={dictTabs} tabIndex={active} onChange={handleTabChange}/>
                 </Grid>
             </Grid>
         </>
     );
 }
 
-export default connect(store => ({ settings: store.dictionaryReducers.settings, active: store.dictionaryReducers.active }))(Dictionary);
+export default connect(store => ({ 
+    authUser: store.fastcatxReducers.authUser,
+    settings: store.dictionaryReducers.settings, 
+    active: store.dictionaryReducers.active }))(Dictionary);

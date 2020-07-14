@@ -71,7 +71,7 @@ const placeholder = {
 }`
 }
 
-function SearchFormPanel({template, templateIndex, lastTemplateIndex, onDelete, onSave, onUp, onDown, disabledSaveButton, disabledDeleteButton, disabledOrderButton}) {
+function SearchFormPanel({template, authUser, templateIndex, lastTemplateIndex, onDelete, onSave, onUp, onDown, disabledSaveButton, disabledDeleteButton, disabledOrderButton}) {
     const classes = useStyles()
     const [name, setName] = useState(template['name'] || '')
     const [indices, setIndices] = useState(template['indices'] || '')
@@ -181,6 +181,7 @@ function SearchFormPanel({template, templateIndex, lastTemplateIndex, onDelete, 
                         </Grid>
                         <Grid item xs={3} md={2} lg={2}>
                             <Box align={"center"}>
+                                {authUser.role.search ? <>
                                 <Hidden lgUp>
                                     <Button size={"small"}
                                             color={"primary"}
@@ -207,6 +208,7 @@ function SearchFormPanel({template, templateIndex, lastTemplateIndex, onDelete, 
                                             disabled={disabledDeleteButton}
                                     >삭제</Button>
                                 </Hidden>
+                                </> : <></>}
                             </Box>
                         </Grid>
                     </Grid>
@@ -460,7 +462,7 @@ function SearchFormPanel({template, templateIndex, lastTemplateIndex, onDelete, 
 
 const sleep = 1000
 
-function ReferenceUI({dispatch}) {
+function ReferenceUI({dispatch, authUser}) {
     const classes = useStyles()
     const [disabledAddPanelButton, setDisabledAddPanelButton] = useState(false)
     const [disabledDeleteButton, setDisabledDeleteButton] = useState(false)
@@ -468,6 +470,7 @@ function ReferenceUI({dispatch}) {
     const [disabledOrderButton, setDisabledOrderButton] = useState(false)
     const [templateList, setTemplateList] = useState([])
 
+    // authUser.role.search = false;
     useEffect(() => {
         dispatch(setReferenceTemplateList())
             .then(response => setTemplateList(response.payload))
@@ -560,7 +563,8 @@ function ReferenceUI({dispatch}) {
                         .map((template, index) => {
                         return (
                             <ListItem my={5} p={0} key={template['order']}>
-                                <SearchFormPanel template={template}
+                                <SearchFormPanel authUser={authUser}
+                                                 template={template}
                                                  templateIndex={index}
                                                  disabledSaveButton={disabledSaveButton}
                                                  disabledDeleteButton={disabledDeleteButton}
@@ -581,11 +585,11 @@ function ReferenceUI({dispatch}) {
             <Grid container>
                 <Grid item xs={12}>
                     <Box align={"center"} mt={5}>
-                        <Button variant={"contained"}
+                        {authUser.role.search ? <Button variant={"contained"}
                                 color={"primary"}
                                 onClick={addTemplatePanel}
                                 disabled={disabledAddPanelButton}
-                        >영역 추가</Button>
+                        >영역 추가</Button> : <></>}
                     </Box>
                 </Grid>
             </Grid>
@@ -594,4 +598,7 @@ function ReferenceUI({dispatch}) {
     );
 }
 
-export default connect(stroe => ({...stroe.referenceSearchReducers}))(ReferenceUI);
+export default connect(store => ({
+    authUser: store.fastcatxReducers.authUser,
+    ...store.referenceSearchReducers
+}))(ReferenceUI);

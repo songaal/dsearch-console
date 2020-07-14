@@ -174,6 +174,7 @@ function RankingTuningCard({dispatch, result, index}) {
     const [pageNum, setPageNum] = useState(0);
     // const [checked, setChecked] = useState(false);
     const [expand, setExpand] = useState([]);
+    const [searchFlag, setSearchFlag] = useState(false)
     const [alert, setAlert] = useState(false);
 
     const handleExpandAll = (event) =>{
@@ -214,7 +215,7 @@ function RankingTuningCard({dispatch, result, index}) {
             setAlert(true);
             return;
         }
-
+        setSearchFlag(true);
         var jsonData = JSON.parse(aceEditor.current.editor.getValue());
         jsonData.explain = true;
         jsonData.from = 0;
@@ -223,13 +224,16 @@ function RankingTuningCard({dispatch, result, index}) {
         var data = {};
         data.index = index;
         data.text = JSON.stringify(jsonData);
+        
         dispatch(setDocumentList(data)).then((result) => {
             if( result.payload.Total.value > 0 ) setPageNum(1);
             else setPageNum(0);
+            setSearchFlag(false);
         })
     }
 
     const handleSnackBarClose = (event) =>{
+        setSearchFlag(false);
         setAlert(false);
     }
 
@@ -238,12 +242,13 @@ function RankingTuningCard({dispatch, result, index}) {
     }
 
     function handlePagination(pageNum) {
+        
         ids = 1;
         if(!isJson(aceEditor.current.editor.getValue())){
             setAlert(true);
             return;
         }
-
+        setSearchFlag(true);
         var jsonData = JSON.parse(aceEditor.current.editor.getValue());
         jsonData.explain = true;
         jsonData.from = (pageNum - 1) * 10;
@@ -252,7 +257,7 @@ function RankingTuningCard({dispatch, result, index}) {
         var data = {};
         data.index = index;
         data.text = JSON.stringify(jsonData);
-        dispatch(setDocumentList(data));
+        dispatch(setDocumentList(data)).then(()=>{setSearchFlag(false);});
         setPageNum(pageNum)
     }
 
@@ -315,10 +320,12 @@ function RankingTuningCard({dispatch, result, index}) {
                                 <Box align="right" mx={3} mt={3}>
                                     <Button variant="outlined" color="primary" onClick={handleSearchQuery}>검색</Button>
                                 </Box>
-                                <Snackbar open={alert} autoHideDuration={10000} onClose={handleSnackBarClose}>
-                                    <MuiAlert elevation={6} variant="filled" severity="error">
+                                <Snackbar open={searchFlag || alert} autoHideDuration={5000} onClose={handleSnackBarClose}>
+                                    {alert ? <MuiAlert elevation={6} variant="filled" severity="error">
                                         올바른 형식의 JSON이 아닙니다.
-                                    </MuiAlert>
+                                    </MuiAlert> : <MuiAlert elevation={6} variant="filled" severity="info">
+                                        검색 중 입니다.
+                                    </MuiAlert>}
                                 </Snackbar>
                             </Grid>
 

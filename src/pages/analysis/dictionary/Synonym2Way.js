@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
 
 let checkedList = []
 let searchedKeyword = ""
-function SynonymDictionary({dictionary, setting, dataSet}) {
+function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
     const result = dataSet[dictionary] || {}
     const dispatch = useDispatch()
     const classes = useStyles()
@@ -63,6 +63,8 @@ function SynonymDictionary({dictionary, setting, dataSet}) {
     const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
     const [createDialogOpen, setCreateDialogOpen] = React.useState(false);
 
+    // console.log("Synonym2Way", authUser);
+    // authUser.role.analysis = false;
 
     useEffect(() => {
         dispatch(setDictionary(dictionary, pageNum, rowSize, isMatch, keyword, searchColumns))
@@ -249,11 +251,14 @@ function SynonymDictionary({dictionary, setting, dataSet}) {
                                     mx={1}
                                     onClick={() => handlePagination(pageNum)}
                             >새로고침</Button>
-                            <Button variant="outlined"
+                            {authUser.role.analysis ? <Button variant="outlined"
                                     color="primary"
                                     onClick={() => setMode(mode === "view" ? "edit" : "view")}
                                     mx={1}
                             >{mode === "view" ? "수정" : "보기"}</Button>
+                            : <></> }
+                            
+                            
                         </Grid>
                     </Grid>
 
@@ -391,4 +396,6 @@ function SynonymDictionary({dictionary, setting, dataSet}) {
     )
 }
 
-export default SynonymDictionary;
+export default connect(store => ({ 
+    authUser: store.fastcatxReducers.authUser
+}))(SynonymDictionary)
