@@ -27,7 +27,7 @@ module install:
 #    - yarn install
 #    - rm -rf node_modules/*/.git/
 #    - npm cache clean -f
-#    - rm -rf node_modules
+    - rm -rf node_modules
     - npm install
 
 
