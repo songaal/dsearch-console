@@ -90,12 +90,12 @@ function Summary({dispatch, authUser, collection}) {
                                     <b>인덱스 템플릿</b>
                                 </Grid>
                                 <Grid item xs={9}>
-                                    <Link style={{cursor: "pointer", marginLeft: "5px", marginRight: "5px"}}
+                                    <Link style={{cursor: "pointer"}}
                                           onClick={() => {history.push(`../templates/${collection['indexA']['index']}`)}}
                                     >
                                         {collection['indexA']['index']}
                                     </Link>,
-                                    <Link style={{cursor: "pointer", marginLeft: "5px", marginRight: "5px"}}
+                                    <Link style={{cursor: "pointer"}}
                                           onClick={() => {history.push(`../templates/${collection['indexB']['index']}`)}}
                                     >
                                         {collection['indexB']['index']}
@@ -108,8 +108,7 @@ function Summary({dispatch, authUser, collection}) {
                                 </Grid>
                                 <Grid item xs={9}>
                                     <Link mx={1} style={{cursor: "pointer",
-                                        display: collection['indexA']['uuid'] ? "inline" : "none",
-                                        marginLeft: "5px", marginRight: "5px"
+                                        display: collection['indexA']['uuid'] ? "inline" : "none"
                                     }}
                                           onClick={() => {history.push(`../indices/${collection['indexA']['uuid']}`)}}
                                     >
@@ -121,8 +120,7 @@ function Summary({dispatch, authUser, collection}) {
                                     </Box>
                                     ,
                                     <Link mx={1} style={{cursor: "pointer",
-                                        display: collection['indexB']['uuid'] ? "inline" : "none",
-                                        marginLeft: "5px", marginRight: "5px"
+                                        display: collection['indexB']['uuid'] ? "inline" : "none"
                                     }}
                                           onClick={() => {history.push(`../indices/${collection['indexB']['uuid']}`)}}
                                     >
@@ -137,22 +135,30 @@ function Summary({dispatch, authUser, collection}) {
 
                         </Grid>
                         <Grid item xs={2} align={"right"}>
-                            <Button variant={"outlined"}
-                                    onClick={toggleMoreMenu}
-                            >
-                                더보기
-                                <ArrowDropDown/>
-                            </Button>
-                            <Menu
-                                anchorEl={moreMenu}
-                                open={Boolean(moreMenu)}
-                                onClose={toggleMoreMenu}
-                            >
-                                {authUser.role.index ? <MenuItem onClick={handleDeleteCollection}>
-                                    컬렉션 삭제
-                                </MenuItem> : <></>}
-                                
-                            </Menu>
+                            {
+                                authUser.role.index ?
+                                    <React.Fragment>
+                                        <Button variant={"outlined"}
+                                                onClick={toggleMoreMenu}
+                                        >
+                                            더보기
+                                            <ArrowDropDown/>
+                                        </Button>
+                                        <Menu
+                                            anchorEl={moreMenu}
+                                            open={Boolean(moreMenu)}
+                                            onClose={toggleMoreMenu}
+                                        >
+                                            <MenuItem onClick={handleDeleteCollection}>
+                                                컬렉션 삭제
+                                            </MenuItem>
+                                        </Menu>
+                                    </React.Fragment>
+                                    :
+                                    <React.Fragment>
+
+                                    </React.Fragment>
+                            }
                         </Grid>
                     </Grid>
 

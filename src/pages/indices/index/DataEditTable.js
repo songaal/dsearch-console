@@ -50,7 +50,7 @@ const tableIcons = {
 const useStyles = makeStyles((theme) => ({}));
 const Divider = styled(MuiDivider)(spacing);
 
-function DataEditTable({dispatch, index}) {
+function DataEditTable({dispatch, index, authUser}) {
     const [id, setId] = useState("");
     const [pageNum, setPageNum] = useState(0);
     const [rowSize, setRowSize] = useState(5);
@@ -146,21 +146,31 @@ function DataEditTable({dispatch, index}) {
 
     return (
         <React.Fragment>
-            <MaterialTable
-                icons={tableIcons}
-                title=""
-                columns={columns.map(column => ({title: column, field: column.replace(/\./gi, "___"), editable: column === "ID" ? 'never' : "always", cellStyle:{whiteSpace: "nowrap"} }))}
-                data={dataList}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
-                editable={{ onRowAdd: handleRowAdd, onRowUpdate: handleRowUpdate, onRowDelete: handleRowDelete }}
-                onSearchChange={handleSearch}
+            {
+                authUser.role.index ?
+                    <MaterialTable
+                        icons={tableIcons}
+                        title=""
+                        columns={columns.map(column => ({title: column, field: column.replace(/\./gi, "___"), editable: column === "ID" ? 'never' : "always", cellStyle:{whiteSpace: "nowrap"} }))}
+                        data={dataList}
+                        onChangeRowsPerPage={handleChangeRowsPerPage}
+                        editable={{ onRowAdd: handleRowAdd, onRowUpdate: handleRowUpdate, onRowDelete: handleRowDelete }}
+                        onSearchChange={handleSearch}
+                    />
+                    :
+                    <MaterialTable
+                        icons={tableIcons}
+                        title=""
+                        columns={columns.map(column => ({title: column, field: column.replace(/\./gi, "___"), editable: column === "ID" ? 'never' : "always", cellStyle:{whiteSpace: "nowrap"} }))}
+                        data={dataList}
+                        onChangeRowsPerPage={handleChangeRowsPerPage}
+                        onSearchChange={handleSearch}
+                    />
+            }
 
-                pagination={{
-                    labelDisplayedRows: "123123",
-                }}
-            />
+
         </React.Fragment>
     )
 }
 
-export default connect(store => ({...store.indicesReducers}))(DataEditTable)
+export default connect(store => ({...store.indicesReducers, ...store.fastcatxReducers}))(DataEditTable)

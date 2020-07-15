@@ -200,7 +200,7 @@ function History({dispatch, authUser, collection, history}) {
                                         {nowPage} / {lastPage === 0 ? 1 : lastPage}
                                     </Box>
                                     <Button variant={"outlined"}
-                                            disabled={nowPage === lastPage}
+                                            disabled={nowPage === (lastPage === 0 ? 1 : lastPage)}
                                             onClick={() => handleSetIndexHistoryList(nowPage * paginationSize)}
                                     >
                                         다음
@@ -211,23 +211,23 @@ function History({dispatch, authUser, collection, history}) {
                         <Grid item xs={2}>
                             <Box align={'right'}>
                                 {authUser.role.index ? <><Button variant={"outlined"}
-                                        onClick={toggleMoreMenu}
+                                                                 onClick={toggleMoreMenu}
                                 >
                                     더보기
                                     <ArrowDropDown/>
                                 </Button>
-                                <Menu
-                                    anchorEl={moreMenu}
-                                    open={Boolean(moreMenu)}
-                                    onClose={toggleMoreMenu}
-                                >
-                                    <MenuItem onClick={() => handleIndexHistoryList(new Date())}>
-                                        초기화
-                                    </MenuItem>
-                                    <MenuItem onClick={() => {let d = new Date(); d.setDate(d.getDate() - 7); handleIndexHistoryList(d)}}>
-                                        7일이전 모두 삭제
-                                    </MenuItem>
-                                </Menu> </> : <></>}
+                                    <Menu
+                                        anchorEl={moreMenu}
+                                        open={Boolean(moreMenu)}
+                                        onClose={toggleMoreMenu}
+                                    >
+                                        <MenuItem onClick={() => handleIndexHistoryList(new Date())}>
+                                            초기화
+                                        </MenuItem>
+                                        <MenuItem onClick={() => {let d = new Date(); d.setDate(d.getDate() - 7); handleIndexHistoryList(d)}}>
+                                            7일이전 모두 삭제
+                                        </MenuItem>
+                                    </Menu> </> : <></>}
                             </Box>
                         </Grid>
                     </Grid>
