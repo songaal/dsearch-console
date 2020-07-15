@@ -12,7 +12,7 @@ const Divider = styled(MuiDivider)(spacing);
 
 function Index() {
     const classes = useStyles();
-    const [chk, setChk] = useState('indexed'); // source, indexed
+    const [chk, setChk] = useState('source'); // source, indexed
 
     function handleRadioChange(e) {
         setChk(e.target.value)
