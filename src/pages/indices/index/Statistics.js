@@ -23,7 +23,7 @@ const Divider = styled(MuiDivider)(spacing);
 
 function Statistics({index, indexState}) {
     const classes = useStyles();
-    if (indexState['indices'] === undefined) {
+    if (!index || indexState['indices'] === undefined) {
         return null
     }
 
