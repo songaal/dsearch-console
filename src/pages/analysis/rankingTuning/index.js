@@ -11,9 +11,9 @@ import "ace-builds/src-noconflict/theme-kuroir";
 import { setDocumentList } from '@actions/rankingTuningActions'
 import MuiAlert from '@material-ui/lab/Alert';
 import {
-    Box, Snackbar, Link, CircularProgress,useScrollTrigger,
+    Box, Snackbar, Link, CircularProgress,
     Table as MuiTable, TableRow, TableCell, TableHead, TableBody,
-    TextField as MuiTextField,
+    TextField, Switch,
     TextareaAutosize as MuiTextareaAutosize,
     Card as MuiCard,
     CardContent,
@@ -36,7 +36,6 @@ const NavLink = React.forwardRef((props, ref) => (
 
 const Card = styled(MuiCard)(spacing);
 const Divider = styled(MuiDivider)(spacing);
-const TextareaAutosize = styled(MuiTextareaAutosize)(spacing);
 const Table = styled(MuiTable)(spacing);
 
 var ids = 1;
@@ -79,62 +78,66 @@ function ScoreTreeView({details, expand, nodeToggle, description}) {
 }
 
 function ResultDocument({result, item, expand, nodeToggle}) {
-    var productMaker = [];
-    var productName = [];
-    for(var tokens of result.analyzerTokensMap[item._id + ""]){
-        if(tokens.field == 'PRODUCTMAKER'){
-            productMaker = tokens.tokens;
-        }else if(tokens.field == 'PRODUCTNAME'){
-            productName = tokens.tokens;
+    const analyzerTokensMap = result.analyzerTokensMap[item._index]
+    let dataList = []
+
+
+    Object.keys(item).forEach(key => {
+        const id = item['_id']
+        let text = item[key]
+        if ("_explanation" === key) {
+            return true;
         }
-    }
+        
+        if (analyzerTokensMap[id] !== undefined) {
+            const analyzerFieldList = analyzerTokensMap[id]
+            const analyzerTokens = analyzerFieldList.find(obj => obj['field'] === key)
+            if (analyzerTokens !== undefined && analyzerTokens['tokens'] !== undefined && analyzerTokens['tokens'] !== null && analyzerTokens['tokens'].length > 0) {
+                dataList.push({
+                    field: key,
+                    text: text,
+                    tokens: analyzerTokens['tokens']
+                  })
+            } else {
+                dataList.push({
+                    field: key,
+                    text: text,
+                    tokens: []
+                })
+            }
+        } else {
+            dataList.push({
+                field: key,
+                text: text,
+                tokens: []
+            })
+        }
+    })
+    console.log("dataList >> ", dataList)
+
     return (
-        <Table >
+        <Table>
             <TableBody>
+                {
+                    dataList.map(data => {
+                        return (
+                            <TableRow style={{whiteSpace: "nowrap"}}>
+                                <TableCell>{data['field']}</TableCell>
+                                <TableCell>{data['text']}</TableCell>
+                                <TableCell>{data['tokens'].join(", ")}</TableCell>
+                            </TableRow>
+                        )
+                    })
+                }
                 <TableRow>
-                    <TableCell style={{ width: '100px' }}>ID</TableCell>
-                    <TableCell > {item.ID} </TableCell>
-                    <TableCell > {item.ID} </TableCell>
-                </TableRow>
-                <TableRow>
-                    <TableCell style={{ width: '100px' }}>제조사</TableCell>
-                    <TableCell > {item.PRODUCTMAKER} </TableCell>
-                    <TableCell > {productMaker.map((token, index) => { return (index === 0 ? token : ", "+ token)}) } </TableCell>
-                </TableRow>
-                <TableRow>
-                    <TableCell style={{ width: '100px' }}>상품명</TableCell>
-                    <TableCell >{item.PRODUCTNAME} </TableCell>
-                    <TableCell >{productName.map((token, index) => {return (index === 0 ? token : ", "+ token)})} </TableCell>
-                </TableRow>
-                <TableRow>
-                    <TableCell style={{ width: '100px' }}>간략설명</TableCell>
-                    <TableCell > {item.ADDDESCRIPTION} </TableCell>
-                    <TableCell > {item.ADDDESCRIPTION} </TableCell>
-                </TableRow>
-                <TableRow>
-                    <TableCell style={{ width: '100px' }}>묶음명</TableCell>
-                    <TableCell ></TableCell>
-                    <TableCell ></TableCell>
-                </TableRow>
-                <TableRow>
-                    <TableCell style={{ width: '100px' }}>관련키워드</TableCell>
-                    <TableCell></TableCell>
-                    <TableCell></TableCell>
-                </TableRow>
-                <TableRow>
-                    <TableCell style={{ width: '100px' }}>카테고리</TableCell>
-                    <TableCell> {item.CATEGORYCODE1} {">"} {item.CATEGORYCODE2} {">"} {item.CATEGORYCODE3}</TableCell>
-                    <TableCell> {item.CATEGORYCODE1} {">"} {item.CATEGORYCODE2} {">"} {item.CATEGORYCODE3} </TableCell>
-                </TableRow>
-                <TableRow>
-                    <TableCell >점수</TableCell>
-                    <TableCell colSpan={2} >
-                        <ScoreTreeView description={item._explanation.description} details={item._explanation.details} expand={expand} nodeToggle={nodeToggle}></ScoreTreeView> 
-                    </TableCell>
-                </TableRow>
+                    <TableCell>점수</TableCell>
+                    <TableCell colSpan={2}>
+                         <ScoreTreeView description={item._explanation.description} details={item._explanation.details} expand={expand} nodeToggle={nodeToggle}></ScoreTreeView> 
+                     </TableCell>
+                 </TableRow>
             </TableBody>
         </Table>
-    );
+    )
 }
 
 function RankingTuningResults({pageNum, result, expand, nodeToggle}) {
@@ -175,14 +178,22 @@ function RankingTuningCard({dispatch, result, index}) {
     const [pageNum, setPageNum] = useState(0);
     const [progress, setProgress] = useState(false);
     const [expand, setExpand] = useState([]);
-    // const [searchFlag, setSearchFlag] = useState(false)
+    const [checked, setChecked] = useState(false);
     const [alert, setAlert] = useState(false);
+    const [autoHeight, setAutoHeight] = useState(600)
+    var inputIndex = useRef('');
 
-    
-    const trigger = useScrollTrigger({
-        disableHysteresis: true,
-        threshold: 100
-      });
+    // useEffect(() => {
+    //     let windowHeight = window.innerHeight  - 150
+    //     if (windowHeight < 500) {
+    //         windowHeight = 500
+    //     }
+    //     setAutoHeight(windowHeight)
+    // }, [])
+
+    const handleChecked = (evnet) =>{
+        setChecked(!checked);
+    }
 
     const handleExpandAll = (event) =>{
         var changeExpand = [];    
@@ -214,10 +225,18 @@ function RankingTuningCard({dispatch, result, index}) {
         jsonData.explain = true;
         jsonData.from = 0;
         jsonData.size = 10;
-
         var data = {};
-        data.index = index;
-        data.text = JSON.stringify(jsonData);
+
+        if(checked){
+            data.isMultiple = true;
+            data.index = inputIndex.current.value;
+            data.text = JSON.stringify(jsonData);
+        } else {
+            data.isMultiple = true;
+            data.index = index;
+            data.text = JSON.stringify(jsonData);
+        }
+
         dispatch(setDocumentList(data)).then((result) => {
             if( result.payload.Total.value > 0 ) setPageNum(1);
             else setPageNum(0);
@@ -247,7 +266,14 @@ function RankingTuningCard({dispatch, result, index}) {
         jsonData.size = 10;
 
         var data = {};
-        data.index = index;
+        if(checked){
+            data.isMultiple = true;
+            data.index = inputIndex.current.value;
+        }else{
+            data.isMultiple = true;
+            data.index = index;
+        }
+        
         data.text = JSON.stringify(jsonData);
         dispatch(setDocumentList(data)).then(() => {
             setProgress(false);
@@ -262,8 +288,15 @@ function RankingTuningCard({dispatch, result, index}) {
                     <Grid item xs={12}>
                         <Grid container>
                             <Grid item xs={12} md={4}>
-                                <Box mx={3}>
-                                    <IndicesSelect />
+                                <Box display="flex"  alignItems="center"  justifyContent="space-between" mx={3}>
+                                    {checked ? <TextField style={{width:"250px"}} inputRef={inputIndex} label="인덱스를 입력해주세요"/> : <IndicesSelect />}
+                                    <Switch
+                                        checked={checked}
+                                        onChange={handleChecked}
+                                        color="primary"
+                                        name="IndexModeSelector"
+                                        inputProps={{ 'aria-label': 'primary checkbox' }}
+                                    />
                                 </Box>
                             </Grid>
                             <Grid item xs={12} md={8}>
@@ -285,7 +318,7 @@ function RankingTuningCard({dispatch, result, index}) {
 
                     <Grid item xs={12}>
 
-                        <Grid container>
+                        <Grid container style={{height: autoHeight + "px"}}>
                             <Grid item xs="12" md="4">
                                 <Box mx={3} style={{border: "1px solid silver"}}>
                                     <AceEditor
@@ -295,17 +328,15 @@ function RankingTuningCard({dispatch, result, index}) {
                                         theme="kuroir"
                                         name="ace-editor"
                                         fontSize="15px"
-                                        height="600px"
+                                        height={autoHeight + "px"}
                                         width="100%"
                                         placeholder="검색쿼리를 입력해주세요."
                                     />
                                 </Box>
                             </Grid>
                             <Grid item xs="12" md="8" >
-                                <Box style={{overflow: "scroll", height: "600px", border: "1px solid silver"}} mx={3}>
-                                    <Zoom in={trigger}>
+                                <Box style={{overflow: "scroll", height: "100%", border: "1px solid silver"}} mx={3}>
                                         <RankingTuningResults pageNum={pageNum} result={result} expand={expand} nodeToggle={nodeToggle}/>
-                                    </Zoom>
                                 </Box>
                             </Grid>
                         </Grid>
