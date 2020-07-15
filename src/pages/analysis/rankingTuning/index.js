@@ -121,7 +121,7 @@ function ResultDocument({result, item, expand, nodeToggle}) {
                 {
                     dataList.map(data => {
                         return (
-                            <TableRow style={{whiteSpace: "nowrap"}}>
+                            <TableRow>
                                 <TableCell>{data['field']}</TableCell>
                                 <TableCell>{data['text']}</TableCell>
                                 <TableCell>{data['tokens'].join(", ")}</TableCell>
