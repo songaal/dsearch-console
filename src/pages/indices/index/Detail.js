@@ -63,7 +63,7 @@ function Index() {
 
             <Divider my={6} />
 
-            <AntTabs tabs={tabs} tabIndex={4} />
+            <AntTabs tabs={tabs} tabIndex={0} />
 
         </React.Fragment>
     );
