@@ -18,7 +18,7 @@ before_script:
 
 module install:
   stage: install
-#  when: manual
+  when: manual
   script:
     - yum install git -y
 #    - git ls-remote -h -t ssh://git@github.com/eligrey/FileSaver.js.git
