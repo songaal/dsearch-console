@@ -18,17 +18,17 @@ before_script:
 
 module install:
   stage: install
-  when: manual
+#  when: manual
   script:
 #    - npm install -g npm
-    - npm install -g yarn
+#    - npm install -g yarn
     - rm -rf yarn.lock
     - rm -rf package-lock.json
     - - rm -rf node_modules
-    - yarn install
+#    - yarn install
 #    - rm -rf node_modules/*/.git/
-#    - npm cache clean -f
-#    - npm install
+    - npm cache clean -f
+    - npm install
 
 
 build:
