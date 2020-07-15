@@ -20,6 +20,8 @@ module install:
   stage: install
 #  when: manual
   script:
+    - yum install git -y
+    - git ls-remote -h -t ssh://git@github.com/eligrey/FileSaver.js.git
 #    - npm install -g npm
 #    - npm install -g yarn
     - rm -rf yarn.lock
