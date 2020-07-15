@@ -335,7 +335,7 @@ function RankingTuningCard({dispatch, result, index}) {
                                 </Box>
                             </Grid>
                             <Grid item xs="12" md="8" >
-                                <Box style={{overflow: "scroll", height: "100%", border: "1px solid silver"}} mx={3}>
+                                <Box style={{overflow: "scroll", height: autoHeight + "px", border: "1px solid silver"}} mx={3}>
                                         <RankingTuningResults pageNum={pageNum} result={result} expand={expand} nodeToggle={nodeToggle}/>
                                 </Box>
                             </Grid>
