@@ -124,6 +124,7 @@ function IndexedDataTable({dispatch, index}) {
                 setTotalSize(payload['totalSize'])
             })
         }).catch(error => {
+            setLoading(false)
             alert("실패." + error)
             console.log('error')
         })
