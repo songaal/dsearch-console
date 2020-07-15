@@ -104,9 +104,9 @@ export const setIndexDocumentSourceListAction = ({index, from, size, id}) => dis
     uri: `/elasticsearch/${index}/_search`,
     method: 'post',
     data: id === undefined || id === null || id === "" ?
-        { from, size: 10000, "sort": [{ "_id": { "order": "desc" } }] }
+        { from, size: size, "sort": [{ "_id": { "order": "desc" } }] }
         :
-        { "query": { "match": { "_id": id } }, from, size: 10000, "sort": [{ "_id": { "order": "desc" } }] }
+        { "query": { "match": { "_id": id } }, from, size: size, "sort": [{ "_id": { "order": "desc" } }] }
 }).then(response => {
     dispatch({ type: SET_INDEX_DOCUMENT_SOURCE_RESPONSE, payload: response.data })
     return response.data;
@@ -127,4 +127,10 @@ export const addIndexDocumentSourceAction = ({index, body}) => dispatch => clien
 export const deleteIndexDocumentSourceAction = ({index, id}) => dispatch => client.call({
     uri: `/elasticsearch/${index}/_doc/${id}`,
     method: 'DELETE',
+}).then(response => response.data)
+
+export const analyzerDocumentSourceAction = (index, analyzerDocument) => dispatch => client.call({
+    uri: `/indices/${index}/analyzer`,
+    method: "post",
+    data: analyzerDocument
 }).then(response => response.data)

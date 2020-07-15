@@ -1,12 +1,16 @@
 import React from "react";
-import { connect } from "react-redux";
+import {connect} from "react-redux";
 import styled from "styled-components";
 
 import {
     Box as MuiBox,
     Button as MuiButton,
     Card as MuiCard,
-    CardContent, Dialog, DialogActions, DialogContent, DialogTitle,
+    CardContent,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
     Divider as MuiDivider,
     FormControl,
     FormControlLabel,
@@ -18,7 +22,7 @@ import {
     TableCell,
     TableHead,
     TableRow,
-    TextareaAutosize, TextField,
+    TextareaAutosize,
     Typography as MuiTypography,
 } from "@material-ui/core";
 
@@ -172,9 +176,9 @@ function Setting({ dispatch, index, authUser, settings }) {
                 <Grid item xs={2}>
                     <Box align={"right"} mt={2}>
                         {authUser.role.index ? <Button size={"small"}
-                                variant={"contained"}
-                                color={"primary"}
-                                onClick={toggleModal}
+                                                       variant={"contained"}
+                                                       color={"primary"}
+                                                       onClick={toggleModal}
                         >동적변경</Button> : <></>}
                     </Box>
                 </Grid>

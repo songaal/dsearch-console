@@ -1,23 +1,11 @@
-import React, {forwardRef, useState} from "react";
+import React, {useState} from "react";
 import styled from "styled-components";
 import {makeStyles} from '@material-ui/core/styles';
-import {
-    Box,
-    Divider as MuiDivider,
-    FormControl,
-    FormControlLabel,
-    Radio,
-    RadioGroup,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow
-} from "@material-ui/core";
+import {Box, Divider as MuiDivider, FormControl, FormControlLabel, Radio, RadioGroup} from "@material-ui/core";
 import {spacing} from "@material-ui/system";
 import DataEditTable from "./DataEditTable";
 import IndexedDataTable from "./IndexedDataTable";
+
 const useStyles = makeStyles((theme) => ({}));
 
 const Divider = styled(MuiDivider)(spacing);

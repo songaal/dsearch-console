@@ -3,15 +3,15 @@ import {connect} from "react-redux";
 import styled from "styled-components";
 import {makeStyles} from '@material-ui/core/styles';
 import {
+    Box,
     Card,
     CardContent,
-    Typography,
     Divider as MuiDivider,
     Table,
     TableBody,
     TableCell,
-    TableHead,
-    TableRow, Box
+    TableRow,
+    Typography
 } from "@material-ui/core";
 
 import {spacing} from "@material-ui/system";

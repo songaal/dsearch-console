@@ -6,11 +6,12 @@ import {flatten} from "flat"
 import {
     Box as MuiBox,
     Card as MuiCard,
-    CardContent, Checkbox,
+    CardContent,
+    Checkbox,
     FormControl,
-    FormControlLabel, Paper,
+    FormControlLabel,
     Radio,
-    RadioGroup, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+    RadioGroup,
     TextareaAutosize
 } from "@material-ui/core";
 

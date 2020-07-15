@@ -12,8 +12,10 @@ import {spacing} from "@material-ui/system";
 import {
     setIndexAction,
     setIndexAliasesAction,
-    setIndexInfoListAction, setIndexMappingsAction,
-    setIndexSettingsAction, setIndexStateAction
+    setIndexInfoListAction,
+    setIndexMappingsAction,
+    setIndexSettingsAction,
+    setIndexStateAction
 } from "../../../redux/actions/indicesActions";
 
 const useStyles = makeStyles((theme) => ({}));

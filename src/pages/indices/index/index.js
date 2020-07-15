@@ -7,16 +7,17 @@ import {
     Divider as MuiDivider,
     Link,
     Paper,
-    Table, TableBody, TableCell,
+    Table,
+    TableBody,
+    TableCell,
     TableContainer,
     TableHead,
     TableRow,
     Typography,
-    Button,
 } from "@material-ui/core";
 
 import {spacing} from "@material-ui/system";
-import {setIndexAction, setIndicesAction} from "../../../redux/actions/indicesActions";
+import {setIndicesAction} from "../../../redux/actions/indicesActions";
 import {connect} from "react-redux";
 
 const useStyles = makeStyles((theme) => ({}));

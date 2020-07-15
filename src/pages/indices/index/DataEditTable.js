@@ -69,7 +69,7 @@ function DataEditTable({dispatch, index}) {
     }, [index])
 
 
-    function fetchIndexDocumentSourceList({searchSize=undefined, searchId=undefined}) {
+    function fetchIndexDocumentSourceList({searchSize=10000, searchId=undefined}) {
         return dispatch(setIndexDocumentSourceListAction({index, from: pageNum, size: searchSize||rowSize, id})).then(response => {
             // columns 적용
             let tmpColumns = {}
@@ -101,9 +101,7 @@ function DataEditTable({dispatch, index}) {
 
     function handleChangeRowsPerPage(row) {
         setRowSize(row)
-        fetchIndexDocumentSourceList({
-            searchSize: row
-        })
+        fetchIndexDocumentSourceList({})
     }
 
     function handleSearch(keyword) {
