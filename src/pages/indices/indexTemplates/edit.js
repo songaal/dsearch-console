@@ -89,6 +89,10 @@ function Edit({dispatch, template, templates}) {
 
 
     useEffect(() => {
+        setIndexPatternText("")
+        setMappingsJson("")
+        setSettingsJson("")
+
         if (selectedTemplate !== "") {
             dispatch(setIndexTemplateAction({template: selectedTemplate}))
             dispatch(setIndexTemplatesAction())
@@ -111,7 +115,7 @@ function Edit({dispatch, template, templates}) {
     }, [template['settings']])
 
     function handleTemplateChange(template) {
-        history.pushState(null, null, `../indices/templates/${template}/edit`)
+        history.push(`../${template}/edit`)
         setSelectedTemplate(template)
     }
 
@@ -260,7 +264,7 @@ function Edit({dispatch, template, templates}) {
                         {/*        onClick={handleSubmitClick}*/}
                         {/*>저장</Button>*/}
                         <Button variant="outlined"
-                                onClick={() => history.push("../indices/templates")}
+                                onClick={() => history.push("../../templates")}
                                 ml={1}
                         >취소</Button>
                     </Box>
@@ -309,7 +313,7 @@ function Edit({dispatch, template, templates}) {
                     mappingMode === "form" ?
                         <Card>
                             <CardContent m={0}>
-                                {Json2html(mappingsJson)}
+                                {Json2html({json: mappingsJson, type: "mappings"})}
                             </CardContent>
                         </Card>
                         :
@@ -347,7 +351,7 @@ function Edit({dispatch, template, templates}) {
                     settingMode === "form" ?
                         <Card>
                             <CardContent m={0}>
-                                {Json2html(settingsJson)}
+                                {Json2html({json: settingsJson, type: "settings"})}
                             </CardContent>
                         </Card>
                         :

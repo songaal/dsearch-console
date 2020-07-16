@@ -1,8 +1,8 @@
 import React from "react"
 import async from "../components/Async"
-import {Users} from "react-feather"
 import * as Icon from "@material-ui/icons";
 
+// eslint-disable-next-line no-restricted-globals
 const clusterContext = location.pathname.substring(0, location.pathname.indexOf("/", 1))
 
 // CLuster
@@ -39,9 +39,6 @@ const Collection = async(() => import("../pages/indices/collection"));
 const CollectionDetail = async(() => import("../pages/indices/collection/Detail"));
 const Jdbc = async(() => import("../pages/indices/jdbc"));
 
-const IndexData = async(() => import("../pages/indices/indexData"));
-const DataSource = async(() => import("../pages/indices/dataSource"));
-
 // Search components
 const QueryTest = async(() => import("../pages/search/queryTest"));
 const ReferenceUI = async(() => import("../pages/search/referenceUI"));
@@ -74,7 +71,6 @@ const editUserRoutes = {id: "정보수정", path: "/my", component: EditUser, hi
 // };
 
 // 관리도구 라우트
-// const dashboardRoutes = {id: "대시보드", path: "/dashboard", icon: <Icon.Dashboard/>, component: Dashboard, children: null};
 const dashboardRoutes = {id: "대시보드", path: `${clusterContext}/dashboard`, icon: <Icon.Dashboard/>, component: Dashboard, children: null};
 
 const analysisRoutes = [
@@ -97,10 +93,6 @@ const indicesRoutes = [
     {id: "인덱스", path: `${clusterContext}/indices`, icon: <Icon.Subject/>, component: Index, children: null},
     {id: "JDBC", path: `${clusterContext}/indices/jdbc`, icon: <Icon.Subject/>, component: Jdbc, children: null},
     {id: "인덱스상세", path: `${clusterContext}/indices/*`, icon: <Icon.Subject/>, component: IndexDetail, children: null, hidden: true},
-
-    // {id: "데이터", path: "/*/indices/data", icon: <Icon.Subject/>, component: IndexData, children: null},
-    // {id: "수집소스", path: "/*/indices/source", icon: <Icon.Subject/>, component: DataSource, children: null},
-    // {id: "색인", path: "/*/indices/index", icon: <Icon.Subject/>, component: Index, children: null},
 
 ];
 
@@ -136,8 +128,4 @@ export const intro = [
 // auth layout routing
 export const auth = [
     homeRoutes,
-    // authRoutes
 ];
-
-// 메뉴 노출
-// export default dashboard.filter(o => o !== homeRoutes)

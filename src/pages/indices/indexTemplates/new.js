@@ -160,7 +160,7 @@ function New({ dispatch }) {
                                 onClick={handleSubmitClick}
                         >저장</Button>
                         <Button variant="outlined"
-                                onClick={() => history.go(-1)}
+                                onClick={() => history.push('./templates')}
                                 ml={1}
                         >취소</Button>
                     </Box>
@@ -208,7 +208,7 @@ function New({ dispatch }) {
                     mappingMode === "form" ?
                         <Card>
                             <CardContent m={0}>
-                                {Json2html(mappingsJson)}
+                                {Json2html({json: mappingsJson, type: "mappings"})}
                             </CardContent>
                         </Card>
                         :
@@ -247,7 +247,7 @@ function New({ dispatch }) {
                     settingMode === "form" ?
                         <Card>
                             <CardContent m={0}>
-                                {Json2html(settingsJson)}
+                                {Json2html({json: settingsJson, type: "settings"})}
                             </CardContent>
                         </Card>
                         :

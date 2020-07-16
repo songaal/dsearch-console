@@ -45,7 +45,6 @@ function createData(name, pattern) {
 
 function Templates({dispatch, authUser, templates}) {
     const classes = useStyles();
-    console.log(authUser)
 
     useEffect(() => {
         dispatch(setIndexTemplatesAction())

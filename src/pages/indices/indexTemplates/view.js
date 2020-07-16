@@ -1,22 +1,28 @@
 import React, {useEffect, useState} from "react";
+import {useHistory} from "react-router-dom";
 import styled from "styled-components";
 import Helmet from 'react-helmet';
 import AntTabs from "~/components/AntTabs";
 import Json2html from "~/components/Json2Html"
 
 import {
-    Avatar,
     Box as MuiBox,
-    MenuItem,
     Button as MuiButton,
     Card as MuiCard,
-    CardContent, Dialog, DialogActions, DialogContent, DialogTitle,
+    CardContent,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
     Divider as MuiDivider,
     FormControl,
     FormControlLabel,
-    Grid, InputLabel, List, ListItem, ListItemAvatar, ListItemText,
+    Grid,
+    InputLabel,
+    MenuItem,
     Radio,
-    RadioGroup, Select,
+    RadioGroup,
+    Select,
     TextareaAutosize,
     TextField,
     Typography as MuiTypography
@@ -25,12 +31,7 @@ import {
 import {makeStyles} from '@material-ui/core/styles';
 import {palette, positions, spacing} from "@material-ui/system";
 import {connect} from "react-redux";
-import {
-    addIndexTemplateAction,
-    setIndexTemplateAction,
-    setIndexTemplatesAction
-} from "../../../redux/actions/indexTemplateActions";
-import {Add as AddIcon, Person as PersonIcon} from "@material-ui/icons";
+import {setIndexTemplateAction, setIndexTemplatesAction} from "../../../redux/actions/indexTemplateActions";
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -52,6 +53,7 @@ const tabs = [{label: "매핑"}, {label: "셋팅"}]
 
 let message = ""
 function View({ dispatch, template, templates}) {
+    const history = useHistory()
     const classes = useStyles();
     const [selectedTemplate, setSelectedTemplate] = useState("")
     const [indexPatternText, setIndexPatternText] = useState("")
@@ -88,7 +90,7 @@ function View({ dispatch, template, templates}) {
     }, [template['settings']])
 
     function handleTemplateChange(template) {
-        history.pushState(null, null,`../indices/templates/${template}`)
+        history.push(`../templates/${template}`)
         setSelectedTemplate(template)
     }
     function handleTabChane(index) {
@@ -168,7 +170,7 @@ function View({ dispatch, template, templates}) {
                     mappingMode === "form" ?
                         <Card>
                             <CardContent m={0}>
-                                {Json2html(mappingsJson)}
+                                {Json2html({json: mappingsJson, type: "mappings"})}
                             </CardContent>
                         </Card>
                         :
@@ -207,7 +209,7 @@ function View({ dispatch, template, templates}) {
                     settingMode === "form" ?
                         <Card>
                             <CardContent m={0}>
-                                {Json2html(settingsJson)}
+                                {Json2html({json: template, type: "settings"})}
                             </CardContent>
                         </Card>
                         :
