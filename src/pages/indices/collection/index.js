@@ -99,18 +99,39 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
     }
 
     function handleChangeBaseId(event) {
-        //         (?<=\[).+(?=])
-        console.log(catIndexTemplateList)
         setCreateBaseIdError(false)
         setCreateBaseId(event.target.value)
         if (event.target.value !== "") {
-            setApplyIndexTemplates([event.target.value + indexSuffixA, event.target.value + indexSuffixB])
+
+            let tmpMatched = []
+            catIndexTemplateList.forEach(catIndexTemplate => {
+                let patternList = catIndexTemplate['index_patterns']
+                patternList = patternList.substring(1, patternList.length - 1).split(", ")
+                patternList.forEach(pattern => {
+                    const re = new RegExp(pattern.replace(/\*/gi, "\\S*"), 'gi')
+                    if (event.target.value.match(re) !== null || (event.target.value + indexSuffixA) === pattern || (event.target.value + indexSuffixB) === pattern) {
+                        tmpMatched.push({
+                            ...catIndexTemplate,
+                            index_patterns: patternList
+                        })
+                        return false
+                    }
+                })
+            })
+            if(!tmpMatched.find(matched => matched['name'] === (event.target.value + indexSuffixA))) {
+                tmpMatched.push({name: event.target.value + indexSuffixA, index_patterns: [event.target.value + indexSuffixA]})
+            }
+            if (!tmpMatched.find(matched => matched['name'] === event.target.value + indexSuffixB)) {
+                tmpMatched.push({name: event.target.value + indexSuffixA, index_patterns: [event.target.value + indexSuffixB]})
+            }
+
+            // console.log(tmpMatched)
+            setApplyIndexTemplates(tmpMatched.map(matched => `${matched['name']} (${matched['index_patterns'].join(',')})`))
+            // tmpMatched.map(matched => matched['name'])
+            // setApplyIndexTemplates([event.target.value + indexSuffixA, event.target.value + indexSuffixB])
         } else {
             setApplyIndexTemplates([])
         }
-        // dispatch(setMatchedIndexTemplates(event.target.value)).then(response => {
-        //     console.log(response)
-        // })
     }
 
     function handleAddCollection() {
@@ -288,7 +309,17 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
                             인덱스 템플릿
                         </Grid>
                         <Grid item xs={8}>
-                            {applyIndexTemplates.join(",")}
+                            <ul>
+                                {
+                                    applyIndexTemplates.map((applyIndexTemplate, index) => {
+                                        return (
+                                            <li key={index}>
+                                                {applyIndexTemplate}
+                                            </li>
+                                        )
+                                    })
+                                }
+                            </ul>
                         </Grid>
                     </Grid>
                     <Grid container my={3}>
