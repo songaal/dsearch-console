@@ -43,10 +43,10 @@ const TextField = styled(MuiTextField)(spacing);
 
 
 function BriefResult({resultBrief}){
-    var total = [];
+    let total = [];
     if(resultBrief.tokens){
-        for(var i = 0; i < resultBrief.tokens.length; i++){
-            if(i % 5 == 0){
+        for(let i = 0; i < resultBrief.tokens.length; i++){
+            if(i % 5 === 0){
                 total.push([]);
             }
             total[total.length-1].push(resultBrief.tokens[i].token)
@@ -72,6 +72,7 @@ function BriefResult({resultBrief}){
 }
 
 function DetailResult({resultDetail}){
+    
     if(!resultDetail.resutl){
         return <Table>
             <TableRow>
@@ -79,15 +80,13 @@ function DetailResult({resultDetail}){
             </TableRow>
         </Table>
     }
-
-    console.log(resultDetail);
+    
     return (<Table>
         <TableRow hover>
             <TableCell>
                 <Typography variant="h4">1. {resultDetail.resutl[2].key}</Typography>
                     <br />
                     <div dangerouslySetInnerHTML={ {__html: resultDetail.resutl[2].value} }></div>
-                    {/* {resultDetail.resutl[2].value.replace(/(<([^>]+)>)/ig,"")} */}
                 </TableCell>
         </TableRow>
         <TableRow hover>
@@ -95,7 +94,6 @@ function DetailResult({resultDetail}){
                 <Typography variant="h4" >2. {resultDetail.resutl[3].key}</Typography>
                 <br />
                 <div dangerouslySetInnerHTML={ {__html: resultDetail.resutl[3].value} }></div>
-                {/* {resultDetail.resutl[3].value.replace(/(<([^>]+)>)/ig,"")} */}
             </TableCell>
         </TableRow>
         <TableRow hover>
@@ -103,14 +101,12 @@ function DetailResult({resultDetail}){
                 <Typography variant="h4">3. {resultDetail.resutl[4].key}</Typography>
                 <br />
                 <div dangerouslySetInnerHTML={ {__html: resultDetail.resutl[4].value} }></div>
-                {/* {resultDetail.resutl[4].value.replace(/(<([^>]+)>)/ig,"")} */}
             </TableCell>
         </TableRow>
         <TableRow hover>
             <TableCell>
             <Typography variant="h4">4. {resultDetail.resutl[5].key}</Typography>
             <br />
-                {/* {resultDetail.resutl[5].value.replace(/(<([^>]+)>)/ig,"")} */}
                 <div dangerouslySetInnerHTML={ {__html: resultDetail.resutl[5].value} }></div>
             </TableCell>
         </TableRow>
@@ -118,7 +114,6 @@ function DetailResult({resultDetail}){
             <TableCell>
                 <Typography variant="h4">5. {resultDetail.resutl[6].key}</Typography>
                 <br />
-                {/* {resultDetail.resutl[6].value.replace(/(<([^>]+)>)/ig,"")} */}
                 <div dangerouslySetInnerHTML={ {__html: resultDetail.resutl[6].value} }></div>
             </TableCell>
         </TableRow>
@@ -127,82 +122,75 @@ function DetailResult({resultDetail}){
                 <Typography variant="h4">6. {resultDetail.resutl[7].key}</Typography>
                 <br />
                 <div dangerouslySetInnerHTML={ {__html: resultDetail.resutl[7].value} }></div>
-                {/* {resultDetail.resutl[7].value.replace(/(<([^>]+)>)/ig,"")} */}
             </TableCell>
         </TableRow>
     </Table>
     );
 }
+
 function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetail}) {
     const [selectedItem, setSelectedItem] = useState('');
     const [toolsTypeAction, setToolsTypeAction] = useState("brief")
     const classes = useStyles()
 
     console.log("resultDetail>>>", resultDetail);
-    var list = [];
+    let list = [];
 
     if(toolsTypeAction == 'brief'){
-        console.log(analyzerList)
-        var originalList = Object.keys(analyzerList);
-        var indexList = []
-        for(var key of originalList){
+        let originalList = Object.keys(analyzerList);
+        let indexList = []
+        for(let key of originalList){
             if(key.charAt(0) != '.'){
                 indexList.push(key);
             }
         }
-        var index2analyzerList = []
-        for(var key of indexList){
+        let index2analyzerList = []
+        for(let key of indexList){
             if(analyzerList[key].settings.index.analysis){
                 let keyList = Object.keys(analyzerList[key].settings.index.analysis.analyzer);
-                for(var analyzer of keyList){
+                for(let analyzer of keyList){
                     index2analyzerList.push(key + "/" + analyzer);
                 }
             }
         }
         list = index2analyzerList;
     }else{
-        var split = pluginList.split("\n");
-        for(var items of split){
-            var item = items.replace(/ +/g, " ").split(" ")
-            if(item[1] != undefined) list.push(item[1]);
-        }
-        list = Array.from(new Set(list))
+        list = pluginList.plugins;
     }
-   
 
     const handleChange = (event) => {
-        if(toolsTypeAction == 'brief'){
+        if(toolsTypeAction === 'brief'){
             dispatch(setAnalyzerList());
         }else{
             dispatch(setPluginList());
         }
-        
         setToolsTypeAction(event.target.value)
     };
+
 
     const handleSelectedItemChange = (event) =>{
         setSelectedItem(event.target.value)
     }
 
     const handleToolsClick = () =>{
-        var analyzer_contents = document.getElementById("analyzer_contents");
-        var analyzer_select = document.getElementById("analyzer_select");
-        var data = {};
+        let analyzer_contents = document.getElementById("analyzer_contents");
+        let analyzer_select = document.getElementById("analyzer_select");
+        let data = {};
         if(toolsTypeAction == 'brief') {
-            var split = analyzer_select.innerHTML.split('/');
-            var index = split[0].replace(' ', '');
-            var analyzer = split[1].replace(' ', '');
+            let split = analyzer_select.innerHTML.split('/');
+            let index = split[0].replace(' ', '');
+            let analyzer = split[1].replace(' ', '');
             data.text = analyzer_contents.value;
             data.analyzer = analyzer
             dispatch(actionAnalyzer(index, data));
         }else {
-            var plugin = analyzer_select.innerHTML
+            let plugin = analyzer_select.innerHTML
             plugin = plugin.replace(/ /gi, "");
-            data.index = ".fastcatx_dict";
-            data.detail = true;
-            data.useForQuery = true;
+
+            data.plugin = plugin;
             data.text = analyzer_contents.value;
-            dispatch(actionPlugin(plugin, data));
+            console.log(data);
+            dispatch(actionPlugin(data));
         }
     }
 
