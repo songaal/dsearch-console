@@ -32,8 +32,8 @@ function SummaryTable({summary}){
         }
     }
 
-    for(var i in settings){
-        var info = settings[i];
+    for(let i in settings){
+        let info = settings[i];
         for(var j in infoDict){
             if(settings[i].id == infoDict[j].type){
                 info.count = infoDict[j].count;
