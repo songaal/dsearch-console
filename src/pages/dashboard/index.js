@@ -1,35 +1,31 @@
 import React, {useEffect} from "react";
 import styled from "styled-components";
 import {
+    setIndexAliasActions,
     setIndexResultActions,
-    setRunningIndexActions,
     setIndexStatusActions,
-    setIndexActions,
-    setIndexAliasActions
+    setRunningIndexActions
 } from '@actions/dashBoardActions'
 import Helmet from "react-helmet";
 
 import {
+    Box,
     Button,
     Card as MuiCard,
     CardContent,
-    Checkbox,
     Divider as MuiDivider,
-    FormControlLabel,
     Grid as MuiGrid,
-    Box ,
+    LinearProgress,
     Table,
     TableBody,
     TableCell as MuiTableCell,
     TableHead,
     TableRow as MuiTableRow,
-    Typography,
-    LinearProgress 
+    Typography
 } from "@material-ui/core";
 import {palette, sizing, spacing} from "@material-ui/system";
-import {lighten,makeStyles,withStyles} from "@material-ui/core/styles";
+import {lighten, makeStyles, withStyles} from "@material-ui/core/styles";
 import {connect} from "react-redux";
-import Async from "~/components/Async";
 import Brightness1Icon from '@material-ui/icons/Brightness1';
 
 const useStyles = makeStyles((theme) => ({
@@ -124,7 +120,7 @@ function numberWithCommas(num) {
 
 function WarningIndex({status}) {
     const classes = useStyles();
-    console.log(status)
+    // console.log(status)
 
     return(
         <>
@@ -138,7 +134,7 @@ function WarningIndex({status}) {
                     {Object.values(status).map(row => {
                         if(row.health != 'green') {
                             return(
-                                <TableRow>
+                                <TableRow key={row.index}>
                                 <TableCell>
                                     <Brightness1Icon style={{color:row.health}} />
                                     {row.index}
@@ -198,7 +194,7 @@ function RunningIndex({result, running, status}) {
                 <TableHead></TableHead>
                 <TableBody>
                     {Object.values(indexList).map(row =>
-                        <TableRow>
+                        <TableRow key={row.index}>
                             <TableCell>
                                 {row.index}
                             </TableCell>
@@ -276,7 +272,7 @@ function BottomArea({result, alias}) {
         }
     }
 
-    console.log('alias : ', alias)
+    // console.log('alias : ', alias)
     let resultList = []
     Object.values(result.hits.hits).forEach(row => {
 
@@ -301,7 +297,8 @@ function BottomArea({result, alias}) {
         )
     })
 
-    console.log('list : ', resultList)
+    // console.log('list : ', resultList)
+
     return (
         <React.Fragment>
             <Typography variant="h4" gutterBottom display="inline">
@@ -322,36 +319,42 @@ function BottomArea({result, alias}) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {Object.values(resultList).map(row =>
-                                <TableRow>
-                                    <TableCell>
-                                        {
-                                            row.status == 'SUCCESS' ? <Brightness1Icon color="primary" /> : 
-                                            <Brightness1Icon style={{color:'red'}} />  
-                                        }
-                                        {row.status}
-                                    </TableCell>
-                                    <TableCell>
-                                       <a href> {row.index} </a>
-                                    </TableCell>
-                                    <TableCell>
-                                        {row.alias}
-                                    </TableCell>
-                                    <TableCell>
-                                        <b>{untilTime(row.endTime)} 전 </b><br/>
-                                        {format(row.endTime)}
-                                    </TableCell>
-                                    <TableCell>
-                                       {getElapsed(row.endTime - row.startTime)}
-                                    </TableCell>
-                                    <TableCell>
-                                        {numberWithCommas(row.docSize)}
-                                    </TableCell>
-                                    <TableCell>
-                                        {row.storage}
-                                    </TableCell>
-                                </TableRow>
-                            )}
+                            {
+                                Object.values(resultList).map(row => {
+                                    return (
+                                        <TableRow key={row.index}>
+                                            <TableCell>
+                                                {
+                                                    row['status'] && row['status'] == 'SUCCESS' ?
+                                                        <Brightness1Icon color="primary"/>
+                                                        :
+                                                        <Brightness1Icon style={{color: 'red'}}/>
+                                                }
+                                                {row['status']}
+                                            </TableCell>
+                                            <TableCell>
+                                                {row.index}
+                                            </TableCell>
+                                            <TableCell>
+                                                {row.alias}
+                                            </TableCell>
+                                            <TableCell>
+                                                <b>{untilTime(row.endTime)} 전 </b><br/>
+                                                {format(row.endTime)}
+                                            </TableCell>
+                                            <TableCell>
+                                                {getElapsed(row.endTime - row.startTime)}
+                                            </TableCell>
+                                            <TableCell>
+                                                {numberWithCommas(row.docSize)}
+                                            </TableCell>
+                                            <TableCell>
+                                                {row.storage}
+                                            </TableCell>
+                                        </TableRow>
+                                    )
+                                })
+                            }
                         </TableBody>
                     </Table>
                 </CardContent>

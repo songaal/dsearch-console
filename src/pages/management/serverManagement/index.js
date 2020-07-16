@@ -1,50 +1,38 @@
-import React, { useEffect } from "react";
+import React, {useEffect} from "react";
 import styled from "styled-components";
 import {NavLink as RouterNavLink} from "react-router-dom";
-import { setServerSummaryActions } from '@actions/serverSummaryActions'
+import {setServerSummaryActions} from '@actions/serverSummaryActions'
 import Async from '~/components/Async';
 
 import Helmet from 'react-helmet';
 
 import {
+    Box,
     Breadcrumbs as MuiBreadcrumbs,
     Card as MuiCard,
     CardContent,
     Divider as MuiDivider,
-    Grid,
-    Link,
-    Typography,
-    Table,
-    TableHead,
-    TableRow,
-    TableCell,
-    TableBody,
-    Box,
     FormControl,
+    Grid,
     InputLabel,
+    Link,
+    MenuItem,
     Select,
-    MenuItem
-
+    TableCell
 } from "@material-ui/core";
 
 import {makeStyles, withStyles} from '@material-ui/core/styles';
-import {spacing, boxSizing} from "@material-ui/system";
-import { SentimentSatisfied } from "@material-ui/icons";
-import AntTabs from "~/components/AntTabs"
+import {spacing} from "@material-ui/system";
 import {connect} from "react-redux";
-import serverSummaryReducers from "../../../redux/reducers/serverSummaryReducers"
-
 
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
-        // margin: theme.spacing(1),
         minWidth: 250,
     },
     root: {
         flexGrow: 1,
         width: '100%',
-        // backgroundColor: theme.palette.background.paper,
     },
     edit: {
         width: '100%'

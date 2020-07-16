@@ -4,28 +4,21 @@ import styled from "styled-components";
 import Helmet from 'react-helmet';
 
 import {
-    Breadcrumbs as MuiBreadcrumbs,
     Card as MuiCard,
     CardContent,
     Divider as MuiDivider,
     Grid,
-    Link,
-    Typography,
     Table,
+    TableBody,
+    TableCell,
     TableHead,
     TableRow,
-    TableCell,
-    TableBody,
-    Box,
-    Button,
-    TextareaAutosize
-
+    Typography
 } from "@material-ui/core";
 
 import {makeStyles, withStyles} from '@material-ui/core/styles';
-import {spacing, boxSizing} from "@material-ui/system";
+import {spacing} from "@material-ui/system";
 import {connect} from "react-redux";
-import { object } from "prop-types";
 
 const Card = styled(MuiCard)(spacing);
 
@@ -96,12 +89,12 @@ function NodeSettingTalbe(node) {
                         <StyledTableCell>{row.version}</StyledTableCell>
                         <StyledTableCell>{row.host}</StyledTableCell>
                         <StyledTableCell>{row.ip}</StyledTableCell>
-                        <StyledTableCell>{row["roles"].join(", ")}</StyledTableCell>
-                        <StyledTableCell>{row.attributes["xpack.installed"] == 'true' ? <font color="blue">설치됨</font> : <font color="red">미설치</font> }</StyledTableCell>
-                        <StyledTableCell>{propertyCheck(row.settings.xpack.security.enabled) == 'true' ? <font color="blue">활성</font> : <font color="red">비활성</font>}</StyledTableCell>
+                        <StyledTableCell>{(row["roles"]||[]).join(", ")}</StyledTableCell>
+                        <StyledTableCell>{(row.attributes||{})["xpack.installed"] == 'true' ? <font color="blue">설치됨</font> : <font color="red">미설치</font> }</StyledTableCell>
+                        <StyledTableCell>{propertyCheck((((row.settings||{}).xpack||{}).security||{}).enabled) == 'true' ? <font color="blue">활성</font> : <font color="red">비활성</font>}</StyledTableCell>
 
                         <StyledTableCell>
-                            {Object.entries(row.settings["bootstrap"]).map((bootstrapOption) => (
+                            {Object.entries(((row.settings||{})["bootstrap"]||{})).map((bootstrapOption) => (
                                 bootstrapOption
                             )).join(", \n")}
                         </StyledTableCell>
@@ -133,9 +126,9 @@ function NodePathTable(node) {
             <TableBody>
                 {Object.values(node).map((row, index) => (
                     <TableRow>
-                        <StyledTableCell>{row.settings.path.home}</StyledTableCell>
-                        <StyledTableCell>{row.settings.path.logs}</StyledTableCell>
-                        <StyledTableCell>{row.settings.path.repo}</StyledTableCell>
+                        <StyledTableCell>{((row.settings||{}).path||{}).home||""}</StyledTableCell>
+                        <StyledTableCell>{((row.settings||{}).path||{}).logs||""}</StyledTableCell>
+                        <StyledTableCell>{((row.settings||{}).path||{}).repo||""}</StyledTableCell>
                     </TableRow>
                 ))}
             </TableBody>
@@ -165,11 +158,11 @@ function NetworkTable(node) {
             <TableBody>
                 {Object.values(node).map((row) => (
                     <TableRow>
-                        <StyledTableCell>{row.settings.network.publish_host}</StyledTableCell>
-                        <StyledTableCell>{row.http.bound_address}</StyledTableCell>
-                        <StyledTableCell>{row.transport.bound_address}</StyledTableCell>
-                        <StyledTableCell>{propertyCheck(row.settings.http.port)}</StyledTableCell>
-                        <StyledTableCell>{propertyCheck(row.settings.transport.tcp.port)}</StyledTableCell>
+                        <StyledTableCell>{((row.settings||{}).network||{}).publish_host||""}</StyledTableCell>
+                        <StyledTableCell>{(row.http||{}).bound_address||""}</StyledTableCell>
+                        <StyledTableCell>{(row.transport||{}).bound_address||""}</StyledTableCell>
+                        <StyledTableCell>{propertyCheck(((row.settings||{}).http||{}).port||"")}</StyledTableCell>
+                        <StyledTableCell>{propertyCheck((((row.settings||{}).transport||{}).tcp||{}).port||"")}</StyledTableCell>
                     </TableRow>
                 ))}
             </TableBody>
@@ -201,11 +194,11 @@ function OsInfoTable(node) {
             <TableBody>
                 {Object.values(node).map((row) => (
                     <TableRow>
-                        <StyledTableCell>{row.os.name} , {row.os.pretty_name}</StyledTableCell>
-                        <StyledTableCell>{row.os.arch}</StyledTableCell>
-                        <StyledTableCell>{row.os.version}</StyledTableCell>
-                        <StyledTableCell>{row.os.allocated_processors}</StyledTableCell>
-                        <StyledTableCell>{row.os.refresh_interval_in_millis}</StyledTableCell>
+                        <StyledTableCell>{(row.os||{}).name||""} , {(row.os||{}).pretty_name||""}</StyledTableCell>
+                        <StyledTableCell>{(row.os||{}).arch||""}</StyledTableCell>
+                        <StyledTableCell>{(row.os||{}).version||""}</StyledTableCell>
+                        <StyledTableCell>{(row.os||{}).allocated_processors||""}</StyledTableCell>
+                        <StyledTableCell>{(row.os||{}).refresh_interval_in_millis||""}</StyledTableCell>
                     </TableRow>
                 ))}
             </TableBody>
@@ -252,11 +245,11 @@ function JvmInfoTable(node) {
                         <StyledTableCell>{jvm.vm_version}</StyledTableCell>
                         <StyledTableCell>{jvm.vm_vendor}</StyledTableCell>
                         <StyledTableCell>{format(jvm.start_time_in_millis)}</StyledTableCell>
-                        <StyledTableCell>{jvm["gc_collectors"].join(", \n")}</StyledTableCell>
+                        <StyledTableCell>{(jvm["gc_collectors"]||[]).join(", \n")}</StyledTableCell>
                         <StyledTableCell>
-                            Heap : {jvm.mem.heap_init_in_bytes > (1024*1024*1024) ?  jvm.mem.heap_init_in_bytes / (1024*1024*1024)+"GB" : jvm.mem.heap_init_in_bytes / (1024*1024)+"MB"} <br/>
+                            Heap : {((jvm.mem||{}).heap_init_in_bytes||0) > (1024*1024*1024) ?  ((jvm.mem||{}).heap_init_in_bytes||0) / (1024*1024*1024)+"GB" : ((jvm.mem||{}).heap_init_in_bytes||0) / (1024*1024)+"MB"} <br/>
 
-                            Non-Heap : {jvm.mem.non_heap_init_in_bytes > (1024*1024*1024) ?  jvm.mem.non_heap_init_in_bytes / (1024*1024*1024)+"GB" : jvm.mem.non_heap_init_in_bytes / (1024*1024)+"MB"} 
+                            Non-Heap : {((jvm.mem||{}).non_heap_init_in_bytes||0) > (1024*1024*1024) ?  ((jvm.mem||{}).non_heap_init_in_bytes||0) / (1024*1024*1024)+"GB" : ((jvm.mem||{}).non_heap_init_in_bytes||0) / (1024*1024)+"MB"}
 
                         </StyledTableCell>
                     </TableRow>
