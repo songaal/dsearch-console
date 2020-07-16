@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import styled from "styled-components";
-import { NavLink as RouterNavLink } from "react-router-dom";
+import { NavLink as RouterNavLink, useLocation} from "react-router-dom";
 import Helmet from 'react-helmet';
 import { spacing } from "@material-ui/system";
 import AceEditor from "react-ace";
@@ -38,7 +38,7 @@ const Card = styled(MuiCard)(spacing);
 const Divider = styled(MuiDivider)(spacing);
 const Table = styled(MuiTable)(spacing);
 
-var ids = 1;
+let ids = 1;
 
 const getTreeItemsFromData = treeItems => {
     return treeItems.map(detail => {
@@ -81,11 +81,10 @@ function ResultDocument({result, item, expand, nodeToggle}) {
     const analyzerTokensMap = result.analyzerTokensMap[item._index]
     let dataList = []
 
-
     Object.keys(item).forEach(key => {
         const id = item['_id']
         let text = item[key]
-        if ("_explanation" === key) {
+        if ("_explanation" === key || "_id"  === key || "_index" === key) {
             return true;
         }
         
@@ -113,18 +112,18 @@ function ResultDocument({result, item, expand, nodeToggle}) {
             })
         }
     })
-    console.log("dataList >> ", dataList)
 
     return (
         <Table>
             <TableBody>
                 {
                     dataList.map(data => {
+                        let tokenValue = data['tokens'].join(", ");
                         return (
                             <TableRow>
                                 <TableCell>{data['field']}</TableCell>
                                 <TableCell>{data['text']}</TableCell>
-                                <TableCell>{data['tokens'].join(", ")}</TableCell>
+                                <TableCell>{tokenValue.length > 0 ? tokenValue : data['text']}</TableCell>
                             </TableRow>
                         )
                     })
@@ -141,6 +140,8 @@ function ResultDocument({result, item, expand, nodeToggle}) {
 }
 
 function RankingTuningResults({pageNum, result, expand, nodeToggle}) {
+
+
     ids = 1;
     return (
         <Table style={{ margin: "9px", overflow: "scroll" }}>
@@ -153,7 +154,7 @@ function RankingTuningResults({pageNum, result, expand, nodeToggle}) {
             <TableBody>
                 {result.SearchResponse.length > 0 ? 
                     result.SearchResponse.map((item, index) => {
-                        var number = index + ((pageNum-1)*10) + 1;
+                        let number = index + ((pageNum-1)*10) + 1;
                         return (<TableRow >
                             <TableCell align="right">{number}</TableCell>
                             <TableCell >
@@ -172,32 +173,49 @@ function RankingTuningResults({pageNum, result, expand, nodeToggle}) {
         </Table>
     );
 }
-
+let eventCode = null
 function RankingTuningCard({dispatch, result, index}) {
-    var aceEditor = useRef("");
+    let aceEditor = useRef("");
+    let inputIndex = useRef('');
+
     const [pageNum, setPageNum] = useState(0);
     const [progress, setProgress] = useState(false);
     const [expand, setExpand] = useState([]);
     const [checked, setChecked] = useState(false);
     const [alert, setAlert] = useState(false);
-    const [autoHeight, setAutoHeight] = useState(600)
-    var inputIndex = useRef('');
+    const [autoHeight, setAutoHeight] = useState(Math.ceil(window.innerHeight * 0.6))
+    
+      
+    useEffect(() => {
+        if (eventCode !== null) {
+            clearInterval(eventCode)
+        }
+        eventCode = setInterval(() => {
+            let windowHeight = Math.ceil(window.innerHeight * 0.6)
+            if (windowHeight < 500) {
+                windowHeight = 500
+            } else if (windowHeight > 900) {
+                windowHeight = Math.ceil(window.innerHeight * 0.8)
+            }
+            setAutoHeight(windowHeight)
+        }, 500)
+        return () => {
+            if (eventCode !== null) {
+                clearInterval(eventCode)
+            }
+        }
+    }, [])
 
-    // useEffect(() => {
-    //     let windowHeight = window.innerHeight  - 150
-    //     if (windowHeight < 500) {
-    //         windowHeight = 500
-    //     }
-    //     setAutoHeight(windowHeight)
-    // }, [])
+    
+
 
     const handleChecked = (evnet) =>{
         setChecked(!checked);
     }
 
     const handleExpandAll = (event) =>{
-        var changeExpand = [];    
-        for (var i = 1; i <= ids; i++)
+        let changeExpand = [];    
+        for (let i = 1; i <= ids; i++)
             changeExpand.push(i);
         setExpand(changeExpand)
     }
@@ -208,7 +226,7 @@ function RankingTuningCard({dispatch, result, index}) {
 
     function isJson(str) {
         try {
-            var json = JSON.parse(str);
+            let json = JSON.parse(str);
             return (typeof json === 'object');
         } catch (e) {
             return false;
@@ -220,12 +238,16 @@ function RankingTuningCard({dispatch, result, index}) {
             setAlert(true);
             return;
         }
+
+        /* 스크롤 top으로 위치 시키기 */
+        document.querySelector("#move").scrollTo(0, 0);
+
         setProgress(true);
-        var jsonData = JSON.parse(aceEditor.current.editor.getValue());
+        let jsonData = JSON.parse(aceEditor.current.editor.getValue());
         jsonData.explain = true;
         jsonData.from = 0;
         jsonData.size = 10;
-        var data = {};
+        let data = {};
 
         if(checked){
             data.isMultiple = true;
@@ -259,13 +281,14 @@ function RankingTuningCard({dispatch, result, index}) {
             setAlert(true);
             return;
         }
+        document.querySelector("#move").scrollTo(0, 0);
         setProgress(true);
-        var jsonData = JSON.parse(aceEditor.current.editor.getValue());
+        let jsonData = JSON.parse(aceEditor.current.editor.getValue());
         jsonData.explain = true;
         jsonData.from = (pageNum - 1) * 10;
         jsonData.size = 10;
 
-        var data = {};
+        let data = {};
         if(checked){
             data.isMultiple = true;
             data.index = inputIndex.current.value;
@@ -335,7 +358,7 @@ function RankingTuningCard({dispatch, result, index}) {
                                 </Box>
                             </Grid>
                             <Grid item xs="12" md="8" >
-                                <Box style={{overflow: "scroll", height: autoHeight + "px", border: "1px solid silver"}} mx={3}>
+                                <Box style={{overflow: "scroll", height: autoHeight + "px", border: "1px solid silver"}} mx={3} id="move">
                                         <RankingTuningResults pageNum={pageNum} result={result} expand={expand} nodeToggle={nodeToggle}/>
                                 </Box>
                             </Grid>
@@ -360,7 +383,7 @@ function RankingTuningCard({dispatch, result, index}) {
                                         variant="outlined" 
                                         color="primary"
                                         onClick={() => handlePagination(pageNum - 1)}
-                                        disabled={pageNum === 0}
+                                        disabled={pageNum === 0 || pageNum === 1 }
                                         > 이전 </Button>
                                     <Box component={"span"} m={3}>
                                         {pageNum} / {result.Total.value ? ( Math.ceil(Number(result.Total.value) / 10)) : "0" }
@@ -369,7 +392,7 @@ function RankingTuningCard({dispatch, result, index}) {
                                         variant="outlined" 
                                         color="primary"
                                         onClick={() => handlePagination(pageNum + 1)}
-                                        disabled={pageNum === 0? true : Math.ceil(Number(result.Total.value) / 10) === pageNum ? true : false}
+                                        disabled={pageNum === 0 ? true : Math.ceil(Number(result.Total.value) / 10) === pageNum ? true : false}
                                         > 다음 </Button>
                                 </Box>
                             </Grid>
