@@ -74,7 +74,7 @@ function SummaryTable({summary}){
     }, [])
 
     const clickApplyDictionary = (event) => {
-        var data = {};
+        let data = {};
         data.index=".fastcatx_dict" // 변경 예정
         data.exportFile= true
         data.distribute= true

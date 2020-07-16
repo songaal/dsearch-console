@@ -2,7 +2,9 @@ import * as types from '../constants';
 
 let initState = {
     analyzerList: [],
-    pluginList: [],
+    pluginList: {
+        plugins: []
+    },
     resultBrief: {},
     resultDetail: {}
 };
