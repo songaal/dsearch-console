@@ -6,7 +6,8 @@ let initState = {
     collection: {},
     collectionList: [],
     matchedIndexTemplates: [],
-    history: {}
+    history: {},
+    catIndexTemplateList: [],
 };
 
 export default function reducer(state = initState, actions) {
@@ -31,6 +32,11 @@ export default function reducer(state = initState, actions) {
             return {
                 ...state,
                 history: actions.payload
+            };
+        case types.SET_CAT_INDEX_TEMPLATE_LIST:
+            return {
+                ...state,
+                catIndexTemplateList: actions.payload
             };
         default:
             return state

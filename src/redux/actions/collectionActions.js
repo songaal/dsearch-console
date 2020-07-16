@@ -1,4 +1,5 @@
 import {
+    SET_CAT_INDEX_TEMPLATE_LIST,
     SET_COLLECTION,
     SET_COLLECTION_INDEX_HISTORY_LIST,
     SET_COLLECTION_INDEX_SUFFIX,
@@ -116,3 +117,7 @@ export const deleteIndexHistoryList = ({indexA, indexB, time}) => dispatch => cl
         }
     }
 }).then(response => response.data)
+
+export const setCatIndexTemplateList = () => dispatch => client.call({
+    uri: `/elasticsearch/_cat/templates?format=json`
+}).then(response => dispatch({type: SET_CAT_INDEX_TEMPLATE_LIST, payload: response.data}))

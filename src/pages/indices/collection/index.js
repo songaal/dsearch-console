@@ -28,7 +28,7 @@ import {
 import {makeStyles} from '@material-ui/core/styles';
 import {positions, spacing} from "@material-ui/system";
 import {
-    addCollectionList,
+    addCollectionList, setCatIndexTemplateList,
     setCollectionIndexSuffix,
     setCollectionList,
     setMatchedIndexTemplates
@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionList}) {
+function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionList, catIndexTemplateList}) {
     const history = useHistory();
     const classes = useStyles();
     const [openAddModal, setOpenAddModal] = useState(false)
@@ -74,6 +74,7 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
         dispatch(setCollectionIndexSuffix())
         dispatch(setIndexTemplatesAction())
         dispatch(setCollectionList())
+        dispatch(setCatIndexTemplateList())
     }, [])
 
     function toggleOpenAddModal() {
@@ -98,6 +99,8 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
     }
 
     function handleChangeBaseId(event) {
+        //         (?<=\[).+(?=])
+        console.log(catIndexTemplateList)
         setCreateBaseIdError(false)
         setCreateBaseId(event.target.value)
         if (event.target.value !== "") {
