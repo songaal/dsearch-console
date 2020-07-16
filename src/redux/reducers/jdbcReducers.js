@@ -8,8 +8,7 @@ let initState = {
         }
     },
     JdbcAccessTest: { message : false},
-    JdbcDeleteResult:{},
-    JdbcAddResult:{}
+    changedJdbcList: false
 };
 
 export default function reducer(state = initState, actions) {
@@ -17,6 +16,7 @@ export default function reducer(state = initState, actions) {
         case types.SET_JDBC_LIST:
             return {
                 ...state,
+                changedJdbcList: false,
                 JdbcList: actions.payload
             }
         case types.SET_JDBC_ACCESS_TEST:
@@ -27,17 +27,22 @@ export default function reducer(state = initState, actions) {
         case types.SET_JDBC_ADD_RESULT:
             return{
                 ...state,
-                JdbcAddResult: actions.payload
+                changedJdbcList: true
             }
         case types.SET_JDBC_DELETE_RESULT:
             return {
                 ...state,
-                JdbcDeleteResult: actions.payload
+                changedJdbcList: true
             }
         case types.SET_JDBC_INDEX:
             return {
                 ...state,
                 JdbcIndex: actions.payload
+            }
+        case types.SET_JDBC_UPDATE_RESULT:
+            return {
+                ...state,
+                changedJdbcList: true
             }
         default:
             return state
