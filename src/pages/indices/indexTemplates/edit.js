@@ -1,36 +1,47 @@
 import React, {useEffect, useState} from "react";
+import {useHistory, useLocation} from "react-router-dom";
 import styled from "styled-components";
 import Helmet from 'react-helmet';
 import AntTabs from "~/components/AntTabs";
 import Json2html from "~/components/Json2Html"
 
 import {
-    Avatar,
     Box as MuiBox,
-    MenuItem,
     Button as MuiButton,
+    ButtonGroup,
     Card as MuiCard,
-    CardContent, Dialog, DialogActions, DialogContent, DialogTitle,
+    CardContent,
+    ClickAwayListener,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
     Divider as MuiDivider,
     FormControl,
     FormControlLabel,
-    Grid, InputLabel, List, ListItem, ListItemAvatar, ListItemText,
+    Grid,
+    Grow,
+    InputLabel,
+    MenuItem,
+    MenuList,
+    Paper,
+    Popper,
     Radio,
-    RadioGroup, Select,
+    RadioGroup,
+    Select,
     TextareaAutosize,
     TextField,
     Typography as MuiTypography
 } from "@material-ui/core";
-
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import {makeStyles} from '@material-ui/core/styles';
 import {palette, positions, spacing} from "@material-ui/system";
 import {connect} from "react-redux";
 import {
-    addIndexTemplateAction,
+    addIndexTemplateAction, deleteIndexTemplateAction,
     setIndexTemplateAction,
     setIndexTemplatesAction
 } from "../../../redux/actions/indexTemplateActions";
-import {Add as AddIcon, Person as PersonIcon} from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -51,7 +62,10 @@ const Button = styled(MuiButton)(spacing, positions, palette);
 const tabs = [{label: "매핑"}, {label: "셋팅"}]
 
 let message = ""
-function Edit({ dispatch, template, templates}) {
+
+function Edit({dispatch, template, templates}) {
+    const location = useLocation();
+    const history = useHistory();
     const classes = useStyles();
     const [selectedTemplate, setSelectedTemplate] = useState("")
     const [indexPatternText, setIndexPatternText] = useState("")
@@ -65,6 +79,14 @@ function Edit({ dispatch, template, templates}) {
     const [settingsJson, setSettingsJson] = useState("")
 
     const [openMessage, setOpenMessage] = useState(false)
+
+    const [inValid, setInvalid] = useState({})
+
+    const [open, setOpen] = React.useState(false);
+    const anchorRef = React.useRef(null);
+
+    const [deleteConfirmDialog, setDeleteConfirmDialog] = useState(false)
+
 
     useEffect(() => {
         if (selectedTemplate !== "") {
@@ -89,22 +111,55 @@ function Edit({ dispatch, template, templates}) {
     }, [template['settings']])
 
     function handleTemplateChange(template) {
-        history.pushState(null, null,`../indices/templates/${template}/edit`)
+        history.pushState(null, null, `../indices/templates/${template}/edit`)
         setSelectedTemplate(template)
     }
+
     function handleTabChane(index) {
         setTabIndex(index)
     }
 
-
     function handleSubmitClick() {
-        dispatch(addIndexTemplateAction( {
+        let tmpInValid = {}
+        if (indexPatternText.trim() === "") {
+            tmpInValid['indexPatternText'] = true
+        } else {
+            let indexPatternTextSplit = indexPatternText.split(",")
+            if (indexPatternTextSplit[0] === "" && indexPatternTextSplit.length === 1) {
+                tmpInValid['indexPatternText'] = true
+            }
+        }
+
+
+        try {
+            JSON.parse(mappingsJson === "" ? "{}" : mappingsJson)
+        } catch (error) {
+            tmpInValid['mappingsJson'] = true
+        }
+
+        try {
+            JSON.parse(settingsJson === "" ? "{}" : settingsJson)
+        } catch (error) {
+            tmpInValid['settingsJson'] = true
+        }
+
+        if (Object.keys(tmpInValid).length > 0) {
+            setInvalid(tmpInValid)
+            return false;
+        }
+
+        let tmpSettings = JSON.parse(settingsJson === "" ? "{}" : settingsJson)
+        let tmpMappings = JSON.parse(mappingsJson === "" ? "{}" : mappingsJson)
+        if (!tmpMappings['properties']) {
+            tmpMappings = {properties: tmpMappings}
+        }
+        dispatch(addIndexTemplateAction({
             template: selectedTemplate,
             index_patterns: indexPatternText.split(","),
-            settings: JSON.parse(settingsJson === "" ? "{}" : settingsJson),
-            mappings: JSON.parse(mappingsJson === "" ? "{}" : mappingsJson)
-        } )).then((response) => {
-            location.replace(`../indices/templates/${selectedTemplate}`)
+            settings: tmpSettings,
+            mappings: tmpMappings
+        })).then((response) => {
+            history.push(`../../templates/${selectedTemplate}`)
         }).catch(error => {
             if (typeof error === 'object') {
                 message = "[수정 실패]" + JSON.stringify(error)
@@ -114,6 +169,28 @@ function Edit({ dispatch, template, templates}) {
             setOpenMessage(true)
         })
     }
+
+
+    const handleToggle = () => {
+        setOpen((prevOpen) => !prevOpen);
+    };
+
+    const handleClose = (event) => {
+        if (anchorRef.current && anchorRef.current.contains(event.target)) {
+            return;
+        }
+        setOpen(false);
+    };
+
+    function handleDeleteTemplate() {
+        dispatch(deleteIndexTemplateAction({template: selectedTemplate})).then(response => {
+            history.push(`../../templates`)
+        }).catch(error => {
+            alert("실패" + error)
+            console.log("error", error)
+        })
+    }
+
     return (
         <React.Fragment>
             <Helmet title="템플릿 수정"/>
@@ -137,7 +214,8 @@ function Edit({ dispatch, template, templates}) {
                                     style={{minWidth: 250}}
                             >
                                 {
-                                    templates.map(template => <MenuItem key={template['name']} value={template['name']}>{template['name']}</MenuItem>)
+                                    templates.map(template => <MenuItem key={template['name']}
+                                                                        value={template['name']}>{template['name']}</MenuItem>)
                                 }
                             </Select>
                         </FormControl>
@@ -145,12 +223,44 @@ function Edit({ dispatch, template, templates}) {
                 </Grid>
                 <Grid item xs={6}>
                     <Box align={'right'}>
+
+
+                        <ButtonGroup variant="contained" color="primary" ref={anchorRef} aria-label="split button">
+                            <Button onClick={handleSubmitClick}>저장</Button>
+                            <Button
+                                size="small"
+                                aria-controls={open ? 'split-button-menu' : undefined}
+                                aria-expanded={open ? 'true' : undefined}
+                                aria-haspopup="menu"
+                                onClick={handleToggle}
+                            >
+                                <ArrowDropDownIcon/>
+                            </Button>
+                        </ButtonGroup>
+                        <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
+                            {({TransitionProps, placement}) => (
+                                <Grow
+                                    {...TransitionProps}
+                                    style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
+                                >
+                                    <Paper>
+                                        <ClickAwayListener onClickAway={handleClose}>
+                                            <MenuList id="split-button-menu">
+                                                <MenuItem onClick={() => setDeleteConfirmDialog(true)}> 삭제 </MenuItem>
+                                            </MenuList>
+                                        </ClickAwayListener>
+                                    </Paper>
+                                </Grow>
+                            )}
+                        </Popper>
+
+
+                        {/*<Button variant="outlined"*/}
+                        {/*        color="primary"*/}
+                        {/*        onClick={handleSubmitClick}*/}
+                        {/*>저장</Button>*/}
                         <Button variant="outlined"
-                                color="primary"
-                                onClick={handleSubmitClick}
-                        >저장</Button>
-                        <Button variant="outlined"
-                                onClick={() => location.href="../indices/templates"}
+                                onClick={() => history.push("../indices/templates")}
                                 ml={1}
                         >취소</Button>
                     </Box>
@@ -162,6 +272,7 @@ function Edit({ dispatch, template, templates}) {
                            placeholder={"access-log-*,error-log-*"}
                            value={indexPatternText}
                            onChange={event => setIndexPatternText(event.target.value)}
+                           error={inValid['indexPatternText'] || false}
 
 
                 />
@@ -261,6 +372,21 @@ function Edit({ dispatch, template, templates}) {
                 <DialogActions>
                     <Button autoFocus onClick={() => setOpenMessage(false)}>
                         확인
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog open={deleteConfirmDialog} fullWidth={true}>
+                <DialogTitle>주의</DialogTitle>
+                <DialogContent>
+                    인덱스 템플릿을 삭제하시겠습니까?
+                </DialogContent>
+                <DialogActions>
+                    <Button color={"secondary"} onClick={handleDeleteTemplate}>
+                        삭제
+                    </Button>
+                    <Button autoFocus onClick={() => setOpenMessage(false)}>
+                        취소
                     </Button>
                 </DialogActions>
             </Dialog>

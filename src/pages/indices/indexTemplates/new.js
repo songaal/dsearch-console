@@ -1,19 +1,23 @@
 import React, {useState} from "react";
+import {useHistory, useLocation} from "react-router-dom";
 import styled from "styled-components";
 import Helmet from 'react-helmet';
 import AntTabs from "~/components/AntTabs";
 import Json2html from "~/components/Json2Html"
 
 import {
-    Avatar,
     Box as MuiBox,
     Button as MuiButton,
     Card as MuiCard,
-    CardContent, Dialog, DialogActions, DialogContent, DialogTitle,
+    CardContent,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
     Divider as MuiDivider,
     FormControl,
     FormControlLabel,
-    Grid, List, ListItem, ListItemAvatar, ListItemText,
+    Grid,
     Radio,
     RadioGroup,
     TextareaAutosize,
@@ -25,7 +29,6 @@ import {makeStyles} from '@material-ui/core/styles';
 import {palette, positions, spacing} from "@material-ui/system";
 import {connect} from "react-redux";
 import {addIndexTemplateAction} from "../../../redux/actions/indexTemplateActions";
-import {Add as AddIcon, Person as PersonIcon} from "@material-ui/icons";
 import utils from "../../../utils";
 
 const useStyles = makeStyles((theme) => ({
@@ -47,6 +50,8 @@ const tabs = [{label: "매핑"}, {label: "셋팅"}]
 
 let message = ""
 function New({ dispatch }) {
+    const location = useLocation();
+    const history = useHistory();
     const classes = useStyles();
     const [templateText, setTemplateText] = useState('')
     const [indexPatternText, setIndexPatternText] = useState('')
@@ -61,21 +66,59 @@ function New({ dispatch }) {
 
     const [openMessage, setOpenMessage] = useState(false)
 
+    const [inValid, setInvalid] = useState({})
+
     function handleTabChane(index) {
         setTabIndex(index)
     }
 
     function handleSubmitClick() {
+        let tmpInValid = {}
+        if (templateText.trim() === "" || /[^a-z0-9-_]/gi.test(templateText.trim())) {
+            tmpInValid['templateText'] = true
+        }
+        if (indexPatternText.trim() === "") {
+            tmpInValid['indexPatternText'] = true
+        } else {
+            let indexPatternTextSplit = indexPatternText.split(",")
+            if (indexPatternTextSplit[0] === "" && indexPatternTextSplit.length === 1) {
+                tmpInValid['indexPatternText'] = true
+            }
+        }
+
+        try {
+            JSON.parse(mappingsJson === "" ? "{}" : mappingsJson)
+        } catch(error) {
+            tmpInValid['mappingsJson'] = true
+        }
+
+        try {
+            JSON.parse(settingsJson === "" ? "{}" : settingsJson)
+        } catch(error) {
+            tmpInValid['settingsJson'] = true
+        }
+
+        if (Object.keys(tmpInValid).length > 0) {
+            setInvalid(tmpInValid)
+            return false;
+        }
+
+        let tmpSettings = JSON.parse(settingsJson === "" ? "{}" : settingsJson)
+        let tmpMappings = JSON.parse(mappingsJson === "" ? "{}" : mappingsJson)
+        if (!tmpMappings['properties']) {
+            tmpMappings = { properties: tmpMappings }
+        }
 
         dispatch(addIndexTemplateAction( {
             template: templateText,
             index_patterns: indexPatternText.split(","),
-            settings: JSON.parse(settingsJson === "" ? "{}" : settingsJson),
-            mappings: JSON.parse(mappingsJson === "" ? "{}" : mappingsJson)
+            settings: tmpSettings,
+            mappings: tmpMappings
         } )).then(async (response) => {
             await utils.sleep(500)
-            location.replace("../indices/templates/" + templateText)
+            history.push("../indices/templates/" + templateText)
         }).catch(error => {
+            console.log('error', error)
             if (typeof error === 'object') {
                 message = "[생성 실패]" + JSON.stringify(error)
             } else {
@@ -105,6 +148,7 @@ function New({ dispatch }) {
                             <TextField label="템플릿명"
                                        value={templateText}
                                        onChange={event => setTemplateText(event.target.value)}
+                                       error={inValid['templateText']||false}
                             />
                         </FormControl>
                     </Box>
@@ -128,16 +172,18 @@ function New({ dispatch }) {
                            value={indexPatternText}
                            placeholder={"access-log-*,error-log-*"}
                            onChange={event => setIndexPatternText(event.target.value)}
+                           error={inValid['indexPatternText']||false}
                 />
             </FormControl>
 
             <br/><br/>
 
-
             <AntTabs tabs={tabs}
                      tabIndex={tabIndex}
                      onChange={handleTabChane}
+                     tabClassNames={{borderBottom: "1px solid #f44336"}}
             />
+
 
             <br/>
 
@@ -169,7 +215,7 @@ function New({ dispatch }) {
                         <Card>
                             <CardContent>
                                 <Box>
-                                    <TextareaAutosize style={{minHeight: "200px"}}
+                                    <TextareaAutosize style={{minHeight: "200px", border: (inValid['mappingsJson'] ? "1px solid #f44336" : "1px solid black")}}
                                                       className={classes.edit}
                                                       value={mappingsJson}
                                                       onChange={event => setMappingsJson(event.target.value)}
@@ -208,7 +254,7 @@ function New({ dispatch }) {
                         <Card>
                             <CardContent>
                                 <Box>
-                                    <TextareaAutosize style={{minHeight: "200px"}}
+                                    <TextareaAutosize style={{minHeight: "200px", border: (inValid['settingsJson'] ? "1px solid #f44336" : "1px solid black")}}
                                                       className={classes.edit}
                                                       value={settingsJson}
                                                       onChange={event => setSettingsJson(event.target.value)}

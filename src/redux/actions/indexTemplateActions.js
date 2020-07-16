@@ -21,6 +21,11 @@ export const addIndexTemplateAction = ({template, index_patterns, settings, mapp
     }
 })
 
+export const deleteIndexTemplateAction = ({template}) => dispatch => client.call({
+    uri: `/elasticsearch/_template/${template}`,
+    method: "DELETE",
+})
+
 export const setIndexTemplateAction = ({ template }) => dispatch => client.call({
     uri: `/elasticsearch/_template/${template}`
 }).then(response => dispatch({type: SET_INDEX_TEMPLATE, payload: response.data[template]}))

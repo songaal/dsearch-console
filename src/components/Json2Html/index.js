@@ -78,7 +78,7 @@ function Render(json) {
         }
         return Json2html(validJson)
     } catch (error) {
-        console.error("parsing error", typeof json, json)
+        console.warn("parsing error", typeof json)
         return (<Box> JSON 형식이 잘못되었습니다. {JSON.stringify(error)}</Box>)
     }
 }
