@@ -15,27 +15,34 @@ const useStyles = makeStyles((theme) => ({
     right: { textAlign: "right"}
 }));
 
-const DictionaryIndex = ".fastcatx_dict";
 
-function SearchResultList({settings, result}){
+function SearchResultList({settings, searchResult}){
+
     return (
         <> 
             {/* 사용자 사전 */}
             {settings.map((setting, idx) => {
-                var flag = true;
-                var str = "";
+                let flag = true;
+                let str = "";
                 
-                for(var i in result.result){
-                    if(setting.id == result.result[i].type){
+                for(let i in searchResult.result){
+                    if(setting.id === searchResult.result[i].type){
                         if(flag) {
-                            str = result.result[i].value; 
+                            if(searchResult.result[i].keyword){
+                                if(searchResult.result[i].value){
+                                    str = searchResult.result[i].keyword + ", " + searchResult.result[i].value; 
+                                }else{
+                                    str = searchResult.result[i].keyword; 
+                                }
+                            }else{
+                                str = searchResult.result[i].value; 
+                            }
                             flag = false; 
                         } else {
-                            str += ", " + result.result[i].value
+                            str += ", " + searchResult.result[i].value
                         }
                     }
                 }
-                if(flag) console.log(setting.name + " : " + str);
                 return flag ? <></> : <li id={idx} key={idx}> {setting.name} {" : "} {str}</li>;
             })}
         </>
@@ -43,30 +50,31 @@ function SearchResultList({settings, result}){
 }
 
 
-function DictionarySearch ({dispatch, settings, result}) {
+function DictionarySearch ({dispatch, settings, searchResult}) {
     const classes = useStyles()
 
     useEffect(() => {
         dispatch(setSettings())
     }, [])
 
-    console.log(settings);
-    console.log(result);
+    
     const [showSearchInput, setShowSearchInput] = useState("")
     const searchInput = useRef("");
 
+    console.log("result", searchResult);
     const handleEnterPress = (event) => {
         if (event.key === 'Enter'){
             if(searchInput.current.value.length === 0) return;
-            result = [];
-            dispatch(searchDictionaries({index: DictionaryIndex , word:searchInput.current.value}))
+            searchResult.result = [ {type: "SYSTEM", posTag: "N", prob: "0"} ];
+            dispatch(searchDictionaries({word:searchInput.current.value}))
             setShowSearchInput(searchInput.current.value);
         }
     }
+
     const handleSearchIcon = (event) => {
         if(searchInput.current.value.length === 0) return;
-        result = [];
-        dispatch(searchDictionaries({index: DictionaryIndex , word:searchInput.current.value}))
+        searchResult.result = [ {type: "SYSTEM", posTag: "N", prob: "0"} ];
+        dispatch(searchDictionaries({word: searchInput.current.value}))
         setShowSearchInput(searchInput.current.value);
     }
 
@@ -98,12 +106,12 @@ function DictionarySearch ({dispatch, settings, result}) {
                         
                         <ul>
                             {/* 기초 사전 */}
-                            {result.result.length === 0 ? <li> N : 0 </li> : result.result.map((item) => {
+                            {searchResult.result.length === 0 ? <li> N : 0 </li> : searchResult.result.map((item) => {
                                 if("SYSTEM" == item.type) return <li key={item.type}> {item.posTag} {" : "} {item.prob} </li>;
                                 return <></>;
                             })}
 
-                            {result.result.length === 0? <></> : <SearchResultList settings={settings} result={result} />}
+                            {searchResult.result.length === 0? <></> : <SearchResultList settings={settings} searchResult={searchResult} />}
                         </ul>
                     </Box>
                 </CardContent>
@@ -116,5 +124,5 @@ function DictionarySearch ({dispatch, settings, result}) {
 
 export default connect(store => ({ 
     settings: store.dictionaryReducers.settings,
-    result: store.dictionaryReducers.searchResult
+    searchResult: store.dictionaryReducers.searchResult
 }))(DictionarySearch)

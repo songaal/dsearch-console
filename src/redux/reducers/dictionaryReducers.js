@@ -25,9 +25,12 @@ export default function reducer(state = initState, actions) {
             return { ...state, dataSet: cloneDataSet};
         }
         case types.SET_DICTIONARY_SEARCH_LIST:
-            return {...state, searchResult: actions.payload}
+            return {
+                ...state, 
+                searchResult: actions.payload
+            };
         case types.SET_DICTIONARY:
-            return {...state, update: actions.payload}
+            return {...state, update: actions.payload};
         case types.SET_SUMMARY:                 return { ...state, summary: actions.payload }
         default: return state
     }

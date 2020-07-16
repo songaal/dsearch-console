@@ -64,8 +64,9 @@ export const updateDictionary = (dictionary, id, data) =>
         })
         .catch(error => console.error(error))
 
+
 export const searchDictionaries = (data) => dispatch => client.call({
-    uri: "/elasticsearch/_analysis-product-name/find-dict",
+    uri: "/dictionaries/find-dict",
     method: "POST",
     data: data
 }).then(response => dispatch({type: types.SET_DICTIONARY_SEARCH_LIST , payload: response.data}))
@@ -74,6 +75,7 @@ export const setSummary = () => dispatch => client.call({
     uri: "/dictionaries/summary",
 }).then(response => dispatch({type: types.SET_SUMMARY , payload: response.data}))
 
+/* 팀장님 물어보고 바꿀예정 */
 export const applyDictionary = (data) => dispatch => client.call({
     uri: "/elasticsearch/_analysis-product-name/compile-dict",
     method: "POST",
