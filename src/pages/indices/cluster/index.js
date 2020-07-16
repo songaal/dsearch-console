@@ -198,7 +198,6 @@ function ClusterShardMap({indices, nodes, shards}) {
         let isMatched = true
         for (let i = 0; i < filterSplit.length; i++) {
             try {
-                console.log(filterSplit[i], String(index))
                 if (String(index).startsWith(filterSplit[i].trim()) || String(index).match(filterSplit[i].trim())) {
                     isMatched = false;
                     break;
