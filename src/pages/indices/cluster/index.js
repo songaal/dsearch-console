@@ -9,6 +9,7 @@ import {
 import Helmet from "react-helmet";
 
 import {
+    Box,
     Button,
     Card as MuiCard,
     CardContent,
@@ -16,12 +17,12 @@ import {
     Divider as MuiDivider,
     FormControlLabel,
     Grid as MuiGrid,
-    Hidden,
+    Hidden, InputLabel,
     Table,
     TableBody,
     TableCell as MuiTableCell,
     TableHead,
-    TableRow as MuiTableRow,
+    TableRow as MuiTableRow, TextField,
     Typography,
 } from "@material-ui/core";
 import {palette, sizing, spacing} from "@material-ui/system";
@@ -130,6 +131,7 @@ function ClusterShardMap({indices, nodes, shards}) {
         checkedA: false,
         checkedB: false,
     });
+    const [filter, setFilter] = React.useState("")
 
     const handleChange = (event) => {
         setState({...state, [event.target.name]: event.target.checked});
@@ -174,10 +176,39 @@ function ClusterShardMap({indices, nodes, shards}) {
             })
         })
         newMap.set(nodesRow.name, assignedArr)
-        if (unassignedArr.length > 0) {
-            newMap.set('unassigned', unassignedArr)
+
+        let filterUnassignedArr = []
+        for (let i = 0; i < unassignedArr.length; i++) {
+            if(!isFilterIndex(unassignedArr[i]['index'])) {
+                filterUnassignedArr.push(unassignedArr[i])
+            }
+        }
+
+        if (filterUnassignedArr.length > 0) {
+            newMap.set('unassigned', filterUnassignedArr)
         }
     })
+
+    function isFilterIndex(index) {
+        const filterSplit = filter.trim().split(",")
+        if (filter.trim() === "" || filterSplit[0] === "") {
+            return false
+        }
+
+        let isMatched = true
+        for (let i = 0; i < filterSplit.length; i++) {
+            try {
+                console.log(filterSplit[i], String(index))
+                if (String(index).startsWith(filterSplit[i].trim()) || String(index).match(filterSplit[i].trim())) {
+                    isMatched = false;
+                    break;
+                }
+            } catch(error) {
+                // ignore
+            }
+        }
+        return isMatched;
+    }
 
     return (
         <React.Fragment>
@@ -186,6 +217,9 @@ function ClusterShardMap({indices, nodes, shards}) {
             </Typography>
             <Card mt={2} style={{overflow: "auto"}}>
                 <CardContent>
+                    <Box my={3}>
+                        <TextField fullWidth placeholder={"인덱스 필터 (ex: product, example-index, -index)"} value={filter} onChange={event => setFilter(event.target.value)}/>
+                    </Box>
                     <FormControlLabel control={ <Checkbox checked={state.checkedA} onChange={handleChange} name="checkedA" color="primary"/> } label="닫힌 인덱스" />
                     <FormControlLabel control={ <Checkbox checked={state.checkedB} onChange={handleChange} name="checkedB" color="primary"/> } label=". 특수 인덱스" />
                     <Table>
@@ -198,7 +232,11 @@ function ClusterShardMap({indices, nodes, shards}) {
                                     overflow: "hidden"
                                 }}>
                                 </TableCell>
-                                {Object.values(indicesArr).map((indicesInfo, indicesInfoIndex) => {
+                                {
+                                    Object.values(indicesArr).map((indicesInfo, indicesInfoIndex) => {
+                                        if(isFilterIndex(indicesInfo['index'])) {
+                                            return null
+                                        }
                                         return (
                                             <TableCell key={indicesInfoIndex} style={{
                                                 fontSize: "1em",
@@ -226,6 +264,9 @@ function ClusterShardMap({indices, nodes, shards}) {
                                         <TableCell align="center">미할당</TableCell>
                                         {
                                             Object.values(indicesArr).map((element, elementIndex) => {
+                                                if(isFilterIndex(element.index)) {
+                                                    return null
+                                                }
                                                 return (
                                                     <TableCell key={elementIndex}>
                                                         {
@@ -254,6 +295,9 @@ function ClusterShardMap({indices, nodes, shards}) {
                                     </TableCell>
                                     {
                                         Object.values(indicesArr).map((element, elementIndex) => {
+                                            if(isFilterIndex(element.index)) {
+                                                return null
+                                            }
                                             return (
                                                 <TableCell key={elementIndex}>
                                                     {
