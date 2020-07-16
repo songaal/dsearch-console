@@ -3,14 +3,8 @@ import Client from '~/Client'
 
 const client = new Client()
 
-export const createJDBCIndex = (data) => dispatch => client.call({
-    uri: "/elasticsearch/.fastcatx_jdbc",
-    method: "PUT",
-    data: data
-}).then(response => dispatch({type: SET_JDBC_INDEX, payload: response.data }))
-
 export const setJDBCList = () => dispatch => client.call({
-    uri: "/elasticsearch/.fastcatx_jdbc/_search",
+    uri: "/jdbc/list",
     method: "GET"
 }).then(response => dispatch({type: SET_JDBC_LIST, payload: response.data}))
 
@@ -21,18 +15,18 @@ export const setJDBCAccessTest = (data) => dispatch => client.call({
 }).then(response => dispatch({type:SET_JDBC_ACCESS_TEST , payload: response.data}))
 
 export const addJdbcIndex = (data) => dispatch => client.call({
-    uri: "/elasticsearch/.fastcatx_jdbc/_doc",
-    method: 'POST',
+    uri: "/jdbc/add",
+    method: 'PUT',
     data: data
 }).then(response => dispatch({ type: SET_JDBC_ADD_RESULT, payload: response.data}))
 
 export const deleteJdbcSource = (id) => dispatch => client.call({
-    uri: "/elasticsearch/.fastcatx_jdbc/_doc/" + id,
+    uri: "/jdbc/delete/" + id,
     method: 'DELETE'
 }).then(response => dispatch({type: SET_JDBC_DELETE_RESULT, payload: response.data}))
 
 export const updateJdbcSource = (id, data) => dispatch => client.call({
-    uri: "/elasticsearch/.fastcatx_jdbc/_update/" + id,
+    uri: "/jdbc/update/" + id,
     method: 'POST',
     data: data
 }).then(response => dispatch({type: SET_JDBC_UPDATE_RESULT, payload: response.data}))
