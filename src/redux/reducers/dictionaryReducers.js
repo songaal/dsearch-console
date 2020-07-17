@@ -8,7 +8,6 @@ let initState = {
     dataSet: {},
     searchResult: {
         result: [
-            {type: "SYSTEM", posTag: "N", prob:"0"}
         ]
     },
     update: { },

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import {
-    Box,
+    Box, CircularProgress,
     Card,
     CardContent,
     Button,
@@ -14,16 +14,18 @@ import {
 } from "@material-ui/core";
 import MuiAlert from '@material-ui/lab/Alert';
 import {setSummary, applyDictionary} from "../../../redux/actions/dictionaryActions";
+import utils from "../../../utils";
 
+let checkedList = {};
+let checkedIDList = {};
 function SummaryTable({summary}){
-    if(summary.dictionaryInfo === undefined || summary.dictionaryTimes === undefined || summary.dictionarySettings === undefined) return <></>;
+    if(summary.dictionaryInfo === undefined || summary.dictionarySettings === undefined) return <></>;
 
-    var infoDict = JSON.parse(summary.dictionaryInfo).dictionary;
-    var times = summary.dictionaryTimes.hits.hits;
-    var settings = summary.dictionarySettings;
-    var tableInfo = [];
+    let infoDict = JSON.parse(summary.dictionaryInfo).dictionary;
+    let settings = summary.dictionarySettings;
+    let tableInfo = [];
 
-    for(var i in infoDict){
+    for(let i in infoDict){
         if(infoDict[i].type == "SYSTEM"){
             var info = infoDict[i];
             info.name = "시스템 사전";
@@ -43,21 +45,24 @@ function SummaryTable({summary}){
             }
         }
 
-        for(var j in times){
-            if(settings[i].id == times[j].sourceAsMap.id){
-                if(times[j].sourceAsMap.updatedTime === undefined && times[j].sourceAsMap.appliedTime === undefined) continue;
-                info.updatedTime = new Date(times[j].sourceAsMap.updatedTime).toLocaleString();
-                info.appliedTime = new Date(times[j].sourceAsMap.appliedTime).toLocaleString();
-                break;
-            }
-        }
         tableInfo.push(info);
     }
-    return tableInfo.map((info) => { return  <TableRow key={info.id}>
-        <TableCell><Checkbox /></TableCell>
+
+    
+    const handleCheckBox = (event) =>{
+        checkedIDList[event.target.value] = event.target.id;
+        checkedList[event.target.value] = event.target.checked;
+    }
+    
+    console.log(tableInfo);
+    return tableInfo.map((info) => { 
+        if(info.id !== undefined) checkedList[info.id] = false;
+
+        return  <TableRow key={info.id}>
+        <TableCell><Checkbox id={info.documentId} name={"checkbox"} value={info.id} onChange={handleCheckBox}/></TableCell>
         <TableCell>{info.name}</TableCell>
         <TableCell>{info.type}</TableCell>
-        <TableCell>{info.indexCount ? info.indexCount : "-"}</TableCell>
+        <TableCell>{info.indexCount ? info.indexCount : "0"}</TableCell>
         <TableCell> {info.updatedTime ? info.updatedTime : "-"} </TableCell>
         <TableCell>{info.count}</TableCell>
         <TableCell> {info.appliedTime ? info.appliedTime : "-"} </TableCell>
@@ -67,21 +72,38 @@ function SummaryTable({summary}){
 }
 
 
- function Summary({dispatch, authUser, summary}) {
+ function Summary({dispatch, authUser, summary, update}) {
      const [applyDict, setApplyDict ] = useState(false);
+    checkedList = {};
+    
     useEffect(() => {
         dispatch(setSummary())
     }, [])
 
     const clickApplyDictionary = (event) => {
         let data = {};
-        data.index=".fastcatx_dict" // 변경 예정
-        data.exportFile= true
-        data.distribute= true
-        dispatch(applyDictionary(data))
+        let str = "";
+        let ids = "";
         setApplyDict(true);
+        let keyList = Object.keys(checkedList);
+        for(let key of keyList){
+            if(checkedList[key]){
+                if(str.length === 0){
+                    str = key;
+                    ids = checkedIDList[key]
+                }else{
+                    str += "," + key;
+                    ids += "," + checkedIDList[key]
+                }
+            }
+        }
+        data.ids = ids;
+        data.type = str;
+        dispatch(applyDictionary(data))
+        utils.sleep(1000).then(() => {  dispatch(setSummary()) });
     }
-    // authUser.role.analysis = false;
+
+
     return (
         <React.Fragment>
             <br/>
@@ -89,8 +111,8 @@ function SummaryTable({summary}){
                 <CardContent>
                     <Box>
                         {authUser.role.analysis ? 
-                            <Button variant={"contained"} color={"primary"} onClick={clickApplyDictionary}>사전적용</Button> 
-                            : <></>}
+                             applyDict ? <CircularProgress /> : <Button variant={"contained"} color={"primary"} onClick={clickApplyDictionary}>사전적용</Button> 
+                            : <></> }
                     </Box>
                     <Box>
                         <Snackbar open={applyDict} autoHideDuration={5000} onClose={() => { setApplyDict(false) }}>
@@ -111,7 +133,7 @@ function SummaryTable({summary}){
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                <SummaryTable authUser={authUser} summary={summary} />
+                                <SummaryTable authUser={authUser} summary={summary}/>
                             </TableBody>
                         </Table>
                     </Box>
@@ -124,5 +146,6 @@ function SummaryTable({summary}){
 
 export default connect(store => ({ 
     authUser: store.fastcatxReducers.authUser,
-    summary: store.dictionaryReducers.summary
+    summary: store.dictionaryReducers.summary,
+    update: store.dictionaryReducers.update
 }))(Summary)

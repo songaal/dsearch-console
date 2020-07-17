@@ -75,9 +75,9 @@ export const setSummary = () => dispatch => client.call({
     uri: "/dictionaries/summary",
 }).then(response => dispatch({type: types.SET_SUMMARY , payload: response.data}))
 
-/* 팀장님 물어보고 바꿀예정 */
+
 export const applyDictionary = (data) => dispatch => client.call({
-    uri: "/elasticsearch/_analysis-product-name/compile-dict",
+    uri: "/dictionaries/compile-dict",
     method: "POST",
     data: data
 }).then(response => dispatch({type: types.SET_DICTIONARY, payload: response.data}))
