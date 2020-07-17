@@ -374,6 +374,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                             <TableRow>
                                                 <TableCell variant={"head"} component={"th"}>런처</TableCell>
                                                 <TableCell>
+                                                    {/*jdbc, csv, ndjson 타입 션택 필요.*/}
                                                     <TextField value={launcher}
                                                                onChange={event => setLauncher(event.target.value)}
                                                                fullWidth
@@ -423,11 +424,12 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                     >
                                                         {
                                                             jdbcHitList.map((jdbcObj, index) => {
+                                                                console.log(jdbcObj)
                                                                 return (
-                                                                    <MenuItem key={jdbcObj['_id']}
-                                                                              value={jdbcObj['_id']}
+                                                                    <MenuItem key={jdbcObj['id']}
+                                                                              value={jdbcObj['id']}
                                                                     >
-                                                                        {jdbcObj['_source']['name']}
+                                                                        {(jdbcObj['sourceAsMap']||{})['name']||""}
                                                                     </MenuItem>
                                                                 )
                                                             })
