@@ -27,7 +27,7 @@ function Statistics({index, indexState}) {
         return null
     }
 
-    const flatMap = flatten(indexState['indices'][index]['total'])
+    const flatMap = flatten(((indexState['indices']||{})[index]||{})['total']||{})
     let group = {}
     Object.keys(flatMap).forEach(fullKey => {
         const fieldKey = fullKey.substring(0, fullKey.indexOf("."))

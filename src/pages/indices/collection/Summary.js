@@ -1,23 +1,27 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import {connect} from "react-redux";
 import {useHistory} from "react-router-dom"
 import styled from "styled-components";
-import Helmet from 'react-helmet';
 
 import {
     Box as MuiBox,
     Button as MuiButton,
     Card as MuiCard,
-    Divider as MuiDivider, FormControl,
-    Grid as MuiGrid, MenuItem, Select,
-    Typography as MuiTypography,
+    CardContent,
+    Chip,
+    Divider as MuiDivider,
+    Grid as MuiGrid,
+    Link,
     Menu,
-    Link, Table, TableBody, TableRow, TableHead, TableCell, CardContent, Hidden,Chip
+    MenuItem,
+    Table,
+    TableBody,
+    TableCell,
+    TableRow,
+    Typography as MuiTypography
 } from "@material-ui/core";
 import {makeStyles} from '@material-ui/core/styles';
 import {positions, spacing} from "@material-ui/system";
-import AntTabs from "~/components/AntTabs"
-import SearchIcon from "@material-ui/icons/Search";
 import {ArrowDropDown, Check} from "@material-ui/icons";
 import {deleteCollectionAction, setCollectionList} from "../../../redux/actions/collectionActions";
 
@@ -110,7 +114,7 @@ function Summary({dispatch, authUser, collection}) {
                                     <Link mx={1} style={{cursor: "pointer",
                                         display: collection['indexA']['uuid'] ? "inline" : "none"
                                     }}
-                                          onClick={() => {history.push(`../indices/${collection['indexA']['uuid']}`)}}
+                                          onClick={() => {history.push(`../${collection['indexA']['uuid']}`)}}
                                     >
                                         {collection['indexA']['index']}
                                     </Link>
@@ -122,7 +126,7 @@ function Summary({dispatch, authUser, collection}) {
                                     <Link mx={1} style={{cursor: "pointer",
                                         display: collection['indexB']['uuid'] ? "inline" : "none"
                                     }}
-                                          onClick={() => {history.push(`../indices/${collection['indexB']['uuid']}`)}}
+                                          onClick={() => {history.push(`../${collection['indexB']['uuid']}`)}}
                                     >
                                         {collection['indexB']['index']}
                                     </Link>

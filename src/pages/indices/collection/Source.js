@@ -1,7 +1,6 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {useHistory} from "react-router-dom";
 import styled from "styled-components";
-
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
@@ -9,19 +8,19 @@ import {
     Box as MuiBox,
     Button as MuiButton,
     Card as MuiCard,
-    CardContent,
+    CardContent, Checkbox,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
     Divider as MuiDivider,
-    Fade,
+    Fade, FormControlLabel,
     Grid as MuiGrid, Grow,
     Link,
     Menu,
     MenuItem, MenuList,
     Paper,
-    Popper,
+    Popper, Radio, RadioGroup,
     Select,
     Switch,
     Table,
@@ -40,6 +39,11 @@ import {
     editCollectionSourceAction,
     setCollection
 } from "../../../redux/actions/collectionActions";
+
+import AceEditor from "react-ace";
+import "ace-builds/src-noconflict/mode-json";
+import "ace-builds/src-noconflict/theme-kuroir";
+import { isValidCron } from 'cron-validator'
 
 const Divider = styled(MuiDivider)(spacing, positions);
 const Typography = styled(MuiTypography)(spacing, positions);
@@ -76,7 +80,8 @@ function Source({dispatch, authUser, collection, JdbcList}) {
     const [placement, setPlacement] = React.useState();
 
     const [sourceName, setSourceName] = useState("")
-    const [launcher, setLauncher] = useState("")
+    const [sourceType, setSourceType] = useState("csv")
+    // const [launcher, setLauncher] = useState("")
     const [launcherYaml, setLauncherYaml] = useState("")
     const [host, setHost] = useState("")
     const [port, setPort] = useState("")
@@ -88,6 +93,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
     const [actionOpen, setActionOpen] = React.useState(false);
     const actionAnchorRef = React.useRef(null);
     const [isScheduled, setSchedule] = useState(false)
+    let aceEditor = useRef(null);
 
     useEffect(() => {
         setInvalid({})
@@ -95,7 +101,6 @@ function Source({dispatch, authUser, collection, JdbcList}) {
             setMode("FORCE_EDIT");
         } else {
             setSourceName(collection['sourceName']);
-            setLauncher((collection['launcher']||{})['path']||"");
             setLauncherYaml((collection['launcher']||{})['yaml']||"");
             setHost((collection['launcher']||{})['host']||"");
             setPort((collection['launcher']||{})['port']||"");
@@ -105,9 +110,6 @@ function Source({dispatch, authUser, collection, JdbcList}) {
         }
     }, [])
 
-    // function toggleMoreMenu(event) {
-    //     setMoreMenu(moreMenu === null ? event.currentTarget : null)
-    // }
 
     function toggleEditModal(event) {
         setEditModal(editModal === null ? event.currentTarget : null)
@@ -125,21 +127,30 @@ function Source({dispatch, authUser, collection, JdbcList}) {
         if (sourceName.trim() === "") {
             invalidCheck['sourceName'] = true
         }
-        if (launcher.trim() === "") {
-            invalidCheck['launcher'] = true
-        }
         if (host.trim() === "" || !/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/gi.test(host)) {
             invalidCheck['host'] = true
         }
         if (port === "") {
             invalidCheck['port'] = true
         }
-        if (jdbcId === "") {
-            invalidCheck['jdbcId'] = true
-        }
-        if (cron === "" || !/(@(annually|yearly|monthly|weekly|daily|hourly|reboot))|(@every (\d+(ns|us|µs|ms|s|m|h))+)|((((\d+,)+\d+|(\d+(\/|-)\d+)|\d+|\*) ?){5,7})/gi.test(cron)) {
+        // if (jdbcId === "") {
+        //     invalidCheck['jdbcId'] = true
+        // }
+        if (!isValidCron(cron)) {
             invalidCheck['cron'] = true
         }
+
+        // scheme: "http"
+        // host: "127.0.0.1"
+        // port: 9200
+        // index: "sample-csv-07"
+        // type: "csv"
+        // path: "C:\\TEST_HOME\\danawa\\fastcatx-indexer\\sample\\account.csv"
+        // encoding: "utf-8"
+        // bulkSize: 2
+        // reset: true
+        // threadSize: 1
+
 
         if (Object.keys(invalidCheck).length > 0) {
             setInvalid(invalidCheck)
@@ -151,7 +162,6 @@ function Source({dispatch, authUser, collection, JdbcList}) {
             cron,
             jdbcId,
             launcher: {
-                path: launcher,
                 yaml: launcherYaml,
                 host,
                 port,
@@ -191,27 +201,9 @@ function Source({dispatch, authUser, collection, JdbcList}) {
         })
     }
 
-    const jdbcHitList = JdbcList['hits']['hits']
-    if (jdbcHitList.length === 0) {
-        return (
-            <React.Fragment>
-                <br/><br/>
-                <Box>
-                    JDBC 등록 후 진행해주세요.
-                    <Button variant={"text"}
-                            color={"primary"}
-                            onClick={() => history.push("../jdbc")}
-                    >
-                        JDBC 이동하기.
-                    </Button>
-                </Box>
-            </React.Fragment>
-        )
-    }
+    const jdbcHitList = (JdbcList['hits']||{})['hits']||[]
 
     const options = ['연속실행', '색인실행', '전파실행', '교체실행'];
-    // authUser.role.index = false;
-    console.log(authUser);
     return (
         <React.Fragment>
 
@@ -296,12 +288,13 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                     <Table>
                                         <TableBody>
                                             <TableRow>
-                                                <TableCell variant={"head"} component={"th"}>런처</TableCell>
+                                                <TableCell variant={"head"} component={"th"}>파라미터</TableCell>
                                                 <TableCell>
-                                                    {(collection['launcher'] || {})['path']}
+                                                    {/*{(collection['launcher'] || {})['path']}*/}
+                                                    {collection['sourceType']}
                                                     <Link style={{cursor: "pointer", marginLeft: "5px"}}
                                                           onClick={toggleEditModal}
-                                                    >수집설정</Link>
+                                                    >YAML</Link>
                                                 </TableCell>
                                             </TableRow>
                                             <TableRow>
@@ -371,46 +364,38 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                     />
                                                 </TableCell>
                                             </TableRow>
+                                            {/*<TableRow>*/}
+                                            {/*    <TableCell variant={"head"} component={"th"}>수집방식</TableCell>*/}
+                                            {/*    <TableCell>*/}
+                                            {/*        /!*jdbc, csv, ndjson 타입 션택 필요.*!/*/}
+                                            {/*        /!*<TextField value={launcher}*!/*/}
+                                            {/*        /!*           onChange={event => setLauncher(event.target.value)}*!/*/}
+                                            {/*        /!*           fullWidth*!/*/}
+                                            {/*        /!*           error={invalid['launcher']||false}*!/*/}
+
+                                            {/*        <RadioGroup value={sourceType} onChange={handleSourceTypeChange}>*/}
+                                            {/*            <FormControlLabel value="csv" control={<Radio />} label="CSV" />*/}
+                                            {/*            <FormControlLabel value="nd-json" control={<Radio />} label="ND-JSON" />*/}
+                                            {/*            <FormControlLabel value="jdbc" control={<Radio />} label="JDBC" />*/}
+                                            {/*        </RadioGroup>*/}
+
+                                            {/*    </TableCell>*/}
+                                            {/*</TableRow>*/}
                                             <TableRow>
-                                                <TableCell variant={"head"} component={"th"}>런처</TableCell>
+                                                <TableCell variant={"head"} component={"th"}>파라미터 YAML</TableCell>
                                                 <TableCell>
-                                                    {/*jdbc, csv, ndjson 타입 션택 필요.*/}
-                                                    <TextField value={launcher}
-                                                               onChange={event => setLauncher(event.target.value)}
-                                                               fullWidth
-                                                               error={invalid['launcher']||false}
-                                                    />
-                                                </TableCell>
-                                            </TableRow>
-                                            <TableRow>
-                                                <TableCell variant={"head"} component={"th"}>런처 YAML</TableCell>
-                                                <TableCell>
+                                                    {/*<AceEditor*/}
+                                                    {/*    ref={aceEditor}*/}
+                                                    {/*    mode="yaml"*/}
+                                                    {/*    theme="kuroir"*/}
+                                                    {/*    fontSize="15px"*/}
+                                                    {/*    height={"200px"}*/}
+                                                    {/*    width="100%"*/}
+                                                    {/*    placeholder=""*/}
+                                                    {/*/>*/}
                                                     <TextareaAutosize value={launcherYaml}
                                                                       onChange={event => setLauncherYaml(event.target.value)}
                                                                       style={{width: "100%", minHeight: "200px"}}
-                                                    />
-                                                </TableCell>
-                                            </TableRow>
-                                            <TableRow>
-                                                <TableCell variant={"head"} component={"th"}>실행호스트</TableCell>
-                                                <TableCell>
-                                                    <TextField value={host}
-                                                               onChange={event => setHost(event.target.value)}
-                                                               fullWidth
-                                                               placeholder={"127.0.0.1"}
-                                                               error={invalid['host']||false}
-                                                    />
-                                                </TableCell>
-                                            </TableRow>
-                                            <TableRow>
-                                                <TableCell variant={"head"} component={"th"}>실행포트</TableCell>
-                                                <TableCell>
-                                                    <TextField value={port}
-                                                               onChange={event => setPort(event.target.value)}
-                                                               fullWidth
-                                                               placeholder={"30100"}
-                                                               type={"number"}
-                                                               error={invalid['port']||false}
                                                     />
                                                 </TableCell>
                                             </TableRow>
@@ -435,6 +420,29 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                             })
                                                         }
                                                     </Select>
+                                                </TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell variant={"head"} component={"th"}>실행호스트</TableCell>
+                                                <TableCell>
+                                                    <TextField value={host}
+                                                               onChange={event => setHost(event.target.value)}
+                                                               fullWidth
+                                                               placeholder={"127.0.0.1"}
+                                                               error={invalid['host']||false}
+                                                    />
+                                                </TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell variant={"head"} component={"th"}>실행포트</TableCell>
+                                                <TableCell>
+                                                    <TextField value={port}
+                                                               onChange={event => setPort(event.target.value)}
+                                                               fullWidth
+                                                               placeholder={"30100"}
+                                                               type={"number"}
+                                                               error={invalid['port']||false}
+                                                    />
                                                 </TableCell>
                                             </TableRow>
                                             <TableRow>
