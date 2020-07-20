@@ -54,7 +54,6 @@ function SummaryTable({summary}){
         checkedList[event.target.value] = event.target.checked;
     }
     
-    console.log(tableInfo);
     return tableInfo.map((info) => { 
         if(info.id !== undefined) checkedList[info.id] = false;
 
