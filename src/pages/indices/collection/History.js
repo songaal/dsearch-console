@@ -55,7 +55,7 @@ function rpad(str, padLen, padStr) {
     return str;
 }
 
-const paginationSize = 2
+const paginationSize = 10
 
 function History({dispatch, authUser, collection, history}) {
     const classes = useStyles();
@@ -116,7 +116,7 @@ function History({dispatch, authUser, collection, history}) {
     console.log('collection', collection)
     console.log('hits >> ', history['hits'])
 
-    // 색인: index, 전파 : spread, 교체: transform
+    // 색인: (FULL_INDEX, DYNAMIC_INDEX) , 전파 : PROPAGATE, 교체: EXPOSE
     const lastPage = Math.ceil(history['hits']['total']['value'] / paginationSize)
     const nowPage = Math.ceil(from / paginationSize) + 1
 
@@ -144,8 +144,8 @@ function History({dispatch, authUser, collection, history}) {
                                 {
                                     ((history['hits']||{})['hits']||[]).map((hit, index) => {
                                         const sourceAsMap = hit['_source']
-
-                                        const jobTypeName = sourceAsMap['jobType'] === "index" ? '색인' : sourceAsMap['jobType'] === "spread" ? "전파" : "교체"
+                                        const jobTypeName = sourceAsMap['jobType'] === "FULL_INDEX" ? "전체색인" : sourceAsMap['jobType'] === "DYNAMIC_INDEX" ? "동적색인" :
+                                            sourceAsMap['jobType'] === "PROPAGATE" ? "전파" : sourceAsMap['jobType'] === "EXPOSE" ? "교체" : sourceAsMap['jobType']
                                         const autoRun = sourceAsMap['autoRun'] ? "자동" : "수동"
                                         let st = new Date();
                                         let et = new Date();
