@@ -89,7 +89,7 @@ function History({dispatch, authUser, collection, history}) {
         dispatch(deleteIndexHistoryList({
             indexA: collection['indexA']['index'],
             indexB: collection['indexB']['index'],
-            time: String(date.getTime()).substring(0, 10)
+            time: date.getTime()
         })).then(response => {
             setFrom(0)
             setTimeout(() => {
