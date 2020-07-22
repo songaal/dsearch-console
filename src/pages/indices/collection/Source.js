@@ -309,11 +309,12 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                 <TableCell variant={"head"} component={"th"}>JDBC</TableCell>
                                                 <TableCell>
                                                     {
-                                                        jdbcHitList.filter(jdbcObj => collection['jdbcId'] === jdbcObj['_id'])
+                                                        jdbcHitList.filter(jdbcObj => collection['jdbcId'] === jdbcObj['id'])
                                                             .map(jdbcObj => {
+                                                                const source = jdbcObj['sourceAsMap']
                                                                 return (
-                                                                    <React.Fragment key={jdbcObj['_source']['name']}>
-                                                                        {jdbcObj['_source']['name']}
+                                                                    <React.Fragment key={source['name']}>
+                                                                        {source['name']}
                                                                     </React.Fragment>
                                                                 )
                                                             })
