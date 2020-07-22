@@ -37,7 +37,10 @@ import {connect} from "react-redux";
 import {
     editCollectionScheduleAction,
     editCollectionSourceAction,
-    setCollection
+    setCollection,
+    stopPropagation,
+    setCollectionActions,
+    getPropagateStatus
 } from "../../../redux/actions/collectionActions";
 
 import AceEditor from "react-ace";
@@ -79,6 +82,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
     const [open, setOpen] = React.useState(null);
     const [placement, setPlacement] = React.useState();
 
+    const [propagationFlag, setPropagationFlag] = useState(false);
     const [sourceName, setSourceName] = useState("")
     const [sourceType, setSourceType] = useState("csv")
     // const [launcher, setLauncher] = useState("")
@@ -97,6 +101,15 @@ function Source({dispatch, authUser, collection, JdbcList}) {
 
     useEffect(() => {
         setInvalid({})
+
+        // dispatch(getPropagateStatus(collection))
+        //     .then((response) => {
+        //         if(response.hits.hits.length > 0){
+        //             setPropagationFlag(true);
+        //         }
+        //     })
+        //     .catch((error) => {console.log()})
+
         if (collection['sourceName'] === undefined || collection['sourceName'] === null || collection['sourceName'] === "") {
             setMode("FORCE_EDIT");
         } else {
@@ -176,10 +189,26 @@ function Source({dispatch, authUser, collection, JdbcList}) {
     }
 
 
+    // const handleStopPropagationClick = (event) => {
+    //     dispatch(stopPropagation(collection['id'])).then(response => {
+    //         setPropagationFlag(!propagationFlag);
+    //     }).catch(error => {
+    //         setPropagationFlag(!propagationFlag);
+    //     })
+    // }
 
     const handleMenuItemClick = (event, index) => {
+        dispatch(setCollectionActions(collection['id'], optionActions[index])).then(response => {
+
+            // propagation 중지 버튼 
+            // if(index === 2){
+            //     setPropagationFlag(!propagationFlag);
+            // }
+        }).catch(error => {
+        })
         setActionOpen(false);
     };
+
     const handleToggle = () => {
         setActionOpen((prevOpen) => !prevOpen);
     };
@@ -204,6 +233,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
     const jdbcHitList = (JdbcList['hits']||{})['hits']||[]
 
     const options = ['연속실행', '색인실행', '전파실행', '교체실행'];
+    const optionActions = ['', 'indexing', 'propagate', 'expose']
     return (
         <React.Fragment>
 
@@ -236,14 +266,24 @@ function Source({dispatch, authUser, collection, JdbcList}) {
 
                                         <ButtonGroup variant="contained" color="primary" ref={actionAnchorRef}>
                                             {/*<Button >{options[selectedIndex]}</Button>*/}
-                                            <Button disabled={true} style={{minWidth: "100px", color: "black"}}> 대기 </Button>
-                                            {authUser.role.index ? <Button
-                                                color="primary"
-                                                size="small"
-                                                onClick={handleToggle}
-                                            >
-                                                <ArrowDropDownIcon/>
-                                            </Button> : <></> }
+                                            
+                                            {propagationFlag ? <Button style={{minWidth: "100px", color: "black"}} 
+                                                onClick={(event) =>{ handleStopPropagationClick(event) } }
+                                            > 중지 </Button> :
+                                            <> 
+                                                <Button disabled={true} style={{minWidth: "100px", color: "black"}}> 대기 </Button>
+                                                {authUser.role.index ? 
+                                                    <Button
+                                                        color="primary"
+                                                        size="small"
+                                                        onClick={handleToggle}
+                                                    >
+                                                        <ArrowDropDownIcon color="primary" />
+                                                    </Button> : <></> }
+                                            </>
+                                            }
+                                            
+                                            
                                         </ButtonGroup>
                                         <Popper open={actionOpen} anchorEl={actionAnchorRef.current} role={undefined}
                                                 transition disablePortal>

@@ -121,3 +121,62 @@ export const deleteIndexHistoryList = ({indexA, indexB, time}) => dispatch => cl
 export const setCatIndexTemplateList = () => dispatch => client.call({
     uri: `/elasticsearch/_cat/templates?format=json`
 }).then(response => dispatch({type: SET_CAT_INDEX_TEMPLATE_LIST, payload: response.data}))
+
+export const stopPropagation = (id) => dispatch => client.call({
+    uri: `/collections/${id}/action`,
+    method: "put",
+    params: {action: "stop_propagation"}    
+}).then(response => response.data)
+
+export const setCollectionActions = (id, action) => dispatch => client.call({
+    uri: `/collections/${id}/action`,
+    method: "put",
+    params: {action: action}    
+}).then(response => response.data)
+
+export const getPropagateStatus =  ({indexA, indexB}) => dispatch  => client.call({
+    uri: `/elasticsearch/.fastcatx_index_history/_search`,
+    method: 'post',
+    data: {
+        "query": {
+            "bool": {
+                "minimum_should_match": 1,
+                "must": [
+                    {
+                        "match": {
+                            "jobType": "PROPAGATE"
+                        }
+                    }
+                ],
+                "must_not": [
+                    {
+                        "match": {
+                            "status": "SUCCESS"
+                        }
+                    }
+                ],
+                "should": [
+                    {
+                        "match": {
+                            "index": indexA
+                        }
+                    },
+                    {
+                        "match": {
+                            "index": indexB
+                        }
+                    }
+                ]
+            }
+        },
+        "sort": [
+            {
+                "startTime": {
+                    "order": "desc"
+                }
+            }
+        ],
+        "size": 1,
+        "from": 0
+    }
+}).then(response => dispatch({ type: SET_SEARCH_HISTORY_PROPAGATE_STATUS, payload: response.data }))
