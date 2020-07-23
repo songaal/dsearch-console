@@ -175,18 +175,12 @@ function RunningIndex({result, running, status}) {
         }
     }
 
-    
-    console.log(result.hits.hits);
-    console.log(running);
-    console.log(status);
 
     if(result.hits.hits.length >= 0){
         for(let item of result.hits.hits){
             successIndexList[item._source.index] = item._source;
         }
     }
-    
-
 
     let keyList = Object.keys(running);
     if (keyList.length !== 0) {
@@ -200,7 +194,9 @@ function RunningIndex({result, running, status}) {
                     && successIndexList[server.index].docSize !== undefined){
                     let estimatedTime = successIndexList[server.index].endTime - successIndexList[server.index].startTime;
                     let docSize = successIndexList[server.index].docSize;
-                    
+
+                    console.log(new Date().getUTCMilliseconds());
+
                     indexList.push({startTime: server.startTime, index: server.index, estimatedTime: estimatedTime, docSize: docSize});
                 }else{
                     indexList.push({startTime: server.startTime, index: server.index});
@@ -209,7 +205,7 @@ function RunningIndex({result, running, status}) {
         }
     }
     //running 돌면서 없는건 초기 셋팅
-
+    
     return(
         <>
             <Typography variant="h4" gutterBottom display="inline">
@@ -229,17 +225,17 @@ function RunningIndex({result, running, status}) {
                                     <Box width="100%" mr={1}>
                                     <BorderLinearProgress
                                         className={classes.margin}
-                                        // variant="determinate"
+                                        variant="determinate"
                                         color="secondary"
-                                        // value={`${Math.round((row.currentDoc / row.lastDoc)*100)}`}
+                                        value={`${Math.round( (untilTime(row.startTime) / getElapsed(row.estimatedTime))*100)}`}
                                     />
                                     </Box>
                                     <Box minWidth={15}>
                                         <Typography variant="body2" color="textSecondary"></Typography>
                                     </Box>
                                 </Box>
-                                {row.estimatedTime ? <>예상 종료 시간 : {getElapsed(row.estimatedTime)} <br/> </> : <>예상 종료 시간 : - <br /></> }
-                                {row.docSize ? <>예상 처리 문서 건수 : {row.docSize} <br/> </> : <>예상 처리 문서 건수 : - <br /></> }
+                                {row.estimatedTime ? <> 예상 종료 시간 : {getElapsed(row.estimatedTime)} <br/> </> : <>예상 종료 시간 : - <br /></> }
+                                {row.docSize ? <> 예상 처리 문서 건수 : {row.docSize} <br/> </> : <>예상 처리 문서 건수 : - <br /></> }
                                 시작시간 : {untilTime(row.startTime)} 전 시작<br/>
                             </TableCell>
                         </TableRow>
