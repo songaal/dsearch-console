@@ -216,7 +216,6 @@ function Source({dispatch, authUser, collection, JdbcList}) {
         if (actionAnchorRef.current && actionAnchorRef.current.contains(event.target)) {
             return;
         }
-
         setActionOpen(false);
     };
 
@@ -282,7 +281,6 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                     </Button> : <></> }
                                             </>
                                             }
-                                            
                                             
                                         </ButtonGroup>
                                         <Popper open={actionOpen} anchorEl={actionAnchorRef.current} role={undefined}

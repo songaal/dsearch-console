@@ -20,23 +20,25 @@ let initState = {
         }
     },
     running: {
-        hits: {
-            hits:[
-                {
-                    index:String,
-                    _source:{
-                        index: String,
-                        alias: String,
-                        docSize: Number,
-                        endTime: Date,
-                        startTime: Date,
-                        status: String,
-                        storage: String
-                    }
-                }
-            ]
-        }
     },
+    // running: {
+    //     hits: {
+    //         hits:[
+    //             {
+    //                 index:String,
+    //                 _source:{
+    //                     index: String,
+    //                     alias: String,
+    //                     docSize: Number,
+    //                     endTime: Date,
+    //                     startTime: Date,
+    //                     status: String,
+    //                     storage: String
+    //                 }
+    //             }
+    //         ]
+    //     }
+    // },
     status:{
         
     },

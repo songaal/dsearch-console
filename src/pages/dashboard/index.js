@@ -93,8 +93,7 @@ const idxResult = [
 ]
 
 const untilTime = (time) => {
-
-    var date = new Date().getTime() - new Date(time * 1000).getTime();
+    var date = new Date().getTime() - new Date(time).getTime();
 
     var hours   = ((date / 3600) / 1000) * 60;
 
@@ -110,9 +109,7 @@ const untilTime = (time) => {
     }else{
         return m+'분' 
     }
-
 }
-
 
 function numberWithCommas(num) {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -157,31 +154,40 @@ function WarningIndex({status}) {
 
 }
 
+
 function RunningIndex({result, running, status}) {
     const classes = useStyles();
     let indexMap = new Map()
     let indexList = []
-    Object.values(running.hits.hits).forEach(row => {
-    
-        Object.values(result.hits.hits).forEach(row2 => {
-    
-            Object.values(status).forEach(row3 => {
-                if(row._source.index == row2._source.index && row2._source.index == row3.index){
 
-                    indexList.push ({
-                        index: row._source.index,
-                        startTime: row._source.startTime,
-                        currentDoc: row3['docs.count'],
-                        lastDoc: row2._source.docSize
-                    })
+    let keyList = Object.keys(running);
+    if (keyList.length !== 0) {
+        for (let key of keyList) {
+            let server = running[key].server;
+            if(server !== undefined){
+                indexList.push({startTime: server.startTime, index: server.index})
+            }
+        }
+    }
+    
+    // Object.values(running.hits.hits).forEach(row => {
+    //     Object.values(result.hits.hits).forEach(row2 => {
+    //         Object.values(status).forEach(row3 => {
+    //             if(row._source.index == row2._source.index && row2._source.index == row3.index){
 
-                    indexMap.set(row._source.index, indexList)
-                }
+    //                 indexList.push ({
+    //                     index: row._source.index,
+    //                     startTime: row._source.startTime,
+    //                     currentDoc: row3['docs.count'],
+    //                     lastDoc: row2._source.docSize
+    //                 })
+
+    //                 indexMap.set(row._source.index, indexList)
+    //             }
                 
-            })
-        })
-    })
-
+    //         })
+    //     })
+    // })
     //running 돌면서 없는건 초기 셋팅
 
     return(
@@ -193,7 +199,29 @@ function RunningIndex({result, running, status}) {
             <Table>
                 <TableHead></TableHead>
                 <TableBody>
-                    {Object.values(indexList).map(row =>
+                {Object.values(indexList).map(row =>
+                        <TableRow key={row.index}>
+                            <TableCell>
+                                {row.index}
+                            </TableCell>
+                            <TableCell>
+                                <Box display="flex" alignItems="center">
+                                    <Box width="100%" mr={1}>
+                                    <BorderLinearProgress
+                                        className={classes.margin}
+                                        variant="determinate"
+                                        color="secondary"
+                                    />
+                                    </Box>
+                                    <Box minWidth={15}>
+                                        <Typography variant="body2" color="textSecondary"></Typography>
+                                    </Box>
+                                </Box>
+                                시작시간 : {untilTime(row.startTime)} 전 시작<br/>
+                            </TableCell>
+                        </TableRow>
+                    )}
+                    {/* {Object.values(indexList).map(row =>
                         <TableRow key={row.index}>
                             <TableCell>
                                 {row.index}
@@ -218,7 +246,7 @@ function RunningIndex({result, running, status}) {
                                 예상문서 약 {numberWithCommas(row.lastDoc)} 건<br/>
                             </TableCell>
                         </TableRow>
-                    )}
+                    )} */}
                 </TableBody>
             </Table>      
         </>
@@ -247,10 +275,11 @@ function TopArea({result, running, status}) {
     )
 }
 
-function BottomArea({result, alias}) {
+function BottomArea({result, alias, status}) {
    
     const format = (time) => {
-        var date = new Date(time * 1000);
+        // var date = new Date(time * 1000);
+        var date = new Date(time);
         
         return date.getFullYear() + '-' +
         ('0' + (date.getMonth()+1)).slice(-2)+ '-' +  
@@ -261,10 +290,12 @@ function BottomArea({result, alias}) {
     }
 
     const getElapsed = (time) => {
-        
+        // epoch_millis to epoch_seconds
+        time = time / 1000;
+
         var hours   = Math.floor(time / 3600);
         var minutes = Math.ceil((time - (hours * 3600)) / 60);
-
+        
         if(hours != 0) {
             return hours+'시간 ' + minutes+'분' 
         }else{
@@ -272,7 +303,6 @@ function BottomArea({result, alias}) {
         }
     }
 
-    // console.log('alias : ', alias)
     let resultList = []
     Object.values(result.hits.hits).forEach(row => {
 
@@ -292,12 +322,10 @@ function BottomArea({result, alias}) {
                 startTime: row._source.startTime,
                 endTime: row._source.endTime,
                 docSize: row._source.docSize,
-                storage: row._source.storage
+                storage: row._source.store
             }
         )
     })
-
-    // console.log('list : ', resultList)
 
     return (
         <React.Fragment>
@@ -321,6 +349,7 @@ function BottomArea({result, alias}) {
                         <TableBody>
                             {
                                 Object.values(resultList).map(row => {
+
                                     return (
                                         <TableRow key={row.index}>
                                             <TableCell>
@@ -403,10 +432,9 @@ function DashBoard({dispatch, result, running, status, alias}) {
             <TopArea result={result} running={running} status={status}/>
 
             <br/>
-            <BottomArea result={result} alias={alias}/>
+            <BottomArea result={result} alias={alias} status={status}/>
 
             <br/>
-            
                 </CardContent>
             </Card>
            
