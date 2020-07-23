@@ -1,54 +1,36 @@
-import React, {useEffect, useRef, useState} from "react";
-import {useHistory} from "react-router-dom";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import {
     Box as MuiBox,
     Button as MuiButton,
     Card as MuiCard,
-    CardContent, Checkbox,
+    CardContent,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
-    Divider as MuiDivider,
-    Fade, FormControlLabel,
-    Grid as MuiGrid, Grow,
+    Fade,
+    Grid as MuiGrid,
     Link,
-    Menu,
-    MenuItem, MenuList,
+    MenuItem,
     Paper,
-    Popper, Radio, RadioGroup,
+    Popper,
     Select,
-    Switch,
     Table,
     TableBody,
     TableCell,
-    TableRow, TextareaAutosize,
+    TableRow,
+    TextareaAutosize,
     TextField,
     Typography as MuiTypography,
 } from "@material-ui/core";
 import {makeStyles} from '@material-ui/core/styles';
 import {positions, spacing} from "@material-ui/system";
-import {ArrowDropDown} from "@material-ui/icons";
 import {connect} from "react-redux";
-import {
-    editCollectionScheduleAction,
-    editCollectionSourceAction,
-    setCollection,
-    stopPropagation,
-    setCollectionActions,
-    getPropagateStatus
-} from "../../../redux/actions/collectionActions";
+import {editCollectionSourceAction, setCollection} from "../../../redux/actions/collectionActions";
+import {isValidCron} from 'cron-validator'
+import ControlBox from "./ControlBox";
 
-import AceEditor from "react-ace";
-import "ace-builds/src-noconflict/mode-json";
-import "ace-builds/src-noconflict/theme-kuroir";
-import { isValidCron } from 'cron-validator'
-
-const Divider = styled(MuiDivider)(spacing, positions);
 const Typography = styled(MuiTypography)(spacing, positions);
 const Box = styled(MuiBox)(spacing, positions);
 const Card = styled(MuiCard)(spacing, positions);
@@ -73,19 +55,14 @@ const useStyles = makeStyles((theme) => ({
 
 
 function Source({dispatch, authUser, collection, JdbcList}) {
-    const history = useHistory();
     const classes = useStyles();
-    const [moreMenu, setMoreMenu] = useState(null)
     const [editModal, setEditModal] = useState(null)
     const [mode, setMode] = useState("VIEW")
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [open, setOpen] = React.useState(null);
     const [placement, setPlacement] = React.useState();
 
-    const [propagationFlag, setPropagationFlag] = useState(false);
     const [sourceName, setSourceName] = useState("")
-    const [sourceType, setSourceType] = useState("csv")
-    // const [launcher, setLauncher] = useState("")
     const [launcherYaml, setLauncherYaml] = useState("")
     const [host, setHost] = useState("")
     const [port, setPort] = useState("")
@@ -94,22 +71,8 @@ function Source({dispatch, authUser, collection, JdbcList}) {
 
     const [invalid, setInvalid] = useState({})
 
-    const [actionOpen, setActionOpen] = React.useState(false);
-    const actionAnchorRef = React.useRef(null);
-    const [isScheduled, setSchedule] = useState(false)
-    let aceEditor = useRef(null);
-
     useEffect(() => {
         setInvalid({})
-
-        // dispatch(getPropagateStatus(collection))
-        //     .then((response) => {
-        //         if(response.hits.hits.length > 0){
-        //             setPropagationFlag(true);
-        //         }
-        //     })
-        //     .catch((error) => {console.log()})
-
         if (collection['sourceName'] === undefined || collection['sourceName'] === null || collection['sourceName'] === "") {
             setMode("FORCE_EDIT");
         } else {
@@ -119,7 +82,6 @@ function Source({dispatch, authUser, collection, JdbcList}) {
             setPort((collection['launcher']||{})['port']||"");
             setJdbcId(collection['jdbcId']);
             setCron(collection['cron']);
-            setSchedule(Boolean(collection['scheduled']));
         }
     }, [])
 
@@ -146,24 +108,9 @@ function Source({dispatch, authUser, collection, JdbcList}) {
         if (port === "") {
             invalidCheck['port'] = true
         }
-        // if (jdbcId === "") {
-        //     invalidCheck['jdbcId'] = true
-        // }
         if (!isValidCron(cron)) {
             invalidCheck['cron'] = true
         }
-
-        // scheme: "http"
-        // host: "127.0.0.1"
-        // port: 9200
-        // index: "sample-csv-07"
-        // type: "csv"
-        // path: "C:\\TEST_HOME\\danawa\\fastcatx-indexer\\sample\\account.csv"
-        // encoding: "utf-8"
-        // bulkSize: 2
-        // reset: true
-        // threadSize: 1
-
 
         if (Object.keys(invalidCheck).length > 0) {
             setInvalid(invalidCheck)
@@ -188,51 +135,8 @@ function Source({dispatch, authUser, collection, JdbcList}) {
         })
     }
 
-
-    // const handleStopPropagationClick = (event) => {
-    //     dispatch(stopPropagation(collection['id'])).then(response => {
-    //         setPropagationFlag(!propagationFlag);
-    //     }).catch(error => {
-    //         setPropagationFlag(!propagationFlag);
-    //     })
-    // }
-
-    const handleMenuItemClick = (event, index) => {
-        dispatch(setCollectionActions(collection['id'], optionActions[index])).then(response => {
-
-            // propagation 중지 버튼 
-            // if(index === 2){
-            //     setPropagationFlag(!propagationFlag);
-            // }
-        }).catch(error => {
-        })
-        setActionOpen(false);
-    };
-
-    const handleToggle = () => {
-        setActionOpen((prevOpen) => !prevOpen);
-    };
-    const handleClose = (event) => {
-        if (actionAnchorRef.current && actionAnchorRef.current.contains(event.target)) {
-            return;
-        }
-        setActionOpen(false);
-    };
-
-    function handleEditSchedule(event) {
-        const tmpSchedule = !isScheduled
-        setSchedule(tmpSchedule)
-        dispatch(editCollectionScheduleAction(collection['id'], tmpSchedule)).then(response => {
-            setSchedule(tmpSchedule)
-        }).catch(error => {
-            setSchedule(!tmpSchedule)
-        })
-    }
-
     const jdbcHitList = (JdbcList['hits']||{})['hits']||[]
 
-    const options = ['연속실행', '색인실행', '전파실행', '교체실행'];
-    const optionActions = ['', 'indexing', 'propagate', 'expose']
     return (
         <React.Fragment>
 
@@ -243,75 +147,9 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                     <Box style={{display: mode === "VIEW" ? "block" : "none"}}>
                         <Grid container>
                             <Grid item xs={10}>
-                                <Grid container my={3}>
-                                    <Grid item xs={3} mt={2}>
-                                        <Box style={{fontWeight: "bold"}}>스케쥴</Box>
-                                    </Grid>
-                                    <Grid item xs={9}>
-                                        <Switch checked={isScheduled}
-                                                onChange={handleEditSchedule}
-                                        />
-                                    </Grid>
-                                </Grid>
 
-                                <Grid container my={3}>
-                                    <Grid item xs={3} mt={2}>
-                                        <b>상태</b>
-                                    </Grid>
-                                    {/*<Grid item xs={2} mt={2}>*/}
-                                    {/*    */}
-                                    {/*</Grid>*/}
-                                    <Grid item xs={9}>
+                                <ControlBox />
 
-                                        <ButtonGroup variant="contained" color="primary" ref={actionAnchorRef}>
-                                            {/*<Button >{options[selectedIndex]}</Button>*/}
-                                            
-                                            {propagationFlag ? <Button style={{minWidth: "100px", color: "black"}} 
-                                                onClick={(event) =>{ handleStopPropagationClick(event) } }
-                                            > 중지 </Button> :
-                                            <> 
-                                                <Button disabled={true} style={{minWidth: "100px", color: "black"}}> 대기 </Button>
-                                                {authUser.role.index ? 
-                                                    <Button
-                                                        color="primary"
-                                                        size="small"
-                                                        onClick={handleToggle}
-                                                    >
-                                                        <ArrowDropDownIcon color="primary" />
-                                                    </Button> : <></> }
-                                            </>
-                                            }
-                                            
-                                        </ButtonGroup>
-                                        <Popper open={actionOpen} anchorEl={actionAnchorRef.current} role={undefined}
-                                                transition disablePortal>
-                                            {({TransitionProps, placement}) => (
-                                                <Grow
-                                                    {...TransitionProps}
-                                                    style={{
-                                                        transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
-                                                    }}
-                                                >
-                                                    <Paper>
-                                                        <ClickAwayListener onClickAway={handleClose}>
-                                                            <MenuList id="split-button-menu">
-                                                                {options.map((option, index) => (
-                                                                    <MenuItem
-                                                                        key={option}
-                                                                        onClick={(event) => handleMenuItemClick(event, index)}
-                                                                    >
-                                                                        {option}
-                                                                    </MenuItem>
-                                                                ))}
-                                                            </MenuList>
-                                                        </ClickAwayListener>
-                                                    </Paper>
-                                                </Grow>
-                                            )}
-                                        </Popper>
-
-                                    </Grid>
-                                </Grid>
                             </Grid>
                             <Grid item xs={2} align={"right"}>
                                 {authUser.role.index ? <Button mx={1} variant={"outlined"} onClick={() => setMode("EDIT")}>
@@ -328,9 +166,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                             <TableRow>
                                                 <TableCell variant={"head"} component={"th"}>파라미터</TableCell>
                                                 <TableCell>
-                                                    {/*{(collection['launcher'] || {})['path']}*/}
-                                                    {collection['sourceType']}
-                                                    <Link style={{cursor: "pointer", marginLeft: "5px"}}
+                                                    <Link style={{cursor: "pointer"}}
                                                           onClick={toggleEditModal}
                                                     >YAML</Link>
                                                 </TableCell>
@@ -403,35 +239,9 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                     />
                                                 </TableCell>
                                             </TableRow>
-                                            {/*<TableRow>*/}
-                                            {/*    <TableCell variant={"head"} component={"th"}>수집방식</TableCell>*/}
-                                            {/*    <TableCell>*/}
-                                            {/*        /!*jdbc, csv, ndjson 타입 션택 필요.*!/*/}
-                                            {/*        /!*<TextField value={launcher}*!/*/}
-                                            {/*        /!*           onChange={event => setLauncher(event.target.value)}*!/*/}
-                                            {/*        /!*           fullWidth*!/*/}
-                                            {/*        /!*           error={invalid['launcher']||false}*!/*/}
-
-                                            {/*        <RadioGroup value={sourceType} onChange={handleSourceTypeChange}>*/}
-                                            {/*            <FormControlLabel value="csv" control={<Radio />} label="CSV" />*/}
-                                            {/*            <FormControlLabel value="nd-json" control={<Radio />} label="ND-JSON" />*/}
-                                            {/*            <FormControlLabel value="jdbc" control={<Radio />} label="JDBC" />*/}
-                                            {/*        </RadioGroup>*/}
-
-                                            {/*    </TableCell>*/}
-                                            {/*</TableRow>*/}
                                             <TableRow>
                                                 <TableCell variant={"head"} component={"th"}>파라미터 YAML</TableCell>
                                                 <TableCell>
-                                                    {/*<AceEditor*/}
-                                                    {/*    ref={aceEditor}*/}
-                                                    {/*    mode="yaml"*/}
-                                                    {/*    theme="kuroir"*/}
-                                                    {/*    fontSize="15px"*/}
-                                                    {/*    height={"200px"}*/}
-                                                    {/*    width="100%"*/}
-                                                    {/*    placeholder=""*/}
-                                                    {/*/>*/}
                                                     <TextareaAutosize value={launcherYaml}
                                                                       onChange={event => setLauncherYaml(event.target.value)}
                                                                       style={{width: "100%", minHeight: "200px"}}
@@ -478,7 +288,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                     <TextField value={port}
                                                                onChange={event => setPort(event.target.value)}
                                                                fullWidth
-                                                               placeholder={"30100"}
+                                                               placeholder={"5005"}
                                                                type={"number"}
                                                                error={invalid['port']||false}
                                                     />
@@ -505,7 +315,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                                         <Paper>
                                                                             <Typography className={classes.typography}>
                                                                                 예제<br/>
-                                                                                */5 * * * * : 5분마다 한 번씩<br/>
+                                                                                */1 * * * * : 1분마다 한 번씩<br/>
                                                                                 */5 * * * * : 5분마다 한 번씩<br/>
                                                                                 0 5 1 * * : 매달 1일 새벽 5시에 실행.<br/>
                                                                                 0 5,11 * * 0,3 : 매주 일요일과 수요일 새벽 5시와 밤
