@@ -2,7 +2,7 @@ import {
     SET_CAT_INDEX_TEMPLATE_LIST,
     SET_COLLECTION,
     SET_COLLECTION_INDEX_HISTORY_LIST,
-    SET_COLLECTION_INDEX_SUFFIX,
+    SET_COLLECTION_INDEX_SUFFIX, SET_COLLECTION_JOB,
     SET_COLLECTION_LIST
 } from "../constants";
 import Client from '~/Client'
@@ -121,3 +121,8 @@ export const deleteIndexHistoryList = ({indexA, indexB, time}) => dispatch => cl
 export const setCatIndexTemplateList = () => dispatch => client.call({
     uri: `/elasticsearch/_cat/templates?format=json`
 }).then(response => dispatch({type: SET_CAT_INDEX_TEMPLATE_LIST, payload: response.data}))
+
+export const setCollectionJob = id => dispatch => client.call({
+    uri: `/collections/${id}/job`,
+    method: "get"
+}).then(response => dispatch({type: SET_COLLECTION_JOB, payload: response.data}))

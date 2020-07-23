@@ -44,6 +44,7 @@ import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-kuroir";
 import { isValidCron } from 'cron-validator'
+import ControlBox from "./ControlBox";
 
 const Divider = styled(MuiDivider)(spacing, positions);
 const Typography = styled(MuiTypography)(spacing, positions);
@@ -68,11 +69,8 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-
 function Source({dispatch, authUser, collection, JdbcList}) {
-    const history = useHistory();
     const classes = useStyles();
-    const [moreMenu, setMoreMenu] = useState(null)
     const [editModal, setEditModal] = useState(null)
     const [mode, setMode] = useState("VIEW")
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -80,8 +78,6 @@ function Source({dispatch, authUser, collection, JdbcList}) {
     const [placement, setPlacement] = React.useState();
 
     const [sourceName, setSourceName] = useState("")
-    const [sourceType, setSourceType] = useState("csv")
-    // const [launcher, setLauncher] = useState("")
     const [launcherYaml, setLauncherYaml] = useState("")
     const [host, setHost] = useState("")
     const [port, setPort] = useState("")
@@ -89,11 +85,6 @@ function Source({dispatch, authUser, collection, JdbcList}) {
     const [cron, setCron] = useState("")
 
     const [invalid, setInvalid] = useState({})
-
-    const [actionOpen, setActionOpen] = React.useState(false);
-    const actionAnchorRef = React.useRef(null);
-    const [isScheduled, setSchedule] = useState(false)
-    let aceEditor = useRef(null);
 
     useEffect(() => {
         setInvalid({})
@@ -106,7 +97,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
             setPort((collection['launcher']||{})['port']||"");
             setJdbcId(collection['jdbcId']);
             setCron(collection['cron']);
-            setSchedule(Boolean(collection['scheduled']));
+            // setSchedule(Boolean(collection['scheduled']));
         }
     }, [])
 
@@ -133,24 +124,9 @@ function Source({dispatch, authUser, collection, JdbcList}) {
         if (port === "") {
             invalidCheck['port'] = true
         }
-        // if (jdbcId === "") {
-        //     invalidCheck['jdbcId'] = true
-        // }
         if (!isValidCron(cron)) {
             invalidCheck['cron'] = true
         }
-
-        // scheme: "http"
-        // host: "127.0.0.1"
-        // port: 9200
-        // index: "sample-csv-07"
-        // type: "csv"
-        // path: "C:\\TEST_HOME\\danawa\\fastcatx-indexer\\sample\\account.csv"
-        // encoding: "utf-8"
-        // bulkSize: 2
-        // reset: true
-        // threadSize: 1
-
 
         if (Object.keys(invalidCheck).length > 0) {
             setInvalid(invalidCheck)
@@ -175,35 +151,8 @@ function Source({dispatch, authUser, collection, JdbcList}) {
         })
     }
 
-
-
-    const handleMenuItemClick = (event, index) => {
-        setActionOpen(false);
-    };
-    const handleToggle = () => {
-        setActionOpen((prevOpen) => !prevOpen);
-    };
-    const handleClose = (event) => {
-        if (actionAnchorRef.current && actionAnchorRef.current.contains(event.target)) {
-            return;
-        }
-
-        setActionOpen(false);
-    };
-
-    function handleEditSchedule(event) {
-        const tmpSchedule = !isScheduled
-        setSchedule(tmpSchedule)
-        dispatch(editCollectionScheduleAction(collection['id'], tmpSchedule)).then(response => {
-            setSchedule(tmpSchedule)
-        }).catch(error => {
-            setSchedule(!tmpSchedule)
-        })
-    }
-
     const jdbcHitList = (JdbcList['hits']||{})['hits']||[]
 
-    const options = ['연속실행', '색인실행', '전파실행', '교체실행'];
     return (
         <React.Fragment>
 
@@ -214,66 +163,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                     <Box style={{display: mode === "VIEW" ? "block" : "none"}}>
                         <Grid container>
                             <Grid item xs={10}>
-                                <Grid container my={3}>
-                                    <Grid item xs={3} mt={2}>
-                                        <Box style={{fontWeight: "bold"}}>스케쥴</Box>
-                                    </Grid>
-                                    <Grid item xs={9}>
-                                        <Switch checked={isScheduled}
-                                                onChange={handleEditSchedule}
-                                        />
-                                    </Grid>
-                                </Grid>
-
-                                <Grid container my={3}>
-                                    <Grid item xs={3} mt={2}>
-                                        <b>상태</b>
-                                    </Grid>
-                                    {/*<Grid item xs={2} mt={2}>*/}
-                                    {/*    */}
-                                    {/*</Grid>*/}
-                                    <Grid item xs={9}>
-
-                                        <ButtonGroup variant="contained" color="primary" ref={actionAnchorRef}>
-                                            {/*<Button >{options[selectedIndex]}</Button>*/}
-                                            <Button disabled={true} style={{minWidth: "100px", color: "black"}}> 대기 </Button>
-                                            {authUser.role.index ? <Button
-                                                color="primary"
-                                                size="small"
-                                                onClick={handleToggle}
-                                            >
-                                                <ArrowDropDownIcon/>
-                                            </Button> : <></> }
-                                        </ButtonGroup>
-                                        <Popper open={actionOpen} anchorEl={actionAnchorRef.current} role={undefined}
-                                                transition disablePortal>
-                                            {({TransitionProps, placement}) => (
-                                                <Grow
-                                                    {...TransitionProps}
-                                                    style={{
-                                                        transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
-                                                    }}
-                                                >
-                                                    <Paper>
-                                                        <ClickAwayListener onClickAway={handleClose}>
-                                                            <MenuList id="split-button-menu">
-                                                                {options.map((option, index) => (
-                                                                    <MenuItem
-                                                                        key={option}
-                                                                        onClick={(event) => handleMenuItemClick(event, index)}
-                                                                    >
-                                                                        {option}
-                                                                    </MenuItem>
-                                                                ))}
-                                                            </MenuList>
-                                                        </ClickAwayListener>
-                                                    </Paper>
-                                                </Grow>
-                                            )}
-                                        </Popper>
-
-                                    </Grid>
-                                </Grid>
+                                <ControlBox />
                             </Grid>
                             <Grid item xs={2} align={"right"}>
                                 {authUser.role.index ? <Button mx={1} variant={"outlined"} onClick={() => setMode("EDIT")}>

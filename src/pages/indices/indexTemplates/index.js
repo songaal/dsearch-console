@@ -1,4 +1,5 @@
 import React, {useEffect} from "react";
+import {useHistory} from "react-router-dom";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import Helmet from 'react-helmet';
@@ -44,6 +45,7 @@ function createData(name, pattern) {
 }
 
 function Templates({dispatch, authUser, templates}) {
+    const history = useHistory();
     const classes = useStyles();
 
     useEffect(() => {
@@ -68,7 +70,10 @@ function Templates({dispatch, authUser, templates}) {
             <Divider my={6}/>
 
             <Box align={'right'}>
-                {authUser.role.index ? <Link href={"../indices/template"} color={"primary"} >
+                {authUser.role.index ?
+                    <Link onClick={() => history.push("../indices/template")}
+                          style={{cursor: "pointer"}}
+                          color={"primary"}>
                     템플릿 생성
                 </Link> : <></>}
             </Box>
@@ -90,13 +95,20 @@ function Templates({dispatch, authUser, templates}) {
                             <TableRow key={row.name}>
                                 <TableCell component="th" scope="row" align="center">{i + 1}</TableCell>
                                 <TableCell align="center">
-                                    <Link href={`../indices/templates/${row.name}`}>
+                                    <Link onClick={() => history.push(`../indices/templates/${row.name}`)}
+                                          style={{cursor: "pointer"}} >
                                         {row.name}
                                     </Link>
                                 </TableCell>
                                 <TableCell align="center">{row.pattern}</TableCell>
                                 <TableCell align="center">
-                                    {authUser.role.index ? <Link href={`../indices/templates/${row.name}/edit`} color={"primary"}>수정</Link> :<></>}
+                                    {authUser.role.index ?
+                                        <Link onClick={() => history.push(`../indices/templates/${row.name}/edit`)}
+                                              style={{cursor: "pointer"}}
+                                              color={"primary"}>수정</Link>
+                                        :
+                                        <></>
+                                    }
                                 </TableCell>
                             </TableRow>
                         ))}
