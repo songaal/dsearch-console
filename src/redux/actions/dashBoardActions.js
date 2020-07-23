@@ -39,6 +39,6 @@ export const setIndexAliasActions = key => dispatch => client.call({uri: `/elast
     .then(response => dispatch({type: SET_INDEX_ALIAS, payload: response.data}))
     .catch(err => console.error(err))
 
-export const setRunningIndexActions = key => dispatch => client.call({uri: `/collections/indexing`})
+export const setRunningIndexActions = key => dispatch => client.call({uri: `/dashboard/indexing`})
   .then(response => dispatch({type: SET_RUNNING_INDEX, payload: response.data}))
   .catch(err => console.error(err))
