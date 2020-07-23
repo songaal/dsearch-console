@@ -131,6 +131,7 @@ function History({dispatch, authUser, collection, history}) {
                             <TableHead>
                                 <TableRow>
                                     <TableCell>#</TableCell>
+                                    <TableCell>인덱스</TableCell>
                                     <TableCell>타입</TableCell>
                                     <TableCell>결과</TableCell>
                                     <TableCell>문서수</TableCell>
@@ -169,6 +170,7 @@ function History({dispatch, authUser, collection, history}) {
                                         return (
                                             <TableRow key={hit['_id']}>
                                                 <TableCell>{from + index + 1}</TableCell>
+                                                <TableCell>{sourceAsMap['index']}</TableCell>
                                                 <TableCell>{jobTypeName}</TableCell>
                                                 <TableCell>{sourceAsMap['status']}</TableCell>
                                                 <TableCell>{formatDocSize}</TableCell>
