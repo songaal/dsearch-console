@@ -50,7 +50,6 @@ const options = ['연속실행', '색인실행', '전파실행', '교체실행']
 
 // let testScheduleFlag = true
 
-let eventCode = null
 function ControlBox({dispatch, authUser, collection, job}) {
     const [actionOpen, setActionOpen] = React.useState(false);
     const actionAnchorRef = React.useRef(null);
@@ -62,24 +61,27 @@ function ControlBox({dispatch, authUser, collection, job}) {
     // job이 있을 경우 데이터가 생김..
     const isRunningJob = job['status'] ? true : false
 
+    // useEffect(() => {
+    //     dispatch(setCollection(collection['id']))
+    // }, [])
+
     useEffect(() => {
-        if (eventCode != null) {
-            clearTimeout(eventCode)
-            eventCode = null
-        }
+        dispatch(setCollection(collection['id']))
+        let timer = null
         const fetchJob = () => {
             dispatch(setCollectionJob(collection['id']))
-                .then(job => {setConnected(true); setTimeout(fetchJob, 1000)})
-                .catch(error => {setConnected(false); setTimeout(fetchJob, 1000) })
+                .then(job => {setConnected(true); timer = setTimeout(fetchJob, 1000)})
+                .catch(error => {setConnected(false); timer = setTimeout(fetchJob, 1000) })
         }
-        fetchJob()
+
+        timer = setTimeout(() => fetchJob(), 1000);
         return () => {
-            if (eventCode != null) {
-                clearTimeout(eventCode)
-                eventCode = null
+            if (timer != null) {
+                clearTimeout(timer)
             }
         }
-    }, [collection])
+
+    }, [])
 
     const handleMenuItemClick = (event, option, index) => {
         if ('연속실행' === option) {
