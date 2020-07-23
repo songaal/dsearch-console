@@ -8,6 +8,7 @@ let initState = {
     matchedIndexTemplates: [],
     history: {},
     catIndexTemplateList: [],
+    job: {},
 };
 
 export default function reducer(state = initState, actions) {
@@ -37,6 +38,11 @@ export default function reducer(state = initState, actions) {
             return {
                 ...state,
                 catIndexTemplateList: actions.payload
+            };
+        case types.SET_COLLECTION_JOB:
+            return {
+                ...state,
+                job: actions.payload
             };
         default:
             return state
