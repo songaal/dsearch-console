@@ -2,7 +2,7 @@ import {
     SET_CAT_INDEX_TEMPLATE_LIST,
     SET_COLLECTION,
     SET_COLLECTION_INDEX_HISTORY_LIST,
-    SET_COLLECTION_INDEX_SUFFIX, SET_COLLECTION_JOB,
+    SET_COLLECTION_INDEX_SUFFIX,
     SET_COLLECTION_LIST
 } from "../constants";
 import Client from '~/Client'
@@ -122,7 +122,61 @@ export const setCatIndexTemplateList = () => dispatch => client.call({
     uri: `/elasticsearch/_cat/templates?format=json`
 }).then(response => dispatch({type: SET_CAT_INDEX_TEMPLATE_LIST, payload: response.data}))
 
-export const setCollectionJob = id => dispatch => client.call({
-    uri: `/collections/${id}/job`,
-    method: "get"
-}).then(response => dispatch({type: SET_COLLECTION_JOB, payload: response.data}))
+export const stopPropagation = (id) => dispatch => client.call({
+    uri: `/collections/${id}/action`,
+    method: "put",
+    params: {action: "stop_propagation"}    
+}).then(response => response.data)
+
+export const setCollectionActions = (id, action) => dispatch => client.call({
+    uri: `/collections/${id}/action`,
+    method: "put",
+    params: {action: action}    
+}).then(response => response.data)
+
+export const getPropagateStatus =  ({indexA, indexB}) => dispatch  => client.call({
+    uri: `/elasticsearch/.fastcatx_index_history/_search`,
+    method: 'post',
+    data: {
+        "query": {
+            "bool": {
+                "minimum_should_match": 1,
+                "must": [
+                    {
+                        "match": {
+                            "jobType": "PROPAGATE"
+                        }
+                    }
+                ],
+                "must_not": [
+                    {
+                        "match": {
+                            "status": "SUCCESS"
+                        }
+                    }
+                ],
+                "should": [
+                    {
+                        "match": {
+                            "index": indexA
+                        }
+                    },
+                    {
+                        "match": {
+                            "index": indexB
+                        }
+                    }
+                ]
+            }
+        },
+        "sort": [
+            {
+                "startTime": {
+                    "order": "desc"
+                }
+            }
+        ],
+        "size": 1,
+        "from": 0
+    }
+}).then(response => dispatch({ type: SET_SEARCH_HISTORY_PROPAGATE_STATUS, payload: response.data }))
