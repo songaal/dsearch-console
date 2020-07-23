@@ -83,7 +83,7 @@ function Detail({dispatch, collection}) {
 
             <Grid container spacing={6}>
                 <Grid item xs={12}>
-                    <AntTabs tabs={tabs} tabIndex={0} onChange={handleChange}/>
+                    <AntTabs tabs={tabs} tabIndex={1} onChange={handleChange}/>
                 </Grid>
             </Grid>
 

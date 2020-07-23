@@ -6,19 +6,26 @@ import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import {
     Box as MuiBox,
     Button as MuiButton,
+    CircularProgress,
     Grid as MuiGrid,
-    Grow,
+    Grow, LinearProgress,
     MenuItem,
     MenuList,
     Paper,
-    Popper,
+    Popper, Snackbar,
     Switch,
 } from "@material-ui/core";
 import {makeStyles} from '@material-ui/core/styles';
 import {positions, spacing} from "@material-ui/system";
-import {editCollectionScheduleAction, setCollectionJob} from "../../../redux/actions/collectionActions";
+import Alert from '@material-ui/lab/Alert';
+import {
+    editCollectionAction,
+    editCollectionScheduleAction,
+    setCollection,
+    setCollectionJob
+} from "../../../redux/actions/collectionActions";
 import {connect} from "react-redux";
-
+import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
 const Box = styled(MuiBox)(spacing, positions);
 const Button = styled(MuiButton)(spacing, positions);
 const Grid = styled(MuiGrid)(spacing, positions);
@@ -41,12 +48,19 @@ const useStyles = makeStyles((theme) => ({
 
 const options = ['연속실행', '색인실행', '전파실행', '교체실행'];
 
+// let testScheduleFlag = true
+
 let eventCode = null
-function ControlBox({dispatch, authUser, collection}) {
+function ControlBox({dispatch, authUser, collection, job}) {
     const [actionOpen, setActionOpen] = React.useState(false);
     const actionAnchorRef = React.useRef(null);
-    const [isScheduled, setSchedule] = useState(false)
-    const [connecting, setConnecting] = useState(false)
+    const [connected, setConnected] = useState(false)
+    const [processUI, setProcessUI] = useState(false)
+    const [errorSnackbar, setErrorSnackbar] = useState(false)
+    const [errorMessage, setErrorMessage] = useState("")
+
+    // job이 있을 경우 데이터가 생김..
+    const isRunningJob = job['status'] ? true : false
 
     useEffect(() => {
         if (eventCode != null) {
@@ -54,13 +68,9 @@ function ControlBox({dispatch, authUser, collection}) {
             eventCode = null
         }
         const fetchJob = () => {
-            dispatch(setCollectionJob(collection['id'])).then(job => {
-
-                setTimeout(fetchJob, 1000)
-            }).catch(error => {
-                setConnecting(true)
-                setTimeout(fetchJob, 1000)
-            })
+            dispatch(setCollectionJob(collection['id']))
+                .then(job => {setConnected(true); setTimeout(fetchJob, 1000)})
+                .catch(error => {setConnected(false); setTimeout(fetchJob, 1000) })
         }
         fetchJob()
         return () => {
@@ -73,13 +83,13 @@ function ControlBox({dispatch, authUser, collection}) {
 
     const handleMenuItemClick = (event, option, index) => {
         if ('연속실행' === option) {
-            alert('연속실행')
+            handleAction('all')
         } else if ('색인실행' === option) {
-            alert('색인실행')
+            handleAction('indexing')
         } else if ('전파실행' === option) {
-            alert('전파실행')
+            handleAction('propagate')
         } else if ('교체실행' === option) {
-            alert('교체실행')
+            handleAction('expose')
         }
         setActionOpen(false);
     };
@@ -94,77 +104,220 @@ function ControlBox({dispatch, authUser, collection}) {
     };
 
     function handleEditSchedule(event) {
-        const tmpSchedule = !isScheduled
-        setSchedule(tmpSchedule)
-        dispatch(editCollectionScheduleAction(collection['id'], tmpSchedule)).then(response => {
-            setSchedule(tmpSchedule)
-        }).catch(error => {
-            setSchedule(!tmpSchedule)
-        })
+        setProcessUI(true)
+        dispatch(editCollectionScheduleAction(collection['id'], event.target.checked))
+            .then(response => {
+                dispatch(setCollection(collection['id']))
+                setProcessUI(false)
+            })
+            .catch(error => {
+                console.log(error)
+                setErrorMessage("" + error)
+                setErrorSnackbar(true)
+                dispatch(setCollection(collection['id']))
+                setProcessUI(false)
+            })
+    }
+    function handleAction(action) {
+        setProcessUI(true)
+        // actions: all, indexing, propagate, expose, stop_propagation, stop_indexing
+        dispatch(editCollectionAction(collection['id'], action))
+            .then(response => {
+                dispatch(setCollection(collection['id']))
+                setProcessUI(false)
+            })
+            .catch(error => {
+                console.log(error)
+                setErrorMessage("" + error)
+                setErrorSnackbar(true)
+                dispatch(setCollection(collection['id']))
+                setProcessUI(false)
+            })
+    }
+
+    function handleErrorSnackbarClose() {
+        setErrorSnackbar(false)
+    }
+
+
+
+
+
+
+
+    if (connected === false) {
+        return (
+            <Grid container my={0} ml={4}>
+                <Grid item xs={9} mt={2} style={{alignSelf: "center"}}>
+                    <Box>
+                        연결 중...
+                    </Box>
+                    <Box>
+                        <CircularProgress m={2} color="secondary" />
+                    </Box>
+                </Grid>
+            </Grid>
+        )
+    }
+
+    if (processUI) {
+        return (
+            <Grid container my={0} ml={4}>
+                <Grid item xs={3} >
+                    <Grid container my={3}>
+                        <Grid item xs={3} mt={2}>
+                            <Box style={{fontWeight: "bold"}}>스케쥴</Box>
+                        </Grid>
+                        <Grid item xs={9}>
+                        </Grid>
+                    </Grid>
+
+                    <Grid container my={3}>
+                        <Grid item xs={3} mt={5} style={{height: '37px'}}>
+                            <b>상태</b>
+                        </Grid>
+                        <Grid item xs={9}>
+                        </Grid>
+                    </Grid>
+
+                </Grid>
+                <Grid item xs={9} mt={2} style={{alignSelf: "center"}}>
+                    <Box>
+                        <CircularProgress m={2} color="secondary" />
+                    </Box>
+                </Grid>
+            </Grid>
+        )
     }
 
     return (
         <React.Fragment>
-            <Grid container my={3}>
+            <Grid container my={3} ml={4}>
                 <Grid item xs={3} mt={2}>
                     <Box style={{fontWeight: "bold"}}>스케쥴</Box>
                 </Grid>
                 <Grid item xs={9}>
-                    <Switch checked={isScheduled}
-                            onChange={handleEditSchedule}
+                    <Switch onChange={handleEditSchedule}
+                            checked={collection['scheduled']}
+                            disabled={!authUser.role.index}
                     />
                 </Grid>
             </Grid>
 
-            <Grid container my={3}>
-                <Grid item xs={3} mt={2}>
+            <Grid container my={3} ml={4}>
+                <Grid item xs={3} mt={2} style={{height: '40px'}}>
                     <b>상태</b>
                 </Grid>
-                {/*<Grid item xs={2} mt={2}>*/}
-                {/*    */}
-                {/*</Grid>*/}
                 <Grid item xs={9}>
-
-                    <ButtonGroup variant="contained" color="primary" ref={actionAnchorRef}>
-                        {/*<Button >{options[selectedIndex]}</Button>*/}
-                        <Button disabled={true} style={{minWidth: "100px", color: "black"}}> 대기 </Button>
-                        {authUser.role.index ? <Button
-                            color="primary"
-                            size="small"
-                            onClick={handleToggle}
-                        >
-                            <ArrowDropDownIcon/>
-                        </Button> : <></> }
-                    </ButtonGroup>
-                    <Popper open={actionOpen} anchorEl={actionAnchorRef.current} role={undefined}
-                            transition disablePortal>
-                        {({TransitionProps, placement}) => (
-                            <Grow
-                                {...TransitionProps}
-                                style={{
-                                    transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
-                                }}
+                    {/* 컨트롤 가능한 상태 */}
+                    <Box style={{display: isRunningJob === false && collection['scheduled'] === false ? "block" : "none"}}>
+                        <ButtonGroup variant="contained" color="primary" ref={actionAnchorRef}>
+                            <Button disabled={true}
+                                    style={{width: '100%', minWidth: "150px", maxWidth: "300px", color: "black"}}
                             >
-                                <Paper>
-                                    <ClickAwayListener onClickAway={handleClose}>
-                                        <MenuList id="split-button-menu">
-                                            {options.map((option, index) => (
-                                                <MenuItem
-                                                    key={option}
-                                                    onClick={(event) => handleMenuItemClick(event, option, index)}
-                                                >
-                                                    {option}
-                                                </MenuItem>
-                                            ))}
-                                        </MenuList>
-                                    </ClickAwayListener>
-                                </Paper>
-                            </Grow>
-                        )}
-                    </Popper>
+                                대기
+                            </Button>
+                            {authUser.role.index ?
+                                <Button
+                                    color="primary"
+                                    size="small"
+                                    onClick={handleToggle}
+                                    disabled={!authUser.role.index}
+                                >
+                                    <ArrowDropDownIcon/>
+                                </Button>
+                                :
+                                <></>
+                            }
+                        </ButtonGroup>
+                        <Popper open={actionOpen} anchorEl={actionAnchorRef.current} role={undefined}
+                                transition disablePortal>
+                            {({TransitionProps, placement}) => (
+                                <Grow
+                                    {...TransitionProps}
+                                    style={{
+                                        transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
+                                    }}
+                                >
+                                    <Paper>
+                                        <ClickAwayListener onClickAway={handleClose}>
+                                            <MenuList id="split-button-menu">
+                                                {options.map((option, index) => (
+                                                    <MenuItem
+                                                        key={option}
+                                                        onClick={(event) => handleMenuItemClick(event, option, index)}
+                                                    >
+                                                        {option}
+                                                    </MenuItem>
+                                                ))}
+                                            </MenuList>
+                                        </ClickAwayListener>
+                                    </Paper>
+                                </Grow>
+                            )}
+                        </Popper>
+                    </Box>
+                    <Box style={{
+                        display: isRunningJob === false && collection['scheduled'] === true ? "block" : "none",
+                        width: '100%', minWidth: "150px", maxWidth: "400px", color: "black" }}
+                    >
+                        <Alert iconMapping={{ success: <PlayCircleOutlineIcon fontSize="inherit" /> }}
+                               severity="success"
+                               style={{display: isRunningJob ? 'none' : 'flex'}}
+                        >스케쥴 대기중</Alert>
+                    </Box>
+
+                    <Box style={{
+                        display: (isRunningJob === true && collection['scheduled'] === false) || (isRunningJob === true && collection['scheduled'] === true) ? "block" : "none",
+                        width: '100%', minWidth: "150px", maxWidth: "400px", color: "black" }}
+                    >
+                        <Box style={{display: job['currentStep'] === 'FULL_INDEX' || job['currentStep'] === 'DYNAMIC_INDEX' ? 'block' : 'none' }}>
+                            <Alert iconMapping={{ info: <PlayCircleOutlineIcon fontSize="inherit" style={{alignSelf: "center"}}/> }}
+                                   severity="info"
+                                   action={<Button color="inherit" style={{border: "1px solid silver"}} size="small" onClick={() => handleAction('stop_indexing')}> 정지 </Button> }
+                            >
+                                <LinearProgress/>
+                                <Box mt={2}>
+                                    색인을 진행하고 있습니다.
+                                </Box>
+                            </Alert>
+                        </Box>
+
+                        <Box style={{display: job['currentStep'] === 'PROPAGATE' ? 'block' : 'none' }}>
+                            <Alert iconMapping={{ info: <PlayCircleOutlineIcon fontSize="inherit" style={{alignSelf: "center"}}/> }}
+                                   severity="info"
+                                   action={<Button color="inherit" style={{border: "1px solid silver"}} size="small" onClick={() => handleAction('stop_propagation')}> 취소 </Button> }
+                            >
+                                <LinearProgress />
+                                <Box mt={2}>
+                                    전파를 진행하고 있습니다.
+                                </Box>
+                            </Alert>
+                        </Box>
+
+                        <Box style={{display: job['currentStep'] === 'PROPAGATE' ? 'block' : 'none' }}>
+                            <Alert iconMapping={{ info: <PlayCircleOutlineIcon fontSize="inherit" /> }}
+                                   severity="info"
+                            >
+                                <LinearProgress />
+                                교체를 진행하고 있습니다.
+                            </Alert>
+                        </Box>
+
+                    </Box>
 
                 </Grid>
             </Grid>
+
+            <Snackbar
+                anchorOrigin={{ vertical: 'top', horizontal: 'right'}}
+                autoHideDuration={6000}
+                open={errorSnackbar}
+                onClose={handleErrorSnackbarClose}
+                severity="error"
+                message={"요청이 실패되었습니다. " + errorMessage}
+                key={"errorSnackbar"}
+            />
         </React.Fragment>
     )
 }

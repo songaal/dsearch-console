@@ -25,7 +25,7 @@ export default class Client {
             try {
                 config.withCredentials = true
                 let response = await axios.request(config)
-                console.log('response >>> ', response)
+                // console.log('response >>> ', response)
                 resolve(response)
             } catch (err) {
                 console.error('API Fail', config, err)
