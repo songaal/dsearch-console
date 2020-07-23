@@ -159,35 +159,55 @@ function RunningIndex({result, running, status}) {
     const classes = useStyles();
     let indexMap = new Map()
     let indexList = []
+    let successIndexList = {};
+
+    const getElapsed = (time) => {
+        // epoch_millis to epoch_seconds
+        time = time / 1000;
+
+        var hours   = Math.floor(time / 3600);
+        var minutes = Math.ceil((time - (hours * 3600)) / 60);
+        
+        if(hours != 0) {
+            return hours+'시간 ' + minutes+'분' 
+        }else{
+            return minutes+'분' 
+        }
+    }
+
+    
+    console.log(result.hits.hits);
+    console.log(running);
+    console.log(status);
+
+    if(result.hits.hits.length >= 0){
+        for(let item of result.hits.hits){
+            successIndexList[item._source.index] = item._source;
+        }
+    }
+    
+
 
     let keyList = Object.keys(running);
     if (keyList.length !== 0) {
         for (let key of keyList) {
             let server = running[key].server;
+
             if(server !== undefined){
-                indexList.push({startTime: server.startTime, index: server.index})
+                if( successIndexList[server.index] !== undefined
+                    && successIndexList[server.index].endTime !== undefined 
+                    && successIndexList[server.index].startTime !== undefined
+                    && successIndexList[server.index].docSize !== undefined){
+                    let estimatedTime = successIndexList[server.index].endTime - successIndexList[server.index].startTime;
+                    let docSize = successIndexList[server.index].docSize;
+                    
+                    indexList.push({startTime: server.startTime, index: server.index, estimatedTime: estimatedTime, docSize: docSize});
+                }else{
+                    indexList.push({startTime: server.startTime, index: server.index});
+                }
             }
         }
     }
-    
-    // Object.values(running.hits.hits).forEach(row => {
-    //     Object.values(result.hits.hits).forEach(row2 => {
-    //         Object.values(status).forEach(row3 => {
-    //             if(row._source.index == row2._source.index && row2._source.index == row3.index){
-
-    //                 indexList.push ({
-    //                     index: row._source.index,
-    //                     startTime: row._source.startTime,
-    //                     currentDoc: row3['docs.count'],
-    //                     lastDoc: row2._source.docSize
-    //                 })
-
-    //                 indexMap.set(row._source.index, indexList)
-    //             }
-                
-    //         })
-    //     })
-    // })
     //running 돌면서 없는건 초기 셋팅
 
     return(
@@ -209,14 +229,17 @@ function RunningIndex({result, running, status}) {
                                     <Box width="100%" mr={1}>
                                     <BorderLinearProgress
                                         className={classes.margin}
-                                        variant="determinate"
+                                        // variant="determinate"
                                         color="secondary"
+                                        // value={`${Math.round((row.currentDoc / row.lastDoc)*100)}`}
                                     />
                                     </Box>
                                     <Box minWidth={15}>
                                         <Typography variant="body2" color="textSecondary"></Typography>
                                     </Box>
                                 </Box>
+                                {row.estimatedTime ? <>예상 종료 시간 : {getElapsed(row.estimatedTime)} <br/> </> : <>예상 종료 시간 : - <br /></> }
+                                {row.docSize ? <>예상 처리 문서 건수 : {row.docSize} <br/> </> : <>예상 처리 문서 건수 : - <br /></> }
                                 시작시간 : {untilTime(row.startTime)} 전 시작<br/>
                             </TableCell>
                         </TableRow>
