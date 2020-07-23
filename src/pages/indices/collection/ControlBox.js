@@ -297,7 +297,7 @@ function ControlBox({dispatch, authUser, collection, job}) {
                             </Alert>
                         </Box>
 
-                        <Box style={{display: job['currentStep'] === 'PROPAGATE' ? 'block' : 'none' }}>
+                        <Box style={{display: job['currentStep'] === 'EXPOSE' ? 'block' : 'none' }}>
                             <Alert iconMapping={{ info: <PlayCircleOutlineIcon fontSize="inherit" /> }}
                                    severity="info"
                             >
