@@ -320,7 +320,7 @@ function RankingTuningCard({dispatch, result, index}) {
                     <Grid item xs={12}>
                         <Grid container>
                             <Grid item xs={12} md={4}>
-                                <Box display="flex"  alignItems="center"  justifyContent="space-between" mx={3}>
+                                <Box display="flex"  alignItems="center"  justifyContent="space-between" mx={3} mb={2}>
                                     {checked ? <TextField style={{width:"250px"}} inputRef={inputIndex} label="인덱스를 입력해주세요"/> : <IndicesSelect />}
                                     <FormControlLabel
                                         control={

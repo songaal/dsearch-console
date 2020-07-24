@@ -219,11 +219,17 @@ function Source({dispatch, authUser, collection, JdbcList}) {
 
                             </Grid>
                             <Grid item xs={2} align={"right"}>
-                                <Button mx={1} variant={"outlined"} onClick={handleSaveProcess}>
+                                <Button mx={1}
+                                        variant={"outlined"}
+                                        onClick={handleSaveProcess}
+                                        style={{display: authUser.role.index ? 'block' : 'none'}}
+                                >
                                     저장
                                 </Button>
-                                <Button style={{display: mode === 'EDIT' ? "inline" : "none"}} mx={1}
-                                        variant={"outlined"} onClick={() => setMode("VIEW")}>
+                                <Button style={{display: authUser.role.index ? mode === 'EDIT' ? "inline" : "none" : "none"}} mx={1}
+                                        variant={"outlined"}
+                                        onClick={() => setMode("VIEW")}
+                                >
                                     취소
                                 </Button>
                             </Grid>
@@ -365,6 +371,6 @@ function Source({dispatch, authUser, collection, JdbcList}) {
 
 export default connect(store => ({
     authUser: store.fastcatxReducers.authUser,
-    ...store.collectionReducers, 
+    ...store.collectionReducers,
     ...store.jdbcReducers
 }))(Source);
