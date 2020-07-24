@@ -182,7 +182,7 @@ function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetai
             let analyzer = split[1].replace(' ', '');
             data.text = analyzer_contents.value;
             data.analyzer = analyzer
-            dispatch(actionAnalyzer(index, data));
+            dispatch(actionAnalyzer(index, data)).catch((error) =>{console.log(error)});
         }else {
             let plugin = analyzer_select.innerHTML
             plugin = plugin.replace(/ /gi, "");
