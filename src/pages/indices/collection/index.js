@@ -155,11 +155,12 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
                     dispatch(setCollectionList())
                 }, 500)
             }, 500)
-
+            setProcess(false)
         }).catch(error => {
             setCreateBaseIdError(true)
             setModalMessage("추가 실패.")
             console.log('error', error)
+            setProcess(false)
         })
     }
 
