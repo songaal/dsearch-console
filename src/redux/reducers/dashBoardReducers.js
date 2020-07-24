@@ -20,7 +20,6 @@ let initState = {
         }
     },
     running: {
-        
     },
     // running: {
     //     hits: {

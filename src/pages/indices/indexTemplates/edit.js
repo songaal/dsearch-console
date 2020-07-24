@@ -163,7 +163,7 @@ function Edit({dispatch, template, templates}) {
             settings: tmpSettings,
             mappings: tmpMappings
         })).then((response) => {
-            history.push(`../../templates/${selectedTemplate}`)
+            history.push(`../../indices-templates/${selectedTemplate}`)
         }).catch(error => {
             if (typeof error === 'object') {
                 message = "[수정 실패]" + JSON.stringify(error)
@@ -188,7 +188,7 @@ function Edit({dispatch, template, templates}) {
 
     function handleDeleteTemplate() {
         dispatch(deleteIndexTemplateAction({template: selectedTemplate})).then(response => {
-            history.push(`../../templates`)
+            history.push(`../../indices-templates`)
         }).catch(error => {
             alert("실패" + error)
             console.log("error", error)
@@ -264,7 +264,7 @@ function Edit({dispatch, template, templates}) {
                         {/*        onClick={handleSubmitClick}*/}
                         {/*>저장</Button>*/}
                         <Button variant="outlined"
-                                onClick={() => history.push("../../templates")}
+                                onClick={() => history.push("../../indices-templates")}
                                 ml={1}
                         >취소</Button>
                     </Box>

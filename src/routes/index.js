@@ -61,15 +61,6 @@ const roleRoutes = {id: "역할", path: "/role", icon: <Icon.Home/>, component: 
 
 const editUserRoutes = {id: "정보수정", path: "/my", component: EditUser, hidden: true};
 
-// const authRoutes = {
-//     id: "auth", path: "/auth", icon: <Users/>, children: [
-//         {path: "/auth/sign-in", name: "Sign In", component: SignIn},
-//         {path: "/auth/reset-password", name: "Reset Password", component: ResetPassword},
-//         {path: "/auth/404", name: "404 Page", component: Page404},
-//         {path: "/auth/500", name: "500 Page", component: Page500}
-//     ]
-// };
-
 // 관리도구 라우트
 const dashboardRoutes = {id: "대시보드", path: `${clusterContext}/dashboard`, icon: <Icon.Dashboard/>, component: Dashboard, children: null};
 
@@ -81,19 +72,19 @@ const analysisRoutes = [
 
 const indicesRoutes = [
 
-    {header: "인덱스", id: "클러스터", path: `${clusterContext}/indices/cluster`, icon: <Icon.Subject/>, component: ClusterData, children: null},
-    {id: "컬렉션", path: `${clusterContext}/indices/collections`, icon: <Icon.Subject/>, component: Collection, children: null},
-    {id: "컬렉션상세", path: `${clusterContext}/indices/collections/*`, icon: <Icon.Subject/>, component: CollectionDetail, children: null, hidden: true, active: "컬렉션"},
+    {header: "인덱스", id: "클러스터", path: `${clusterContext}/indices-cluster`, icon: <Icon.Subject/>, component: ClusterData, children: null},
+    {id: "컬렉션", path: `${clusterContext}/indices-collections`, icon: <Icon.Subject/>, component: Collection, children: null},
+    {id: "컬렉션상세", path: `${clusterContext}/indices-collections/*`, icon: <Icon.Subject/>, component: CollectionDetail, children: null, hidden: true},
 
-    {id: "템플릿", path: `${clusterContext}/indices/templates`, icon: <Icon.Subject/>, component: Templates, children: null},
-    {id: "템플릿생성", path: `${clusterContext}/indices/template`, component: TemplateNew, hidden: true},
-    {id: "템플릿수정", path: `${clusterContext}/indices/templates/*/edit`, component: TemplateEdit, hidden: true},
-    {id: "템플릿조회", path: `${clusterContext}/indices/templates/*`, component: TemplateView, hidden: true},
+    {id: "템플릿", path: `${clusterContext}/indices-templates`, icon: <Icon.Subject/>, component: Templates, children: null},
+    {id: "템플릿생성", path: `${clusterContext}/indices-templates/new`, component: TemplateNew, hidden: true},
+    {id: "템플릿수정", path: `${clusterContext}/indices-templates/*/edit`, component: TemplateEdit, hidden: true},
+    {id: "템플릿조회", path: `${clusterContext}/indices-templates/*`, component: TemplateView, hidden: true},
 
     {id: "인덱스", path: `${clusterContext}/indices`, icon: <Icon.Subject/>, component: Index, children: null},
-    {id: "JDBC", path: `${clusterContext}/indices/jdbc`, icon: <Icon.Subject/>, component: Jdbc, children: null},
     {id: "인덱스상세", path: `${clusterContext}/indices/*`, icon: <Icon.Subject/>, component: IndexDetail, children: null, hidden: true},
 
+    {id: "JDBC", path: `${clusterContext}/indices-jdbc`, icon: <Icon.Subject/>, component: Jdbc, children: null},
 ];
 
 const searchRoutes = [

@@ -383,7 +383,7 @@ function Sidebar(props) {
                                         activeClassName="active"
                                         component={NavLink}
                                         icon={category.icon}
-                                        exact
+                                        // exact
                                         badge={category.badge}
                                     />
                                 )}
