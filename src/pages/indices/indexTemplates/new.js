@@ -116,7 +116,7 @@ function New({ dispatch }) {
             mappings: tmpMappings
         } )).then(async (response) => {
             await utils.sleep(500)
-            history.push("../indices/templates/" + templateText)
+            history.push("../indices-templates/" + templateText)
         }).catch(error => {
             console.log('error', error)
             if (typeof error === 'object') {
@@ -160,7 +160,7 @@ function New({ dispatch }) {
                                 onClick={handleSubmitClick}
                         >저장</Button>
                         <Button variant="outlined"
-                                onClick={() => history.push('./templates')}
+                                onClick={() => history.push('../indices-templates')}
                                 ml={1}
                         >취소</Button>
                     </Box>

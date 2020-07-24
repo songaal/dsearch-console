@@ -169,7 +169,7 @@ function JdbcSourceEdit({JdbcList, JdbcListIndex, editId, editName, editDriver, 
     let JdbcSource = JdbcList.hits.hits[JdbcListIndex];
 
     return(
-        <Box fullWidth p={2}>
+        <Box p={2}>
             <Box display="flex" m={3}  alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>아이디</Typography>
                 <TextField placeholder="ID" fullWidth variant="outlined" defaultValue={JdbcSource.sourceAsMap.id} inputRef={editId} />
@@ -200,9 +200,8 @@ function JdbcSourceEdit({JdbcList, JdbcListIndex, editId, editName, editDriver, 
 }
 
 function JdbcSource({errorHandleJdbcSource, jdbcId, jdbcName, jdbcDriver, jdbcAddr, jdbcPort, jdbcDB, jdbcUser, jdbcPassword, jdbcParams, jdbcURL, setProvider}){
-    console.log("source handle>>> " , errorHandleJdbcSource);
     return (
-        <Box fullWidth p={2}>
+        <Box p={2}>
             <Box display="flex" m={3}  alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>아이디</Typography>
                 <TextField error={errorHandleJdbcSource.id} id="jdbcSourceId" size="small" placeholder="ID" fullWidth variant="outlined"  inputRef={jdbcId} />
@@ -215,7 +214,7 @@ function JdbcSource({errorHandleJdbcSource, jdbcId, jdbcName, jdbcDriver, jdbcAd
                 <Typography style={{ width: "150px" }}>DB제공자</Typography>
                 <Select id="jdbcSourceDriver" fullWidth onChange={setProvider} >
                     {drivers.map((item) => {
-                        return <MenuItem value={item}> {item} Driver</MenuItem>;
+                        return <MenuItem key={item} value={item}> {item} Driver</MenuItem>;
                     })}
                 </Select>
             </Box>

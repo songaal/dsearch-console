@@ -58,7 +58,7 @@ function Summary({dispatch, authUser, collection}) {
         toggleMoreMenu(event)
         dispatch(deleteCollectionAction(collection['id'])).then(response => {
             dispatch(setCollectionList())
-            setTimeout(() => history.push("../collections"), 500)
+            setTimeout(() => history.push("../indices-collections"), 500)
         }).catch(error => {
             console.log(error)
         })
@@ -95,12 +95,12 @@ function Summary({dispatch, authUser, collection}) {
                                 </Grid>
                                 <Grid item xs={9}>
                                     <Link style={{cursor: "pointer"}}
-                                          onClick={() => {history.push(`../templates/${collection['indexA']['index']}`)}}
+                                          onClick={() => {history.push(`../indices-templates/${collection['indexA']['index']}`)}}
                                     >
                                         {collection['indexA']['index']}
                                     </Link>,
                                     <Link style={{cursor: "pointer"}}
-                                          onClick={() => {history.push(`../templates/${collection['indexB']['index']}`)}}
+                                          onClick={() => {history.push(`../indices-templates/${collection['indexB']['index']}`)}}
                                     >
                                         {collection['indexB']['index']}
                                     </Link>
@@ -114,7 +114,7 @@ function Summary({dispatch, authUser, collection}) {
                                     <Link mx={1} style={{cursor: "pointer",
                                         display: collection['indexA']['uuid'] ? "inline" : "none"
                                     }}
-                                          onClick={() => {history.push(`../${collection['indexA']['uuid']}`)}}
+                                          onClick={() => {history.push(`../indices/${collection['indexA']['uuid']}`)}}
                                     >
                                         {collection['indexA']['index']}
                                     </Link>
@@ -126,7 +126,7 @@ function Summary({dispatch, authUser, collection}) {
                                     <Link mx={1} style={{cursor: "pointer",
                                         display: collection['indexB']['uuid'] ? "inline" : "none"
                                     }}
-                                          onClick={() => {history.push(`../${collection['indexB']['uuid']}`)}}
+                                          onClick={() => {history.push(`../indices/${collection['indexB']['uuid']}`)}}
                                     >
                                         {collection['indexB']['index']}
                                     </Link>

@@ -73,6 +73,7 @@ function View({ dispatch, template, templates}) {
             dispatch(setIndexTemplateAction({template: selectedTemplate}))
             dispatch(setIndexTemplatesAction())
         } else {
+            // eslint-disable-next-line no-restricted-globals
             setSelectedTemplate(location.pathname.substring(location.pathname.lastIndexOf("/") + 1))
         }
     }, [selectedTemplate])
@@ -90,7 +91,7 @@ function View({ dispatch, template, templates}) {
     }, [template['settings']])
 
     function handleTemplateChange(template) {
-        history.push(`../templates/${template}`)
+        history.push(`../indices-templates/${template}`)
         setSelectedTemplate(template)
     }
     function handleTabChane(index) {

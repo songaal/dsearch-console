@@ -89,13 +89,13 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
     }
 
     function moveDetail(id) {
-        history.push(`./collections/${id}`)
+        history.push(`./indices-collections/${id}`)
     }
     function moveIndex(indexId) {
         if (indexId === undefined || indexId === null || indexId === "") {
             return false
         }
-        history.push(`../indices/${indexId}`)
+        history.push(`./indices/${indexId}`)
     }
 
     function handleChangeBaseId(event) {

@@ -1,13 +1,11 @@
 import React, {useEffect} from "react";
 import {useHistory} from "react-router-dom";
-import { connect } from "react-redux";
+import {connect} from "react-redux";
 import styled from "styled-components";
 import Helmet from 'react-helmet';
 
 import {
     Box as MuiBox,
-    Button as MuiButton,
-    Card as MuiCard,
     Divider as MuiDivider,
     Link,
     Paper,
@@ -20,7 +18,7 @@ import {
     Typography as MuiTypography,
 } from "@material-ui/core";
 import {makeStyles} from '@material-ui/core/styles';
-import {palette, positions, spacing} from "@material-ui/system";
+import {positions, spacing} from "@material-ui/system";
 import {setIndexTemplatesAction} from "../../../redux/actions/indexTemplateActions";
 
 const useStyles = makeStyles((theme) => ({
@@ -51,9 +49,7 @@ function Templates({dispatch, authUser, templates}) {
     useEffect(() => {
         dispatch(setIndexTemplatesAction())
     }, [])
-
     const rows = templates.map(template => createData(template['name'], template['index_patterns']));
-    // authUser.role.index = false;
     return (
         <React.Fragment>
             <Helmet title="템플릿"/>
@@ -71,7 +67,7 @@ function Templates({dispatch, authUser, templates}) {
 
             <Box align={'right'}>
                 {authUser.role.index ?
-                    <Link onClick={() => history.push("../indices/template")}
+                    <Link onClick={() => history.push("./indices-templates/new")}
                           style={{cursor: "pointer"}}
                           color={"primary"}>
                     템플릿 생성
@@ -95,7 +91,7 @@ function Templates({dispatch, authUser, templates}) {
                             <TableRow key={row.name}>
                                 <TableCell component="th" scope="row" align="center">{i + 1}</TableCell>
                                 <TableCell align="center">
-                                    <Link onClick={() => history.push(`../indices/templates/${row.name}`)}
+                                    <Link onClick={() => history.push(`./indices-templates/${row.name}`)}
                                           style={{cursor: "pointer"}} >
                                         {row.name}
                                     </Link>
@@ -103,7 +99,7 @@ function Templates({dispatch, authUser, templates}) {
                                 <TableCell align="center">{row.pattern}</TableCell>
                                 <TableCell align="center">
                                     {authUser.role.index ?
-                                        <Link onClick={() => history.push(`../indices/templates/${row.name}/edit`)}
+                                        <Link onClick={() => history.push(`./indices-templates/${row.name}/edit`)}
                                               style={{cursor: "pointer"}}
                                               color={"primary"}>수정</Link>
                                         :
