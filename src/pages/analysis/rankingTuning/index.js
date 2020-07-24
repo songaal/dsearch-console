@@ -21,7 +21,7 @@ import {
     Grid,
     Button,
     Typography,
-    Zoom
+    Zoom, FormControlLabel
 } from "@material-ui/core";
 
 import { TreeView, TreeItem, ToggleButton } from '@material-ui/lab';
@@ -78,6 +78,8 @@ function ScoreTreeView({details, expand, nodeToggle, description}) {
 }
 
 function ResultDocument({result, item, expand, nodeToggle}) {
+    if(result.SearchResponse.length === 0) return <></>;
+
     const analyzerTokensMap = result.analyzerTokensMap[item._index]
     let dataList = []
 
@@ -119,11 +121,14 @@ function ResultDocument({result, item, expand, nodeToggle}) {
                 {
                     dataList.map(data => {
                         let tokenValue = data['tokens'].join(", ");
+                        let text = JSON.stringify(data['text']);
+                        let field = data['field'];
+                        console.log("text", text, "field", field, "tokenValue",tokenValue);
                         return (
                             <TableRow>
-                                <TableCell>{data['field']}</TableCell>
-                                <TableCell>{data['text']}</TableCell>
-                                <TableCell>{tokenValue.length > 0 ? tokenValue : data['text']}</TableCell>
+                                <TableCell>{field}</TableCell>
+                                <TableCell>{text}</TableCell>
+                                <TableCell>{tokenValue.length > 0 ? tokenValue : text}</TableCell>
                             </TableRow>
                         )
                     })
@@ -140,8 +145,7 @@ function ResultDocument({result, item, expand, nodeToggle}) {
 }
 
 function RankingTuningResults({pageNum, result, expand, nodeToggle}) {
-
-
+    console.log(result.SearchResponse.length);
     ids = 1;
     return (
         <Table style={{ margin: "9px", overflow: "scroll" }}>
@@ -152,9 +156,11 @@ function RankingTuningResults({pageNum, result, expand, nodeToggle}) {
                 </TableRow>
             </TableHead>
             <TableBody>
-                {result.SearchResponse.length > 0 ? 
+                {result.SearchResponse.length !== 0 ? 
                     result.SearchResponse.map((item, index) => {
+                        console.log(item);
                         let number = index + ((pageNum-1)*10) + 1;
+                        // return <></>;
                         return (<TableRow >
                             <TableCell align="right">{number}</TableCell>
                             <TableCell >
@@ -206,8 +212,6 @@ function RankingTuningCard({dispatch, result, index}) {
         }
     }, [])
 
-    
-
 
     const handleChecked = (evnet) =>{
         setChecked(!checked);
@@ -251,17 +255,22 @@ function RankingTuningCard({dispatch, result, index}) {
 
         if(checked){
             data.isMultiple = true;
-            data.index = inputIndex.current.value;
+            data.index = inputIndex.current.value.replace(/ /gi, "");
             data.text = JSON.stringify(jsonData);
         } else {
             data.isMultiple = true;
             data.index = index;
             data.text = JSON.stringify(jsonData);
         }
+        console.log(data);
 
         dispatch(setDocumentList(data)).then((result) => {
             if( result.payload.Total.value > 0 ) setPageNum(1);
             else setPageNum(0);
+            setProgress(false);
+        }).catch((error)=>{
+            //에러표시가 필요 한지?
+            setPageNum(0);
             setProgress(false);
         })
     }
@@ -313,12 +322,17 @@ function RankingTuningCard({dispatch, result, index}) {
                             <Grid item xs={12} md={4}>
                                 <Box display="flex"  alignItems="center"  justifyContent="space-between" mx={3}>
                                     {checked ? <TextField style={{width:"250px"}} inputRef={inputIndex} label="인덱스를 입력해주세요"/> : <IndicesSelect />}
-                                    <Switch
-                                        checked={checked}
-                                        onChange={handleChecked}
-                                        color="primary"
-                                        name="IndexModeSelector"
-                                        inputProps={{ 'aria-label': 'primary checkbox' }}
+                                    <FormControlLabel
+                                        control={
+                                            <Switch
+                                                checked={checked}
+                                                onChange={handleChecked}
+                                                color="primary"
+                                                name="IndexModeSelector"
+                                                inputProps={{ 'aria-label': 'primary checkbox' }}
+                                            />
+                                        }
+                                        label="직접 입력"
                                     />
                                 </Box>
                             </Grid>

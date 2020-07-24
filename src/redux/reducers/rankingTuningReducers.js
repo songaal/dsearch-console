@@ -4,7 +4,7 @@ let initState = {
     
     result: { 
         Total : {},
-        SearchResponse: {},
+        SearchResponse: [],
         analyzerTokensMap: {}
     }
 };

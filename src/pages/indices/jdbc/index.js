@@ -192,8 +192,7 @@ function JdbcSourceEdit({JdbcList, JdbcListIndex, editId, editName, editDriver, 
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>비밀번호</Typography>
-                {/* defaultValue={JdbcSource._source.password} */}
-                <TextField placeholder="PASSWORD (LEAVE BLANK IF YOU DON'T WANT CHANGE)" fullWidth variant="outlined"  inputRef={editPassword}/>
+                <TextField placeholder="PASSWORD (LEAVE BLANK IF YOU DON'T WANT CHANGE)" fullWidth variant="outlined" type="password" inputRef={editPassword}/>
             </Box>
         </Box>
     );
@@ -313,6 +312,19 @@ function JdbcCard({dispatch, authUser, JdbcList, JdbcAccessTest, changedJdbcList
     };
 
     const handleSourceDialogOpen = (event) => {
+        /* 에러 초기화 */
+        setErrorHandleJdbcSource({
+            id: false,
+            name: false,
+            driver: false,
+            address: false,
+            port: false,
+            db_name: false,
+            user: false,
+            password: false,
+            params: false,
+            url: false
+        })
         setjdbcSourceDialogOpenAction(true)
     };
 
@@ -394,18 +406,6 @@ function JdbcCard({dispatch, authUser, JdbcList, JdbcAccessTest, changedJdbcList
             setErrorHandleJdbcSource(change);
             return;
         }
-        
-
-        // if( jdbcId.current.value.length === 0 
-        //     || jdbcName.current.value.length === 0
-        //     || jdbcDriver.current.value.length === 0
-        //     || jdbcAddr.current.value.length === 0
-        //     || jdbcPort.current.value.length === 0
-        //     || jdbcUser.current.value.length === 0
-        //     || jdbcPassword.current.value.length === 0
-        //     || jdbcURL.current.value.length === 0) {
-        //         return;
-        // }
         
         let addJdbcSource = {};
         addJdbcSource.id = jdbcId.current.value
