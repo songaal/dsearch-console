@@ -55,8 +55,8 @@ function DictionarySearch ({dispatch, settings, searchResult}) {
 
     useEffect(() => {
         dispatch(setSettings())
+        searchResult.result = []
     }, [])
-
     
     const [showSearchInput, setShowSearchInput] = useState("")
     const searchInput = useRef("");
