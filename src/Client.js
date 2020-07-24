@@ -28,8 +28,11 @@ export default class Client {
                 // console.log('response >>> ', response)
                 resolve(response)
             } catch (err) {
-                console.error('API Fail', config, err)
-                reject(err)
+                if (error.response && error.response.status === 401 && config.uri !== '/auth') {
+                    location.href = "/"
+                } else {
+                    reject(error)
+                }
             }
         })
     }
