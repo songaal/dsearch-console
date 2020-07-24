@@ -27,7 +27,8 @@ export default class Client {
                 let response = await axios.request(config)
                 // console.log('response >>> ', response)
                 resolve(response)
-            } catch (err) {
+            } catch (error) {
+                console.log(error);
                 if (error.response && error.response.status === 401 && config.uri !== '/auth') {
                     location.href = "/"
                 } else {
