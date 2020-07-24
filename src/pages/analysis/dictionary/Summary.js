@@ -16,9 +16,14 @@ import MuiAlert from '@material-ui/lab/Alert';
 import {setSummary, applyDictionary} from "../../../redux/actions/dictionaryActions";
 import utils from "../../../utils";
 
-let checkedList = {};
-let checkedIDList = {};
-function SummaryTable({summary}){
+
+const systemInfo = {
+    type: "SYSTEM",
+    name: "시스템 사전"
+}
+
+
+function SummaryTable({summary, makeCheckedIdList, makeCheckedList}){
     if(summary.dictionaryInfo === undefined || summary.dictionarySettings === undefined) return <></>;
 
     let infoDict = JSON.parse(summary.dictionaryInfo).dictionary;
@@ -26,9 +31,9 @@ function SummaryTable({summary}){
     let tableInfo = [];
 
     for(let i in infoDict){
-        if(infoDict[i].type == "SYSTEM"){
+        if(infoDict[i].type == systemInfo.type){
             var info = infoDict[i];
-            info.name = "시스템 사전";
+            info.name = systemInfo.name;
             tableInfo.push(info);
             break;
         }
@@ -47,61 +52,95 @@ function SummaryTable({summary}){
 
         tableInfo.push(info);
     }
-
     
     const handleCheckBox = (event) =>{
-        checkedIDList[event.target.value] = event.target.id;
-        checkedList[event.target.value] = event.target.checked;
+        makeCheckedIdList(event.target.value, event.target.id);
+        makeCheckedList(event.target.value, event.target.checked);
     }
     
     return tableInfo.map((info) => { 
-        if(info.id !== undefined) checkedList[info.id] = false;
-
         return  <TableRow key={info.id}>
-        <TableCell><Checkbox id={info.documentId} name={"checkbox"} value={info.id} onChange={handleCheckBox}/></TableCell>
-        <TableCell>{info.name}</TableCell>
-        <TableCell>{info.type}</TableCell>
-        <TableCell>{info.indexCount ? info.indexCount : "0"}</TableCell>
-        <TableCell> {info.updatedTime ? info.updatedTime : "-"} </TableCell>
-        <TableCell>{info.count}</TableCell>
-        <TableCell> {info.appliedTime ? info.appliedTime : "-"} </TableCell>
-        <TableCell> {info.tokenType ? info.tokenType : "-"} </TableCell>
-        <TableCell> {info.ignoreCase ? info.ignoreCase ? "Y": "N" : "-"} </TableCell>
+            <TableCell> {info.type === systemInfo.type ? <></> : <Checkbox id={info.documentId} name={"checkbox"} value={info.id} onChange={handleCheckBox}/>} </TableCell>
+            <TableCell>{info.name}</TableCell>
+            <TableCell>{info.type}</TableCell>
+            <TableCell>{info.indexCount ? info.indexCount : "0"}</TableCell>
+            <TableCell> {info.updatedTime ? new Date(info.updatedTime).toLocaleString() : "-"} </TableCell>
+            <TableCell>{info.count}</TableCell>
+            <TableCell> {info.appliedTime ? new Date(info.appliedTime).toLocaleString() : "-"} </TableCell>
+            <TableCell> {info.tokenType ? info.tokenType : "-"} </TableCell>
+            <TableCell> {info.ignoreCase ? info.ignoreCase ? "Y": "N" : "-"} </TableCell>
         </TableRow> });
 }
 
 
  function Summary({dispatch, authUser, summary, update}) {
-     const [applyDict, setApplyDict ] = useState(false);
-    checkedList = {};
-    
+    const [applyDict, setApplyDict] = useState(false);
+    const [disabled, setDisabled] = useState(true);
+    const [checkedList, setCheckedList] = useState({});
+    const [checkedIdList, setCheckedIdList] = useState({});
+
     useEffect(() => {
         dispatch(setSummary())
     }, [])
+
+    function makeCheckedIdList(key, value){
+        let cList = {};
+        let list = Object.keys(checkedIdList);
+        for(let key of list){
+            cList[key] = checkedIdList[key];
+        }
+
+        cList[key] = value;
+        setCheckedIdList(cList);
+    }
+
+    function makeCheckedList(key, value){
+        let cList = {};
+        let list = Object.keys(checkedList);
+        for(let key of list){
+            cList[key] = checkedList[key];
+        }
+
+        cList[key] = value;
+        setCheckedList(cList);
+        disabledApplyButton(cList)
+    }
 
     const clickApplyDictionary = (event) => {
         let data = {};
         let str = "";
         let ids = "";
-        setApplyDict(true);
+        
         let keyList = Object.keys(checkedList);
         for(let key of keyList){
             if(checkedList[key]){
                 if(str.length === 0){
                     str = key;
-                    ids = checkedIDList[key]
+                    ids = checkedIdList[key]
                 }else{
                     str += "," + key;
-                    ids += "," + checkedIDList[key]
+                    ids += "," + checkedIdList[key]
                 }
             }
         }
         data.ids = ids;
         data.type = str;
+        setApplyDict(true);
         dispatch(applyDictionary(data))
-        utils.sleep(1000).then(() => {  dispatch(setSummary()) });
+        utils.sleep(2000).then(() => {  dispatch(setSummary()).then(() => {setApplyDict(false);})  });
     }
 
+    function disabledApplyButton(list){
+        let keyList = Object.keys(list);
+        let flag = true;
+        for(let key of keyList){
+            if(list[key]){
+                flag = false; 
+                break;
+            }
+        }
+        setDisabled(flag);
+    }
 
     return (
         <React.Fragment>
@@ -110,7 +149,7 @@ function SummaryTable({summary}){
                 <CardContent>
                     <Box>
                         {authUser.role.analysis ? 
-                             applyDict ? <CircularProgress /> : <Button variant={"contained"} color={"primary"} onClick={clickApplyDictionary}>사전적용</Button> 
+                             applyDict ? <CircularProgress /> : <Button disabled={disabled} variant={"contained"} color={"primary"} onClick={clickApplyDictionary}>사전적용</Button> 
                             : <></> }
                     </Box>
                     <Box>
@@ -132,7 +171,7 @@ function SummaryTable({summary}){
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                <SummaryTable authUser={authUser} summary={summary}/>
+                                <SummaryTable authUser={authUser} summary={summary} makeCheckedIdList={makeCheckedIdList} makeCheckedList={makeCheckedList} />
                             </TableBody>
                         </Table>
                     </Box>

@@ -195,8 +195,6 @@ function RunningIndex({result, running, status}) {
                     let estimatedTime = successIndexList[server.index].endTime - successIndexList[server.index].startTime;
                     let docSize = successIndexList[server.index].docSize;
 
-                    console.log(new Date().getUTCMilliseconds());
-
                     indexList.push({startTime: server.startTime, index: server.index, estimatedTime: estimatedTime, docSize: docSize});
                 }else{
                     indexList.push({startTime: server.startTime, index: server.index});
