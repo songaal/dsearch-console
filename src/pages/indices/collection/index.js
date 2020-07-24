@@ -151,7 +151,11 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
             toggleOpenAddModal()
             setTimeout(() => {
                 dispatch(setCollectionList())
+                setTimeout(() => {
+                    dispatch(setCollectionList())
+                }, 500)
             }, 500)
+
         }).catch(error => {
             setCreateBaseIdError(true)
             setModalMessage("추가 실패.")

@@ -53,6 +53,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+const NO_SELECTED = 'NO_SELECTED';
 
 function Source({dispatch, authUser, collection, JdbcList}) {
     const classes = useStyles();
@@ -66,7 +67,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
     const [launcherYaml, setLauncherYaml] = useState("")
     const [host, setHost] = useState("")
     const [port, setPort] = useState("")
-    const [jdbcId, setJdbcId] = useState("")
+    const [jdbcId, setJdbcId] = useState(NO_SELECTED)
     const [cron, setCron] = useState("")
 
     const [invalid, setInvalid] = useState({})
@@ -80,7 +81,8 @@ function Source({dispatch, authUser, collection, JdbcList}) {
             setLauncherYaml((collection['launcher']||{})['yaml']||"");
             setHost((collection['launcher']||{})['host']||"");
             setPort((collection['launcher']||{})['port']||"");
-            setJdbcId(collection['jdbcId']);
+            // setJdbcId(collection['jdbcId']);
+            setJdbcId(collection['jdbcId'] === '' ? NO_SELECTED : collection['jdbcId'])
             setCron(collection['cron']);
         }
     }, [])
@@ -120,7 +122,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
         dispatch(editCollectionSourceAction(collection['id'], {
             sourceName,
             cron,
-            jdbcId,
+            jdbcId: (jdbcId === NO_SELECTED ? '' : jdbcId),
             launcher: {
                 yaml: launcherYaml,
                 host,
@@ -135,8 +137,10 @@ function Source({dispatch, authUser, collection, JdbcList}) {
         })
     }
 
-    const jdbcHitList = (JdbcList['hits']||{})['hits']||[]
-
+    let jdbcHitList = [
+        { id: NO_SELECTED, sourceAsMap: {name: '선택안함'} },
+        ...((JdbcList['hits']||{})['hits']||[])
+    ]
     return (
         <React.Fragment>
 
@@ -183,7 +187,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                 <TableCell variant={"head"} component={"th"}>JDBC</TableCell>
                                                 <TableCell>
                                                     {
-                                                        jdbcHitList.filter(jdbcObj => collection['jdbcId'] === jdbcObj['id'])
+                                                        jdbcHitList.filter(jdbcObj => (collection['jdbcId'] === '' ? NO_SELECTED : collection['jdbcId']) === jdbcObj['id'])
                                                             .map(jdbcObj => {
                                                                 const source = jdbcObj['sourceAsMap']
                                                                 return (
@@ -258,9 +262,8 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                     >
                                                         {
                                                             jdbcHitList.map((jdbcObj, index) => {
-                                                                console.log(jdbcObj)
                                                                 return (
-                                                                    <MenuItem key={jdbcObj['id']}
+                                                                    <MenuItem key={index}
                                                                               value={jdbcObj['id']}
                                                                     >
                                                                         {(jdbcObj['sourceAsMap']||{})['name']||""}

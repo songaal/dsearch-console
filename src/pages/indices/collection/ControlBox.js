@@ -26,6 +26,7 @@ import {
 } from "../../../redux/actions/collectionActions";
 import {connect} from "react-redux";
 import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
+import ScheduleIcon from '@material-ui/icons/Schedule';
 const Box = styled(MuiBox)(spacing, positions);
 const Button = styled(MuiButton)(spacing, positions);
 const Grid = styled(MuiGrid)(spacing, positions);
@@ -70,11 +71,11 @@ function ControlBox({dispatch, authUser, collection, job}) {
         let timer = null
         const fetchJob = () => {
             dispatch(setCollectionJob(collection['id']))
-                .then(job => {setConnected(true); timer = setTimeout(fetchJob, 1000)})
-                .catch(error => {setConnected(false); timer = setTimeout(fetchJob, 1000) })
+                .then(job => {setConnected(true); timer = setTimeout(fetchJob, 500)})
+                .catch(error => {setConnected(false); timer = setTimeout(fetchJob, 500) })
         }
 
-        timer = setTimeout(() => fetchJob(), 1000);
+        timer = setTimeout(() => fetchJob(), 500);
         return () => {
             if (timer != null) {
                 clearTimeout(timer)
@@ -110,14 +111,18 @@ function ControlBox({dispatch, authUser, collection, job}) {
         dispatch(editCollectionScheduleAction(collection['id'], event.target.checked))
             .then(response => {
                 dispatch(setCollection(collection['id']))
-                setProcessUI(false)
+                setTimeout(() => {
+                    setProcessUI(false)
+                }, 2000)
             })
             .catch(error => {
                 console.log(error)
                 setErrorMessage("" + error)
                 setErrorSnackbar(true)
                 dispatch(setCollection(collection['id']))
-                setProcessUI(false)
+                setTimeout(() => {
+                    setProcessUI(false)
+                }, 2000)
             })
     }
     function handleAction(action) {
@@ -126,26 +131,24 @@ function ControlBox({dispatch, authUser, collection, job}) {
         dispatch(editCollectionAction(collection['id'], action))
             .then(response => {
                 dispatch(setCollection(collection['id']))
-                setProcessUI(false)
+                setTimeout(() => {
+                    setProcessUI(false)
+                }, 4000)
             })
             .catch(error => {
                 console.log(error)
                 setErrorMessage("" + error)
                 setErrorSnackbar(true)
                 dispatch(setCollection(collection['id']))
-                setProcessUI(false)
+                setTimeout(() => {
+                    setProcessUI(false)
+                }, 4000)
             })
     }
 
     function handleErrorSnackbarClose() {
         setErrorSnackbar(false)
     }
-
-
-
-
-
-
 
     if (connected === false) {
         return (
@@ -217,7 +220,7 @@ function ControlBox({dispatch, authUser, collection, job}) {
                             <Button disabled={true}
                                     style={{width: '100%', minWidth: "150px", maxWidth: "300px", color: "black"}}
                             >
-                                대기
+                                수동 실행
                             </Button>
                             {authUser.role.index ?
                                 <Button
@@ -263,7 +266,7 @@ function ControlBox({dispatch, authUser, collection, job}) {
                         display: isRunningJob === false && collection['scheduled'] === true ? "block" : "none",
                         width: '100%', minWidth: "150px", maxWidth: "400px", color: "black" }}
                     >
-                        <Alert iconMapping={{ success: <PlayCircleOutlineIcon fontSize="inherit" /> }}
+                        <Alert iconMapping={{ success: <ScheduleIcon fontSize="inherit" /> }}
                                severity="success"
                                style={{display: isRunningJob ? 'none' : 'flex'}}
                         >스케쥴 대기중</Alert>

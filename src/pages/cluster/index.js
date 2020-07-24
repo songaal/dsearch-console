@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
-import { useHistory } from "react-router-dom";
+import {useHistory} from "react-router-dom";
 import {makeStyles, useTheme} from '@material-ui/core/styles';
 import styled from "styled-components";
 
@@ -11,14 +11,13 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-
+import LaunchIcon from '@material-ui/icons/Launch';
 import Helmet from 'react-helmet';
 
 import {
     Box,
     Button,
     Card as MuiCard,
-    CardActionArea,
     CardContent,
     Divider as MuiDivider,
     Fab,
@@ -41,7 +40,6 @@ import {
     setClusterList,
     setClusterStatus
 } from "../../redux/actions/clusterActions";
-import {Edit as EditIcon, Settings} from "@material-ui/icons";
 import {red} from "@material-ui/core/colors";
 
 const Card = styled(MuiCard)(spacing);
@@ -59,7 +57,7 @@ const useStyles = makeStyles({
 
 const ITEM_HEIGHT = 48;
 
-function ClusterCard({classes, cluster, onEditClick, onRemoveClick, to, showMenu}) {
+function ClusterCard({classes, cluster, onEditClick, onRemoveClick, to, newTo, showMenu}) {
     const connection = cluster['status']['connection'] || false
     const name = cluster['cluster']['name']
     const seed = `${cluster['cluster']['scheme']}://${cluster['cluster']['host']}:${cluster['cluster']['port']}`
@@ -106,6 +104,14 @@ function ClusterCard({classes, cluster, onEditClick, onRemoveClick, to, showMenu
 
                             <Box className={classes.title} align={"center"}>
                                 {name}
+                                <Box style={{position: "relative", height: "0px", right: "-45%", top: "15px"}}>
+                                    <IconButton
+                                        onClick={newTo}
+                                        size={"small"}
+                                    >
+                                        <LaunchIcon />
+                                    </IconButton>
+                                </Box>
 
                                 <Box style={{position: "relative", height: "0px", right: "-45%", top: "-25px", display: showMenu ? "block" : "none"}}>
 
@@ -472,11 +478,15 @@ function Cluster({ dispatch, clusterList, authUser }) {
         })
     }
     function goDashboard(id) {
-        // const link = document.createElement('a');
-        // link.setAttribute("href", `${id}/dashboard`)
-        // link.setAttribute("target", "_blank")
-        // document.body.appendChild(link);
-        // link.click()
+        const link = document.createElement('a');
+        link.setAttribute("href", `${id}/dashboard`)
+        link.setAttribute("target", "_blank")
+        document.body.appendChild(link);
+        link.click()
+    }
+
+    function goNewDashboard(event, id) {
+        event.stopPropagation()
         let width = window.outerWidth
         let height = window.outerHeight
 
@@ -504,6 +514,7 @@ function Cluster({ dispatch, clusterList, authUser }) {
                                                          onEditClick={() => toggleOpenEditModal(cluster)}
                                                          onRemoveClick={() => toggleOpenRemoveModal(cluster['cluster']['id'])}
                                                          to={() => goDashboard(cluster['cluster']['id'])}
+                                                         newTo={event => goNewDashboard(event, cluster['cluster']['id'])}
                                                          showMenu={isManager}
                 />)}
 

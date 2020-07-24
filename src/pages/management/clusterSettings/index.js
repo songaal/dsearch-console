@@ -21,9 +21,9 @@ function ClusterSettings() {
             <Divider my={6}/>
 
             <AntTabs tabs={[
+                {label: "기본값", component: async(() => import("./Defaults"))},
                 {label: "영구설정", component: async(() => import("./Persistent"))},
                 {label: "임시설정", component: async(() => import("./Transient"))},
-                {label: "기본값", component: async(() => import("./Defaults"))},
             ]} />
 
 

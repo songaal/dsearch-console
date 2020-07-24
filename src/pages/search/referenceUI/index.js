@@ -180,7 +180,7 @@ function SearchFormPanel({template, authUser, templateIndex, lastTemplateIndex, 
                             </Box>
                         </Grid>
                         <Grid item xs={3} md={2} lg={2}>
-                            <Box align={"center"}>
+                            <Box align={"right"}>
                                 {authUser.role.search ? <>
                                 <Hidden lgUp>
                                     <Button size={"small"}
@@ -188,12 +188,14 @@ function SearchFormPanel({template, authUser, templateIndex, lastTemplateIndex, 
                                             variant={editable ? "contained" : "outlined"}
                                             onClick={handleSave}
                                             disabled={disabledSaveButton || disabledDeleteButton}
+                                            ml={2}
                                     >저장</Button>
                                     <Button size={"small"}
                                             className={classes.warm}
                                             variant={"contained"}
                                             onClick={onDelete}
                                             disabled={disabledDeleteButton}
+                                            ml={2}
                                     >삭제</Button>
                                 </Hidden>
                                 <Hidden mdDown>
@@ -201,6 +203,7 @@ function SearchFormPanel({template, authUser, templateIndex, lastTemplateIndex, 
                                             variant={editable ? "contained" : "outlined"}
                                             onClick={handleSave}
                                             disabled={disabledSaveButton || disabledDeleteButton}
+                                            mx={2}
                                     >저장</Button>
                                     <Button className={classes.warm}
                                             variant={"contained"}

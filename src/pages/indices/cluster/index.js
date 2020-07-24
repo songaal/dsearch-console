@@ -17,12 +17,13 @@ import {
     Divider as MuiDivider,
     FormControlLabel,
     Grid as MuiGrid,
-    Hidden, InputLabel,
+    Hidden,
     Table,
     TableBody,
     TableCell as MuiTableCell,
     TableHead,
-    TableRow as MuiTableRow, TextField,
+    TableRow as MuiTableRow,
+    TextField,
     Typography,
 } from "@material-ui/core";
 import {palette, sizing, spacing} from "@material-ui/system";
@@ -209,6 +210,7 @@ function ClusterShardMap({indices, nodes, shards}) {
         return isMatched;
     }
 
+    const matchedCount = Object.values(indicesArr).filter(indexObj => !isFilterIndex(indexObj['index'])).length;
     return (
         <React.Fragment>
             <Typography variant="h4" gutterBottom display="inline">
@@ -221,99 +223,135 @@ function ClusterShardMap({indices, nodes, shards}) {
                     </Box>
                     <FormControlLabel control={ <Checkbox checked={state.checkedA} onChange={handleChange} name="checkedA" color="primary"/> } label="닫힌 인덱스" />
                     <FormControlLabel control={ <Checkbox checked={state.checkedB} onChange={handleChange} name="checkedB" color="primary"/> } label=". 특수 인덱스" />
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell style={{
-                                    fontSize: "0.5em",
-                                    minWidth: "100px",
-                                    textOverflow: "ellipsis",
-                                    overflow: "hidden"
-                                }}>
-                                </TableCell>
-                                {
-                                    Object.values(indicesArr).map((indicesInfo, indicesInfoIndex) => {
-                                        if(isFilterIndex(indicesInfo['index'])) {
-                                            return null
-                                        }
-                                        return (
-                                            <TableCell key={indicesInfoIndex} style={{
-                                                fontSize: "1em",
-                                                minWidth: "100px",
-                                                textOverflow: "ellipsis",
-                                                overflow: "hidden",
-                                                textAlign: "left",
-                                                backgroundColor: indicesInfo.health === 'red' ? pink['100'] : indicesInfo.health === 'yellow' ? yellow['A400'] : '#ffffff'
-                                            }}>
-                                                <Typography style={{fontWeight: "bold"}}>{indicesInfo.index}</Typography>
-                                                <Typography>샤드: P({indicesInfo.pri}) R({indicesInfo.rep})</Typography>
-                                                <Typography>문서: {indicesInfo['docs.count']}</Typography>
-                                                <Typography>크기: {indicesInfo['store.size']}</Typography>
-                                                {/*<Typography>상태: {indicesInfo.health}</Typography>*/}
-                                            </TableCell>
-                                        )
-                                    }
-                                )}
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {
-                                newMap.get('unassigned') ?
-                                    <TableRow>
-                                        <TableCell align="center">미할당</TableCell>
-                                        {
-                                            Object.values(indicesArr).map((element, elementIndex) => {
-                                                if(isFilterIndex(element.index)) {
-                                                    return null
-                                                }
-                                                return (
-                                                    <TableCell key={elementIndex}>
-                                                        {
-                                                            Object.values(newMap.get('unassigned')).map((data, dataIndex) => {
-                                                                if (element.index === data.index) {
-                                                                    return (
-                                                                        <ShardButton prirep={data.prirep} label={data.shard} key={dataIndex} />
-                                                                    )
-                                                                }
-                                                            })
-                                                        }
-                                                    </TableCell>
-                                                )
-                                            })
-                                        }
-                                    </TableRow>
-                                    : <></>
-                            }
-                            {Object.values(nodes).map((nodeRow, nodeRowIndex) =>
-                                <TableRow key={nodeRowIndex}>
-                                    <TableCell align="center">
-                                        <Typography>{nodeRow.name}</Typography>
-                                        <Typography>{nodeRow.ip}</Typography>
-                                        <Typography>{nodeRow.master === '*' ? '마스터노드' : ''}</Typography>
-                                        <Typography>{nodeRow.role}</Typography>
-                                    </TableCell>
+
+                    {
+                        matchedCount === 0 ?
+                            <Table>
+                                <TableBody>
                                     {
-                                        Object.values(indicesArr).map((element, elementIndex) => {
-                                            if(isFilterIndex(element.index)) {
-                                                return null
-                                            }
+                                        Object.values(nodes).map((nodeRow, nodeRowIndex) => {
                                             return (
-                                                <TableCell key={elementIndex}>
-                                                    {
-                                                        Object.values(newMap.get(nodeRow.name)).map((data, dataIndex) => {
-                                                            if (element.index === data.index) {
-                                                                return <ShardButton key={dataIndex} prirep={data.prirep} label={data.shard} />
-                                                            }
-                                                        })
-                                                    }
+                                            <TableRow key={nodeRowIndex}>
+                                                <TableCell align="center" style={{
+                                                    fontSize: "0.5em",
+                                                    minWidth: "80px",
+                                                    textOverflow: "ellipsis",
+                                                    overflow: "hidden"
+                                                }}>
+                                                    <Typography>{nodeRow.name}</Typography>
+                                                    <Typography>{nodeRow.ip}</Typography>
+                                                    <Typography>{nodeRow.master === '*' ? '마스터노드' : ''}</Typography>
+                                                    <Typography>{nodeRow.role}</Typography>
                                                 </TableCell>
+                                                {
+                                                    nodeRowIndex === 0 ?
+                                                        <TableCell rowSpan={Object.keys(nodes).length} colSpan={20} align="center">
+                                                            선택된 인덱스가 없습니다.
+                                                        </TableCell>
+                                                        :
+                                                        null
+                                                }
+                                            </TableRow>
                                             )
                                         })
                                     }
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
+                                </TableBody>
+                            </Table>
+                            :
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell style={{
+                                            fontSize: "0.5em",
+                                            minWidth: "100px",
+                                            textOverflow: "ellipsis",
+                                            overflow: "hidden"
+                                        }}>
+                                        </TableCell>
+                                        {
+                                            Object.values(indicesArr).map((indicesInfo, indicesInfoIndex) => {
+                                                    if(isFilterIndex(indicesInfo['index'])) {
+                                                        return null
+                                                    }
+                                                    return (
+                                                        <TableCell key={indicesInfoIndex} style={{
+                                                            fontSize: "1em",
+                                                            minWidth: "100px",
+                                                            textOverflow: "ellipsis",
+                                                            overflow: "hidden",
+                                                            textAlign: "left",
+                                                            backgroundColor: indicesInfo.health === 'red' ? pink['100'] : indicesInfo.health === 'yellow' ? yellow['A400'] : '#ffffff'
+                                                        }}>
+                                                            <Typography style={{fontWeight: "bold"}}>{indicesInfo.index}</Typography>
+                                                            <Typography>샤드: P({indicesInfo.pri}) R({indicesInfo.rep})</Typography>
+                                                            <Typography>문서: {indicesInfo['docs.count']}</Typography>
+                                                            <Typography>크기: {indicesInfo['store.size']}</Typography>
+                                                            {/*<Typography>상태: {indicesInfo.health}</Typography>*/}
+                                                        </TableCell>
+                                                    )
+                                                }
+                                            )}
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {
+                                        newMap.get('unassigned') ?
+                                            <TableRow>
+                                                <TableCell align="center">미할당</TableCell>
+                                                {
+                                                    Object.values(indicesArr).map((element, elementIndex) => {
+                                                        if(isFilterIndex(element.index)) {
+                                                            return null
+                                                        }
+                                                        return (
+                                                            <TableCell key={elementIndex}>
+                                                                {
+                                                                    Object.values(newMap.get('unassigned')).map((data, dataIndex) => {
+                                                                        if (element.index === data.index) {
+                                                                            return (
+                                                                                <ShardButton prirep={data.prirep} label={data.shard} key={dataIndex} />
+                                                                            )
+                                                                        }
+                                                                    })
+                                                                }
+                                                            </TableCell>
+                                                        )
+                                                    })
+                                                }
+                                            </TableRow>
+                                            : <></>
+                                    }
+                                    {Object.values(nodes).map((nodeRow, nodeRowIndex) =>
+                                        <TableRow key={nodeRowIndex}>
+                                            <TableCell align="center">
+                                                <Typography>{nodeRow.name}</Typography>
+                                                <Typography>{nodeRow.ip}</Typography>
+                                                <Typography>{nodeRow.master === '*' ? '마스터노드' : ''}</Typography>
+                                                <Typography>{nodeRow.role}</Typography>
+                                            </TableCell>
+                                            {
+                                                Object.values(indicesArr).map((element, elementIndex) => {
+                                                    if(isFilterIndex(element.index)) {
+                                                        return null
+                                                    }
+                                                    return (
+                                                        <TableCell key={elementIndex}>
+                                                            {
+                                                                Object.values(newMap.get(nodeRow.name)).map((data, dataIndex) => {
+                                                                    if (element.index === data.index) {
+                                                                        return <ShardButton key={dataIndex} prirep={data.prirep} label={data.shard} />
+                                                                    }
+                                                                })
+                                                            }
+                                                        </TableCell>
+                                                    )
+                                                })
+                                            }
+                                        </TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
+                    }
                 </CardContent>
             </Card>
         </React.Fragment>

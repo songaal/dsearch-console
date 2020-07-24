@@ -21,7 +21,7 @@ function Transient({dispatch, transient}) {
     useEffect(() => {
         let settings = {}
         Object.keys(transient).forEach(key => {
-            const prefixKey = key.substring(0, key.indexOf(".") - 1)
+            const prefixKey = key.substring(0, key.indexOf("."))
             if (settings[prefixKey] === undefined) {
                 settings[prefixKey] = []
             }

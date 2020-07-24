@@ -1,4 +1,5 @@
 import React, {useEffect} from "react";
+import { useHistory } from 'react-router-dom';
 import styled from "styled-components";
 import {NavLink as RouterNavLink} from "react-router-dom";
 import {setServerSummaryActions} from '@actions/serverSummaryActions'
@@ -14,7 +15,6 @@ import {
     Divider as MuiDivider,
     FormControl,
     Grid,
-    InputLabel,
     Link,
     MenuItem,
     Select,
@@ -66,77 +66,65 @@ const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
 //         })
 //      })
 // }
-
+const SUMMARY = 'NO_SELECTED';
 function Server({dispatch, server}) {
-
-
     const classes = useStyles();
 
-    const [indices, setIndices] = React.useState('');
+    const [indices, setIndices] = React.useState(SUMMARY);
    
     const handleChange = (event) => {
         setIndices(event.target.value);
     };
 
-
     useEffect(() => {
         dispatch(setServerSummaryActions())
     }, [])
-    
-
-    // useEffect(() => {
-    //     fetch(`${process.env.REACT_APP_SERVER_URL}/_nodes`)
-    //         .then((response) => response.json())
-    //         .then((result) => {
-    //             dispatch(setServerSummary(result))
-    //         })
-    // }, [])
 
     let ServerInfoCall
-    if(indices != '') {
-        ServerInfoCall = Async(() => import("./serverInfo")); 
+    if(indices !== '' && indices !== SUMMARY) {
+        ServerInfoCall = Async(() => import("./serverInfo"));
     }else{
-        ServerInfoCall = Async(() => import("./summary")); 
+        ServerInfoCall = Async(() => import("./summary"));
     }
 
     return (
-        
+
         <React.Fragment>
             <Helmet title="Server 정보"/>
             
-            <Breadcrumbs aria-label="Breadcrumb" mt={2}>
+            <Breadcrumbs aria-label="Breadcrumb" mt={2} mb={2}>
                 <Link href="./server" color="inherit">
                        서버 개요
                 </Link>
                 <Box>
                     <FormControl className={classes.formControl}>
-                    <InputLabel>서버</InputLabel>
+                    {/*<InputLabel>서버</InputLabel>*/}
                     <Select
                         value={indices}
                         onChange={handleChange}
                     >
-                    {Object.entries(server.nodes).map((node,index) => (
-                        <MenuItem value={node[0]}>{node[1].name}</MenuItem>
-                    ))};
-
+                        <MenuItem value={SUMMARY} disabled>서버를 선택하세요.</MenuItem>
+                        {Object.entries(server.nodes).map((node,index) => (
+                            <MenuItem value={node[0]}>{node[1].name}</MenuItem>
+                        ))};
                     </Select>
                     </FormControl>
                 </Box>
             </Breadcrumbs>
 
-            <Card>
-                <CardContent>
-                    
-                    <Divider my={6}/>
+            <ServerInfoCall nodeKey={indices}/>
 
-                    <Grid container spacing={6}>
-                        <Grid item xs={12}>
-                            <ServerInfoCall nodeKey={indices}/>
-                        </Grid>
-                    </Grid>
+            {/*<Card>*/}
+            {/*    <CardContent>*/}
+            {/*        */}
+            {/*        <Grid container spacing={6}>*/}
+            {/*            <Grid item xs={12}>*/}
+            {/*                */}
+            {/*            </Grid>*/}
+            {/*        </Grid>*/}
 
-                </CardContent>
-            </Card>
+            {/*    </CardContent>*/}
+            {/*</Card>*/}
         </React.Fragment>
     );
 }
