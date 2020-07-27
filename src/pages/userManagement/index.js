@@ -213,8 +213,8 @@ function UserManagement({dispatch, userList, userRolesList, roleList, authUser})
             .then(response => {
                 setShowPassword(response.data['password'])
             }).catch(error => {
-                alert("실패")
-                console.log(error)
+            alert("실패")
+            console.log(error)
         })
     }
 
@@ -420,10 +420,11 @@ function UserManagement({dispatch, userList, userRolesList, roleList, authUser})
             </Dialog>
 
 
-        {/*    수정       */}
+            {/*    수정       */}
             <Dialog open={Boolean(openUserEditModal)}
                     fullScreen={fullScreen}
                     onClose={toggleUserEditModal}
+                    fullWidth={true}
             >
                 <DialogTitle id="form-dialog-title">사용자 수정</DialogTitle>
                 <DialogContent>
