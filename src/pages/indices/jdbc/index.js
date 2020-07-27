@@ -211,8 +211,10 @@ function JdbcSource({errorHandleJdbcSource, jdbcId, jdbcName, jdbcDriver, jdbcAd
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{ width: "150px" }}>DB제공자</Typography>
-                <Select id="jdbcSourceDriver" fullWidth onChange={setProvider} >
-                    {drivers.map((item) => {
+                <Select id="jdbcSourceDriver" fullWidth onChange={setProvider} defaultValue="">
+                    {drivers.map((item, index) => {
+                        console.log(item, index);
+                        if(index === 0) return <MenuItem key={item} value={item}> {item} Driver</MenuItem>;
                         return <MenuItem key={item} value={item}> {item} Driver</MenuItem>;
                     })}
                 </Select>
@@ -231,7 +233,7 @@ function JdbcSource({errorHandleJdbcSource, jdbcId, jdbcName, jdbcDriver, jdbcAd
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>DB명</Typography>
-                <TextField error={errorHandleJdbcSource.db_name} id="jdbcSourceDbName" size="small" fullWidth variant="outlined" inputRef ={jdbcDB}/>
+                <TextField error={errorHandleJdbcSource.db_name} id="jdbcSourceDbName" size="small" fullWidth variant="outlined" inputRef={jdbcDB}/>
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>사용자</Typography>
@@ -247,7 +249,7 @@ function JdbcSource({errorHandleJdbcSource, jdbcId, jdbcName, jdbcDriver, jdbcAd
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>URL</Typography>
-                <TextField error={errorHandleJdbcSource.url} disabled={true} id="jdbcSourceURL" size="small" placeholder="jdbc:mysql://" fullWidth variant="outlined" inputRef={jdbcURL}/>
+                <TextField error={errorHandleJdbcSource.url} id="jdbcSourceURL" size="small" placeholder="jdbc:mysql://" fullWidth variant="outlined" inputRef={jdbcURL}/>
             </Box>
         </Box>
     );
@@ -300,10 +302,13 @@ function JdbcCard({dispatch, authUser, JdbcList, JdbcAccessTest, changedJdbcList
     function handleAccessFlag(){
         setAccessFlag(false)
     }
-    function setProvider(event, index, next){
-        setJdbcProvider(index.props.value);
+
+    function setProvider(event, index){
         jdbcDriver.current.value = JdbcDrivers[event.target.value]
         jdbcURL.current.value = JdbcDriversURL[event.target.value]
+        // console.log("index.props.value ", index.props.value);
+        // console.log("event, target.value",);
+        setJdbcProvider(event.target.value);
     }
     
     const handleSourceDialogClose = (event) => {
@@ -425,17 +430,17 @@ function JdbcCard({dispatch, authUser, JdbcList, JdbcAccessTest, changedJdbcList
     return (
         <Card mb={6}>
             <CardContent>
-                <Box style={{width: "90px"}}>
+                <Grid container alignItems="flex-start" justify="flex-end" direction="row">
                     {authUser.role.index ? 
-                        <Box>
+                        <Box display="flex" alignItems="center" justifyContent="right">
                             <Link href="#" onClick={handleSourceDialogOpen}> 
-                                <Box display="flex" alignItems="center" justifyContent="left">
+                                <Box display="flex" alignItems="center" justifyContent="right">
                                     <AddCircleOutlineIcon /> <Typography>{"JDBC 추가"}</Typography>
                                 </Box>
                             </Link>
                         </Box> 
                     : <></>}
-                </Box>
+                </Grid>
                 <JdbcTable dispatch={dispatch} authUser={authUser} JdbcList={JdbcList} JdbcAccessTest={JdbcAccessTest} changedJdbcList={changedJdbcList}></JdbcTable>
                 <Dialog open={jdbcSourceDialogOpen} onClose={handleSourceDialogClose} >
                     <DialogTitle id="dialog-title">{"JDBC 소스"}</DialogTitle>

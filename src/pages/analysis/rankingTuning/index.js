@@ -59,6 +59,8 @@ const getTreeItemsFromData = treeItems => {
   };
   
 
+  
+
 function ScoreTreeView({details, expand, nodeToggle, description}) {
     return (
         <TreeView
@@ -123,9 +125,8 @@ function ResultDocument({result, item, expand, nodeToggle}) {
                         let tokenValue = data['tokens'].join(", ");
                         let text = JSON.stringify(data['text']);
                         let field = data['field'];
-                        console.log("text", text, "field", field, "tokenValue",tokenValue);
                         return (
-                            <TableRow>
+                            <TableRow key={text}>
                                 <TableCell>{field}</TableCell>
                                 <TableCell>{text}</TableCell>
                                 <TableCell>{tokenValue.length > 0 ? tokenValue : text}</TableCell>
@@ -145,7 +146,6 @@ function ResultDocument({result, item, expand, nodeToggle}) {
 }
 
 function RankingTuningResults({pageNum, result, expand, nodeToggle}) {
-    console.log(result.SearchResponse.length);
     ids = 1;
     return (
         <Table style={{ margin: "9px", overflow: "scroll" }}>
@@ -158,10 +158,9 @@ function RankingTuningResults({pageNum, result, expand, nodeToggle}) {
             <TableBody>
                 {result.SearchResponse.length !== 0 ? 
                     result.SearchResponse.map((item, index) => {
-                        console.log(item);
                         let number = index + ((pageNum-1)*10) + 1;
                         // return <></>;
-                        return (<TableRow >
+                        return (<TableRow key={"a" + number}>
                             <TableCell align="right">{number}</TableCell>
                             <TableCell >
                                 <ResultDocument result={result} item={item} expand={expand} nodeToggle={nodeToggle}/>
@@ -189,7 +188,7 @@ function RankingTuningCard({dispatch, result, index}) {
     const [expand, setExpand] = useState([]);
     const [checked, setChecked] = useState(false);
     const [alert, setAlert] = useState(false);
-    const [autoHeight, setAutoHeight] = useState(Math.ceil(window.innerHeight * 0.6))
+    const [autoHeight, setAutoHeight] = useState('600px')
     
       
     useEffect(() => {
@@ -203,7 +202,7 @@ function RankingTuningCard({dispatch, result, index}) {
             } else if (windowHeight > 900) {
                 windowHeight = Math.ceil(window.innerHeight * 0.8)
             }
-            setAutoHeight(windowHeight)
+            setAutoHeight(windowHeight + "px")
         }, 500)
         return () => {
             if (eventCode !== null) {
@@ -262,7 +261,6 @@ function RankingTuningCard({dispatch, result, index}) {
             data.index = index;
             data.text = JSON.stringify(jsonData);
         }
-        console.log(data);
 
         dispatch(setDocumentList(data)).then((result) => {
             if( result.payload.Total.value > 0 ) setPageNum(1);
@@ -354,25 +352,24 @@ function RankingTuningCard({dispatch, result, index}) {
                     </Grid>
 
                     <Grid item xs={12}>
-
-                        <Grid container style={{height: autoHeight + "px"}}>
-                            <Grid item xs="12" md="4">
+                        <Grid container style={{height: autoHeight}}>
+                            <Grid item xs={12} md={4}>
                                 <Box mx={3} style={{border: "1px solid silver"}}>
                                     <AceEditor
                                         ref={aceEditor}
                                         id="aceEditor"
                                         mode="json"
                                         theme="kuroir"
-                                        name="ace-editor"
                                         fontSize="15px"
-                                        height={autoHeight + "px"}
+                                        height={autoHeight}
                                         width="100%"
                                         placeholder="검색쿼리를 입력해주세요."
+                                        setOptions={{ useWorker: false }}
                                     />
                                 </Box>
                             </Grid>
-                            <Grid item xs="12" md="8" >
-                                <Box style={{overflow: "scroll", height: autoHeight + "px", border: "1px solid silver"}} mx={3} id="move">
+                            <Grid item xs={12} md={8} >
+                                <Box style={{overflow: "scroll", height: autoHeight, border: "1px solid silver"}} mx={3} id="move">
                                         <RankingTuningResults pageNum={pageNum} result={result} expand={expand} nodeToggle={nodeToggle}/>
                                 </Box>
                             </Grid>
@@ -420,9 +417,6 @@ function RankingTuningCard({dispatch, result, index}) {
 }
 
 function RankingTuning({ dispatch, result, index}) {
-    useEffect(() => {
-        dispatch(setDocumentList())
-    }, [])
 
     return (
         <React.Fragment>

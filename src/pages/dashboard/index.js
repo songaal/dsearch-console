@@ -27,7 +27,7 @@ import {palette, sizing, spacing} from "@material-ui/system";
 import {lighten, makeStyles, withStyles} from "@material-ui/core/styles";
 import {connect} from "react-redux";
 import Brightness1Icon from '@material-ui/icons/Brightness1';
-
+import ErrorIcon from '@material-ui/icons/Error';
 const useStyles = makeStyles((theme) => ({
     headerField: {fontSize: '1.2em', fontWeight: "bold"},
     headerValue: {fontSize: '1.2em', fontWeight: "bold"},
@@ -120,7 +120,8 @@ function WarningIndex({status}) {
     // console.log(status)
 
     return(
-        <>
+        <Card>
+            <CardContent>
             <Typography variant="h4" gutterBottom display="inline">
                 주의할 인덱스
             </Typography>
@@ -132,9 +133,12 @@ function WarningIndex({status}) {
                         if(row.health != 'green') {
                             return(
                                 <TableRow key={row.index}>
-                                <TableCell>
-                                    <Brightness1Icon style={{color:row.health}} />
-                                    {row.index}
+                                <TableCell align="left">
+                                    <Box display="flex" justifyContent="left" >
+                                        <ErrorIcon style={{color:row.health}}/>
+                                        {/* <Brightness1Icon style={{color:row.health}} /> */}
+                                        <Typography>{row.index}</Typography>
+                                    </Box>
                                 </TableCell>
                                 <TableCell>
                                     {row.health == 'yellow' ? <font color="orange"> 레플리카 샤드 이상 </font> :
@@ -143,13 +147,13 @@ function WarningIndex({status}) {
                                     </TableRow>
 
                             )
-                            
                         }
                     }
                     )}
                 </TableBody>
-            </Table>      
-        </>
+            </Table>
+            </CardContent>
+        </Card>
     );
 
 }
@@ -205,7 +209,8 @@ function RunningIndex({result, running, status}) {
     //running 돌면서 없는건 초기 셋팅
     
     return(
-        <>
+        <Card>
+            <CardContent>
             <Typography variant="h4" gutterBottom display="inline">
                 전체색인 실행중
             </Typography>
@@ -213,31 +218,34 @@ function RunningIndex({result, running, status}) {
             <Table>
                 <TableHead></TableHead>
                 <TableBody>
-                {Object.values(indexList).map(row =>
-                        <TableRow key={row.index}>
-                            <TableCell>
-                                {row.index}
-                            </TableCell>
-                            <TableCell>
-                                <Box display="flex" alignItems="center">
-                                    <Box width="100%" mr={1}>
-                                    <BorderLinearProgress
-                                        className={classes.margin}
-                                        variant="determinate"
-                                        color="secondary"
-                                        value={`${Math.round( (untilTime(row.startTime) / getElapsed(row.estimatedTime))*100)}`}
-                                    />
+                    {indexList.length === 0 ? <TableRow><TableCell> <Box display="flex" alignItems="center" justifyContent="center"> <Typography>현재 실행중인 색인 작업이 없습니다.</Typography></Box>  </TableCell></TableRow> : 
+                        Object.values(indexList).map(row =>
+                            <TableRow key={row.index}>
+                                <TableCell>
+                                    {row.index}
+                                </TableCell>
+                                <TableCell>
+                                    <Box display="flex" alignItems="center">
+                                        <Box width="100%" mr={1}>
+                                        <BorderLinearProgress
+                                            className={classes.margin}
+                                            variant="determinate"
+                                            color="secondary"
+                                            value={`${Math.round( (untilTime(row.startTime) / getElapsed(row.estimatedTime))*100)}`}
+                                        />
+                                        </Box>
+                                        <Box minWidth={15}>
+                                            <Typography variant="body2" color="textSecondary"></Typography>
+                                        </Box>
                                     </Box>
-                                    <Box minWidth={15}>
-                                        <Typography variant="body2" color="textSecondary"></Typography>
-                                    </Box>
-                                </Box>
-                                {row.estimatedTime ? <> 예상 종료 시간 : {getElapsed(row.estimatedTime)} <br/> </> : <>예상 종료 시간 : - <br /></> }
-                                {row.docSize ? <> 예상 처리 문서 건수 : {row.docSize} <br/> </> : <>예상 처리 문서 건수 : - <br /></> }
-                                시작시간 : {untilTime(row.startTime)} 전 시작<br/>
-                            </TableCell>
-                        </TableRow>
-                    )}
+                                    {row.estimatedTime ? <> 예상 종료 시간 : {getElapsed(row.estimatedTime)} <br/> </> : <>예상 종료 시간 : - <br /></> }
+                                    {row.docSize ? <> 예상 처리 문서 건수 : {row.docSize} <br/> </> : <>예상 처리 문서 건수 : - <br /></> }
+                                    시작시간 : {untilTime(row.startTime)} 전 시작<br/>
+                                </TableCell>
+                            </TableRow>
+                        )
+                    }
+                
                     {/* {Object.values(indexList).map(row =>
                         <TableRow key={row.index}>
                             <TableCell>
@@ -265,30 +273,25 @@ function RunningIndex({result, running, status}) {
                         </TableRow>
                     )} */}
                 </TableBody>
-            </Table>      
-        </>
+            </Table>
+            </CardContent>
+        </Card>
     );
 
 }
 
-function TopArea({result, running, status}) {
+function TopArea({ result, running, status }) {
     const classes = useStyles();
 
     return (
-        <React.Fragment>
-            <Card mt={2}>
-                <CardContent>
-                    <Grid container spacing={3}>
-                        <Grid item xs={6}>
-                            <RunningIndex result={result} running={running} status={status}/>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <WarningIndex status={status}/>
-                        </Grid>
-                    </Grid>
-                </CardContent>
-            </Card>
-        </React.Fragment>
+        <Grid container spacing={3} >
+            <Grid item xs={6}>
+                <RunningIndex result={result} running={running} status={status} />
+            </Grid>
+            <Grid item xs={6}>
+                <WarningIndex status={status} />
+            </Grid>
+        </Grid>
     )
 }
 
@@ -346,11 +349,14 @@ function BottomArea({result, alias, status}) {
 
     return (
         <React.Fragment>
-            <Typography variant="h4" gutterBottom display="inline">
-                전체색인 결과
-            </Typography>
-            <Card mt={2} style={{overflow: "auto"}}>
+
+            <Card mt={2} style={{ overflow: "auto" }}>
+
                 <CardContent>
+                    <Typography variant="h4" gutterBottom display="inline">
+                        전체색인 결과
+                    </Typography>
+                    <br /> <br />
                     <Table>
                         <TableHead>
                             <TableRow>
@@ -364,42 +370,42 @@ function BottomArea({result, alias, status}) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {
-                                Object.values(resultList).map(row => {
 
-                                    return (
-                                        <TableRow key={row.index}>
-                                            <TableCell>
-                                                {
-                                                    row['status'] && row['status'] == 'SUCCESS' ?
-                                                        <Brightness1Icon color="primary"/>
-                                                        :
-                                                        <Brightness1Icon style={{color: 'red'}}/>
-                                                }
-                                                {row['status']}
-                                            </TableCell>
-                                            <TableCell>
-                                                {row.index}
-                                            </TableCell>
-                                            <TableCell>
-                                                {row.alias}
-                                            </TableCell>
-                                            <TableCell>
-                                                <b>{untilTime(row.endTime)} 전 </b><br/>
-                                                {format(row.endTime)}
-                                            </TableCell>
-                                            <TableCell>
-                                                {getElapsed(row.endTime - row.startTime)}
-                                            </TableCell>
-                                            <TableCell>
-                                                {numberWithCommas(row.docSize)}
-                                            </TableCell>
-                                            <TableCell>
-                                                {row.storage}
-                                            </TableCell>
-                                        </TableRow>
-                                    )
-                                })
+                            {resultList.length === 0 ? <TableRow><TableCell colSpan={7}> <Box display="flex" alignItems="center" justifyContent="center"> <Typography>전체 색인 결과가 없습니다.</Typography></Box> </TableCell></TableRow> : 
+                            Object.values(resultList).map(row => {
+                                return (
+                                    <TableRow key={row.index}>
+                                        <TableCell>
+                                            {
+                                                row['status'] && row['status'] == 'SUCCESS' ?
+                                                    <Brightness1Icon color="primary"/>
+                                                    :
+                                                    <Brightness1Icon style={{color: 'red'}}/>
+                                            }
+                                            {row['status']}
+                                        </TableCell>
+                                        <TableCell>
+                                            {row.index}
+                                        </TableCell>
+                                        <TableCell>
+                                            {row.alias}
+                                        </TableCell>
+                                        <TableCell>
+                                            <b>{untilTime(row.endTime)} 전 </b><br/>
+                                            {format(row.endTime)}
+                                        </TableCell>
+                                        <TableCell>
+                                            {getElapsed(row.endTime - row.startTime)}
+                                        </TableCell>
+                                        <TableCell>
+                                            {numberWithCommas(row.docSize)}
+                                        </TableCell>
+                                        <TableCell>
+                                            {row.storage}
+                                        </TableCell>
+                                    </TableRow>
+                                )
+                            })
                             }
                         </TableBody>
                     </Table>
@@ -414,6 +420,7 @@ function DashBoard({dispatch, result, running, status, alias}) {
 
     useEffect(() => {
         dispatch(setIndexResultActions())
+        const resultActions = setInterval(()=>{dispatch(setIndexResultActions());}, 1000 * 60 * 3);
         dispatch(setRunningIndexActions())
         dispatch(setIndexStatusActions())
         dispatch(setIndexAliasActions())
@@ -436,25 +443,11 @@ function DashBoard({dispatch, result, running, status, alias}) {
         <React.Fragment>
             <Helmet title="대시보드"/>
 
-            <Card>
-                <CardContent>
-                <Typography variant="h3" gutterBottom display="inline">
-                    대시보드
-            </Typography>
+            <Typography variant="h3" gutterBottom display="inline"> 대시보드 </Typography>
 
-            <br/>
-
-            <Divider my={6}/>
-
-            <TopArea result={result} running={running} status={status}/>
-
-            <br/>
-            <BottomArea result={result} alias={alias} status={status}/>
-
-            <br/>
-                </CardContent>
-            </Card>
-           
+            <Divider my={6} />
+            <TopArea result={result} running={running} status={status} />
+            <BottomArea result={result} alias={alias} status={status} />
         </React.Fragment>
     );
 }

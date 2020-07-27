@@ -19,6 +19,7 @@ import {
     MenuItem,
     TextField as MuiTextField,
     Typography,
+    TableBody,
 } from "@material-ui/core";
 
 import { spacing } from "@material-ui/system";
@@ -61,27 +62,32 @@ function BriefResult({resultBrief}){
                     <col width="20%" />
                     <col width="20%" />
                 </colgroup>
+                <TableBody>
                 {total.length > 0 ?
                     total.map((listItem) => {
-                        return (<TableRow hover>
+                        return (<TableRow hover key={item}>
                             {listItem.map((item) => { return <TableCell> {item}</TableCell> })}
                         </TableRow>)
                     })
-                    : <TableRow hover> <TableCell> 검색된 결과가 없습니다 </TableCell></TableRow>}
+                    : <TableRow hover key={"nothing"}><TableCell>{"검색된 결과가 없습니다"}</TableCell></TableRow>}
+                    </TableBody>
         </Table>;
 }
 
 function DetailResult({resultDetail}){
     
     if(!resultDetail.resutl){
-        return <Table>
+        return <Table key="empltyDetail">
+            <TableBody>
             <TableRow>
-                <TableCell> 검색된 결과가 없습니다. </TableCell>
+                <TableCell>{"검색된 결과가 없습니다."}</TableCell>
             </TableRow>
+            </TableBody>
         </Table>
     }
     
-    return (<Table>
+    return (<Table key="detailResult">
+        <TableBody>
         <TableRow hover>
             <TableCell>
                 <Typography variant="h4">1. {resultDetail.resutl[2].key}</Typography>
@@ -124,17 +130,17 @@ function DetailResult({resultDetail}){
                 <div dangerouslySetInnerHTML={ {__html: resultDetail.resutl[7].value} }></div>
             </TableCell>
         </TableRow>
+        </TableBody>
     </Table>
     );
 }
 
 function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetail}) {
-    const [selectedItem, setSelectedItem] = useState('');
+    let list = [];
+    
+    
     const [toolsTypeAction, setToolsTypeAction] = useState("brief")
     const classes = useStyles()
-
-    console.log("resultDetail>>>", resultDetail);
-    let list = [];
 
     if(toolsTypeAction == 'brief'){
         let originalList = Object.keys(analyzerList);
@@ -158,11 +164,12 @@ function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetai
         list = pluginList.plugins;
     }
 
+    const [selectedItem, setSelectedItem] = useState(list[0] !== undefined? list[0] : "");
     const handleChange = (event) => {
         if(toolsTypeAction === 'brief'){
-            dispatch(setAnalyzerList());
+            dispatch(setAnalyzerList())
         }else{
-            dispatch(setPluginList());
+            dispatch(setPluginList())
         }
         setToolsTypeAction(event.target.value)
     };
@@ -189,16 +196,14 @@ function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetai
 
             data.plugin = plugin;
             data.text = analyzer_contents.value;
-            console.log(data);
             dispatch(actionPlugin(data));
         }
     }
-
     return (
         <Card mb={6}>
             <CardContent>
-                <TextField id="analyzer_contents" label="분석할 내용을 입력해 주세요." multiline rows={2} variant="outlined" fullWidth gutterBottom> </TextField>
-                <Box display="flex" alignItems="center" justifyContent="left" fullWidth >
+                <TextField id="analyzer_contents" label="분석할 내용을 입력해 주세요." multiline rows={2} variant="outlined" fullWidth> </TextField>
+                <Box display="flex" alignItems="center" justifyContent="left" >
                     <Box p={3}>
                         <FormControl>
                             <RadioGroup value={toolsTypeAction} row onChange={handleChange} >
@@ -209,10 +214,18 @@ function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetai
                     </Box>
                     <Box p={3}>
                         <FormControl className={classes.formControl}>
-                            <InputLabel >분석 도구 선택 </InputLabel>
-                            <Select id="analyzer_select" value={selectedItem} onChange={handleSelectedItemChange}>
-                                { list.map((item) => {
-                                    return <MenuItem value={item}> {item} </MenuItem>;
+                            <InputLabel>분석 도구 선택</InputLabel>
+                            <Select id="analyzer_select" 
+                                value={selectedItem} 
+                                onChange={handleSelectedItemChange}
+                                >
+
+                                { list.map((item, index) => {
+                                    if(index === 0) {
+                                        return <MenuItem selected={true} key={item} value={item}> {item} </MenuItem>;
+                                    }else{
+                                        return <MenuItem key={item} value={item}> {item} </MenuItem>;
+                                    }
                                 })}
                             </Select>
                         </FormControl>
@@ -223,7 +236,7 @@ function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetai
                 </Box>
 
                 <Box m={2}>
-                    <Typography variant="h4" gutterBottom display="inline" > 분석 결과 </Typography>
+                    <Typography variant="h4" display="inline" >분석 결과</Typography>
                 </Box>
                 <Box p={2}>
                     {toolsTypeAction == 'brief' ? <BriefResult resultBrief={resultBrief} /> :  <DetailResult resultDetail={resultDetail}/>}
@@ -234,16 +247,15 @@ function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetai
 }
 
 function Tools({ dispatch, analyzerList, pluginList, resultBrief, resultDetail }) {
-
     useEffect(() => {
-        dispatch(setAnalyzerList())
-        dispatch(setPluginList())
+            dispatch(setAnalyzerList())
+            dispatch(setPluginList())
     }, [])
-    
+
     return (
         <React.Fragment>
             <Helmet title="Blank" />
-            <Typography variant="h3" gutterBottom display="inline">
+            <Typography variant="h3" display="inline">
                 분석도구
             </Typography>
 
