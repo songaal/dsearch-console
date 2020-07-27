@@ -137,8 +137,7 @@ function DetailResult({resultDetail}){
 
 function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetail}) {
     let list = [];
-    
-    
+    const [selectedItem, setSelectedItem] = useState(list[0] !== undefined? list[0] : "");
     const [toolsTypeAction, setToolsTypeAction] = useState("brief")
     const classes = useStyles()
 
@@ -164,7 +163,6 @@ function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetai
         list = pluginList.plugins;
     }
 
-    const [selectedItem, setSelectedItem] = useState(list[0] !== undefined? list[0] : "");
     const handleChange = (event) => {
         if(toolsTypeAction === 'brief'){
             dispatch(setAnalyzerList())
@@ -172,6 +170,7 @@ function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetai
             dispatch(setPluginList())
         }
         setToolsTypeAction(event.target.value)
+        setSelectedItem('')
     };
 
 
@@ -214,15 +213,18 @@ function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetai
                     </Box>
                     <Box p={3}>
                         <FormControl className={classes.formControl}>
-                            <InputLabel>분석 도구 선택</InputLabel>
+                            {/* <InputLabel>분석 도구 선택</InputLabel> */}
                             <Select id="analyzer_select" 
                                 value={selectedItem} 
                                 onChange={handleSelectedItemChange}
+                                defaultValue=""
+                                displayEmpty
                                 >
 
+                                <MenuItem value="" selected={true}> 분석도구를 선택해 주세요 </MenuItem>
                                 { list.map((item, index) => {
                                     if(index === 0) {
-                                        return <MenuItem selected={true} key={item} value={item}> {item} </MenuItem>;
+                                        return <MenuItem key={item} value={item}> {item} </MenuItem>;
                                     }else{
                                         return <MenuItem key={item} value={item}> {item} </MenuItem>;
                                     }
