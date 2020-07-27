@@ -1,4 +1,4 @@
-import React, {Component, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Link, useHistory} from "react-router-dom";
 import {connect, useDispatch, useSelector} from "react-redux";
 import styled, {withTheme} from "styled-components";
@@ -110,6 +110,7 @@ function ClusterMenu() {
         if (authUser['cluster']['id'] === clusterId) {
             return false
         }
+        // eslint-disable-next-line no-restricted-globals
         location.href = `/${clusterId }/dashboard`
     }
 
@@ -164,6 +165,7 @@ function UserMenu({ signOutClose = false }) {
         dispatch(setFastcatxSignOut()).then(response => {
             if (signOutClose) {
                 try {
+                    // eslint-disable-next-line no-restricted-globals
                     opener.location.href="/"
                 } catch(error) {
                     // ignore
@@ -174,6 +176,7 @@ function UserMenu({ signOutClose = false }) {
             console.error('error', error)
             if (signOutClose) {
                 try {
+                    // eslint-disable-next-line no-restricted-globals
                     opener.location.href="/"
                 } catch(error) {
                     // ignore
@@ -252,6 +255,7 @@ const DashBoardHeader = ({theme, onDrawerToggle}) => {
     const references = useSelector(store => ({...store.referenceSearchReducers}))
     const authUserStore = useSelector(store => ({...store.fastcatxReducers}))['authUser']
     const [keyword, setKeyword] = useState(references.keyword)
+    // eslint-disable-next-line no-restricted-globals
     const qs = new URLSearchParams(location.search)
     const dispatch = useDispatch()
     const history = useHistory()
@@ -307,12 +311,14 @@ const DashBoardHeader = ({theme, onDrawerToggle}) => {
                             <IconButton color="inherit"
                                         onClick={() => {
                                             try {
+                                                // eslint-disable-next-line no-restricted-globals
                                                 if (opener.document === document) {
                                                     history.push("/cluster")
                                                     return
                                                 }
                                                 const link = document.createElement('a');
                                                 link.href = "/cluster"
+                                                // eslint-disable-next-line no-restricted-globals
                                                 opener.document.body.appendChild(link);
                                                 link.click()
                                                 window.close()

@@ -5,8 +5,6 @@ import Helmet from 'react-helmet';
 import {useHistory} from "react-router-dom"
 import {
     Box,
-    Card,
-    CardContent,
     Divider as MuiDivider, FormControlLabel,
     Link,
     Paper, Switch,

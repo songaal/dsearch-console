@@ -1,17 +1,9 @@
 import React, {useState} from "react";
-import styled from "styled-components";
-import {makeStyles} from '@material-ui/core/styles';
-import {Box, Divider as MuiDivider, FormControl, FormControlLabel, Radio, RadioGroup} from "@material-ui/core";
-import {spacing} from "@material-ui/system";
+import {Box, FormControl, FormControlLabel, Radio, RadioGroup} from "@material-ui/core";
 import DataEditTable from "./DataEditTable";
 import IndexedDataTable from "./IndexedDataTable";
 
-const useStyles = makeStyles((theme) => ({}));
-
-const Divider = styled(MuiDivider)(spacing);
-
 function Index() {
-    const classes = useStyles();
     const [chk, setChk] = useState('source'); // source, indexed
 
     function handleRadioChange(e) {

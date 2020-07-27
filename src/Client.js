@@ -8,14 +8,18 @@ export default class Client {
     call(config) {
         if (config.uri) {
             const server = sessionStorage.getItem(SET_FASTCATX_SERVER)
+            // eslint-disable-next-line no-restricted-globals
             if (server === null && location.pathname !== "/") {
+                // eslint-disable-next-line no-restricted-globals
                 location.href = "/"
                 return
             } else {
                 config.url = `${server}${config.uri}`
             }
         }
+        // eslint-disable-next-line no-restricted-globals
         if (location.pathname.split("/").length >= 3) {
+            // eslint-disable-next-line no-restricted-globals
             const clusterId = location.pathname.substring(1, location.pathname.indexOf("/", 1))
             config.headers = Object.assign(config.headers||{}, {
                 "cluster-id": clusterId
@@ -30,6 +34,7 @@ export default class Client {
             } catch (error) {
                 console.log(error);
                 if (error.response && error.response.status === 401 && config.uri !== '/auth') {
+                    // eslint-disable-next-line no-restricted-globals
                     location.href = "/"
                 } else {
                     reject(error)

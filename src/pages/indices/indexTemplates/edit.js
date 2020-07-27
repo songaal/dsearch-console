@@ -104,14 +104,17 @@ function Edit({dispatch, template, templates}) {
 
     useEffect(() => {
         setIndexPatternText((template['index_patterns'] || []).join(","))
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [template['index_patterns']])
 
     useEffect(() => {
         setMappingsJson(JSON.stringify(((template['mappings'] || {})['properties']), null, 4))
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [template['mappings']])
 
     useEffect(() => {
         setSettingsJson(JSON.stringify(((template['settings'] || {})['index']), null, 4))
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [template['settings']])
 
     function handleTemplateChange(template) {

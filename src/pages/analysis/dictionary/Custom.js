@@ -127,6 +127,7 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
     }
 
     async function handleDeleteButton(id) {
+        // eslint-disable-next-line no-restricted-globals
         if (!confirm("해당 라인을 삭제 하시겠습니까?")) {
             return false;
         }
@@ -137,6 +138,7 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
     }
 
     async function handleUpdateButton(id, row, columns) {
+        // eslint-disable-next-line no-restricted-globals
         if (!confirm("해당 라인을 수정 하시겠습니까?")) {
             return false;
         }
