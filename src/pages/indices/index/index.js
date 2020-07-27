@@ -1,12 +1,15 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import {makeStyles} from '@material-ui/core/styles';
 import Helmet from 'react-helmet';
 import {useHistory} from "react-router-dom"
 import {
-    Divider as MuiDivider,
+    Box,
+    Card,
+    CardContent,
+    Divider as MuiDivider, FormControlLabel,
     Link,
-    Paper,
+    Paper, Switch,
     Table,
     TableBody,
     TableCell,
@@ -26,7 +29,7 @@ const Divider = styled(MuiDivider)(spacing);
 function Index({dispatch, indices}) {
     const classes = useStyles();
     const history = useHistory();
-
+    const [checked, setChecked] = useState(false)
 
     useEffect(() => {
         dispatch(setIndicesAction())
@@ -35,6 +38,10 @@ function Index({dispatch, indices}) {
 
     function moveDetail(uuid) {
         history.push(`./indices/${uuid}`)
+    }
+
+    function handleChecked(event) {
+        setChecked(!checked)
     }
 
     return (
@@ -54,6 +61,20 @@ function Index({dispatch, indices}) {
             {/*</Box>*/}
 
             <br/>
+            <Box align={"right"}>
+                <FormControlLabel
+                    control={
+                        <Switch
+                            checked={checked}
+                            onChange={handleChecked}
+                            color="primary"
+                            name="IndexModeSelector"
+                            inputProps={{ 'aria-label': 'primary checkbox' }}
+                        />
+                    }
+                    label="특수 인덱스 보기"
+                />
+            </Box>
 
             <TableContainer component={Paper}>
                 <Table className={classes.table} aria-label="simple table">
@@ -66,7 +87,7 @@ function Index({dispatch, indices}) {
                     </TableHead>
                     <TableBody>
                         {
-                            indices.map((index, no) => {
+                            indices.filter(index => checked ? true : index['index'].startsWith(".") === false ).map((index, no) => {
                                 return (
                                     <TableRow key={index['uuid']}>
                                         <TableCell component="th" scope="row" align="center">{no + 1}</TableCell>

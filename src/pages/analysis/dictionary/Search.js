@@ -61,7 +61,7 @@ function DictionarySearch ({dispatch, settings, searchResult}) {
     const [showSearchInput, setShowSearchInput] = useState("")
     const searchInput = useRef("");
 
-    console.log("result", searchResult);
+    // console.log("result", searchResult);
     const handleEnterPress = (event) => {
         if (event.key === 'Enter'){
             if(searchInput.current.value.length === 0) return;

@@ -1,7 +1,7 @@
 import Client from '~/Client'
 import {
     SET_INDEX,
-    SET_INDEX_ALIASES, SET_INDEX_DOCUMENT_SOURCE_LIST, SET_INDEX_DOCUMENT_SOURCE_RESPONSE,
+    SET_INDEX_ALIASES, SET_INDEX_DOCUMENT_SOURCE_RESPONSE,
     SET_INDEX_DOCUMENTS,
     SET_INDEX_INFO_LIST,
     SET_INDEX_MAPPINGS,
@@ -133,4 +133,15 @@ export const analyzerDocumentSourceAction = (index, analyzerDocument) => dispatc
     uri: `/indices/${index}/analyzer`,
     method: "post",
     data: analyzerDocument
+}).then(response => response.data)
+
+
+export const setIndexManagedAction = (action, index) => dispatch => client.call({
+    uri: `/elasticsearch/${index}/${action}`,
+    method: "post"
+}).then(response => response.data)
+
+export const deleteIndexAction = index => dispatch => client.call({
+    uri: `/elasticsearch/${index}`,
+    method: "delete"
 }).then(response => response.data)
