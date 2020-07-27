@@ -125,10 +125,6 @@ function ResultDocument({result, item, expand, nodeToggle}) {
                         let tokenValue = data['tokens'].join(", ");
                         let text = JSON.stringify(data['text']);
                         let field = data['field'];
-<<<<<<< HEAD
-=======
-                        // console.log("text", text, "field", field, "tokenValue",tokenValue);
->>>>>>> c828d83b08b647f6034bb4922b3dd7e6a9eb3681
                         return (
                             <TableRow key={text}>
                                 <TableCell>{field}</TableCell>
