@@ -36,7 +36,7 @@ build:
   stage: build
   script:
     - npm install -g yarn
-    - export VERSION="$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | tr -d '[[:space:]]')"
+    - export VERSION="$(cat package.json | grep version | head -1 | awk -F= "{ print $2 }" | sed -E 's/(version)|[:,\",]//g' | tr -d '[[:space:]]')"
     - yarn build --reset-cache
     - docker build -t ${IMAGE}:latest .
     - docker tag ${IMAGE}:latest ${IMAGE}:${VERSION}
