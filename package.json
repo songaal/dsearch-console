@@ -1,6 +1,6 @@
 {
   "name": "fastcatx-console",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "description": "ElasticSearch Managed Service",
   "author": "danawa <support@danawa.com>",
   "private": true,
