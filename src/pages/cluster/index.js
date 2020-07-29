@@ -296,7 +296,7 @@ function AddGuideCard(props) {
                          mt={15}
                          className={classes.title}
                     >
-                        FastcatX 서버설치방법
+                        DSearch 서버설치방법
                     </Box>
                     <Box display="flex"
                          justifyContent="center"

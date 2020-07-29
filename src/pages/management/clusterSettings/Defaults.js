@@ -51,8 +51,8 @@ function Defaults({dispatch, defaults}) {
             {
                 Object.keys(data).map((key, index) => {
                     return (
-                        <Box key={index} my={3}>
-                            <Typography variant={"h5"}>
+                        <Box key={index} my={3} mb={6}>
+                            <Typography variant={"h5"} style={{marginBottom:"15px"}}>
                                 {key.toUpperCase()}
                             </Typography>
                             <Card>

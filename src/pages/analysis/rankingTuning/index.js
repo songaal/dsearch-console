@@ -7,7 +7,7 @@ import AceEditor from "react-ace";
 import { connect } from "react-redux";
 import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-kuroir";
-
+import {makeStyles} from '@material-ui/core/styles';
 import { setDocumentList } from '@actions/rankingTuningActions'
 import MuiAlert from '@material-ui/lab/Alert';
 import {
@@ -33,6 +33,11 @@ const NavLink = React.forwardRef((props, ref) => (
     <RouterNavLink innerRef={ref} {...props} />
 ));
 
+const useStyles = makeStyles((theme) => ({
+    formControl: {
+        minWidth: 250
+    }
+}));
 
 const Card = styled(MuiCard)(spacing);
 const Divider = styled(MuiDivider)(spacing);
@@ -180,6 +185,7 @@ function RankingTuningResults({pageNum, result, expand, nodeToggle}) {
 }
 let eventCode = null
 function RankingTuningCard({dispatch, result, index}) {
+    const classes = useStyles()
     let aceEditor = useRef("");
     let inputIndex = useRef('');
 
@@ -319,7 +325,7 @@ function RankingTuningCard({dispatch, result, index}) {
                         <Grid container>
                             <Grid item xs={12} md={4}>
                                 <Box display="flex"  alignItems="center"  justifyContent="space-between" mx={3} mb={2}>
-                                    {checked ? <TextField style={{width:"250px"}} inputRef={inputIndex} label="인덱스를 입력해주세요"/> : <IndicesSelect />}
+                                    {checked ? <TextField className={classes.formControl} inputRef={inputIndex} label="인덱스를 입력해주세요"/> : <IndicesSelect />}
                                     <FormControlLabel
                                         control={
                                             <Switch

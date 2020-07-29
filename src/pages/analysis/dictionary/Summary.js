@@ -22,7 +22,6 @@ const systemInfo = {
     name: "시스템 사전"
 }
 
-
 function SummaryTable({summary, makeCheckedIdList, makeCheckedList}){
     if(summary.dictionaryInfo === undefined || summary.dictionarySettings === undefined) return <></>;
 
@@ -75,6 +74,7 @@ function SummaryTable({summary, makeCheckedIdList, makeCheckedList}){
 
  function Summary({dispatch, authUser, summary, update}) {
     const [applyDict, setApplyDict] = useState(false);
+    const [progress, setProgress] = useState(false);
     const [disabled, setDisabled] = useState(true);
     const [checkedList, setCheckedList] = useState({});
     const [checkedIdList, setCheckedIdList] = useState({});
@@ -111,6 +111,7 @@ function SummaryTable({summary, makeCheckedIdList, makeCheckedList}){
         let str = "";
         let ids = "";
         
+        setProgress(true);
         let keyList = Object.keys(checkedList);
         for(let key of keyList){
             if(checkedList[key]){
@@ -125,9 +126,7 @@ function SummaryTable({summary, makeCheckedIdList, makeCheckedList}){
         }
         data.ids = ids;
         data.type = str;
-        setApplyDict(true);
-        dispatch(applyDictionary(data))
-        utils.sleep(2000).then(() => {  dispatch(setSummary()).then(() => {setApplyDict(false);})  });
+        dispatch(applyDictionary(data)).then(() => {setApplyDict(true); setProgress(false); utils.sleep(1000).then(() => { dispatch(setSummary()) }); });
     }
 
     function disabledApplyButton(list){
@@ -149,7 +148,7 @@ function SummaryTable({summary, makeCheckedIdList, makeCheckedList}){
                 <CardContent>
                     <Box>
                         {authUser.role.analysis ? 
-                             applyDict ? <CircularProgress /> : <Button disabled={disabled} variant={"contained"} color={"primary"} onClick={clickApplyDictionary}>사전적용</Button> 
+                             progress ? <CircularProgress /> : <Button disabled={disabled} variant={"contained"} color={"primary"} onClick={clickApplyDictionary}>사전적용</Button> 
                             : <></> }
                     </Box>
                     <Box>

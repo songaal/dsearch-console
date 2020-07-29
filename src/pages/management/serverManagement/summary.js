@@ -24,6 +24,7 @@ const useStyles = makeStyles((theme) => ({
     root: {
         flexGrow: 1,
         width: '100%',
+        marginBottom: "15px"
     },
     edit: {
         width: '100%'
@@ -41,7 +42,7 @@ function NodeSettingTable({server}) {
     const classes = useStyles();
     return (
         <div style={{maxWidth: '100%'}}>
-            <Typography variant="h6" className={classes.root}>
+            <Typography variant="h6" className={classes.root} >
                 노드 설정
             </Typography>
             <Card>

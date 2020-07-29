@@ -89,7 +89,7 @@ const indicesRoutes = [
 
 const searchRoutes = [
     {header: "검색", id: "쿼리테스트", path: `${clusterContext}/search/query-test`, icon: <Icon.Search/>, component: QueryTest, children: null},
-    {id: "레퍼런스UI", path: `${clusterContext}/search/reference-ui`, icon: <Icon.AspectRatio/>, component: ReferenceUI, children: null},
+    {id: "레퍼런스UI", path: `${clusterContext}/search/reference-ui`, icon: <Icon.AspectRatio/>, icon2: <Icon.Launch />, component: ReferenceUI, children: null},
     {id: "검색결과", path: `${clusterContext}/search`, component: ReferenceUIResult, children: null, hidden: true},
 ];
 

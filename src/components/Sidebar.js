@@ -21,7 +21,7 @@ import {
     Typography
 } from "@material-ui/core";
 
-import {ExpandLess, ExpandMore} from "@material-ui/icons";
+import {ExpandLess, ExpandMore, Launch} from "@material-ui/icons";
 
 // import {green} from "@material-ui/core/colors";
 
@@ -241,6 +241,8 @@ function SidebarCategory({
                              badge,
                              ...rest
                          }) {
+    let flag = false;
+    if(name === '쿼리테스트') flag = true;
     return (
         <Category {...rest}>
             {icon}
@@ -253,11 +255,13 @@ function SidebarCategory({
                 )
             ) : null}
             {badge ? <CategoryBadge label={badge}/> : ""}
+            {flag ? <Launch /> : <></>}
         </Category>
     );
 }
 
-function SidebarLink({name, to, badge}) {
+function SidebarLink({name, to, badge, icon2}) {
+    
     return (
         <Link
             button
@@ -330,12 +334,11 @@ function Sidebar(props) {
     }
 
     routes = routes.filter(route => route.hidden === undefined || route.hidden === null || route.hidden === false)
-
     return (
         <Drawer variant="permanent" {...other}>
             <Brand>
                 <BrandIcon/>
-                <Box ml={1}>Fastcat X
+                <Box ml={1}>DSearch
                     {/* <BrandChip label="X" /> */}
                 </Box>
             </Brand>
