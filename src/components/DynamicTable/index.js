@@ -18,6 +18,7 @@ import {makeStyles} from "@material-ui/core/styles";
 import {
     Delete as DeleteIcon,
     SaveAlt as SaveAltIcon,
+    OfflinePin as OfflinePinIcon
 } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
@@ -169,7 +170,7 @@ function DynamicTable({dataList, from = 0, limit = 100000, showCheckBox = false,
                                                                 className={classes.iconButton}
                                                                 onClick={() => handleEdit(cols[0]['id'], rowIdx)}
                                                     >
-                                                        <SaveAltIcon/>
+                                                        <OfflinePinIcon/>
                                                     </IconButton>
                                                     <IconButton size={"small"}
                                                                 className={classes.iconButton}
