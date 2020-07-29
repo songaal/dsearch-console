@@ -336,7 +336,6 @@ function Sidebar(props) {
     }
     
 
-    console.log(title);
     routes = routes.filter(route => route.hidden === undefined || route.hidden === null || route.hidden === false)
     return (
         <Drawer variant="permanent" {...other}>

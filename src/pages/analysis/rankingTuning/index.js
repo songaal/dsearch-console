@@ -323,10 +323,11 @@ function RankingTuningCard({dispatch, result, index}) {
                 <Grid container>
                     <Grid item xs={12}>
                         <Grid container>
-                            <Grid item xs={12} md={4}>
+                            <Grid item xs={12} md={12} lg={4}>
                                 <Box display="flex"  alignItems="center"  justifyContent="space-between" mx={3} mb={2}>
                                     {checked ? <TextField className={classes.formControl} inputRef={inputIndex} label="인덱스를 입력해주세요"/> : <IndicesSelect />}
                                     <FormControlLabel
+                                        style={{whiteSpace: "nowrap"}}
                                         control={
                                             <Switch
                                                 checked={checked}
@@ -340,7 +341,7 @@ function RankingTuningCard({dispatch, result, index}) {
                                     />
                                 </Box>
                             </Grid>
-                            <Grid item xs={12} md={8}>
+                            <Grid item xs={12} md={12} lg={8}>
                             {/* justifyContent="space-between" */}
                                 <Box display="flex" alignItems="center"  justifyContent="space-between" mx={3}>
                                 <Typography variant="h6">총 {result.Total.value ? result.Total.value : "0"}건의 검색결과</Typography>
@@ -359,7 +360,7 @@ function RankingTuningCard({dispatch, result, index}) {
 
                     <Grid item xs={12}>
                         <Grid container style={{height: autoHeight}}>
-                            <Grid item xs={12} md={4}>
+                            <Grid item xs={12} md={12} lg={4}>
                                 <Box mx={3} style={{border: "1px solid silver"}}>
                                     <AceEditor
                                         ref={aceEditor}
@@ -374,7 +375,7 @@ function RankingTuningCard({dispatch, result, index}) {
                                     />
                                 </Box>
                             </Grid>
-                            <Grid item xs={12} md={8} >
+                            <Grid item xs={12} md={12} lg={8}>
                                 <Box style={{overflow: "scroll", height: autoHeight, border: "1px solid silver"}} mx={3} id="move">
                                         <RankingTuningResults pageNum={pageNum} result={result} expand={expand} nodeToggle={nodeToggle}/>
                                 </Box>

@@ -12,8 +12,8 @@ function App() {
     return (
         <React.Fragment>
             <Helmet
-                titleTemplate="%s | FastcatX Console"
-                defaultTitle="FastcatX Console"
+                titleTemplate="%s | DSearch Console"
+                defaultTitle="DSearch Console"
             />
             <StylesProvider injectFirst>
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>

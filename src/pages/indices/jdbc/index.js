@@ -428,49 +428,56 @@ function JdbcCard({dispatch, authUser, JdbcList, JdbcAccessTest, changedJdbcList
     }
 
     return (
-        <Card mb={6}>
-            <CardContent>
-                <Grid container alignItems="flex-start" justify="flex-end" direction="row">
-                    {authUser.role.index ? 
-                        <Box display="flex" alignItems="center" justifyContent="right">
-                            <Link href="#" onClick={handleSourceDialogOpen}> 
-                                <Box display="flex" alignItems="center" justifyContent="right">
-                                    <AddCircleOutlineIcon /> <Typography>{"JDBC 추가"}</Typography>
-                                </Box>
-                            </Link>
-                        </Box> 
-                    : <></>}
-                </Grid>
-                <JdbcTable dispatch={dispatch} authUser={authUser} JdbcList={JdbcList} JdbcAccessTest={JdbcAccessTest} changedJdbcList={changedJdbcList}></JdbcTable>
-                <Dialog open={jdbcSourceDialogOpen} onClose={handleSourceDialogClose} >
-                    <DialogTitle id="dialog-title">{"JDBC 소스"}</DialogTitle>
-                    <DialogContent style={{width:"100%"}}>
-                        <label>설정</label>
-                        <Divider />
-                        <JdbcSource 
-                            errorHandleJdbcSource={errorHandleJdbcSource}
-                            jdbcId={jdbcId}
-                            jdbcName={jdbcName}
-                            jdbcDriver ={jdbcDriver}
-                            setProvider = {setProvider}
-                            jdbcAddr ={jdbcAddr}
-                            jdbcPort = {jdbcPort}
-                            jdbcDB = {jdbcDB}
-                            jdbcUser = {jdbcUser}
-                            jdbcPassword = {jdbcPassword}
-                            jdbcParams = {jdbcParams}
-                            jdbcURL = {jdbcURL}
-                         />
-                        <AccessTestSuccess accessFlag={accessFlag} JdbcAccessTest={JdbcAccessTest} handleAccessFlag={handleAccessFlag}/>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button variant="contained" color="default" onClick={handleSourceDialogClose}>닫기</Button>
-                        <Button variant="outlined" onClick={accessTest}>연결테스트</Button>
-                        <Button variant="contained" color="primary" onClick={addJdbcSouce}>추가</Button>
-                    </DialogActions>
-                </Dialog>
-            </CardContent>
-        </Card>
+        <React.Fragment>
+
+
+            <Box align={'right'}>
+                {
+                    authUser.role.index ?
+                    <Link onClick={handleSourceDialogOpen}
+                          style={{cursor: "pointer"}}
+                          color={"primary"}>
+                        JDBC 추가
+                    </Link>
+                    :
+                    <></>
+                }
+            </Box>
+            <br/>
+
+            <Card mb={6}>
+                <CardContent>
+                    <JdbcTable dispatch={dispatch} authUser={authUser} JdbcList={JdbcList} JdbcAccessTest={JdbcAccessTest} changedJdbcList={changedJdbcList}></JdbcTable>
+                    <Dialog open={jdbcSourceDialogOpen} onClose={handleSourceDialogClose} >
+                        <DialogTitle id="dialog-title">{"JDBC 소스"}</DialogTitle>
+                        <DialogContent style={{width:"100%"}}>
+                            <label>설정</label>
+                            <Divider />
+                            <JdbcSource
+                                errorHandleJdbcSource={errorHandleJdbcSource}
+                                jdbcId={jdbcId}
+                                jdbcName={jdbcName}
+                                jdbcDriver ={jdbcDriver}
+                                setProvider = {setProvider}
+                                jdbcAddr ={jdbcAddr}
+                                jdbcPort = {jdbcPort}
+                                jdbcDB = {jdbcDB}
+                                jdbcUser = {jdbcUser}
+                                jdbcPassword = {jdbcPassword}
+                                jdbcParams = {jdbcParams}
+                                jdbcURL = {jdbcURL}
+                            />
+                            <AccessTestSuccess accessFlag={accessFlag} JdbcAccessTest={JdbcAccessTest} handleAccessFlag={handleAccessFlag}/>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button variant="contained" color="default" onClick={handleSourceDialogClose}>닫기</Button>
+                            <Button variant="outlined" onClick={accessTest}>연결테스트</Button>
+                            <Button variant="contained" color="primary" onClick={addJdbcSouce}>추가</Button>
+                        </DialogActions>
+                    </Dialog>
+                </CardContent>
+            </Card>
+        </React.Fragment>
     );
 }
 
@@ -481,7 +488,7 @@ function JDBC({dispatch, authUser, JdbcList, JdbcAccessTest, changedJdbcList}) {
 
     return (
         <React.Fragment>
-            <Helmet title="Blank"/>
+            <Helmet title="JDBC"/>
             <Typography variant="h3" gutterBottom display="inline">JDBC</Typography>
             <Divider my={6}/>
             <Grid container spacing={6}>
