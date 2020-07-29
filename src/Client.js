@@ -7,7 +7,10 @@ export default class Client {
     }
     call(config) {
         if (config.uri) {
-            const server = sessionStorage.getItem(SET_FASTCATX_SERVER)
+            let server = sessionStorage.getItem(SET_FASTCATX_SERVER)
+            if (server === null) {
+                server = localStorage.getItem(SET_FASTCATX_SERVER)
+            }
             // eslint-disable-next-line no-restricted-globals
             if (server === null && location.pathname !== "/") {
                 // eslint-disable-next-line no-restricted-globals
