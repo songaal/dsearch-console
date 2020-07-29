@@ -219,13 +219,13 @@ function RunningIndex({result, running, status}) {
             <Table>
                 <TableHead></TableHead>
                 <TableBody>
-                    {indexList.length === 0 ? <TableRow><TableCell> <Box display="flex" alignItems="center" justifyContent="center"> <Typography>현재 실행중인 색인 작업이 없습니다.</Typography></Box>  </TableCell></TableRow> : 
+                    {indexList.length === 0 ? <TableRow><TableCell align="center"> <Box display="flex" alignItems="center" justifyContent="center"> <Typography>현재 실행중인 색인 작업이 없습니다.</Typography></Box>  </TableCell></TableRow> : 
                         Object.values(indexList).map(row =>
                             <TableRow key={row.index}>
-                                <TableCell>
+                                <TableCell align="center">
                                     {row.index}
                                 </TableCell>
-                                <TableCell>
+                                <TableCell align="center">
                                     <Box display="flex" alignItems="center">
                                         <Box width="100%" mr={1}>
                                         <BorderLinearProgress
@@ -239,8 +239,8 @@ function RunningIndex({result, running, status}) {
                                             <Typography variant="body2" color="textSecondary"></Typography>
                                         </Box>
                                     </Box>
-                                    {row.estimatedTime ? <> 예상 종료 시간 : {getElapsed(row.estimatedTime)} <br/> </> : <>예상 종료 시간 : - <br /></> }
-                                    {row.docSize ? <> 예상 처리 문서 건수 : {row.docSize} <br/> </> : <>예상 처리 문서 건수 : - <br /></> }
+                                    {row.estimatedTime !== undefined ? <> 예상 종료 시간 : {getElapsed(row.estimatedTime)} <br/> </> : <>예상 종료 시간 : - <br /></> }
+                                    {row.docSize !== undefined ? <> 예상 처리 문서 건수 : {row.docSize} <br/> </> : <>예상 처리 문서 건수 : - <br /></> }
                                     시작시간 : {untilTime(row.startTime)} 전 시작<br/>
                                 </TableCell>
                             </TableRow>
@@ -361,47 +361,49 @@ function BottomArea({result, alias, status}) {
                     <Table>
                         <TableHead>
                             <TableRow>
-                                <TableCell>색인 결과</TableCell>
-                                <TableCell>인덱스</TableCell>
-                                <TableCell>별칭</TableCell>
-                                <TableCell>최근 성공</TableCell>
-                                <TableCell>소요 시간</TableCell>
-                                <TableCell>문서수</TableCell>
-                                <TableCell>스토리지 용량</TableCell>
+                                <TableCell align="center">색인 결과</TableCell>
+                                <TableCell align="center">인덱스</TableCell>
+                                <TableCell align="center">별칭</TableCell>
+                                <TableCell align="center">최근 성공</TableCell>
+                                <TableCell align="center">소요 시간</TableCell>
+                                <TableCell align="center">문서수</TableCell>
+                                <TableCell align="center">스토리지 용량</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
 
-                            {resultList.length === 0 ? <TableRow><TableCell colSpan={7}> <Box display="flex" alignItems="center" justifyContent="center"> <Typography>전체 색인 결과가 없습니다.</Typography></Box> </TableCell></TableRow> : 
+                            {resultList.length === 0 ? <TableRow><TableCell colSpan={7} align="center"> <Box display="flex" alignItems="center" justifyContent="center"> <Typography>전체 색인 결과가 없습니다.</Typography></Box> </TableCell></TableRow> : 
                             Object.values(resultList).map(row => {
                                 return (
                                     <TableRow key={row.index}>
-                                        <TableCell>
-                                            {
-                                                row['status'] && row['status'] == 'SUCCESS' ?
-                                                    <Brightness1Icon color="primary"/>
-                                                    :
-                                                    <Brightness1Icon style={{color: 'red'}}/>
-                                            }
-                                            {row['status']}
+                                        <TableCell align="center">
+                                            <Box display="flex" justifyContent="center" >
+                                                {
+                                                    row['status'] && row['status'] == 'SUCCESS' ?
+                                                        <Brightness1Icon color="primary"/>
+                                                        :
+                                                        <Brightness1Icon style={{color: 'red'}}/>
+                                                }
+                                                <Typography>{row['status']}</Typography>
+                                            </Box>
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell align="center">
                                             {row.index}
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell align="center">
                                             {row.alias}
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell align="center">
                                             <b>{untilTime(row.endTime)} 전 </b><br/>
                                             {format(row.endTime)}
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell align="center">
                                             {getElapsed(row.endTime - row.startTime)}
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell align="center">
                                             {numberWithCommas(row.docSize)}
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell align="center">
                                             {row.storage}
                                         </TableCell>
                                     </TableRow>
