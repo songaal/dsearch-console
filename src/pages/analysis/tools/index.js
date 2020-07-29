@@ -136,39 +136,34 @@ function DetailResult({resultDetail}){
 }
 
 function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetail}) {
-    let list = [];
-    
-    
+    const [selectedItem, setSelectedItem] = useState("EMPTY");
     const [toolsTypeAction, setToolsTypeAction] = useState("brief")
     const classes = useStyles()
 
-    if(toolsTypeAction == 'brief'){
-        let originalList = Object.keys(analyzerList);
-        let indexList = []
-        for(let key of originalList){
-            if(key.charAt(0) != '.'){
-                indexList.push(key);
+    let index2AnalyzerList = []
+    if (analyzerList !== undefined && analyzerList !== null) {
+        Object.keys(analyzerList).filter(analyzerKey => !analyzerKey.startsWith(".")).map(analyzerKey => {
+            const analysis = analyzerList[analyzerKey].settings.index.analysis;
+            if (analysis !== undefined) {
+                Object.keys(analysis.analyzer).map(analyzer => index2AnalyzerList.push(analyzerKey + "/" + analyzer))
             }
-        }
-        let index2analyzerList = []
-        for(let key of indexList){
-            if(analyzerList[key].settings.index.analysis){
-                let keyList = Object.keys(analyzerList[key].settings.index.analysis.analyzer);
-                for(let analyzer of keyList){
-                    index2analyzerList.push(key + "/" + analyzer);
-                }
-            }
-        }
-        list = index2analyzerList;
-    }else{
-        list = pluginList.plugins;
+        })
     }
 
-    const [selectedItem, setSelectedItem] = useState(list[0] !== undefined? list[0] : "");
     const handleChange = (event) => {
         if(toolsTypeAction === 'brief'){
+            if (((pluginList||{})['plugins']||[]).length !== 0) {
+                setSelectedItem(((pluginList||{})['plugins']||[])[0])
+            } else {
+                setSelectedItem("EMPTY")
+            }
             dispatch(setAnalyzerList())
         }else{
+            if (index2AnalyzerList.length !== 0) {
+                setSelectedItem(index2AnalyzerList[0])
+            } else {
+                setSelectedItem("EMPTY")
+            }
             dispatch(setPluginList())
         }
         setToolsTypeAction(event.target.value)
@@ -214,19 +209,37 @@ function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetai
                     </Box>
                     <Box p={3}>
                         <FormControl className={classes.formControl}>
-                            <InputLabel>분석 도구 선택</InputLabel>
+                            {/* <InputLabel>분석 도구 선택</InputLabel> */}
                             <Select id="analyzer_select" 
                                 value={selectedItem} 
                                 onChange={handleSelectedItemChange}
+                                defaultValue=""
+                                displayEmpty
                                 >
-
-                                { list.map((item, index) => {
-                                    if(index === 0) {
-                                        return <MenuItem selected={true} key={item} value={item}> {item} </MenuItem>;
-                                    }else{
-                                        return <MenuItem key={item} value={item}> {item} </MenuItem>;
+                                    {
+                                        toolsTypeAction === "brief" ?
+                                        index2AnalyzerList.length === 0 ?
+                                            <MenuItem key={"no"} selected={true} disabled={true} value="EMPTY"> 분석기가 없습니다. </MenuItem>
+                                            :
+                                            index2AnalyzerList.map((item, index) => {
+                                                if(index === 0) {
+                                                    return <MenuItem key={item} selected={true} value={item}> {item} </MenuItem>;
+                                                }else{
+                                                    return <MenuItem key={item} value={item}> {item} </MenuItem>;
+                                                }
+                                            })
+                                        :
+                                        ((pluginList||{})['plugins']||[]).length === 0 ?
+                                            <MenuItem key={"no"} selected={true} disabled={true} value="EMPTY"> 분석기가 없습니다. </MenuItem>
+                                            :
+                                            ((pluginList||{})['plugins']||[]).map((item, index) => {
+                                                if(index === 0) {
+                                                    return <MenuItem key={item} selected={true} value={item}> {item} </MenuItem>;
+                                                }else{
+                                                    return <MenuItem key={item} value={item}> {item} </MenuItem>;
+                                                }
+                                            })
                                     }
-                                })}
                             </Select>
                         </FormControl>
                     </Box>

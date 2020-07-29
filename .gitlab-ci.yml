@@ -13,8 +13,7 @@ cache:
 before_script:
 #  - export app_version=$(grep version package.json | awk '{print $2}'|sed 's/[\",]//g')
 #  - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}:${app_version}-${CI_BUILD_ID}"
-  - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}:latest"
-  - echo "${IMAGE}"
+  - export IMAGE="${REGISTRY}/${CI_PROJECT_TITLE}"
 
 module install:
   stage: install
@@ -37,15 +36,18 @@ build:
   stage: build
   script:
     - npm install -g yarn
+    - export VERSION="$(cat package.json | grep version | head -1 | awk -F= "{ print $2 }" | sed -E 's/(version)|[:,\",]//g' | tr -d '[[:space:]]')"
     - yarn build --reset-cache
-    - docker build -t "${IMAGE}" .
-    - docker push "${IMAGE}"
-
+    - docker build -t ${IMAGE}:latest .
+    - docker tag ${IMAGE}:latest ${IMAGE}:${VERSION}
+    - docker push ${IMAGE}:latest
+    - docker push ${IMAGE}:${VERSION}
+    
 deploy:
   stage: deploy
   cache: {}
   script:
-    - kubectl patch deployment fastcatx-console -n fastcatx -p "{\"spec\":{\"template\":{\"metadata\":{\"labels\":{\"date\":\"`date +'%s'`\"}},\"spec\":{\"containers\":[{\"name\":\"fastcatx-console\",\"image\":\"${IMAGE}\"}]}}}}"
+    - kubectl patch deployment fastcatx-console -n fastcatx -p "{\"spec\":{\"template\":{\"metadata\":{\"labels\":{\"date\":\"`date +'%s'`\"}},\"spec\":{\"containers\":[{\"name\":\"fastcatx-console\",\"image\":\"${IMAGE}:latest\"}]}}}}"
     - sleep 5
     - kubectl get pod -n fastcatx -o wide
 
