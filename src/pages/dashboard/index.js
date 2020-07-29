@@ -134,14 +134,14 @@ function WarningIndex({status}) {
                         if(row.health != 'green') {
                             return(
                                 <TableRow key={row.index}>
-                                <TableCell align="left">
-                                    <Box display="flex" justifyContent="left" >
-                                        <ErrorIcon style={{color:row.health}}/>
-                                        {/* <Brightness1Icon style={{color:row.health}} /> */}
-                                        <Typography>{row.index}</Typography>
+                                <TableCell align="center">
+                                    <Box display="flex" justifyContent="center" >
+                                        {/* <ErrorIcon style={{color:row.health}}/> */}
+                                        <Brightness1Icon style={{color:row.health}} />
+                                        <Typography variant="h5">{row.index}</Typography>
                                     </Box>
                                 </TableCell>
-                                <TableCell>
+                                <TableCell align="center">
                                     {row.health == 'yellow' ? <font color="orange"> 레플리카 샤드 이상 </font> :
                                     <font color="red"> 프라이머리 샤드 이상 </font>}
                                 </TableCell>
@@ -223,10 +223,10 @@ function RunningIndex({result, running, status}) {
                         Object.values(indexList).map(row =>
                             <TableRow key={row.index}>
                                 <TableCell align="center">
-                                    {row.index}
+                                    <Typography variant="h5">{row.index}</Typography>
                                 </TableCell>
                                 <TableCell align="center">
-                                    <Box display="flex" alignItems="center">
+                                    <Box display="flex" alignItems="center" justifyContent="center">
                                         <Box width="100%" mr={1}>
                                         <BorderLinearProgress
                                             className={classes.margin}
@@ -377,7 +377,7 @@ function BottomArea({result, alias, status}) {
                                 return (
                                     <TableRow key={row.index}>
                                         <TableCell align="center">
-                                            <Box display="flex" justifyContent="center" >
+                                            <Box display="flex" justifyContent="center" alignItems="center">
                                                 {
                                                     row['status'] && row['status'] == 'SUCCESS' ?
                                                         <Brightness1Icon color="primary"/>
@@ -388,7 +388,7 @@ function BottomArea({result, alias, status}) {
                                             </Box>
                                         </TableCell>
                                         <TableCell align="center">
-                                            {row.index}
+                                            <Typography variant="h5">{row.index}</Typography>
                                         </TableCell>
                                         <TableCell align="center">
                                             {row.alias}
