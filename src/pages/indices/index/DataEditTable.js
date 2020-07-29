@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({}));
 const Divider = styled(MuiDivider)(spacing);
 
 function DataEditTable({dispatch, index, authUser}) {
-    const [id, setId] = useState("");
+    const [keyword, setKeyword] = useState("");
     const [pageNum, setPageNum] = useState(0);
     const [rowSize, setRowSize] = useState(5);
     const [columns, setColumns] = useState([])
@@ -59,18 +59,19 @@ function DataEditTable({dispatch, index, authUser}) {
 
     // 인덱스 변경시 호출
     useEffect(() => {
-        setId("")
+        setKeyword("")
         setPageNum(0)
         setRowSize(5)
         if (index === "") {
             return
         }
-        fetchIndexDocumentSourceList({})
+        fetchIndexDocumentSourceList({keyword})
     }, [index])
 
 
-    function fetchIndexDocumentSourceList({searchSize=10000, searchId=undefined}) {
-        return dispatch(setIndexDocumentSourceListAction({index, from: pageNum, size: searchSize||rowSize, id})).then(response => {
+    function fetchIndexDocumentSourceList({searchSize=10000, columns=[], keyword=null}) {
+        console.log(columns)
+        return dispatch(setIndexDocumentSourceListAction({index, from: pageNum, size: searchSize||rowSize, columns, keyword})).then(response => {
             // columns 적용
             let tmpColumns = {}
             tmpColumns['ID'] = null
@@ -101,13 +102,13 @@ function DataEditTable({dispatch, index, authUser}) {
 
     function handleChangeRowsPerPage(row) {
         setRowSize(row)
-        fetchIndexDocumentSourceList({})
+        fetchIndexDocumentSourceList({keyword})
     }
 
     function handleSearch(keyword) {
-        fetchIndexDocumentSourceList({
-            searchId: keyword
-        })
+        setKeyword(keyword)
+        setColumns(columns)
+        fetchIndexDocumentSourceList({columns, keyword})
     }
 
     function handleRowAdd(newData) {
@@ -118,7 +119,7 @@ function DataEditTable({dispatch, index, authUser}) {
             console.log(body)
             delete body['ID']
             dispatch(addIndexDocumentSourceAction({ index, body }))
-                .then(() => setTimeout(() => fetchIndexDocumentSourceList({}).then(resolve), 1000))
+                .then(() => setTimeout(() => fetchIndexDocumentSourceList({keyword}).then(resolve), 1000))
                 .catch(reject)
         })
     }
@@ -131,7 +132,7 @@ function DataEditTable({dispatch, index, authUser}) {
             delete body['_hitsId']
             delete body['ID']
             dispatch(editIndexDocumentSourceAction({ index, id, body }))
-                .then(() => setTimeout(() => fetchIndexDocumentSourceList({}).then(resolve), 1000))
+                .then(() => setTimeout(() => fetchIndexDocumentSourceList({keyword}).then(resolve), 1000))
                 .catch(reject)
         })
     }
@@ -139,7 +140,7 @@ function DataEditTable({dispatch, index, authUser}) {
         return new Promise((resolve, reject) => {
             const id = unflatten(oldData)['_hitsId']
             dispatch(deleteIndexDocumentSourceAction({ index, id }))
-                .then(() => setTimeout(() => fetchIndexDocumentSourceList({}).then(resolve), 1000))
+                .then(() => setTimeout(() => fetchIndexDocumentSourceList({keyword}).then(resolve), 1000))
                 .catch(reject)
         })
     }

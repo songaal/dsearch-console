@@ -100,13 +100,16 @@ export const setIndexDocumentsAction = ({index, pageNum, rowSize, id, analysis})
 })).catch(err => console.error(err))
 
 
-export const setIndexDocumentSourceListAction = ({index, from, size, id}) => dispatch => client.call({
+export const setIndexDocumentSourceListAction = ({index, from, size, id, columns=[], keyword = null}) => dispatch => client.call({
     uri: `/elasticsearch/${index}/_search`,
     method: 'post',
-    data: id === undefined || id === null || id === "" ?
-        { from, size: size, "sort": [{ "_id": { "order": "desc" } }] }
+    data: id !== undefined && id !== null && id !== "" ?
+        { "query": { "match": { "_id": id } }, from, size, "sort": [{ "_id": { "order": "desc" } }] }
         :
-        { "query": { "match": { "_id": id } }, from, size: size, "sort": [{ "_id": { "order": "desc" } }] }
+        keyword !== undefined && keyword !== null && keyword !== ""?
+            { "query": { "bool": { "should": (columns.map(c =>  ({ "match": { [c]: keyword } }))  ) } }, from, size, "sort": [{ "_id": { "order": "desc" } }] }
+            :
+            { from, size, "sort": [{ "_id": { "order": "desc" } }] }
 }).then(response => {
     dispatch({ type: SET_INDEX_DOCUMENT_SOURCE_RESPONSE, payload: response.data })
     return response.data;
