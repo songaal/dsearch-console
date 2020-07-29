@@ -13,7 +13,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import LaunchIcon from '@material-ui/icons/Launch';
 import Helmet from 'react-helmet';
-
+import {title} from "../../title.json";
 import {
     Box,
     Button,
@@ -296,7 +296,7 @@ function AddGuideCard(props) {
                          mt={15}
                          className={classes.title}
                     >
-                        DSearch 서버설치방법
+                        {title} 서버설치방법
                     </Box>
                     <Box display="flex"
                          justifyContent="center"

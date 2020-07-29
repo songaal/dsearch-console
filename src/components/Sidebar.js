@@ -3,6 +3,8 @@ import {connect, useDispatch, useSelector} from "react-redux";
 import styled from "styled-components";
 import {darken, rgba} from "polished";
 
+import {title} from "../title.json";
+
 import {NavLink as RouterNavLink, withRouter} from "react-router-dom";
 
 import PerfectScrollbar from "react-perfect-scrollbar";
@@ -332,13 +334,15 @@ function Sidebar(props) {
     } else {
         routes = introRoutes
     }
+    
 
+    console.log(title);
     routes = routes.filter(route => route.hidden === undefined || route.hidden === null || route.hidden === false)
     return (
         <Drawer variant="permanent" {...other}>
             <Brand>
                 <BrandIcon/>
-                <Box ml={1}>DSearch
+                <Box ml={1}> {title}
                     {/* <BrandChip label="X" /> */}
                 </Box>
             </Brand>
