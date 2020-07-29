@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
 const options = ['연속실행', '색인실행', '전파실행', '교체실행'];
 
 // let testScheduleFlag = true
-
+let timer = null
 function ControlBox({dispatch, authUser, collection, job}) {
     const [actionOpen, setActionOpen] = React.useState(false);
     const actionAnchorRef = React.useRef(null);
@@ -68,17 +68,43 @@ function ControlBox({dispatch, authUser, collection, job}) {
 
     useEffect(() => {
         dispatch(setCollection(collection['id']))
-        let timer = null
+        
         const fetchJob = () => {
             dispatch(setCollectionJob(collection['id']))
-                .then(job => {setConnected(true); timer = setTimeout(fetchJob, 500)})
-                .catch(error => {setConnected(false); timer = setTimeout(fetchJob, 500) })
+                .then(job => {
+                    setConnected(true); 
+                    if (timer != null) {
+                        try {
+                            clearTimeout(timer)
+                            timer = null
+                        } catch(err) {}
+                    }
+                    timer = setTimeout(fetchJob, 500)
+                })
+                .catch(error => {
+                    setConnected(false); 
+                    if (timer != null) {
+                        try {
+                            clearTimeout(timer)
+                            timer = null
+                        } catch(err) {}
+                    }
+                    timer = setTimeout(fetchJob, 500) 
+                })
+        }
+        if (timer != null) {
+            try {
+                clearTimeout(timer)
+                timer = null
+            } catch(err) {}
         }
 
         timer = setTimeout(() => fetchJob(), 500);
         return () => {
-            if (timer != null) {
+            try {
                 clearTimeout(timer)
+            } catch(error) {
+                // ignore..
             }
         }
 
