@@ -44,7 +44,8 @@ let initState = {
     },
     alias:[
         
-    ]
+    ],
+    indices:{}
 };
 
 export default function reducer(state = initState, actions) {
@@ -68,6 +69,11 @@ export default function reducer(state = initState, actions) {
             return {
                 ...state,
                 alias: actions.payload
+            }
+        case types.SET_DASHBOARD_INDICES_INFO:
+            return{
+                ...state,
+                indices: actions.payload
             }
         default:
             return state

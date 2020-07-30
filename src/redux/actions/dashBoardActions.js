@@ -1,4 +1,4 @@
-import {SET_INDEX_RESULT,SET_RUNNING_INDEX,SET_INDEX_STATUS,SET_INDEX_ALIAS} from "../constants";
+import {SET_INDEX_RESULT,SET_RUNNING_INDEX,SET_INDEX_STATUS,SET_INDEX_ALIAS, SET_DASHBOARD_INDICES_INFO} from "../constants";
 import Client from '~/Client'
 
 const client = new Client()
@@ -6,7 +6,11 @@ const client = new Client()
 export const setIndexResultActions = key => dispatch => client.call({uri: `/elasticsearch/.fastcatx_index_history/_search`,
         method:'post',
         data: {
-         
+          "query": {
+            "match": {
+              "jobType": "FULL_INDEX"
+            }
+          }, 
             sort: [
                 {
                   endTime: {
@@ -42,3 +46,13 @@ export const setIndexAliasActions = key => dispatch => client.call({uri: `/elast
 export const setRunningIndexActions = key => dispatch => client.call({uri: `/dashboard/indexing`})
   .then(response => dispatch({type: SET_RUNNING_INDEX, payload: response.data}))
   .catch(err => console.error(err))
+
+export const setIndicesActions = () => dispatch =>
+    client.call({
+        uri: `/elasticsearch/_cat/indices`,
+        params: {
+            format: "json",
+        }
+    })
+        .then(response => dispatch({type: SET_DASHBOARD_INDICES_INFO, payload: response.data}))
+        .catch(error => console.error(error))

@@ -4,11 +4,13 @@ import {
     setIndexAliasActions,
     setIndexResultActions,
     setIndexStatusActions,
-    setRunningIndexActions
+    setRunningIndexActions,
+    setIndicesActions
 } from '@actions/dashBoardActions'
 import Helmet from "react-helmet";
-
+import {useHistory} from "react-router-dom"
 import {
+    Link,
     Box,
     Button,
     Card as MuiCard,
@@ -28,6 +30,7 @@ import {lighten, makeStyles, withStyles} from "@material-ui/core/styles";
 import {connect} from "react-redux";
 import Brightness1Icon from '@material-ui/icons/Brightness1';
 import ErrorIcon from '@material-ui/icons/Error';
+
 const useStyles = makeStyles((theme) => ({
     headerField: {fontSize: '1.2em', fontWeight: "bold"},
     headerValue: {fontSize: '1.2em', fontWeight: "bold"},
@@ -91,6 +94,12 @@ const idxResult = [
     {status:"success", index:"shop-a", alias:"shop", lastSuccess:"5분전", elapsed:"1시간 20분", docs:140000, storage:"530mb"},
     {status:"fail", index:"shop-b", alias:"shop", lastSuccess:"56분전", elapsed:"1초", docs:0, storage:"10kb"},
 ]
+
+const getFinishTime = (startTime, estimatedTime) => {
+    var date = new Date().getTime() - new Date(startTime).getTime();
+    return (date.valueOf()/ estimatedTime) * 100
+}
+
 
 const untilTime = (time) => {
     var date = new Date().getTime() - new Date(time).getTime();
@@ -160,7 +169,8 @@ function WarningIndex({status}) {
 }
 
 
-function RunningIndex({result, running, status}) {
+function RunningIndex({result, running, status, indices}) {
+    const history = useHistory();
     const classes = useStyles();
     let indexMap = new Map()
     let indexList = []
@@ -180,7 +190,6 @@ function RunningIndex({result, running, status}) {
         }
     }
 
-
     if(result.hits.hits.length >= 0){
         for(let item of result.hits.hits){
             successIndexList[item._source.index] = item._source;
@@ -193,21 +202,33 @@ function RunningIndex({result, running, status}) {
             let server = running[key].server;
 
             if(server !== undefined){
+                let uuid = "";
+                Object.values(indices).forEach(item => {
+                    if (item.index == server.index) {
+                        uuid = item.uuid;
+                    }
+                })
+
                 if( successIndexList[server.index] !== undefined
                     && successIndexList[server.index].endTime !== undefined 
                     && successIndexList[server.index].startTime !== undefined
                     && successIndexList[server.index].docSize !== undefined){
+                    
                     let estimatedTime = successIndexList[server.index].endTime - successIndexList[server.index].startTime;
                     let docSize = successIndexList[server.index].docSize;
-
-                    indexList.push({startTime: server.startTime, index: server.index, estimatedTime: estimatedTime, docSize: docSize});
+                    
+                    getFinishTime(server.startTime, estimatedTime);
+                    indexList.push({startTime: server.startTime, index: server.index, estimatedTime: estimatedTime, docSize: docSize, uuid : uuid});
                 }else{
-                    indexList.push({startTime: server.startTime, index: server.index});
+                    indexList.push({startTime: server.startTime, index: server.index, uuid: uuid});
                 }
             }
         }
     }
-    //running 돌면서 없는건 초기 셋팅
+    
+    function moveDetail(uuid) {
+        history.push(`./indices/${uuid}`)
+    }
     
     return(
         <Card>
@@ -223,17 +244,20 @@ function RunningIndex({result, running, status}) {
                         Object.values(indexList).map(row =>
                             <TableRow key={row.index}>
                                 <TableCell align="center">
-                                    <Typography variant="h5">{row.index}</Typography>
+                                    <Link style={{ cursor: "pointer" }} onClick={() => moveDetail(row['uuid'])}>
+                                        <Typography variant="h5">{row.index}</Typography>
+                                    </Link>
                                 </TableCell>
                                 <TableCell align="center">
                                     <Box display="flex" alignItems="center" justifyContent="center">
                                         <Box width="100%" mr={1}>
-                                        <BorderLinearProgress
-                                            className={classes.margin}
-                                            variant="determinate"
-                                            color="secondary"
-                                            value={`${Math.round( (untilTime(row.startTime) / getElapsed(row.estimatedTime))*100)}`}
-                                        />
+                                            <BorderLinearProgress
+                                                className={classes.margin}
+                                                variant="determinate"
+                                                color="secondary"
+                                                value={Number(getFinishTime(row.startTime, row.estimatedTime))}
+                                                // value={Number(`${Math.round( (untilTime(row.startTime) / getElapsed(row.estimatedTime))*100)}`)}
+                                            />
                                         </Box>
                                         <Box minWidth={15}>
                                             <Typography variant="body2" color="textSecondary"></Typography>
@@ -281,13 +305,13 @@ function RunningIndex({result, running, status}) {
 
 }
 
-function TopArea({ result, running, status }) {
+function TopArea({ result, running, status, indices}) {
     const classes = useStyles();
 
     return (
         <Grid container spacing={3} >
             <Grid item xs={6}>
-                <RunningIndex result={result} running={running} status={status} />
+                <RunningIndex result={result} running={running} status={status} indices={indices} />
             </Grid>
             <Grid item xs={6}>
                 <WarningIndex status={status} />
@@ -296,8 +320,9 @@ function TopArea({ result, running, status }) {
     )
 }
 
-function BottomArea({result, alias, status}) {
-   
+function BottomArea({result, alias, indices}) {
+    const history = useHistory();
+
     const format = (time) => {
         // var date = new Date(time * 1000);
         var date = new Date(time);
@@ -334,6 +359,13 @@ function BottomArea({result, alias, status}) {
                 aliasName = row2.alias
             }
         })
+
+        let uuid = ""
+        Object.values(indices).forEach(item => {
+            if(item.index == row._source.index){
+                uuid = item.uuid;
+            }
+        })
    
         resultList.push(
             {
@@ -343,10 +375,15 @@ function BottomArea({result, alias, status}) {
                 startTime: row._source.startTime,
                 endTime: row._source.endTime,
                 docSize: row._source.docSize,
-                storage: row._source.store
+                storage: row._source.store,
+                uuid: uuid
             }
         )
     })
+
+    function moveDetail(uuid) {
+        history.push(`./indices/${uuid}`)
+    }
 
     return (
         <React.Fragment>
@@ -388,7 +425,9 @@ function BottomArea({result, alias, status}) {
                                             </Box>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Typography variant="h5">{row.index}</Typography>
+                                            <Link style={{cursor: "pointer"}} onClick={() => moveDetail(row['uuid'])}>
+                                                <Typography variant="h5">{row.index}</Typography>
+                                            </Link>
                                         </TableCell>
                                         <TableCell align="center">
                                             {row.alias}
@@ -418,7 +457,7 @@ function BottomArea({result, alias, status}) {
     );
 }
 
-function DashBoard({dispatch, result, running, status, alias}) {
+function DashBoard({dispatch, result, running, status, alias, indices}) {
     const classes = useStyles();
 
     useEffect(() => {
@@ -427,20 +466,8 @@ function DashBoard({dispatch, result, running, status, alias}) {
         dispatch(setRunningIndexActions())
         dispatch(setIndexStatusActions())
         dispatch(setIndexAliasActions())
+        dispatch(setIndicesActions());
     }, [])
-
-
-    // let runArr = []
-
-    // Object.values(running.hits.hits).forEach(row => {
-    //     console.log('row : ' + row._source.index)
-    //     runArr.push(row._source.index)
-
-    // })
-
-    // console.log('runArr : ' + runArr)
-    
-    //const Api = Async(() => import("./runningIndex"));
     
     return (
         <React.Fragment>
@@ -449,8 +476,8 @@ function DashBoard({dispatch, result, running, status, alias}) {
             <Typography variant="h3" gutterBottom display="inline"> 대시보드 </Typography>
 
             <Divider my={6} />
-            <TopArea result={result} running={running} status={status} />
-            <BottomArea result={result} alias={alias} status={status} />
+            <TopArea result={result} running={running} status={status} indices={indices}/>
+            <BottomArea result={result} alias={alias} status={status} indices={indices} />
         </React.Fragment>
     );
 }
@@ -459,5 +486,6 @@ export default connect(store => ({
     result: store.dashBoardReducers.result,
     running: store.dashBoardReducers.running,
     status: store.dashBoardReducers.status,
-    alias: store.dashBoardReducers.alias
+    alias: store.dashBoardReducers.alias,
+    indices: store.dashBoardReducers.indices
 }))(DashBoard);
