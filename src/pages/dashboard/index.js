@@ -125,9 +125,29 @@ function numberWithCommas(num) {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-function WarningIndex({status}) {
+function WarningIndex({status, indices}) {
     const classes = useStyles();
-    // console.log(status)
+    const history = useHistory();
+    function moveDetail(uuid) {
+        history.push(`./indices/${uuid}`)
+    }
+
+    let list = [];
+    Object.values(status).map(row => {
+        if(row.health != 'green'){
+            let uuid = "";
+            Object.values(indices).forEach(item => {
+                if (item.index == row.index) {
+                    uuid = item.uuid;
+                }
+            })
+            let item = row;
+            item.uuid = uuid;
+            list.push(item);
+        }
+    })
+
+    console.log(list);
 
     return(
         <Card>
@@ -139,13 +159,32 @@ function WarningIndex({status}) {
             <Table>
                 <TableHead></TableHead>
                 <TableBody>
-                    {Object.values(status).map(row => {
+                    {list.map(row =>{
+                         return(
+                            <TableRow key={row.index}>
+                            <TableCell align="center">
+                                <Box display="flex" justifyContent="center" >
+                                    <Brightness1Icon style={{color:row.health}} />
+                                    <Link style={{cursor: "pointer"}} onClick={() => moveDetail(row['uuid'])}>
+                                        <Typography variant="h5">{row.index}</Typography>
+                                    </Link>
+                                </Box>
+                            </TableCell>
+                            <TableCell align="center">
+                                {row.health == 'yellow' ? <font color="orange"> 레플리카 샤드 이상 </font> :
+                                <font color="red"> 프라이머리 샤드 이상 </font>}
+                            </TableCell>
+                                </TableRow>
+
+                        )
+                    })}
+
+                    {/* {Object.values(status).map(row => {
                         if(row.health != 'green') {
                             return(
                                 <TableRow key={row.index}>
                                 <TableCell align="center">
                                     <Box display="flex" justifyContent="center" >
-                                        {/* <ErrorIcon style={{color:row.health}}/> */}
                                         <Brightness1Icon style={{color:row.health}} />
                                         <Typography variant="h5">{row.index}</Typography>
                                     </Box>
@@ -156,10 +195,9 @@ function WarningIndex({status}) {
                                 </TableCell>
                                     </TableRow>
 
-                            )
                         }
                     }
-                    )}
+                    )} */}
                 </TableBody>
             </Table>
             </CardContent>
@@ -314,7 +352,7 @@ function TopArea({ result, running, status, indices}) {
                 <RunningIndex result={result} running={running} status={status} indices={indices} />
             </Grid>
             <Grid item xs={6}>
-                <WarningIndex status={status} />
+                <WarningIndex status={status} indices={indices} />
             </Grid>
         </Grid>
     )
