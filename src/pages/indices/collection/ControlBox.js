@@ -51,6 +51,9 @@ const options = ['연속실행', '색인실행', '전파실행', '교체실행']
 
 // let testScheduleFlag = true
 let timer = null
+
+
+let pollingDelay = 2000
 function ControlBox({dispatch, authUser, collection, job}) {
     const [actionOpen, setActionOpen] = React.useState(false);
     const actionAnchorRef = React.useRef(null);
@@ -79,7 +82,7 @@ function ControlBox({dispatch, authUser, collection, job}) {
                             timer = null
                         } catch(err) {}
                     }
-                    timer = setTimeout(fetchJob, 500)
+                    timer = setTimeout(fetchJob, pollingDelay)
                 })
                 .catch(error => {
                     setConnected(false); 
@@ -89,7 +92,7 @@ function ControlBox({dispatch, authUser, collection, job}) {
                             timer = null
                         } catch(err) {}
                     }
-                    timer = setTimeout(fetchJob, 500) 
+                    timer = setTimeout(fetchJob, pollingDelay)
                 })
         }
         if (timer != null) {

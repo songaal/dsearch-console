@@ -24,6 +24,11 @@ import {makeStyles} from '@material-ui/core/styles';
 import {positions, spacing} from "@material-ui/system";
 import {ArrowDropDown, Check} from "@material-ui/icons";
 import {deleteCollectionAction, setCollectionList} from "../../../redux/actions/collectionActions";
+import {red} from "@material-ui/core/colors";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
+import Dialog from "@material-ui/core/Dialog";
 
 const Divider = styled(MuiDivider)(spacing, positions);
 const Typography = styled(MuiTypography)(spacing, positions);
@@ -49,6 +54,7 @@ function Summary({dispatch, authUser, collection}) {
     const history = useHistory();
     const classes = useStyles();
     const [moreMenu, setMoreMenu] = useState(null)
+    const [openRemoveModal, setOpenRemoveModal] = useState(false)
 
     function toggleMoreMenu(event) {
         setMoreMenu(moreMenu === null ? event.currentTarget : null)
@@ -152,8 +158,11 @@ function Summary({dispatch, authUser, collection}) {
                                             anchorEl={moreMenu}
                                             open={Boolean(moreMenu)}
                                             onClose={toggleMoreMenu}
+                                            getContentAnchorEl={null}
+                                            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                                            transformOrigin={{ vertical: "top", horizontal: "center" }}
                                         >
-                                            <MenuItem onClick={handleDeleteCollection}>
+                                            <MenuItem style={{backgroundColor: red["300"]}} onClick={() => setOpenRemoveModal(true)}>
                                                 컬렉션 삭제
                                             </MenuItem>
                                         </Menu>
@@ -163,6 +172,9 @@ function Summary({dispatch, authUser, collection}) {
 
                                     </React.Fragment>
                             }
+                            <Box>
+
+                            </Box>
                         </Grid>
                     </Grid>
 
@@ -319,6 +331,27 @@ function Summary({dispatch, authUser, collection}) {
                     </Grid>
                 </CardContent>
             </Card>
+
+            <Dialog open={openRemoveModal} fullWidth={true}>
+                <DialogTitle>컬랙션 삭제</DialogTitle>
+                <DialogContent>
+                    <Box style={{color: red['500']}}> 선택하신 컬랙션을 삭제 하시겠습니까? </Box>
+                </DialogContent>
+                <DialogActions>
+                    <Button style={{backgroundColor: red['200']}}
+                            variant="contained"
+                            onClick={handleDeleteCollection}
+                    >
+                        삭제
+                    </Button>
+                    <Button onClick={() => setOpenRemoveModal(false)}
+                            variant="contained"
+                    >
+                        취소
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
         </React.Fragment>
     );
 }

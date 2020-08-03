@@ -69,6 +69,7 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
     const [createBaseIdError, setCreateBaseIdError] = useState(false)
     const [modalMessage,setModalMessage] = useState(null)
     const [process, setProcess] = useState(false)
+    const [addBtnDisabled, setAddBtnDisabled] = useState(true)
 
     useEffect(() => {
         dispatch(setCollectionIndexSuffix())
@@ -78,6 +79,7 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
     }, [])
 
     function toggleOpenAddModal() {
+        setAddBtnDisabled(true)
         setProcess(false)
         setModalMessage(null)
         setCreateNameError(false)
@@ -101,6 +103,24 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
     function handleChangeBaseId(event) {
         setCreateBaseIdError(false)
         setCreateBaseId(event.target.value)
+        let inValid = false
+        if (event.target.value.length > 1 && (!/^[a-z]+[a-z0-9-_]/g.test(event.target.value))) {
+            setCreateBaseIdError(true)
+            inValid = true
+        } else if (event.target.value.length === 1 && /[0-9]/g.test(event.target.value)) {
+            setCreateBaseIdError(true)
+            inValid = true
+        } else if (event.target.value.startsWith(".")) {
+            setCreateBaseIdError(true)
+            inValid = true
+        } else if (/[A-Z]/g.test(event.target.value)) {
+            setCreateBaseIdError(true)
+            inValid = true
+        } else if (/[ㄱ-ㅎ가-힣]/g.test(event.target.value)) {
+            setCreateBaseIdError(true)
+            inValid = true
+        }
+
         if (event.target.value !== "") {
 
             let tmpMatched = []
@@ -129,7 +149,15 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
             setApplyIndexTemplates(tmpMatched.map(matched => `${matched['name']} (${matched['index_patterns'].join(',')})`))
             // tmpMatched.map(matched => matched['name'])
             // setApplyIndexTemplates([event.target.value + indexSuffixA, event.target.value + indexSuffixB])
+
+            if (createName.trim().length !== 0 && inValid === false) {
+                setAddBtnDisabled(false)
+            } else {
+                setAddBtnDisabled(true)
+            }
+
         } else {
+            setAddBtnDisabled(true)
             setApplyIndexTemplates([])
         }
     }
@@ -139,10 +167,27 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
             setCreateNameError(true)
             return false
         }
-        if (createBaseId === "" || createBaseId.startsWith(".") || !/[a-z0-9]/gi.test(createBaseId)) {
+        // if (createBaseId === "" || createBaseId.startsWith(".") || !/[a-z0-9]/g.test(createBaseId)) {
+        //     setCreateBaseIdError(true)
+        //     return false
+        // }
+        if (createBaseId.length > 1 && (!/^[a-z]+[a-z0-9-_]/g.test(createBaseId))) {
+            setCreateBaseIdError(true)
+            return false
+        } else if (createBaseId.length === 1 && /[0-9]/g.test(createBaseId)) {
+            setCreateBaseIdError(true)
+            return false
+        } else if (createBaseId.startsWith(".")) {
+            setCreateBaseIdError(true)
+            return false
+        } else if (/[A-Z]/g.test(createBaseId)) {
+            setCreateBaseIdError(true)
+            return false
+        } else if (/[ㄱ-ㅎ가-힣]/g.test(createBaseId)) {
             setCreateBaseIdError(true)
             return false
         }
+
         setProcess(true)
         dispatch(addCollectionList({
             name: createName,
@@ -162,6 +207,16 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
             console.log('error', error)
             setProcess(false)
         })
+    }
+
+    function checkCollectionName(event) {
+        setCreateNameError(false);
+        setCreateName(event.target.value);
+        if (event.target.value.length !== 0 && createBaseId.length !== 0 && createBaseIdError === false) {
+            setAddBtnDisabled(false)
+        } else {
+            setAddBtnDisabled(true)
+        }
     }
 
     return (
@@ -290,7 +345,7 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
                             <TextField fullWidth
                                        autoFocus
                                        value={createName}
-                                       onChange={event => {setCreateNameError(false); setCreateName(event.target.value)}}
+                                       onChange={checkCollectionName}
                                        placeholder={"상품컬렉션"}
                                        error={createNameError}
                             />
@@ -345,7 +400,7 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleAddCollection}
-                            disabled={process}
+                            disabled={process || addBtnDisabled}
                             variant={"outlined"}
                             color={"primary"}
                     >추가</Button>
