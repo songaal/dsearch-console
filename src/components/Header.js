@@ -3,6 +3,8 @@ import {Link, useHistory} from "react-router-dom";
 import {connect, useDispatch, useSelector} from "react-redux";
 import styled, {withTheme} from "styled-components";
 import {darken} from "polished";
+import {Autocomplete } from '@material-ui/lab';
+// import Autocomplete from 'react-autocomplete';
 
 import {
     AppBar as MuiAppBar,
@@ -13,7 +15,8 @@ import {
     InputBase,
     Menu,
     MenuItem,
-    Toolbar
+    Toolbar,
+    TextField
 } from "@material-ui/core";
 
 import {ArrowDropDown, Menu as MenuIcon} from "@material-ui/icons";
@@ -21,8 +24,11 @@ import {ArrowDropDown, Menu as MenuIcon} from "@material-ui/icons";
 import {Home, Search as SearchIcon} from "react-feather";
 import {setReferenceResultAll, setReferenceSearchKeyword} from "../redux/actions/referenceSearchActions";
 import { setFastcatxSignOut } from "../redux/actions/fastcatxActions";
+import { setAutoCompleteAction } from "../redux/actions/dsearchPluginActions";
+
 import {SET_FASTCATX_AUTH_USER} from "../redux/constants";
 import {setClusterList} from "../redux/actions/clusterActions";
+import { textAlign, maxHeight, height, width } from "@material-ui/system";
 
 const AppBar = styled(MuiAppBar)`
   background: ${props => props.theme.header.background};
@@ -78,7 +84,6 @@ const Input = styled(InputBase)`
     padding-right: ${props => props.theme.spacing(2.5)}px;
     padding-bottom: ${props => props.theme.spacing(2.5)}px;
     padding-left: ${props => props.theme.spacing(12)}px;
-    width: 160px;
   }
 `;
 
@@ -87,6 +92,7 @@ const Button = styled(ButtonBase)`
   padding-left: ${props => props.theme.spacing(2)}px;
   padding-right: ${props => props.theme.spacing(2)}px;
 `
+
 
 function ClusterMenu() {
     const dispatch = useDispatch()
@@ -251,14 +257,30 @@ const MainHeader = ({theme, onDrawerToggle}) => (
         </AppBar>
     </React.Fragment>)
 
+
+const options = ['Option 1', 'Option 2'];
+
 const DashBoardHeader = ({theme, onDrawerToggle}) => {
     const references = useSelector(store => ({...store.referenceSearchReducers}))
     const authUserStore = useSelector(store => ({...store.fastcatxReducers}))['authUser']
     const [keyword, setKeyword] = useState(references.keyword)
+    const [selectedItem, setSelectedItem] = useState('')
+    const [itemList, setItemList] = useState([])
+    const [inputCache, setInputCache] = useState({});
     // eslint-disable-next-line no-restricted-globals
     const qs = new URLSearchParams(location.search)
     const dispatch = useDispatch()
     const history = useHistory()
+
+    function handleCache(k, val){
+        let cache = {};
+        cache[k] = val;
+        Object.keys(inputCache).forEach(key =>{
+            cache[key] = inputCache[key];
+        })
+        setItemList(val);
+        setInputCache(cache);
+    }
 
     function handleSearch() {
         dispatch(setReferenceSearchKeyword(keyword))
@@ -266,9 +288,32 @@ const DashBoardHeader = ({theme, onDrawerToggle}) => {
         history.push(`/${authUserStore['cluster']['id']}/search`)
     }
 
-    function handleKeyEvent(event) {
+    function handleKeyEvent(event, val) {
         if (event.keyCode === 13) {
             handleSearch()
+        }
+    }
+
+    function handleKeyword(event, val) {
+        let value = event.target.value;
+        if(value === 0){
+            setKeyword(val);
+        }else{
+            setKeyword(value);
+        }
+        
+        if (event.keyCode === 13) {
+            handleSearch()
+        }else{
+            if (value.length > 0 && (inputCache[value] === undefined || inputCache[value] === null)) {
+                /* 비동기 방식으로 보냄 */
+                dispatch(setAutoCompleteAction(value)).then((data) => {
+                    let payload = data.data;
+                    handleCache(payload.q, payload.result)
+                }).catch(err => { console.log(err) });
+            }else if(value.length > 0){
+                setItemList(inputCache[value])
+            }
         }
     }
 
@@ -276,7 +321,6 @@ const DashBoardHeader = ({theme, onDrawerToggle}) => {
         setKeyword(qs.get("keyword"))
         handleSearch()
     }
-
     return (
         <React.Fragment>
             <AppBar position="sticky" elevation={0}>
@@ -293,19 +337,35 @@ const DashBoardHeader = ({theme, onDrawerToggle}) => {
                                 </IconButton>
                             </Grid>
                         </Hidden>
-                        <Grid item>
+
+                        <Grid item xs>
+
                             <Search>
                                 <SearchIconWrapper>
                                     <SearchIcon/>
                                 </SearchIconWrapper>
-                                <Input placeholder="검색 (Enter 입력)"
-                                       onKeyUp={handleKeyEvent}
-                                       value={keyword}
-                                       onChange={event => setKeyword(event.target.value)}
+
+                                <Autocomplete 
+                                    onChange={handleKeyword}
+                                    options={itemList}
+                                    selectOnFocus
+                                    renderInput={(params) => (
+                                        <div ref={params.InputProps.ref}>
+                                            <Input 
+                                                {...params.inputProps} 
+                                                style={{ width: "100%" }} 
+                                                placeholder="검색 (Enter 입력)" 
+                                                value={keyword} 
+                                                onChange={handleKeyword} 
+                                                onKeyUp={handleKeyEvent}
+                                            />
+                                        </div>
+                                    )}
                                 />
                             </Search>
                         </Grid>
-                        <Grid item xs/>
+
+                        <Grid item xs={1}/>
 
                         <Grid item>
                             <IconButton color="inherit"
