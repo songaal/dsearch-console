@@ -5,11 +5,15 @@ import {
 
 const client = new Client()
 
-export const setAutoCompleteAction = (keyword) => dispatch =>
-    
+export const setAutoCompleteStoreAction = (keyword) => dispatch =>
     client.call({
         uri: `/elasticsearch/_dsearch/_all?q=` + encodeURIComponent(keyword)
+    }).then(response => {
+      dispatch({type: SET_PLUGIN_KEYWORD, payload: response.data})
     })
-        // .then(response => dispatch({type: SET_PLUGIN_KEYWORD, payload: response.data}))
-        // .catch(error => console.error(error))
+      .catch(error => console.error(error))
 
+export const setAutoCompleteAction = (keyword) => dispatch =>
+      client.call({
+          uri: `/elasticsearch/_dsearch/_all?q=` + encodeURIComponent(keyword)
+      })

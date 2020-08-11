@@ -24,7 +24,7 @@ import {ArrowDropDown, Menu as MenuIcon} from "@material-ui/icons";
 import {Home, Search as SearchIcon} from "react-feather";
 import {setReferenceResultAll, setReferenceSearchKeyword} from "../redux/actions/referenceSearchActions";
 import { setFastcatxSignOut } from "../redux/actions/fastcatxActions";
-import { setAutoCompleteAction } from "../redux/actions/dsearchPluginActions";
+import { setAutoCompleteAction, setAutoCompleteStoreAction } from "../redux/actions/dsearchPluginActions";
 
 import {SET_FASTCATX_AUTH_USER} from "../redux/constants";
 import {setClusterList} from "../redux/actions/clusterActions";
@@ -264,7 +264,6 @@ const DashBoardHeader = ({theme, onDrawerToggle}) => {
     const references = useSelector(store => ({...store.referenceSearchReducers}))
     const authUserStore = useSelector(store => ({...store.fastcatxReducers}))['authUser']
     const [keyword, setKeyword] = useState(references.keyword)
-    const [selectedItem, setSelectedItem] = useState('')
     const [itemList, setItemList] = useState([])
     const [inputCache, setInputCache] = useState({});
     // eslint-disable-next-line no-restricted-globals
@@ -273,18 +272,19 @@ const DashBoardHeader = ({theme, onDrawerToggle}) => {
     const history = useHistory()
 
     function handleCache(k, val){
+        setItemList(val);
         let cache = {};
         cache[k] = val;
         Object.keys(inputCache).forEach(key =>{
             cache[key] = inputCache[key];
         })
-        setItemList(val);
         setInputCache(cache);
     }
 
     function handleSearch() {
         dispatch(setReferenceSearchKeyword(keyword))
         dispatch(setReferenceResultAll(keyword))
+        dispatch(setAutoCompleteStoreAction(keyword))
         history.push(`/${authUserStore['cluster']['id']}/search`)
     }
 
@@ -348,7 +348,6 @@ const DashBoardHeader = ({theme, onDrawerToggle}) => {
                                 <Autocomplete 
                                     onChange={handleKeyword}
                                     options={itemList}
-                                    selectOnFocus
                                     renderInput={(params) => (
                                         <div ref={params.InputProps.ref}>
                                             <Input 

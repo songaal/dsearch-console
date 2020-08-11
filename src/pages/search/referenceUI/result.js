@@ -215,9 +215,10 @@ function SearchPanel(documents, aggregations, template, pagination) {
     )
 }
 
-function Result({resultList, authUser}) {
+function Result({resultList, authUser, pluginResponse}) {
     const keyword = useSelector(store => (store.referenceSearchReducers.keyword))
     const history = useHistory()
+    
 
     const tabs = resultList.map(result => ({
         label: result['template']['name'] || "이름 없음",
@@ -239,21 +240,50 @@ function Result({resultList, authUser}) {
         history.push(`/${authUser['cluster']['id']}/search/reference-ui`)
     }
 
+    let resultACList = pluginResponse.result;
+    let listStr = "";
+    if(resultACList !== undefined && resultACList !== null && resultACList.length > 0 ){
+        resultACList.forEach(
+            item => { 
+                listStr += (item + ", ")
+            }
+        )
+        listStr = listStr.substring(0, listStr.length-2);
+    }
+    
     return (
         <React.Fragment>
             <Helmet title="검색결과"/>
 
             <Grid container>
                 <Grid item xs={10}>
-                    <Typography variant="h3" gutterBottom display="inline">
+                    <Typography variant="h3"  display="inline">
                         레퍼런스 UI
                     </Typography>
                 </Grid>
+                
                 <Grid item xs={2}>
                     <Box align={"right"}>
                         <Button color={"default"} variant={"contained"}
                                 onClick={moveSetting}>설정</Button>
                     </Box>
+                </Grid>
+                
+            </Grid>
+            <br />
+            <Divider></Divider>
+            <br />
+            {/* 추가된 부분 */}
+            <Grid container>
+                <Grid item xs={12}>
+                    <Typography variant="h4" gutterBottom display="inline">
+                        자동 완성 키워드
+                    </Typography>
+                </Grid>
+
+                <Grid item xs={12}>
+                    <br />
+                    <Typography>{listStr}</Typography>
                 </Grid>
             </Grid>
 
@@ -266,4 +296,9 @@ function Result({resultList, authUser}) {
     )
 }
 
-export default connect(store => ({...store.referenceSearchReducers, ...store.fastcatxReducers}))(Result)
+{/* 추가된 부분 : pluginResponse */}
+export default connect(store => ({
+    ...store.referenceSearchReducers, 
+    ...store.fastcatxReducers, 
+    ...store.dsearchPluginReducers
+    }))(Result)

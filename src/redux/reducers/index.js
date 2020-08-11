@@ -39,4 +39,5 @@ export default combineReducers({
     toolsReducers,
     rankingTuningReducers,
     jdbcReducers,
+    dsearchPluginReducers
 });
