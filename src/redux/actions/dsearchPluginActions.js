@@ -7,7 +7,7 @@ import { PostAdd } from '@material-ui/icons';
 
 const client = new Client()
 
-export const setAutoCompleteStoreAction = (eyword) => dispatch =>
+export const setAutoCompleteStoreAction = (keyword) => dispatch =>
     client.call({
         uri: `/reference/autocomplete?` + encodeURIComponent(keyword)
     }).then(response => {

@@ -477,9 +477,10 @@ function AutocompleteRegister({dispatch, acUrl}){
     }
 
     function handleSubmitURL(){
-        dispatch(setAutoCompleteURLAction({url: autoCompleteUrl}))
-        setRegisteredUrl(true)
-        setTimeout(()=>{setRegisteredUrl(false)}, 3000);
+        dispatch(setAutoCompleteURLAction({url: autoCompleteUrl})).then(() => {
+            setRegisteredUrl(true)
+            setTimeout(()=>{setRegisteredUrl(false)}, 3000);
+        })
     }
 
     if(flag){
