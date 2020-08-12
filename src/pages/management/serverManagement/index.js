@@ -86,7 +86,7 @@ function Server({dispatch, server}) {
     }else{
         ServerInfoCall = Async(() => import("./summary"));
     }
-
+    console.log(server);
     return (
 
         <React.Fragment>

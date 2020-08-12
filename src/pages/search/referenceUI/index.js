@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import {connect} from "react-redux";
 import styled from "styled-components";
 import Helmet from 'react-helmet';
@@ -17,9 +17,10 @@ import {
     Hidden,
     List as MuiList,
     ListItem as MuiListItem,
+    Snackbar
 } from "@material-ui/core";
 import {} from "@material-ui/icons";
-
+import MuiAlert from '@material-ui/lab/Alert';
 import {
     ArrowUp as ArrowUpIcon,
     ArrowDown as ArrowDownIcon,
@@ -30,6 +31,7 @@ import {
 import {makeStyles} from "@material-ui/styles";
 import {borders, display, palette, sizing, spacing} from "@material-ui/system";
 import * as Color from '@material-ui/core/colors';
+import {setAutoCompleteURLAction, getAutoCompleteURLAction} from "../../../redux/actions/dsearchPluginActions"
 import {
     addReferenceTemplate,
     updateReferenceTemplate,
@@ -464,21 +466,62 @@ function SearchFormPanel({template, authUser, templateIndex, lastTemplateIndex, 
 }
 
 const sleep = 1000
+let flag = true;
+function AutocompleteRegister({dispatch, acUrl}){
 
-function ReferenceUI({dispatch, authUser}) {
-    const classes = useStyles()
+    const [autoCompleteUrl, setAutoCompleteUrl] = useState(acUrl)
+    const [registeredUrl, setRegisteredUrl] = useState(false)
+
+    function handleAutoCompleteURL(event){
+        setAutoCompleteUrl(event.target.value)
+    }
+
+    function handleSubmitURL(){
+        dispatch(setAutoCompleteURLAction({url: autoCompleteUrl}))
+        setRegisteredUrl(true)
+        setTimeout(()=>{setRegisteredUrl(false)}, 3000);
+    }
+
+    if(flag){
+        if(acUrl.length > 0){
+            setAutoCompleteUrl(acUrl)
+            flag= false;
+        }
+    }
+    return (
+        <>
+            <Box display="flex" mt={3}>
+                <TextField value={autoCompleteUrl} style={{ width: "90%", marginRight: "10px" }} placeholder="http://auto-complete.danawa.com/q={keyword}" onChange={handleAutoCompleteURL} />
+                <Button style={{ width: "10%", marginLeft: "10px" }} variant="outlined" color="primary" onClick={handleSubmitURL} >
+                    등록
+                </Button>
+            </Box>
+            <Divider my={6} />
+            {registeredUrl ? <MuiAlert severity="success"> 등록되었습니다 </MuiAlert> : <></>}
+        </>
+    );
+}
+
+
+function ReferenceUI({dispatch, authUser, acUrl}) {
+    // const classes = useStyles()
+    
     const [disabledAddPanelButton, setDisabledAddPanelButton] = useState(false)
     const [disabledDeleteButton, setDisabledDeleteButton] = useState(false)
     const [disabledSaveButton, setDisabledSaveButton] = useState(false)
     const [disabledOrderButton, setDisabledOrderButton] = useState(false)
     const [templateList, setTemplateList] = useState([])
-
+    
+    
     // authUser.role.search = false;
     useEffect(() => {
+        dispatch(getAutoCompleteURLAction())
+
         dispatch(setReferenceTemplateList())
             .then(response => setTemplateList(response.payload))
             .catch(error => console.error(error))
     }, [])
+
 
     function addTemplatePanel() {
         setDisabledAddPanelButton(true)
@@ -559,6 +602,12 @@ function ReferenceUI({dispatch, authUser}) {
 
             <Divider my={6}/>
 
+            <Typography variant="h5" gutterBottom display="inline">
+                자동완성 URL
+            </Typography>
+
+            <AutocompleteRegister dispatch={dispatch} acUrl={acUrl}></AutocompleteRegister>
+            
             <List>
                 {
                     templateList
@@ -603,5 +652,6 @@ function ReferenceUI({dispatch, authUser}) {
 
 export default connect(store => ({
     authUser: store.fastcatxReducers.authUser,
-    ...store.referenceSearchReducers
+    ...store.referenceSearchReducers,
+    acUrl: store.dsearchPluginReducers.autoCompleteUrl
 }))(ReferenceUI);

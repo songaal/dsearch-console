@@ -48,6 +48,7 @@ function Statistics({index, indexState}) {
                                 <Typography variant={"h5"} mt={5}>
                                     {key.toUpperCase()}
                                 </Typography>
+                                <br />
                                 <Card my={5}>
                                     <CardContent>
                                         <Table>

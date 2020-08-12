@@ -7,6 +7,7 @@ export default class Client {
     }
     call(config) {
         if (config.uri) {
+
             let server = sessionStorage.getItem(SET_FASTCATX_SERVER)
             if (server === null) {
                 server = localStorage.getItem(SET_FASTCATX_SERVER)
@@ -17,7 +18,7 @@ export default class Client {
                 location.href = "/"
                 return
             } else {
-                config.url = `${server}${config.uri}`
+                    config.url = `${server}${config.uri}`
             }
         }
         // eslint-disable-next-line no-restricted-globals

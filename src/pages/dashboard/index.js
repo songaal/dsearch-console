@@ -108,10 +108,14 @@ const untilTime = (time) => {
 
     let h = Math.floor(hours / 60)
     let m = Math.floor(hours % 60)
-    
     // var minutes = Math.ceil(((date - (hours * 3600)) / 60)/ 1000);
-
-    if(h != 0 && m != 0) {
+    if(h >= 720){
+        let month = h / 30 / 24;
+        return Math.ceil(month) + "개월"
+    }else if(h >= 24){
+        let d = h / 24;
+        return  Math.ceil(d) + '일'
+    }else if(h != 0 && m != 0) {
         return h+'시간 ' + m+'분'
     }else if(h != 0 && m == 0) {
         return h+'시간'
@@ -163,8 +167,8 @@ function WarningIndex({status, indices}) {
                          return(
                             <TableRow key={row.index}>
                             <TableCell align="center">
-                                <Box display="flex" justifyContent="center" >
-                                    <Brightness1Icon style={{color:row.health}} />
+                                <Box display="flex" justifyContent="left" alignItems="center">
+                                    <Brightness1Icon style={{color:row.health, marginRight:"5px"}} />
                                     <Link style={{cursor: "pointer"}} onClick={() => moveDetail(row['uuid'])}>
                                         <Typography variant="h5">{row.index}</Typography>
                                     </Link>
@@ -452,14 +456,14 @@ function BottomArea({result, alias, indices}) {
                                 return (
                                     <TableRow key={row.index}>
                                         <TableCell align="center">
-                                            <Box display="flex" justifyContent="center" alignItems="center">
+                                            <Box display="flex" justifyContent="left" alignItems="center">
                                                 {
                                                     row['status'] && row['status'] == 'SUCCESS' ?
                                                         <Brightness1Icon color="primary"/>
                                                         :
                                                         <Brightness1Icon style={{color: 'red'}}/>
                                                 }
-                                                <Typography>{row['status']}</Typography>
+                                                <Typography style={{marginLeft: "5px"}} >{row['status']}</Typography>
                                             </Box>
                                         </TableCell>
                                         <TableCell align="center">

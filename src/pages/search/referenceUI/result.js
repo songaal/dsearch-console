@@ -268,23 +268,6 @@ function Result({resultList, authUser, pluginResponse}) {
                                 onClick={moveSetting}>설정</Button>
                     </Box>
                 </Grid>
-                
-            </Grid>
-            <br />
-            <Divider></Divider>
-            <br />
-            {/* 추가된 부분 */}
-            <Grid container>
-                <Grid item xs={12}>
-                    <Typography variant="h4" gutterBottom display="inline">
-                        자동 완성 키워드
-                    </Typography>
-                </Grid>
-
-                <Grid item xs={12}>
-                    <br />
-                    <Typography>{listStr}</Typography>
-                </Grid>
             </Grid>
 
             {tabs && tabs.length > 0 ? <Divider my={6}/> : null}

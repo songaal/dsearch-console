@@ -24,7 +24,7 @@ import {ArrowDropDown, Menu as MenuIcon} from "@material-ui/icons";
 import {Home, Search as SearchIcon} from "react-feather";
 import {setReferenceResultAll, setReferenceSearchKeyword} from "../redux/actions/referenceSearchActions";
 import { setFastcatxSignOut } from "../redux/actions/fastcatxActions";
-import { setAutoCompleteAction, setAutoCompleteStoreAction } from "../redux/actions/dsearchPluginActions";
+import { setAutoCompleteAction, setAutoCompleteStoreAction, getAutoCompleteURLAction } from "../redux/actions/dsearchPluginActions";
 
 import {SET_FASTCATX_AUTH_USER} from "../redux/constants";
 import {setClusterList} from "../redux/actions/clusterActions";
@@ -263,6 +263,8 @@ const options = ['Option 1', 'Option 2'];
 const DashBoardHeader = ({theme, onDrawerToggle}) => {
     const references = useSelector(store => ({...store.referenceSearchReducers}))
     const authUserStore = useSelector(store => ({...store.fastcatxReducers}))['authUser']
+    const autoCompleteUrl = useSelector(store => ({...store.dsearchPluginReducers}))['autoCompleteUrl']
+    
     const [keyword, setKeyword] = useState(references.keyword)
     const [itemList, setItemList] = useState([])
     const [inputCache, setInputCache] = useState({});
@@ -271,6 +273,7 @@ const DashBoardHeader = ({theme, onDrawerToggle}) => {
     const dispatch = useDispatch()
     const history = useHistory()
 
+    
     function handleCache(k, val){
         setItemList(val);
         let cache = {};
@@ -307,10 +310,13 @@ const DashBoardHeader = ({theme, onDrawerToggle}) => {
         }else{
             if (value.length > 0 && (inputCache[value] === undefined || inputCache[value] === null)) {
                 /* 비동기 방식으로 보냄 */
-                dispatch(setAutoCompleteAction(value)).then((data) => {
-                    let payload = data.data;
-                    handleCache(payload.q, payload.result)
-                }).catch(err => { console.log(err) });
+                // 등록된 url로 !
+
+                    dispatch(setAutoCompleteAction(value)).then((data) => {
+                        let payload = data.data;
+                        console.log(payload);
+                        handleCache(payload.q, payload.result)
+                    }).catch(err => { console.log(err) });
             }else if(value.length > 0){
                 setItemList(inputCache[value])
             }

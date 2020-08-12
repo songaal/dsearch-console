@@ -129,8 +129,8 @@ function JdbcTable({dispatch, authUser, JdbcList, changedJdbcList}){
                                     <TableCell>{index + 1}</TableCell>
                                     <TableCell>{item.sourceAsMap.id}</TableCell>
                                     <TableCell>{item.sourceAsMap.name}</TableCell>
-                                    <TableCell>{item.sourceAsMap.driver}</TableCell>
-                                    <TableCell>{item.sourceAsMap.url}</TableCell>
+                                    <TableCell style={{wordBreak:"break-all"}}>{item.sourceAsMap.driver}</TableCell>
+                                    <TableCell style={{wordBreak:"break-all"}}>{item.sourceAsMap.url}</TableCell>
                                     <TableCell>{item.sourceAsMap.user}</TableCell>
                                     <TableCell>{password}</TableCell>
                                     {/* <TableCell>{item._source.password}</TableCell> */}

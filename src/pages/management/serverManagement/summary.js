@@ -38,8 +38,33 @@ const StyledTableCell = withStyles((theme) => ({
 }))(TableCell);
 const Card = styled(MuiCard)(spacing);
 
+function getLists(nodes){
+    let obj = {};
+    let sortList = [];
+    let rowList = {};
+
+    Object.values(nodes).map((row, index) =>{
+        sortList.push(row.name);
+        rowList[row.name] = row;
+    })
+    
+    sortList = sortList.sort(function(a,b){
+        if (a > b) return 1;
+        if (b > a) return -1;
+        return 0;
+    });
+
+    obj.sortList = sortList;
+    obj.rowList = rowList;
+    return obj;
+}
+
 function NodeSettingTable({server}) {
     const classes = useStyles();
+    let lists = getLists(server.nodes);
+    let sortList = lists.sortList;
+    let rowList = lists.rowList;
+
     return (
         <div style={{maxWidth: '100%'}}>
             <Typography variant="h6" className={classes.root} >
@@ -62,7 +87,30 @@ function NodeSettingTable({server}) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {Object.values(server.nodes).map((row, index) => (
+                            {sortList.map((item, index)=>{
+                                let row = rowList[item];
+                                return <TableRow>
+                                 <StyledTableCell>{index}</StyledTableCell>
+                                 <StyledTableCell>{row.name}</StyledTableCell>
+                                 <StyledTableCell>{row.version}</StyledTableCell>
+                                 <StyledTableCell>{row.host}</StyledTableCell>
+                                 <StyledTableCell>{row.ip}</StyledTableCell>
+                                 <StyledTableCell>{(row["roles"] || []).join(", ")}</StyledTableCell>
+                                 <StyledTableCell>{(row.attributes || {})["xpack.installed"] == 'true' ?
+                                     <font color="blue">설치됨</font> : <font color="red">미설치</font>}</StyledTableCell>
+                                 <StyledTableCell>{(((row.settings || {}).xpack || {}).security || {}).enabled == 'true' ?
+                                     <font color="blue">활성</font> : <font color="red">비활성</font>}</StyledTableCell>
+
+                                 <StyledTableCell>
+                                     {Object.entries(((row.settings || {})["bootstrap"] || {})).map((bootstrapOption) => (
+                                         bootstrapOption
+                                     )).join(", \n")}
+                                 </StyledTableCell>
+                             </TableRow>
+                            })}
+
+
+                            {/* {Object.values(server.nodes).map((row, index) => (
                                 <TableRow>
                                     <StyledTableCell>{index}</StyledTableCell>
                                     <StyledTableCell>{row.name}</StyledTableCell>
@@ -81,7 +129,7 @@ function NodeSettingTable({server}) {
                                         )).join(", \n")}
                                     </StyledTableCell>
                                 </TableRow>
-                            ))}
+                            ))} */}
                         </TableBody>
                     </Table>
                 </CardContent>
@@ -93,6 +141,11 @@ function NodeSettingTable({server}) {
 
 function NodePathTable({nodes}) {
     const classes = useStyles();
+
+    let lists = getLists(nodes);
+    let sortList = lists.sortList;
+    let rowList = lists.rowList;
+
     return (
         <div style={{maxWidth: '100%'}}>
             <Typography variant="h6" className={classes.root}>
@@ -111,7 +164,18 @@ function NodePathTable({nodes}) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {Object.values(nodes).map((row, index) => (
+                            {sortList.map((item, index)=>{
+                                let row = rowList[item];
+                                return <TableRow>
+                                            <StyledTableCell>{index}</StyledTableCell>
+                                            <StyledTableCell>{row.name}</StyledTableCell>
+                                            <StyledTableCell>{(((row.settings || {}).path || {}).home || "")}</StyledTableCell>
+                                            <StyledTableCell>{(((row.settings || {}).path || {}).logs || "")}</StyledTableCell>
+                                            <StyledTableCell>{(((row.settings || {}).path || {}).repo || "")}</StyledTableCell>
+                                        </TableRow>
+                                })
+                            }
+                            {/* {Object.values(nodes).map((row, index) => (
                                 <TableRow>
                                     <StyledTableCell>{index}</StyledTableCell>
                                     <StyledTableCell>{row.name}</StyledTableCell>
@@ -119,7 +183,7 @@ function NodePathTable({nodes}) {
                                     <StyledTableCell>{(((row.settings || {}).path || {}).logs || "")}</StyledTableCell>
                                     <StyledTableCell>{(((row.settings || {}).path || {}).repo || "")}</StyledTableCell>
                                 </TableRow>
-                            ))}
+                            ))} */}
                         </TableBody>
                     </Table>
                 </CardContent>
@@ -130,6 +194,10 @@ function NodePathTable({nodes}) {
 
 function NetworkTable({nodes}) {
     const classes = useStyles();
+    let lists = getLists(nodes);
+    let sortList = lists.sortList;
+    let rowList = lists.rowList;
+
     return (
         <div style={{maxWidth: '100%'}}>
             <Typography variant="h6" className={classes.root}>
@@ -150,7 +218,20 @@ function NetworkTable({nodes}) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {Object.values(nodes).map((row, index) => (
+                            {sortList.map((item, index)=>{
+                                let row = rowList[item];
+                                return <TableRow>
+                                            <StyledTableCell>{index}</StyledTableCell>
+                                            <StyledTableCell>{row.name}</StyledTableCell>
+                                            <StyledTableCell>{((row.settings || {}).network || {}).publish_host || ""}</StyledTableCell>
+                                            <StyledTableCell>{(row.http || {}).bound_address || ""}</StyledTableCell>
+                                            <StyledTableCell>{(row.transport || {}).bound_address || ""}</StyledTableCell>
+                                            <StyledTableCell>{((row.settings || {}).http || {}).port || ""}</StyledTableCell>
+                                            <StyledTableCell>{(((row.settings || {}).transport || {}).tcp || {}).port || ""}</StyledTableCell>
+                                        </TableRow>
+                                })
+                            }
+                            {/* {Object.values(nodes).map((row, index) => (
                                 <TableRow>
                                     <StyledTableCell>{index}</StyledTableCell>
                                     <StyledTableCell>{row.name}</StyledTableCell>
@@ -160,7 +241,7 @@ function NetworkTable({nodes}) {
                                     <StyledTableCell>{((row.settings || {}).http || {}).port || ""}</StyledTableCell>
                                     <StyledTableCell>{(((row.settings || {}).transport || {}).tcp || {}).port || ""}</StyledTableCell>
                                 </TableRow>
-                            ))}
+                            ))} */}
                         </TableBody>
                     </Table>
                 </CardContent>
@@ -171,6 +252,9 @@ function NetworkTable({nodes}) {
 
 function OsInfoTable({nodes}) {
     const classes = useStyles();
+    let lists = getLists(nodes);
+    let sortList = lists.sortList;
+    let rowList = lists.rowList;
     return (
         <div style={{maxWidth: '100%'}}>
             <Typography variant="h6" className={classes.root}>
@@ -191,7 +275,20 @@ function OsInfoTable({nodes}) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {Object.values(nodes).map((row, index) => (
+                            {sortList.map((item, index)=>{
+                                let row = rowList[item];
+                                return <TableRow>
+                                        <StyledTableCell>{index}</StyledTableCell>
+                                        <StyledTableCell>{row.name}</StyledTableCell>
+                                        <StyledTableCell>{(row.os || {}).name || ""} , {(row.os || {}).pretty_name || ""}</StyledTableCell>
+                                        <StyledTableCell>{(row.os || {}).arch || ""}</StyledTableCell>
+                                        <StyledTableCell>{(row.os || {}).version || ""}</StyledTableCell>
+                                        <StyledTableCell>{(row.os || {}).allocated_processors || ""}</StyledTableCell>
+                                        <StyledTableCell>{(row.os || {}).refresh_interval_in_millis || ""}</StyledTableCell>
+                                    </TableRow>
+                                })
+                            }
+                            {/* {Object.values(nodes).map((row, index) => (
                                 <TableRow>
                                     <StyledTableCell>{index}</StyledTableCell>
                                     <StyledTableCell>{row.name}</StyledTableCell>
@@ -201,7 +298,7 @@ function OsInfoTable({nodes}) {
                                     <StyledTableCell>{(row.os || {}).allocated_processors || ""}</StyledTableCell>
                                     <StyledTableCell>{(row.os || {}).refresh_interval_in_millis || ""}</StyledTableCell>
                                 </TableRow>
-                            ))}
+                            ))} */}
                         </TableBody>
                     </Table>
                 </CardContent>
@@ -216,6 +313,11 @@ function JvmInfoTable({nodes}) {
         let date = new Date(time);
         return date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2) + ' ' + date.getHours() + ':' + ('0' + (date.getMinutes())).slice(-2) + ':' + date.getSeconds()
     }
+
+    let lists = getLists(nodes);
+    let sortList = lists.sortList;
+    let rowList = lists.rowList;
+
     return (
         <div style={{maxWidth: '100%'}}>
             <Typography variant="h6" className={classes.root}>
@@ -239,7 +341,31 @@ function JvmInfoTable({nodes}) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {Object.values(nodes).map((row, index) => (
+                            {sortList.map((item, index)=>{
+                                let row = rowList[item];
+                                return <TableRow>
+                                            <StyledTableCell>{index}</StyledTableCell>
+                                            <StyledTableCell>{row.name || ""}</StyledTableCell>
+                                            <StyledTableCell>{(row.jvm || {}).pid || ""}</StyledTableCell>
+                                            <StyledTableCell>{(row.jvm || {}).version || ""}</StyledTableCell>
+                                            <StyledTableCell>{(row.jvm || {}).vm_name || ""}</StyledTableCell>
+                                            <StyledTableCell>{(row.jvm || {}).vm_version || ""}</StyledTableCell>
+                                            <StyledTableCell>{(row.jvm || {}).vm_vendor || ""}</StyledTableCell>
+                                            <StyledTableCell>{format((row.jvm || {}).start_time_in_millis)}</StyledTableCell>
+                                            <StyledTableCell>{((row.jvm || {})["gc_collectors"] || []).join(", \n")}</StyledTableCell>
+                                            <StyledTableCell>
+                                                Heap
+                                                : {(((row.jvm || {}).mem || {}).heap_init_in_bytes || 0) > (1024 * 1024 * 1024) ? (((row.jvm || {}).mem || {}).heap_init_in_bytes || 0) / (1024 * 1024 * 1024) + "GB" : (((row.jvm || {}).mem || {}).heap_init_in_bytes || 0) / (1024 * 1024) + "MB"}
+                                                <br/>
+
+                                                Non-Heap
+                                                : {(((row.jvm || {}).mem || {}).non_heap_init_in_bytes || 0) > (1024 * 1024 * 1024) ? (((row.jvm || {}).mem || {}).non_heap_init_in_bytes || 0) / (1024 * 1024 * 1024) + "GB" : (((row.jvm || {}).mem || {}).non_heap_init_in_bytes || 0) / (1024 * 1024) + "MB"}
+
+                                            </StyledTableCell>
+                                        </TableRow>
+                                })
+                            }
+                            {/* {Object.values(nodes).map((row, index) => (
                                 <TableRow>
                                     <StyledTableCell>{index}</StyledTableCell>
                                     <StyledTableCell>{row.name || ""}</StyledTableCell>
@@ -260,7 +386,7 @@ function JvmInfoTable({nodes}) {
 
                                     </StyledTableCell>
                                 </TableRow>
-                            ))}
+                            ))} */}
                         </TableBody>
                     </Table>
                 </CardContent>
@@ -271,6 +397,9 @@ function JvmInfoTable({nodes}) {
 
 function JvmOptionTable({nodes}) {
     const classes = useStyles();
+    let lists = getLists(nodes);
+    let sortList = lists.sortList;
+    let rowList = lists.rowList;
     return (
         <div style={{maxWidth: '100%'}}>
             <Typography variant="h6" className={classes.root}>
@@ -287,13 +416,22 @@ function JvmOptionTable({nodes}) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {Object.values(nodes).map((row, index) => (
+                            {sortList.map((item, index)=>{
+                                let row = rowList[item];
+                                return <TableRow>
+                                            <StyledTableCell>{index}</StyledTableCell>
+                                            <StyledTableCell>{row.name}</StyledTableCell>
+                                            <StyledTableCell>{row.jvm["input_arguments"].join(" ")}</StyledTableCell>
+                                        </TableRow>
+                                })
+                            }
+                            {/* {Object.values(nodes).map((row, index) => (
                                 <TableRow>
                                     <StyledTableCell>{index}</StyledTableCell>
                                     <StyledTableCell>{row.name}</StyledTableCell>
                                     <StyledTableCell>{row.jvm["input_arguments"].join(" ")}</StyledTableCell>
                                 </TableRow>
-                            ))}
+                            ))} */}
                         </TableBody>
                     </Table>
                 </CardContent>
@@ -304,6 +442,9 @@ function JvmOptionTable({nodes}) {
 
 function PluginInfoTable({nodes}) {
     const classes = useStyles();
+    let lists = getLists(nodes);
+    let sortList = lists.sortList;
+    let rowList = lists.rowList;
     return (
         <div style={{maxWidth: '100%'}}>
             <Typography variant="h6" className={classes.root}>
@@ -320,7 +461,16 @@ function PluginInfoTable({nodes}) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {Object.values(nodes).map((row, index) => (
+                            {sortList.map((item, index)=>{
+                                let row = rowList[item];
+                                return <TableRow>
+                                            <StyledTableCell>{index}</StyledTableCell>
+                                            <StyledTableCell>{row.name}</StyledTableCell>
+                                            <StyledTableCell>{row.jvm["input_arguments"].join(" ")}</StyledTableCell>
+                                        </TableRow>
+                                })
+                            }
+                            {/* {Object.values(nodes).map((row, index) => (
                                 <TableRow>
                                     <StyledTableCell>{index}</StyledTableCell>
                                     <StyledTableCell>{row.name}</StyledTableCell>
@@ -332,7 +482,7 @@ function PluginInfoTable({nodes}) {
 
                                     </StyledTableCell>
                                 </TableRow>
-                            ))}
+                            ))} */}
                         </TableBody>
                     </Table>
                 </CardContent>
@@ -344,6 +494,9 @@ function PluginInfoTable({nodes}) {
 
 function ModuleInfoTable({nodes}) {
     const classes = useStyles();
+    let lists = getLists(nodes);
+    let sortList = lists.sortList;
+    let rowList = lists.rowList;
     return (
         <div style={{maxWidth: '100%'}}>
             <Typography variant="h6" className={classes.root}>
@@ -360,7 +513,20 @@ function ModuleInfoTable({nodes}) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {Object.values(nodes).map((node, index) => (
+                            {sortList.map((item, index)=>{
+                                let row = rowList[item];
+                                return <TableRow>
+                                            <StyledTableCell>{index}</StyledTableCell>
+                                            <StyledTableCell>{row.name}</StyledTableCell>
+                                            <StyledTableCell>
+                                                {Object.values(row["modules"]).map((module, index) => (
+                                                    module.name + ':' + module.version
+                                                )).join(", ")}
+                                            </StyledTableCell>
+                                        </TableRow>
+                                })
+                            }
+                            {/* {Object.values(nodes).map((node, index) => (
                                 <TableRow>
                                     <StyledTableCell>{index}</StyledTableCell>
                                     <StyledTableCell>{node.name}</StyledTableCell>
@@ -370,7 +536,7 @@ function ModuleInfoTable({nodes}) {
                                         )).join(", ")}
                                     </StyledTableCell>
                                 </TableRow>
-                            ))}
+                            ))} */}
                         </TableBody>
                     </Table>
                 </CardContent>
