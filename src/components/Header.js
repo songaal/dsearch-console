@@ -4,7 +4,6 @@ import {connect, useDispatch, useSelector} from "react-redux";
 import styled, {withTheme} from "styled-components";
 import {darken} from "polished";
 import {Autocomplete } from '@material-ui/lab';
-// import Autocomplete from 'react-autocomplete';
 
 import {
     AppBar as MuiAppBar,

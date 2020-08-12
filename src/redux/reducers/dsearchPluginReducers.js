@@ -1,5 +1,4 @@
 import * as types from '../constants';
-import Autocomplete from 'react-autocomplete';
 
 let initState = {
    pluginResponse : {},
