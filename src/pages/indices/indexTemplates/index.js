@@ -49,7 +49,12 @@ function Templates({dispatch, authUser, templates}) {
     useEffect(() => {
         dispatch(setIndexTemplatesAction())
     }, [])
-    const rows = templates.map(template => createData(template['name'], template['index_patterns']));
+
+    let list = templates.map(template => createData(template['name'], template['index_patterns']));
+    const rows = list.sort(function (a,b){
+        if(a['name'] >= b['name']) return 1;
+        else return -1;
+    })
     return (
         <React.Fragment>
             <Helmet title="템플릿"/>

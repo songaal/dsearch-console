@@ -41,6 +41,14 @@ function Index({dispatch, indices}) {
     function handleChecked(event) {
         setChecked(!checked)
     }
+    let list = indices.filter(index => checked ? true : index['index'].startsWith(".") === false ).map((index, no) => { return index; })
+    let sortedIndices = list.sort(function (a,b){
+        if(a['index'] > b['index']){
+            return 1;
+        }else{
+            return -1;
+        }
+    });
 
     return (
         <React.Fragment>
@@ -84,7 +92,20 @@ function Index({dispatch, indices}) {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {
+                        {sortedIndices.map((index, no) => {
+                            return (
+                                <TableRow key={index['uuid']}>
+                                    <TableCell component="th" scope="row" align="center">{no + 1}</TableCell>
+                                    <TableCell align="center" >
+                                        <Link style={{cursor: "pointer"}} onClick={() => moveDetail(index['uuid'])}>
+                                            {index['index']}
+                                        </Link>
+                                    </TableCell>
+                                    <TableCell align="center">{index['status']}</TableCell>
+                                </TableRow>
+                            )
+                        })}
+                        {/* {
                             indices.filter(index => checked ? true : index['index'].startsWith(".") === false ).map((index, no) => {
                                 return (
                                     <TableRow key={index['uuid']}>
@@ -98,7 +119,7 @@ function Index({dispatch, indices}) {
                                     </TableRow>
                                 )
                             })
-                        }
+                        } */}
                     </TableBody>
                 </Table>
             </TableContainer>
