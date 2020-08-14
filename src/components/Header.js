@@ -313,8 +313,9 @@ const DashBoardHeader = ({theme, onDrawerToggle}) => {
 
                     dispatch(setAutoCompleteAction(value)).then((data) => {
                         let payload = data.data;
-                        console.log(payload);
-                        handleCache(payload.q, payload.result)
+                        if(payload.q !== undefined && payload.result !== undefined && payload.q !== null && payload.result !== null) {
+                            handleCache(payload.q, payload.result)
+                        }
                     }).catch(err => { console.log(err) });
             }else if(value.length > 0){
                 setItemList(inputCache[value])
