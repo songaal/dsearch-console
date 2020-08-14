@@ -245,7 +245,7 @@ function JdbcSource({errorHandleJdbcSource, jdbcId, jdbcName, jdbcDriver, jdbcAd
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>JDBC파라미터</Typography>
-                <TextField error={errorHandleJdbcSource.params} id="jdbcSourceParams" size="small" fullWidth variant="outlined" inputRef={jdbcParams} />
+                <TextField error={errorHandleJdbcSource.params} id="jdbcSourceParams" size="small" fullWidth variant="outlined" inputRef={jdbcParams} placeholder="characterEncoding=utf-8" />
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>URL</Typography>
@@ -373,7 +373,7 @@ function JdbcCard({dispatch, authUser, JdbcList, JdbcAccessTest, changedJdbcList
         jdbcdSourceObj.user = jdbcUser.current.value;
         jdbcdSourceObj.password = jdbcPassword.current.value;
         jdbcdSourceObj.params = jdbcParams.current.value;
-        jdbcdSourceObj.url = jdbcURL.current.value + jdbcAddr.current.value + ":"+ jdbcPort.current.value + "/" + jdbcDB.current.value + jdbcParams.current.value;
+        jdbcdSourceObj.url = jdbcURL.current.value + jdbcAddr.current.value + ":"+ jdbcPort.current.value + "/" + jdbcDB.current.value + "?" + jdbcParams.current.value;
 
         setAccessFlag(true);
         dispatch(setJDBCAccessTest(jdbcdSourceObj));

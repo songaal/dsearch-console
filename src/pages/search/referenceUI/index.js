@@ -16,8 +16,7 @@ import {
     CardContent as MuiCardContent,
     Hidden,
     List as MuiList,
-    ListItem as MuiListItem,
-    Snackbar
+    ListItem as MuiListItem
 } from "@material-ui/core";
 import {} from "@material-ui/icons";
 import MuiAlert from '@material-ui/lab/Alert';
@@ -492,7 +491,7 @@ function AutocompleteRegister({dispatch, acUrl}){
     return (
         <>
             <Box display="flex" mt={3}>
-                <TextField value={autoCompleteUrl} style={{ width: "90%", marginRight: "10px" }} placeholder="http://auto-complete.danawa.com/q={keyword}" onChange={handleAutoCompleteURL} />
+                <TextField value={autoCompleteUrl} style={{ width: "90%", marginRight: "10px" }} placeholder="http://auto-complete.danawa.com/q=" onChange={handleAutoCompleteURL} />
                 <Button style={{ width: "10%", marginLeft: "10px" }} variant="outlined" color="primary" onClick={handleSubmitURL} >
                     등록
                 </Button>
