@@ -302,7 +302,7 @@ function AddGuideCard(props) {
                          justifyContent="center"
                          m={3}
                     >
-                        <Link href="#" onClick={() => console.log("click")}>
+                        <Link target="_blank" href="https://github.com/danawalab/dsearch/blob/master/README.md">
                             바로가기
                         </Link>
                     </Box>
