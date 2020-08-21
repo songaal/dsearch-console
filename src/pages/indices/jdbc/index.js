@@ -48,7 +48,7 @@ const Divider = styled(MuiDivider)(spacing);
 
 const TextField = styled(MuiTextField)(spacing);
 
-function JdbcTable({dispatch, authUser, JdbcList, changedJdbcList}){
+function JdbcTable({dispatch, authUser, JdbcList, handleAccessFlag}){
     const [jdbcSourceEditDialogOpen, setJdbcSourceEditDialogOpenAction] = useState(false)
     const [jdbcListIndex, setJdbcListIndex] = useState(-1)
 
@@ -90,6 +90,17 @@ function JdbcTable({dispatch, authUser, JdbcList, changedJdbcList}){
         setJdbcSourceEditDialogOpenAction(true)
     };
 
+    function accessTestFromTable(item){
+        let jdbcSourceObj = {};
+        jdbcSourceObj.driver = item.sourceAsMap.driver;
+        jdbcSourceObj.user = item.sourceAsMap.user;
+        jdbcSourceObj.password = item.sourceAsMap.password;
+        jdbcSourceObj.url = item.sourceAsMap.url;
+        console.log(jdbcSourceObj);
+        handleAccessFlag(true);
+        dispatch(setJDBCAccessTest(jdbcSourceObj))
+    }
+
     return (
                 <Table>
                     <colgroup>
@@ -111,6 +122,7 @@ function JdbcTable({dispatch, authUser, JdbcList, changedJdbcList}){
                             <TableCell>URL</TableCell>
                             <TableCell>사용자</TableCell>
                             <TableCell>비밀번호</TableCell>
+                            <TableCell></TableCell>
                             <TableCell></TableCell>
                         </TableRow>
                     </TableHead>
@@ -134,8 +146,10 @@ function JdbcTable({dispatch, authUser, JdbcList, changedJdbcList}){
                                     <TableCell>{item.sourceAsMap.user}</TableCell>
                                     <TableCell>{password}</TableCell>
                                     {/* <TableCell>{item._source.password}</TableCell> */}
+                                    <TableCell><Link href="#" onClick={()=>accessTestFromTable(item)}> 연결테스트 </Link></TableCell>
                                     {authUser.role.index ? <TableCell><Link id={index} href="#" onClick={handleEditDialogOpen}>수정</Link></TableCell> : <TableCell></TableCell>}
                                 </TableRow>})):(<TableRow><TableCell align="center" colSpan={8}>{"현재 등록된 JDBC가 없습니다."}</TableCell></TableRow>)}
+                                
                     </TableBody>
                     <Dialog open={jdbcSourceEditDialogOpen} onClose={handleEditDialogClose} >
                         <DialogTitle id="dialog-title">{"JDBC 소스"}</DialogTitle>
@@ -157,13 +171,12 @@ function JdbcTable({dispatch, authUser, JdbcList, changedJdbcList}){
                             <Button variant="contained" style={{backgroundColor:"red", color:"white"}} onClick={handleDeleteJdbcSource}>삭제</Button>
                             <div style={{flex: '1 0 0'}} />
                             <Button variant="contained" color="default" onClick={handleEditDialogClose}>닫기</Button>
-                            <Button variant="contained" color="primary" onClick={handleEditJdbcSource}>저장</Button>
-                        </DialogActions>
-                    </Dialog>
-                </Table>
+                    <Button variant="contained" color="primary" onClick={handleEditJdbcSource}>저장</Button>
+                </DialogActions>
+            </Dialog>
+        </Table>
     );
 }
-
 
 function JdbcSourceEdit({JdbcList, JdbcListIndex, editId, editName, editDriver, editURL, editUser, editPassword}){
     let JdbcSource = JdbcList.hits.hits[JdbcListIndex];
@@ -198,12 +211,12 @@ function JdbcSourceEdit({JdbcList, JdbcListIndex, editId, editName, editDriver, 
     );
 }
 
-function JdbcSource({errorHandleJdbcSource, jdbcId, jdbcName, jdbcDriver, jdbcAddr, jdbcPort, jdbcDB, jdbcUser, jdbcPassword, jdbcParams, jdbcURL, setProvider}){
+function JdbcSource({errorHandleJdbcSource, jdbcId, jdbcName, jdbcDriver, jdbcAddr, jdbcPort, jdbcDB, jdbcUser, jdbcPassword, jdbcParams, jdbcURL, setProvider, handleJdbcURL}){
     return (
         <Box p={2}>
             <Box display="flex" m={3}  alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>아이디</Typography>
-                <TextField error={errorHandleJdbcSource.id} id="jdbcSourceId" size="small" placeholder="ID" fullWidth variant="outlined"  inputRef={jdbcId} />
+                <TextField error={errorHandleJdbcSource.id} id="jdbcSourceId" size="small" placeholder="ID" fullWidth variant="outlined"  inputRef={jdbcId}/>
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>이름</Typography>
@@ -213,7 +226,6 @@ function JdbcSource({errorHandleJdbcSource, jdbcId, jdbcName, jdbcDriver, jdbcAd
                 <Typography style={{ width: "150px" }}>DB제공자</Typography>
                 <Select id="jdbcSourceDriver" fullWidth onChange={setProvider} defaultValue="">
                     {drivers.map((item, index) => {
-                        console.log(item, index);
                         if(index === 0) return <MenuItem key={item} value={item}> {item} Driver</MenuItem>;
                         return <MenuItem key={item} value={item}> {item} Driver</MenuItem>;
                     })}
@@ -221,23 +233,23 @@ function JdbcSource({errorHandleJdbcSource, jdbcId, jdbcName, jdbcDriver, jdbcAd
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>드라이버</Typography>
-                <TextField error={errorHandleJdbcSource.driver} id="jdbcSourceDbSupport" size="small" fullWidth variant="outlined" inputRef={jdbcDriver} />
+                <TextField error={errorHandleJdbcSource.driver} id="jdbcSourceDbSupport" size="small" fullWidth variant="outlined" inputRef={jdbcDriver} onChange={handleJdbcURL}/>
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>호스트주소</Typography>
-                <TextField error={errorHandleJdbcSource.address} id="jdbcSourceHostAddress" size="small" placeholder="127.0.0.1" fullWidth variant="outlined" inputRef={jdbcAddr} />
+                <TextField error={errorHandleJdbcSource.address} id="jdbcSourceHostAddress" size="small" placeholder="127.0.0.1" fullWidth variant="outlined" inputRef={jdbcAddr} onChange={handleJdbcURL} />
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>포트</Typography>
-                <TextField error={errorHandleJdbcSource.port} id="jdbcSourcePort" size="small" placeholder="3306" fullWidth variant="outlined" inputRef={jdbcPort} />
+                <TextField error={errorHandleJdbcSource.port} id="jdbcSourcePort" size="small" placeholder="3306" fullWidth variant="outlined" inputRef={jdbcPort} onChange={handleJdbcURL} />
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>DB명</Typography>
-                <TextField error={errorHandleJdbcSource.db_name} id="jdbcSourceDbName" size="small" fullWidth variant="outlined" inputRef={jdbcDB}/>
+                <TextField error={errorHandleJdbcSource.db_name} id="jdbcSourceDbName" size="small" fullWidth variant="outlined" inputRef={jdbcDB} onChange={handleJdbcURL}/>
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>사용자</Typography>
-                <TextField error={errorHandleJdbcSource.user} id="jdbcSourceUser" size="small" placeholder="USER" fullWidth variant="outlined" inputRef ={jdbcUser}/>
+                <TextField error={errorHandleJdbcSource.user} id="jdbcSourceUser" size="small" placeholder="USER" fullWidth variant="outlined" inputRef ={jdbcUser} />
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>비밀번호</Typography>
@@ -245,27 +257,17 @@ function JdbcSource({errorHandleJdbcSource, jdbcId, jdbcName, jdbcDriver, jdbcAd
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>JDBC파라미터</Typography>
-                <TextField error={errorHandleJdbcSource.params} id="jdbcSourceParams" size="small" fullWidth variant="outlined" inputRef={jdbcParams} placeholder="characterEncoding=utf-8" />
+                <TextField error={errorHandleJdbcSource.params} id="jdbcSourceParams" size="small" fullWidth variant="outlined" inputRef={jdbcParams} placeholder="characterEncoding=utf-8" onChange={handleJdbcURL}/>
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>URL</Typography>
-                <TextField error={errorHandleJdbcSource.url} id="jdbcSourceURL" size="small" placeholder="jdbc:mysql://" fullWidth variant="outlined" inputRef={jdbcURL}/>
+                {/* <TextField error={errorHandleJdbcSource.url} disabled id="jdbcSourceURL" size="small" placeholder="jdbc:mysql://" fullWidth variant="outlined" inputRef={jdbcURL}/> */}
+                <TextField error={errorHandleJdbcSource.url} id="jdbcSourceURL" size="small" placeholder="jdbc:mysql://" fullWidth variant="outlined" value={jdbcURL}/>
             </Box>
         </Box>
     );
 }
 
-function AccessTestSuccess({JdbcAccessTest, accessFlag, handleAccessFlag}){
-
-    return <Snackbar open={accessFlag} autoHideDuration={3000} onClose={() => {handleAccessFlag(); JdbcAccessTest.message = false; }}>
-                {JdbcAccessTest.message ? 
-                    <MuiAlert elevation={6} variant="filled" severity="info">{"연결테스트 성공"} </MuiAlert> : <MuiAlert elevation={6} variant="filled" severity="error">{"연결테스트 실패"}</MuiAlert>}
-            </Snackbar>
-
-    // return <Snackbar open={JdbcAccessTest.message} autoHideDuration={5000} onClose={() => {JdbcAccessTest.message = false;}}>
-    //             <MuiAlert elevation={6} variant="filled" severity="info"> 연결테스트 성공 </MuiAlert>
-    //         </Snackbar>
-}
 
 function JdbcCard({dispatch, authUser, JdbcList, JdbcAccessTest, changedJdbcList}) {
     const [jdbcSourceDialogOpen, setjdbcSourceDialogOpenAction] = useState(false)
@@ -297,20 +299,27 @@ function JdbcCard({dispatch, authUser, JdbcList, JdbcAccessTest, changedJdbcList
     let jdbcUser = useRef("");
     let jdbcPassword = useRef("");
     let jdbcParams = useRef("");
-    let jdbcURL = useRef("");
+    // let jdbcURL = useRef("");
+    let [jdbcURL, setJdbcURL] = useState("");
 
-    function handleAccessFlag(){
-        setAccessFlag(false)
+    function handleJdbcURL(){
+        let url = "";
+        if(jdbcParams.current.value !== null && jdbcParams.current.value.length > 0)
+            url = JdbcDriversURL[jdbcProvider] + jdbcAddr.current.value + ":"+ jdbcPort.current.value + "/" + jdbcDB.current.value + "?" + jdbcParams.current.value;
+        else
+            url = JdbcDriversURL[jdbcProvider] + jdbcAddr.current.value + ":"+ jdbcPort.current.value + "/" + jdbcDB.current.value;
+        setJdbcURL(url);
+    }
+
+    function handleAccessFlag(flag){
+        setAccessFlag(flag)
     }
 
     function setProvider(event, index){
         jdbcDriver.current.value = JdbcDrivers[event.target.value]
-        jdbcURL.current.value = JdbcDriversURL[event.target.value]
-        // console.log("index.props.value ", index.props.value);
-        // console.log("event, target.value",);
         setJdbcProvider(event.target.value);
     }
-    
+
     const handleSourceDialogClose = (event) => {
         setjdbcSourceDialogOpenAction(false)
     };
@@ -331,7 +340,7 @@ function JdbcCard({dispatch, authUser, JdbcList, JdbcAccessTest, changedJdbcList
         })
         setjdbcSourceDialogOpenAction(true)
     };
-
+    
     const accessTest = (event) => {
         let flag = false;
         let change = {
@@ -354,8 +363,9 @@ function JdbcCard({dispatch, authUser, JdbcList, JdbcAccessTest, changedJdbcList
         if(jdbcPort.current.value.length === 0){ flag = true; change.port = true; }
         if(jdbcUser.current.value.length === 0){ flag = true; change.user = true; }
         if(jdbcPassword.current.value.length === 0){ flag = true; change.password = true; }
-        if(jdbcURL.current.value.length === 0) { flag = true; change.url = true; }
+        // if(jdbcURL.current.value.length === 0) { flag = true; change.url = true; }
         if(jdbcDB.current.value.length === 0) { flag = true; change.db_name = true; }
+        if(jdbcURL.length === 0) { flag = true; change.url = true; }
 
         if(flag){
             setErrorHandleJdbcSource(change);
@@ -363,22 +373,13 @@ function JdbcCard({dispatch, authUser, JdbcList, JdbcAccessTest, changedJdbcList
         }
 
         let jdbcdSourceObj = {};
-        jdbcdSourceObj.id = jdbcId.current.value
-        jdbcdSourceObj.name =  jdbcName.current.value
-        jdbcdSourceObj.provider = jdbcProvider;
         jdbcdSourceObj.driver = jdbcDriver.current.value;
-        jdbcdSourceObj.address = jdbcAddr.current.value;
-        jdbcdSourceObj.port = jdbcPort.current.value;
-        jdbcdSourceObj.db_name = jdbcDB.current.value;
         jdbcdSourceObj.user = jdbcUser.current.value;
         jdbcdSourceObj.password = jdbcPassword.current.value;
-        jdbcdSourceObj.params = jdbcParams.current.value;
-        jdbcdSourceObj.url = jdbcURL.current.value + jdbcAddr.current.value + ":"+ jdbcPort.current.value + "/" + jdbcDB.current.value + "?" + jdbcParams.current.value;
-
+        jdbcdSourceObj.url = jdbcURL
         setAccessFlag(true);
         dispatch(setJDBCAccessTest(jdbcdSourceObj));
     }
-
 
     /* 연결테스트를 하지 않아도 추가할 수 있어야 함*/
     const addJdbcSouce = (event) => {
@@ -403,8 +404,9 @@ function JdbcCard({dispatch, authUser, JdbcList, JdbcAccessTest, changedJdbcList
         if(jdbcPort.current.value.length === 0){ flag = true; change.port = true; }
         if(jdbcUser.current.value.length === 0){ flag = true; change.user = true; }
         if(jdbcPassword.current.value.length === 0){ flag = true; change.password = true; }
-        if(jdbcURL.current.value.length === 0) { flag = true; change.url = true; }
         if(jdbcDB.current.value.length === 0) { flag = true; change.db_name = true; }
+        if(jdbcURL.length === 0) { flag = true; change.url = true; }
+        // if(jdbcURL.current.value.length === 0) { flag = true; change.url = true; }
 
         if(flag){
             setErrorHandleJdbcSource(change);
@@ -422,15 +424,13 @@ function JdbcCard({dispatch, authUser, JdbcList, JdbcAccessTest, changedJdbcList
         addJdbcSource.user = jdbcUser.current.value;
         addJdbcSource.password = jdbcPassword.current.value;
         addJdbcSource.params = jdbcParams.current.value;
-        addJdbcSource.url = jdbcURL.current.value + jdbcAddr.current.value + ":"+ jdbcPort.current.value + "/" + jdbcDB.current.value + jdbcParams.current.value;
+        addJdbcSource.url = jdbcURL;
         setjdbcSourceDialogOpenAction(false);
         dispatch(addJdbcIndex(addJdbcSource))
     }
 
     return (
         <React.Fragment>
-
-
             <Box align={'right'}>
                 {
                     authUser.role.index ?
@@ -447,10 +447,10 @@ function JdbcCard({dispatch, authUser, JdbcList, JdbcAccessTest, changedJdbcList
 
             <Card mb={6}>
                 <CardContent>
-                    <JdbcTable dispatch={dispatch} authUser={authUser} JdbcList={JdbcList} JdbcAccessTest={JdbcAccessTest} changedJdbcList={changedJdbcList}></JdbcTable>
+                    <JdbcTable dispatch={dispatch} authUser={authUser} JdbcList={JdbcList} handleAccessFlag={handleAccessFlag} changedJdbcList={changedJdbcList}></JdbcTable>
                     <Dialog open={jdbcSourceDialogOpen} onClose={handleSourceDialogClose} >
                         <DialogTitle id="dialog-title">{"JDBC 소스"}</DialogTitle>
-                        <DialogContent style={{width:"100%"}}>
+                        <DialogContent style={{ width: "100%" }}>
                             <label>설정</label>
                             <Divider />
                             <JdbcSource
@@ -458,6 +458,7 @@ function JdbcCard({dispatch, authUser, JdbcList, JdbcAccessTest, changedJdbcList
                                 jdbcId={jdbcId}
                                 jdbcName={jdbcName}
                                 jdbcDriver ={jdbcDriver}
+                                handleJdbcURL = {handleJdbcURL}
                                 setProvider = {setProvider}
                                 jdbcAddr ={jdbcAddr}
                                 jdbcPort = {jdbcPort}
@@ -467,7 +468,6 @@ function JdbcCard({dispatch, authUser, JdbcList, JdbcAccessTest, changedJdbcList
                                 jdbcParams = {jdbcParams}
                                 jdbcURL = {jdbcURL}
                             />
-                            <AccessTestSuccess accessFlag={accessFlag} JdbcAccessTest={JdbcAccessTest} handleAccessFlag={handleAccessFlag}/>
                         </DialogContent>
                         <DialogActions>
                             <Button variant="contained" color="default" onClick={handleSourceDialogClose}>닫기</Button>
@@ -475,6 +475,10 @@ function JdbcCard({dispatch, authUser, JdbcList, JdbcAccessTest, changedJdbcList
                             <Button variant="contained" color="primary" onClick={addJdbcSouce}>추가</Button>
                         </DialogActions>
                     </Dialog>
+                    <Snackbar open={accessFlag} autoHideDuration={3000} onClose={() => { handleAccessFlag(false); JdbcAccessTest.message = false; }}>
+                        {JdbcAccessTest.message ?
+                            <MuiAlert elevation={6} variant="filled" severity="info">{"연결테스트 성공"} </MuiAlert> : <MuiAlert elevation={6} variant="filled" severity="error">{"연결테스트 실패"}</MuiAlert>}
+                    </Snackbar>
                 </CardContent>
             </Card>
         </React.Fragment>

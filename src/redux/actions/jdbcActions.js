@@ -12,7 +12,9 @@ export const setJDBCAccessTest = (data) => dispatch => client.call({
     uri: "/jdbc/",
     method: "POST",
     data: data
-}).then(response => dispatch({type:SET_JDBC_ACCESS_TEST , payload: response.data}))
+}).then(response => {
+    dispatch({type:SET_JDBC_ACCESS_TEST , payload: response.data}); console.log(response);
+})
 
 export const addJdbcIndex = (data) => dispatch => client.call({
     uri: "/jdbc/add",
