@@ -144,7 +144,7 @@ function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetai
     if (analyzerList !== undefined && analyzerList !== null) {
         Object.keys(analyzerList).filter(analyzerKey => !analyzerKey.startsWith(".")).map(analyzerKey => {
             const analysis = analyzerList[analyzerKey].settings.index.analysis;
-            if (analysis !== undefined) {
+            if (analysis !== undefined && analysis.analyzer !== undefined) {
                 Object.keys(analysis.analyzer).map(analyzer => index2AnalyzerList.push(analyzerKey + "/" + analyzer))
             }
         })
