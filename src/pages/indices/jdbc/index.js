@@ -51,6 +51,7 @@ const TextField = styled(MuiTextField)(spacing);
 function JdbcTable({dispatch, authUser, JdbcList, handleAccessFlag}){
     const [jdbcSourceEditDialogOpen, setJdbcSourceEditDialogOpenAction] = useState(false)
     const [jdbcListIndex, setJdbcListIndex] = useState(-1)
+    const [processConnTest, setProcessConnTest] = useState(false)
 
     let editId = useRef("");
     let editName = useRef("");
@@ -91,14 +92,19 @@ function JdbcTable({dispatch, authUser, JdbcList, handleAccessFlag}){
     };
 
     function accessTestFromTable(item){
+        setProcessConnTest(true)
+
         let jdbcSourceObj = {};
         jdbcSourceObj.driver = item.sourceAsMap.driver;
         jdbcSourceObj.user = item.sourceAsMap.user;
         jdbcSourceObj.password = item.sourceAsMap.password;
         jdbcSourceObj.url = item.sourceAsMap.url;
-        console.log(jdbcSourceObj);
-        handleAccessFlag(true);
         dispatch(setJDBCAccessTest(jdbcSourceObj))
+        setTimeout(() => {
+            setProcessConnTest(false)
+            handleAccessFlag(true);
+        }, 500)
+
     }
 
     return (
@@ -122,8 +128,8 @@ function JdbcTable({dispatch, authUser, JdbcList, handleAccessFlag}){
                             <TableCell>URL</TableCell>
                             <TableCell>사용자</TableCell>
                             <TableCell>비밀번호</TableCell>
-                            <TableCell></TableCell>
-                            <TableCell></TableCell>
+                            <TableCell align={"center"}>테스트</TableCell>
+                            {authUser.role.index ? <TableCell align={"center"}> 액션</TableCell> : null}
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -138,16 +144,16 @@ function JdbcTable({dispatch, authUser, JdbcList, handleAccessFlag}){
 
                                 password = password.substring(0, 2) + star + password.substring(password.length-1, password.length);
                                 return <TableRow key={item.sourceAsMap.id}>
-                                    <TableCell>{index + 1}</TableCell>
-                                    <TableCell>{item.sourceAsMap.id}</TableCell>
-                                    <TableCell>{item.sourceAsMap.name}</TableCell>
-                                    <TableCell style={{wordBreak:"break-all"}}>{item.sourceAsMap.driver}</TableCell>
-                                    <TableCell style={{wordBreak:"break-all"}}>{item.sourceAsMap.url}</TableCell>
-                                    <TableCell>{item.sourceAsMap.user}</TableCell>
-                                    <TableCell>{password}</TableCell>
+                                    <TableCell style={{whiteSpace: "nowrap"}}>{index + 1}</TableCell>
+                                    <TableCell style={{whiteSpace: "nowrap"}}>{item.sourceAsMap.id}</TableCell>
+                                    <TableCell style={{whiteSpace: "nowrap"}}>{item.sourceAsMap.name}</TableCell>
+                                    <TableCell style={{whiteSpace: "nowrap"}} style={{wordBreak:"break-all"}}>{item.sourceAsMap.driver}</TableCell>
+                                    <TableCell style={{whiteSpace: "nowrap"}} style={{wordBreak:"break-all"}}>{item.sourceAsMap.url}</TableCell>
+                                    <TableCell style={{whiteSpace: "nowrap"}}>{item.sourceAsMap.user}</TableCell>
+                                    <TableCell style={{whiteSpace: "nowrap"}}>{password}</TableCell>
                                     {/* <TableCell>{item._source.password}</TableCell> */}
-                                    <TableCell><Link href="#" onClick={()=>accessTestFromTable(item)}> 연결테스트 </Link></TableCell>
-                                    {authUser.role.index ? <TableCell><Link id={index} href="#" onClick={handleEditDialogOpen}>수정</Link></TableCell> : <TableCell></TableCell>}
+                                    <TableCell style={{whiteSpace: "nowrap"}}><Button variant={"outlined"} color={"primary"} disabled={processConnTest} onClick={()=>accessTestFromTable(item)}> 연결테스트 </Button></TableCell>
+                                    {authUser.role.index ? <TableCell><Button variant={"outlined"} id={index} color={"primary"} style={{whiteSpace: "nowrap"}} onClick={handleEditDialogOpen}>수정</Button></TableCell> : <TableCell></TableCell>}
                                 </TableRow>})):(<TableRow><TableCell align="center" colSpan={8}>{"현재 등록된 JDBC가 없습니다."}</TableCell></TableRow>)}
                                 
                     </TableBody>
@@ -378,9 +384,7 @@ function JdbcCard({dispatch, authUser, JdbcList, JdbcAccessTest, changedJdbcList
         jdbcdSourceObj.password = jdbcPassword.current.value;
         jdbcdSourceObj.url = jdbcURL
         dispatch(setJDBCAccessTest(jdbcdSourceObj)).then(() => {
-            setTimeout(() => {
-                setAccessFlag(true);
-            }, 500)
+            setAccessFlag(true);
         });
     }
 

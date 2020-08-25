@@ -14,6 +14,7 @@ export const setJDBCAccessTest = (data) => dispatch => client.call({
     data: data
 }).then(response => {
     dispatch({type:SET_JDBC_ACCESS_TEST , payload: response.data}); console.log(response);
+    return true
 })
 
 export const addJdbcIndex = (data) => dispatch => client.call({
