@@ -313,9 +313,12 @@ const DashBoardHeader = ({theme, onDrawerToggle}) => {
 
                     dispatch(setAutoCompleteAction(value)).then((data) => {
                         let payload = data.data;
-                        if(payload.q !== undefined && payload.result !== undefined && payload.q !== null && payload.result !== null) {
-                            handleCache(payload.q, payload.result)
+                        if(payload.keyword !== undefined && payload.result !== undefined && payload.keyword !== null && payload.result !== null) {
+                            handleCache(payload.keyword, payload.result.map(item => item.item))
                         }
+                        // if(payload.q !== undefined && payload.result !== undefined && payload.q !== null && payload.result !== null) {
+                        //     handleCache(payload.q, payload.result)
+                        // }
                     }).catch(err => { console.log(err) });
             }else if(value.length > 0){
                 setItemList(inputCache[value])
@@ -358,6 +361,7 @@ const DashBoardHeader = ({theme, onDrawerToggle}) => {
                                         <div ref={params.InputProps.ref}>
                                             <Input 
                                                 {...params.inputProps} 
+
                                                 style={{ width: "100%" }} 
                                                 placeholder="검색 (Enter 입력)" 
                                                 value={keyword} 
