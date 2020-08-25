@@ -377,8 +377,11 @@ function JdbcCard({dispatch, authUser, JdbcList, JdbcAccessTest, changedJdbcList
         jdbcdSourceObj.user = jdbcUser.current.value;
         jdbcdSourceObj.password = jdbcPassword.current.value;
         jdbcdSourceObj.url = jdbcURL
-        setAccessFlag(true);
-        dispatch(setJDBCAccessTest(jdbcdSourceObj));
+        dispatch(setJDBCAccessTest(jdbcdSourceObj)).then(() => {
+            setTimeout(() => {
+                setAccessFlag(true);
+            }, 500)
+        });
     }
 
     /* 연결테스트를 하지 않아도 추가할 수 있어야 함*/

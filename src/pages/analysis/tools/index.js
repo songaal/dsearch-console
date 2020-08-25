@@ -178,13 +178,17 @@ function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetai
         let analyzer_contents = document.getElementById("analyzer_contents");
         let analyzer_select = document.getElementById("analyzer_select");
         let data = {};
-        if(toolsTypeAction == 'brief') {
+        if(toolsTypeAction === 'brief') {
             let split = analyzer_select.innerHTML.split('/');
-            let index = split[0].replace(' ', '');
-            let analyzer = split[1].replace(' ', '');
-            data.text = analyzer_contents.value;
-            data.analyzer = analyzer
-            dispatch(actionAnalyzer(index, data)).catch((error) =>{console.log(error)});
+            if (split && split.length === 2) {
+                let index = split[0].replace(' ', '');
+                let analyzer = split[1].replace(' ', '');
+                data.text = analyzer_contents.value;
+                data.analyzer = analyzer
+                dispatch(actionAnalyzer(index, data)).catch((error) =>{console.log(error)});
+            } else {
+                console.error('err', split)
+            }
         }else {
             let plugin = analyzer_select.innerHTML
             plugin = plugin.replace(/ /gi, "");

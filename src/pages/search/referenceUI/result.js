@@ -111,7 +111,7 @@ function SearchPanel(documents, aggregations, template, pagination) {
                                                         <Grid item xs={8}>
                                                             <Box style={{width: '100%'}}>
                                                                 <Box px={3} py={2} style={{
-                                                                    backgroundColor: Color.blueGrey['200'],
+                                                                    backgroundColor: "#F7F9FC",
                                                                     borderRadius: '5px'
                                                                 }}>
                                                                     <a href={clickUrl} target="_blank">
