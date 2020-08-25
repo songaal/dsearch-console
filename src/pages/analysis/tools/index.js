@@ -64,8 +64,8 @@ function BriefResult({resultBrief}){
                 </colgroup>
                 <TableBody>
                 {total.length > 0 ?
-                    total.map((listItem) => {
-                        return (<TableRow hover key={item}>
+                    total.map((listItem, listItemIndex) => {
+                        return (<TableRow hover key={listItemIndex}>
                             {listItem.map((item) => { return <TableCell> {item}</TableCell> })}
                         </TableRow>)
                     })
