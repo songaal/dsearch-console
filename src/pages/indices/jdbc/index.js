@@ -157,7 +157,7 @@ function JdbcTable({dispatch, authUser, JdbcList, handleAccessFlag}){
                                 </TableCell>
                                 {authUser.role.index ?
                                     <TableCell>
-                                        <Button variant={"outlined"} id={index} color={"primary"} style={{whiteSpace: "nowrap"}} onClick={() => handleEditDialogOpen(item.sourceAsMap.id)}>수정</Button>
+                                        <Button variant={"outlined"} id={index} color={"primary"} style={{whiteSpace: "nowrap"}} onClick={() => handleEditDialogOpen(index)}>수정</Button>
                                     </TableCell>
                                     :
                                     <TableCell></TableCell>
