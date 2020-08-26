@@ -92,35 +92,35 @@ function DetailResult({resultDetail}){
             <TableCell>
                 <Typography variant="h4">1. {resultDetail.result[2].key}</Typography>
                     <br />
-                    <div dangerouslySetInnerHTML={ {__html: resultDetail.resutl[2].value} }></div>
+                    <div dangerouslySetInnerHTML={ {__html: resultDetail.result[2].value} }></div>
                 </TableCell>
         </TableRow>
         <TableRow hover>
             <TableCell>
                 <Typography variant="h4" >2. {resultDetail.result[3].key}</Typography>
                 <br />
-                <div dangerouslySetInnerHTML={ {__html: resultDetail.resutl[3].value} }></div>
+                <div dangerouslySetInnerHTML={ {__html: resultDetail.result[3].value} }></div>
             </TableCell>
         </TableRow>
         <TableRow hover>
             <TableCell>
                 <Typography variant="h4">3. {resultDetail.result[4].key}</Typography>
                 <br />
-                <div dangerouslySetInnerHTML={ {__html: resultDetail.resutl[4].value} }></div>
+                <div dangerouslySetInnerHTML={ {__html: resultDetail.result[4].value} }></div>
             </TableCell>
         </TableRow>
         <TableRow hover>
             <TableCell>
             <Typography variant="h4">4. {resultDetail.result[5].key}</Typography>
             <br />
-                <div dangerouslySetInnerHTML={ {__html: resultDetail.resutl[5].value} }></div>
+                <div dangerouslySetInnerHTML={ {__html: resultDetail.result[5].value} }></div>
             </TableCell>
         </TableRow>
         <TableRow hover>
             <TableCell>
                 <Typography variant="h4">5. {resultDetail.result[6].key}</Typography>
                 <br />
-                <div dangerouslySetInnerHTML={ {__html: resultDetail.resutl[6].value} }></div>
+                <div dangerouslySetInnerHTML={ {__html: resultDetail.result[6].value} }></div>
             </TableCell>
         </TableRow>
         <TableRow hover>
