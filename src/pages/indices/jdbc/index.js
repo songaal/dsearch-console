@@ -162,7 +162,7 @@ function JdbcTable({dispatch, authUser, JdbcList, handleAccessFlag}){
                                     :
                                     <TableCell></TableCell>
                                 }
-                            </TableRow>})):(<TableRow><TableCell align="center" colSpan={8}>{"현재 등록된 JDBC가 없습니다."}</TableCell></TableRow>)}
+                            </TableRow>})):(<TableRow><TableCell align="center" colSpan={9}>{"현재 등록된 JDBC가 없습니다."}</TableCell></TableRow>)}
 
                 </TableBody>
             </Table>
