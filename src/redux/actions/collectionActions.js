@@ -73,7 +73,8 @@ export const setIndexHistoryList = ({ indexA, indexB, from, size }) => dispatch 
                             "index": indexB
                         }
                     }
-                ]
+                ],
+                "minimum_should_match": 1
             }
         },
         "sort": [
@@ -106,6 +107,7 @@ export const deleteIndexHistoryList = ({indexA, indexB, time}) => dispatch => cl
                         }
                     }
                 ],
+                "minimum_should_match": 1,
                 "filter": {
                     "range": {
                         "startTime": {
