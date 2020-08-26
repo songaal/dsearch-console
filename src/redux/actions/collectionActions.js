@@ -73,8 +73,10 @@ export const setIndexHistoryList = ({ indexA, indexB, from, size }) => dispatch 
                     },
                     {
                         "match": {
-                            "query": indexB,
-                            "boost": 1
+                            "index": {
+                                "query": indexB,
+                                "boost": 1
+                            }
                         }
                     }
                 ],
@@ -105,14 +107,18 @@ export const deleteIndexHistoryList = ({indexA, indexB, time}) => dispatch => cl
                 "should": [
                     {
                         "match": {
-                            "query": indexA,
-                            "boost": 1
+                            "index": {
+                                "query": indexA,
+                                "boost": 1
+                            }
                         }
                     },
                     {
                         "match": {
-                            "query": indexB,
-                            "boost": 1
+                            "index": {
+                                "query": indexB,
+                                "boost": 1
+                            }
                         }
                     }
                 ],
