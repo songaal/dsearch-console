@@ -191,23 +191,23 @@ function JdbcSourceEdit({JdbcList, JdbcListIndex, editId, editName, editDriver, 
         <Box p={2}>
             <Box display="flex" m={3}  alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>아이디</Typography>
-                <TextField placeholder="ID" fullWidth variant="outlined" defaultValue={JdbcSource.sourceAsMap.id} inputRef={editId} />
+                <TextField placeholder="ID" fullWidth variant="outlined" defaultValue={((JdbcSource||{}).sourceAsMap||{}).id} inputRef={editId} />
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>이름</Typography>
-                <TextField placeholder="Name" fullWidth variant="outlined" defaultValue={JdbcSource.sourceAsMap.name} inputRef={editName}/>
+                <TextField placeholder="Name" fullWidth variant="outlined" defaultValue={((JdbcSource||{}).sourceAsMap|| {}).name} inputRef={editName}/>
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{ width: "150px" }}>드라이버</Typography>
-                <TextField placeholder="Driver" fullWidth variant="outlined" defaultValue={JdbcSource.sourceAsMap.driver} inputRef={editDriver}/>
+                <TextField placeholder="Driver" fullWidth variant="outlined" defaultValue={((JdbcSource||{}).sourceAsMap||{}).driver} inputRef={editDriver}/>
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>URL</Typography>
-                <TextField placeholder="jdbc:Altibase://localhost:3306/" fullWidth variant="outlined" defaultValue={JdbcSource.sourceAsMap.url} inputRef={editURL}/>
+                <TextField placeholder="jdbc:Altibase://localhost:3306/" fullWidth variant="outlined" defaultValue={((JdbcSource||{}).sourceAsMap||{}).url} inputRef={editURL}/>
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>사용자</Typography>
-                <TextField placeholder="USER" fullWidth variant="outlined" defaultValue={JdbcSource.sourceAsMap.user} inputRef={editUser}/>
+                <TextField placeholder="USER" fullWidth variant="outlined" defaultValue={((JdbcSource||{}).sourceAsMap||{}).user} inputRef={editUser}/>
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>비밀번호</Typography>
