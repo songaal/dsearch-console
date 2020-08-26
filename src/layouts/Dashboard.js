@@ -11,7 +11,7 @@ import {CssBaseline, Hidden, Paper as MuiPaper, withWidth} from "@material-ui/co
 import {isWidthUp} from "@material-ui/core/withWidth";
 import maTheme from "../theme";
 import {ThemeProvider as MuiThemeProvider} from "@material-ui/styles";
-import {setFastcatxAuthUser} from "../redux/actions/fastcatxActions";
+import {setDsearchAuthUser} from "../redux/actions/dsearchActions";
 
 const drawerWidth = 260;
 
@@ -72,7 +72,7 @@ function Dashboard({dispatch, authUser, children, routes, width}) {
     const [mobileOpen, setMobileOpen] = useState(false)
 
     if (!authUser['sessionId']) {
-        dispatch(setFastcatxAuthUser()).catch(() => location.replace("/"))
+        dispatch(setDsearchAuthUser()).catch(() => location.replace("/"))
         return null
     }
 
@@ -121,4 +121,4 @@ function Dashboard({dispatch, authUser, children, routes, width}) {
     );
 }
 
-export default connect(store => ({...store.fastcatxReducers}))(withWidth()(Dashboard));
+export default connect(store => ({...store.dsearchReducers}))(withWidth()(Dashboard));

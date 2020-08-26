@@ -17,8 +17,8 @@ import {
     Typography
 } from "@material-ui/core";
 import {spacing} from "@material-ui/system";
-import {setFastcatxAuthUser, setFastcatxServer, setFastcatxSignIn} from "../../redux/actions/fastcatxActions";
-import {SET_FASTCATX_AUTH_USER, SET_FASTCATX_SERVER} from "../../redux/constants";
+import {setDsearchAuthUser, setDsearchServer, setDsearchSignIn} from "../../redux/actions/dsearchActions";
+import {SET_DSEARCH_AUTH_USER, SET_DSEARCH_SERVER} from "../../redux/constants";
 
 const Button = styled(MuiButton)(spacing);
 
@@ -41,13 +41,13 @@ function SignIn({dispatch}) {
     const [loginSave, setLoginSave] = useState(false)
 
     useEffect(() => {
-        const fastcatxServer = localStorage.getItem(SET_FASTCATX_SERVER)
-        const hash = JSON.parse(localStorage.getItem(SET_FASTCATX_AUTH_USER) || "{}")
+        const dsearchServer = localStorage.getItem(SET_DSEARCH_SERVER)
+        const hash = JSON.parse(localStorage.getItem(SET_DSEARCH_AUTH_USER) || "{}")
         // 서버의 세션 유무 체크.
-        dispatch(setFastcatxAuthUser())
+        dispatch(setDsearchAuthUser())
             .then(response => {
                 console.log("authenticated")
-                sessionStorage.setItem(SET_FASTCATX_SERVER, localStorage.getItem(SET_FASTCATX_SERVER));
+                sessionStorage.setItem(SET_DSEARCH_SERVER, localStorage.getItem(SET_DSEARCH_SERVER));
                 location.replace(authenticatedRoute)
             })
 
@@ -59,8 +59,8 @@ function SignIn({dispatch}) {
         }
 
         // 마지막 서버 접속 정보
-        if (fastcatxServer) {
-            setServer(fastcatxServer)
+        if (dsearchServer) {
+            setServer(dsearchServer)
         }
     }, [])
 
@@ -73,7 +73,7 @@ function SignIn({dispatch}) {
         if (!server.startsWith("http")) {
             checkServer = "http://" + server
         }
-        dispatch(setFastcatxServer(checkServer))
+        dispatch(setDsearchServer(checkServer))
             .then(response => {
                 response ? setServerError(false) : setServerError(true)
             })
@@ -82,7 +82,7 @@ function SignIn({dispatch}) {
 
     function handleSignIn() {
         // 자동로그인 (로컬 스토리지 정보 삭제)
-        localStorage.removeItem(SET_FASTCATX_AUTH_USER)
+        localStorage.removeItem(SET_DSEARCH_AUTH_USER)
         if (email.length === 0 || password.length === 0) {
             setInValid(true)
             return
@@ -95,14 +95,14 @@ function SignIn({dispatch}) {
         if (!server.startsWith("https://") && !server.startsWith("http://")) {
             server = "http://" + server
         }
-        sessionStorage.setItem(SET_FASTCATX_SERVER, server);
-        dispatch(setFastcatxSignIn({server, email, password}))
+        sessionStorage.setItem(SET_DSEARCH_SERVER, server);
+        dispatch(setDsearchSignIn({server, email, password}))
             .then(response => {
                 console.log("sign in success")
                 setInValid(false)
                 if (loginSave) {
                     // 자동로그인 (로컬 스토리지 추가)
-                    localStorage.setItem(SET_FASTCATX_AUTH_USER, JSON.stringify({
+                    localStorage.setItem(SET_DSEARCH_AUTH_USER, JSON.stringify({
                         hash1: loginSave,
                         hash2: btoa(btoa(btoa(server))),
                         hash3: btoa(btoa(btoa(email))),
@@ -210,4 +210,4 @@ function SignIn({dispatch}) {
     );
 }
 
-export default connect(store => ({...store.fastcatxReducers}))(SignIn);
+export default connect(store => ({...store.dsearchReducers}))(SignIn);

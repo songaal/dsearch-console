@@ -356,4 +356,4 @@ function ControlBox({dispatch, authUser, collection, job}) {
     )
 }
 
-export default connect(store => ({ authUser: store.fastcatxReducers.authUser, ...store.collectionReducers }))(ControlBox);
+export default connect(store => ({ authUser: store.dsearchReducers.authUser, ...store.collectionReducers }))(ControlBox);

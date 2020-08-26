@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {SET_FASTCATX_SERVER} from "./redux/constants";
+import {SET_DSEARCH_SERVER} from "./redux/constants";
 
 export default class Client {
     constructor(props) {
@@ -8,9 +8,9 @@ export default class Client {
     call(config) {
         if (config.uri) {
 
-            let server = sessionStorage.getItem(SET_FASTCATX_SERVER)
+            let server = sessionStorage.getItem(SET_DSEARCH_SERVER)
             if (server === null) {
-                server = localStorage.getItem(SET_FASTCATX_SERVER)
+                server = localStorage.getItem(SET_DSEARCH_SERVER)
             }
             // eslint-disable-next-line no-restricted-globals
             if (server === null && location.pathname !== "/") {

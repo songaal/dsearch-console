@@ -121,6 +121,6 @@ function Templates({dispatch, authUser, templates}) {
 }
 
 export default connect(store => ({ 
-    authUser: store.fastcatxReducers.authUser,
+    authUser: store.dsearchReducers.authUser,
     ...store.indexTemplateReducers 
 }))(Templates)

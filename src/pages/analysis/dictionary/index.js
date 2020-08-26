@@ -50,6 +50,6 @@ function Dictionary({dispatch, authUser, settings, active}) {
 }
 
 export default connect(store => ({ 
-    authUser: store.fastcatxReducers.authUser,
+    authUser: store.dsearchReducers.authUser,
     settings: store.dictionaryReducers.settings, 
     active: store.dictionaryReducers.active }))(Dictionary);

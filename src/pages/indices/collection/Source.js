@@ -370,7 +370,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
 }
 
 export default connect(store => ({
-    authUser: store.fastcatxReducers.authUser,
+    authUser: store.dsearchReducers.authUser,
     ...store.collectionReducers,
     ...store.jdbcReducers
 }))(Source);

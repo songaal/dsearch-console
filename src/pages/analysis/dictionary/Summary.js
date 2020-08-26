@@ -182,7 +182,7 @@ function SummaryTable({summary, makeCheckedIdList, makeCheckedList}){
 
 
 export default connect(store => ({ 
-    authUser: store.fastcatxReducers.authUser,
+    authUser: store.dsearchReducers.authUser,
     summary: store.dictionaryReducers.summary,
     update: store.dictionaryReducers.update
 }))(Summary)

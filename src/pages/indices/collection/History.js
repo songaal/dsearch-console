@@ -241,6 +241,6 @@ function History({dispatch, authUser, collection, history}) {
 }
 
 export default connect(store => ({
-    authUser: store.fastcatxReducers.authUser,
+    authUser: store.dsearchReducers.authUser,
     ...store.collectionReducers
 }))(History);

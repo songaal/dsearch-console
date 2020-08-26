@@ -512,7 +512,7 @@ function JDBC({dispatch, authUser, JdbcList, JdbcAccessTest, changedJdbcList}) {
 }
 
 export default connect(store => ({
-    authUser: store.fastcatxReducers.authUser,
+    authUser: store.dsearchReducers.authUser,
     JdbcList: store.jdbcReducers.JdbcList,
     JdbcAccessTest: store.jdbcReducers.JdbcAccessTest,
     changedJdbcList: store.jdbcReducers.changedJdbcList

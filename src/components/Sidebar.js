@@ -30,7 +30,7 @@ import {ExpandLess, ExpandMore, Launch} from "@material-ui/icons";
 import {dashboard as dashboardRoutes, intro as introRoutes} from "../routes/index";
 
 import {Layers} from "react-feather";
-import fastcatxReducers from "../redux/reducers/fastcatxReducers";
+import dsearchReducers from "../redux/reducers/dsearchReducers";
 
 const NavLink = React.forwardRef((props, ref) => (
     <RouterNavLink innerRef={ref} {...props} />

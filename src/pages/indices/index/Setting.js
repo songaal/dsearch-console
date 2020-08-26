@@ -225,7 +225,7 @@ function Setting({ dispatch, index, authUser, settings }) {
 }
 
 export default connect(store => ({
-    authUser: store.fastcatxReducers.authUser,
+    authUser: store.dsearchReducers.authUser,
     ...store.indicesReducers
 
 }))(Setting);

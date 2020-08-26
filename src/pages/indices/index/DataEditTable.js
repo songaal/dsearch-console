@@ -174,4 +174,4 @@ function DataEditTable({dispatch, index, authUser}) {
     )
 }
 
-export default connect(store => ({...store.indicesReducers, ...store.fastcatxReducers}))(DataEditTable)
+export default connect(store => ({...store.indicesReducers, ...store.dsearchReducers}))(DataEditTable)

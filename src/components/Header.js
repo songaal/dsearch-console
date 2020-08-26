@@ -22,10 +22,10 @@ import {ArrowDropDown, Menu as MenuIcon} from "@material-ui/icons";
 
 import {Home, Search as SearchIcon} from "react-feather";
 import {setReferenceResultAll, setReferenceSearchKeyword} from "../redux/actions/referenceSearchActions";
-import { setFastcatxSignOut } from "../redux/actions/fastcatxActions";
+import { setDsearchSignOut } from "../redux/actions/dsearchActions";
 import { setAutoCompleteAction, setAutoCompleteStoreAction, getAutoCompleteURLAction } from "../redux/actions/dsearchPluginActions";
 
-import {SET_FASTCATX_AUTH_USER} from "../redux/constants";
+import {SET_DSEARCH_AUTH_USER} from "../redux/constants";
 import {setClusterList} from "../redux/actions/clusterActions";
 import { textAlign, maxHeight, height, width } from "@material-ui/system";
 
@@ -95,7 +95,7 @@ const Button = styled(ButtonBase)`
 
 function ClusterMenu() {
     const dispatch = useDispatch()
-    const authUser = useSelector(store => store.fastcatxReducers)['authUser']
+    const authUser = useSelector(store => store.dsearchReducers)['authUser']
     const clusterStore = useSelector(store => store.clusterReducers)
     const [clusterListMenu, setClusterListMenu] = useState(null);
 
@@ -153,7 +153,7 @@ function ClusterMenu() {
 
 function UserMenu({ signOutClose = false }) {
     const dispatch = useDispatch()
-    const authUser = useSelector(store => store.fastcatxReducers.authUser)
+    const authUser = useSelector(store => store.dsearchReducers.authUser)
     const [anchorMenu, setAnchorMenu] = useState(null)
     const open = Boolean(anchorMenu);
 
@@ -166,8 +166,8 @@ function UserMenu({ signOutClose = false }) {
     }
 
     function signOut() {
-        localStorage.removeItem(SET_FASTCATX_AUTH_USER)
-        dispatch(setFastcatxSignOut()).then(response => {
+        localStorage.removeItem(SET_DSEARCH_AUTH_USER)
+        dispatch(setDsearchSignOut()).then(response => {
             if (signOutClose) {
                 try {
                     // eslint-disable-next-line no-restricted-globals
@@ -261,7 +261,7 @@ const options = ['Option 1', 'Option 2'];
 
 const DashBoardHeader = ({theme, onDrawerToggle}) => {
     const references = useSelector(store => ({...store.referenceSearchReducers}))
-    const authUserStore = useSelector(store => ({...store.fastcatxReducers}))['authUser']
+    const authUserStore = useSelector(store => ({...store.dsearchReducers}))['authUser']
     const autoCompleteUrl = useSelector(store => ({...store.dsearchPluginReducers}))['autoCompleteUrl']
     
     const [keyword, setKeyword] = useState(references.keyword)

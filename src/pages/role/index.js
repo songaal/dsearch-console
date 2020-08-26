@@ -42,7 +42,7 @@ import {
     setRoleListAction
 } from "../../redux/actions/roleManagementActions";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import fastcatxReducers from "../../redux/reducers/fastcatxReducers";
+import dsearchReducers from "../../redux/reducers/dsearchReducers";
 
 const Card = styled(MuiCard)(spacing);
 const Divider = styled(MuiDivider)(spacing);
@@ -563,4 +563,4 @@ function Role({dispatch, roleList, userRolesList, authUser}) {
     );
 }
 
-export default connect(store => ({...store.roleManagementReducers, ...store.fastcatxReducers}))(Role);
+export default connect(store => ({...store.roleManagementReducers, ...store.dsearchReducers}))(Role);

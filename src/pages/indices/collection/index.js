@@ -416,7 +416,7 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
 }
 
 export default connect(store => ({
-    authUser: store.fastcatxReducers.authUser,
+    authUser: store.dsearchReducers.authUser,
     ...store.collectionReducers, 
     ...store.indexTemplateReducers
 }))(Collection);

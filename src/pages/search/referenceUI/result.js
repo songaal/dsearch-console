@@ -282,6 +282,6 @@ function Result({resultList, authUser, pluginResponse}) {
 {/* 추가된 부분 : pluginResponse */}
 export default connect(store => ({
     ...store.referenceSearchReducers, 
-    ...store.fastcatxReducers, 
+    ...store.dsearchReducers,
     ...store.dsearchPluginReducers
     }))(Result)

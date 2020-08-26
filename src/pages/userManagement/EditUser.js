@@ -15,7 +15,7 @@ import {
     TextField,
     Typography,
 } from "@material-ui/core";
-import {editUserPassword} from "../../redux/actions/fastcatxActions";
+import {editUserPassword} from "../../redux/actions/dsearchActions";
 
 const Card = styled(MuiCard)(spacing);
 const Divider = styled(MuiDivider)(spacing);
@@ -192,4 +192,4 @@ function EditUser({dispatch, authUser}) {
     );
 }
 
-export default connect(store => ({...store.fastcatxReducers}))(EditUser);
+export default connect(store => ({...store.dsearchReducers}))(EditUser);

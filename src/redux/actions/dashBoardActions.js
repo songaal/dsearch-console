@@ -3,7 +3,7 @@ import Client from '~/Client'
 
 const client = new Client()
 
-export const setIndexResultActions = key => dispatch => client.call({uri: `/elasticsearch/.fastcatx_index_history/_search`,
+export const setIndexResultActions = key => dispatch => client.call({uri: `/elasticsearch/.dsearch_index_history/_search`,
         method:'post',
         data: {
           "query": {
@@ -30,7 +30,7 @@ export const setIndexResultActions = key => dispatch => client.call({uri: `/elas
     .then(response => dispatch({type: SET_INDEX_RESULT, payload: response.data}))
     .catch(err => console.error(err))
 
-// export const setRunningIndexActions = key => dispatch => client.call({uri: `/elasticsearch/.fastcatx_last_index_status/_search?q=status:RUNNING`})
+// export const setRunningIndexActions = key => dispatch => client.call({uri: `/elasticsearch/.dsearch_last_index_status/_search?q=status:RUNNING`})
 //     .then(response => dispatch({type: SET_RUNNING_INDEX, payload: response.data}))
 //     .catch(err => console.error(err))
 

@@ -31,4 +31,4 @@ function QueryTest({authUser}) {
     }
 }
 
-export default connect(store => ({...store.fastcatxReducers}))(QueryTest);
+export default connect(store => ({...store.dsearchReducers}))(QueryTest);

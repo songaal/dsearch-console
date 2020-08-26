@@ -499,4 +499,4 @@ function UserManagement({dispatch, userList, userRolesList, roleList, authUser})
     );
 }
 
-export default connect(store => ({...store.userManagementReducers, ...store.roleManagementReducers, ...store.fastcatxReducers}))(UserManagement);
+export default connect(store => ({...store.userManagementReducers, ...store.roleManagementReducers, ...store.dsearchReducers}))(UserManagement);

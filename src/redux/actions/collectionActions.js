@@ -53,7 +53,7 @@ export const editCollectionScheduleAction = (id, isSchedule) => dispatch => clie
 
 
 export const setIndexHistoryList = ({ indexA, indexB, from, size }) => dispatch => client.call({
-    uri: `/elasticsearch/.fastcatx_index_history/_search`,
+    uri: `/elasticsearch/.dsearch_index_history/_search`,
     method: "post",
     params: {
         pretty: true,
@@ -89,7 +89,7 @@ export const setIndexHistoryList = ({ indexA, indexB, from, size }) => dispatch 
 }).then(response => dispatch({type: SET_COLLECTION_INDEX_HISTORY_LIST, payload: response.data}))
 
 export const deleteIndexHistoryList = ({indexA, indexB, time}) => dispatch => client.call({
-    uri: `/elasticsearch/.fastcatx_index_history/_delete_by_query`,
+    uri: `/elasticsearch/.dsearch_index_history/_delete_by_query`,
     method: 'post',
     data: {
         "query": {

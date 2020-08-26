@@ -651,7 +651,7 @@ function ReferenceUI({dispatch, authUser, acUrl}) {
 }
 
 export default connect(store => ({
-    authUser: store.fastcatxReducers.authUser,
+    authUser: store.dsearchReducers.authUser,
     ...store.referenceSearchReducers,
     acUrl: store.dsearchPluginReducers.autoCompleteUrl
 }))(ReferenceUI);

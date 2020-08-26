@@ -357,6 +357,6 @@ function Summary({dispatch, authUser, collection}) {
 }
 
 export default connect(store => ({
-    authUser: store.fastcatxReducers.authUser,
+    authUser: store.dsearchReducers.authUser,
     ...store.collectionReducers
 }))(Summary);

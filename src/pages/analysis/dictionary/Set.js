@@ -397,5 +397,5 @@ function Set({ dictionary, authUser, setting, dataSet }) {
 }
 
 export default connect(store => ({ 
-    authUser: store.fastcatxReducers.authUser
+    authUser: store.dsearchReducers.authUser
 }))(Set)

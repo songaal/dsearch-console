@@ -10,7 +10,7 @@ import clusterInfoReducers from "./clusterInfoReducers";
 import dashBoardReducers from "./dashBoardReducers";
 import referenceSearchReducers from "./referenceSearchReducers";
 import indexTemplateReducers from "./indexTemplateReducers";
-import fastcatxReducers from "./fastcatxReducers";
+import dsearchReducers from "./dsearchReducers";
 import roleManagementReducers from "./roleManagementReducers";
 import userManagementReducers from "./userManagementReducers";
 import clusterSettingsReducers from "./clusterSettingsReducers";
@@ -30,7 +30,7 @@ export default combineReducers({
     dashBoardReducers,
     referenceSearchReducers,
     indexTemplateReducers,
-    fastcatxReducers,
+    dsearchReducers,
     roleManagementReducers,
     userManagementReducers,
     clusterSettingsReducers,

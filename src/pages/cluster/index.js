@@ -723,5 +723,5 @@ function Cluster({ dispatch, clusterList, authUser }) {
     );
 }
 
-export default connect(store => ({ ...store.clusterReducers, ...store.fastcatxReducers }))(Cluster);
+export default connect(store => ({ ...store.clusterReducers, ...store.dsearchReducers }))(Cluster);
 
