@@ -16,6 +16,7 @@ import {
     TableHead,
     TableRow,
     Typography as MuiTypography,
+    Button
 } from "@material-ui/core";
 import {makeStyles} from '@material-ui/core/styles';
 import {positions, spacing} from "@material-ui/system";
@@ -104,9 +105,9 @@ function Templates({dispatch, authUser, templates}) {
                                 <TableCell align="center">{row.pattern}</TableCell>
                                 <TableCell align="center">
                                     {authUser.role.index ?
-                                        <Link onClick={() => history.push(`./indices-templates/${row.name}/edit`)}
+                                        <Button variant={"outlined"} color={"primary"} onClick={() => history.push(`./indices-templates/${row.name}/edit`)}
                                               style={{cursor: "pointer"}}
-                                              color={"primary"}>수정</Link>
+                                              color={"primary"}>수정</Button>
                                         :
                                         <></>
                                     }
