@@ -86,8 +86,8 @@ function JdbcTable({dispatch, authUser, JdbcList, handleAccessFlag}){
         setJdbcSourceEditDialogOpenAction(false)
     };
 
-    const handleEditDialogOpen = (event) => {
-        setJdbcListIndex(event.target.id);
+    const handleEditDialogOpen = (id) => {
+        setJdbcListIndex(id);
         setJdbcSourceEditDialogOpenAction(true)
     };
 
@@ -104,83 +104,92 @@ function JdbcTable({dispatch, authUser, JdbcList, handleAccessFlag}){
             setProcessConnTest(false)
             handleAccessFlag(true);
         }, 500)
-
     }
 
     return (
-                <Table>
-                    <colgroup>
-                        <col width="1%" />
-                        <col width="10%" />
-                        <col width="13%" />
-                        <col width="20%" />
-                        <col width="30%" />
-                        <col width="10%" />
-                        <col width="10%" />
-                        <col width="5%" />
-                    </colgroup>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>#</TableCell>
-                            <TableCell>아이디</TableCell>
-                            <TableCell>이름</TableCell>
-                            <TableCell>드라이버</TableCell>
-                            <TableCell>URL</TableCell>
-                            <TableCell>사용자</TableCell>
-                            <TableCell>비밀번호</TableCell>
-                            <TableCell align={"center"}>테스트</TableCell>
-                            {authUser.role.index ? <TableCell align={"center"}> 액션</TableCell> : null}
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {JdbcList.hits.hits.length > 0 ?  (
-                            JdbcList.hits.hits.map((item, index)=>{
-                                let password = item.sourceAsMap.password;
-                                let star = "";
-                                
-                                for(let i = 0; i < password.length-3; i++){
-                                    star += "*";
-                                }
+        <React.Fragment>
+            <Table>
+                <colgroup>
+                    <col width="1%" />
+                    <col width="10%" />
+                    <col width="13%" />
+                    <col width="20%" />
+                    <col width="30%" />
+                    <col width="10%" />
+                    <col width="10%" />
+                    <col width="5%" />
+                </colgroup>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>#</TableCell>
+                        <TableCell>아이디</TableCell>
+                        <TableCell>이름</TableCell>
+                        <TableCell>드라이버</TableCell>
+                        <TableCell>URL</TableCell>
+                        <TableCell>사용자</TableCell>
+                        <TableCell>비밀번호</TableCell>
+                        <TableCell align={"center"}>테스트</TableCell>
+                        {authUser.role.index ? <TableCell align={"center"}> 액션</TableCell> : null}
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {JdbcList.hits.hits.length > 0 ?  (
+                        JdbcList.hits.hits.map((item, index)=>{
+                            let password = item.sourceAsMap.password;
+                            let star = "";
 
-                                password = password.substring(0, 2) + star + password.substring(password.length-1, password.length);
-                                return <TableRow key={item.sourceAsMap.id}>
-                                    <TableCell style={{whiteSpace: "nowrap"}}>{index + 1}</TableCell>
-                                    <TableCell style={{whiteSpace: "nowrap"}}>{item.sourceAsMap.id}</TableCell>
-                                    <TableCell style={{whiteSpace: "nowrap"}}>{item.sourceAsMap.name}</TableCell>
-                                    <TableCell style={{whiteSpace: "nowrap"}} style={{wordBreak:"break-all"}}>{item.sourceAsMap.driver}</TableCell>
-                                    <TableCell style={{whiteSpace: "nowrap"}} style={{wordBreak:"break-all"}}>{item.sourceAsMap.url}</TableCell>
-                                    <TableCell style={{whiteSpace: "nowrap"}}>{item.sourceAsMap.user}</TableCell>
-                                    <TableCell style={{whiteSpace: "nowrap"}}>{password}</TableCell>
-                                    {/* <TableCell>{item._source.password}</TableCell> */}
-                                    <TableCell style={{whiteSpace: "nowrap"}}><Button variant={"outlined"} color={"primary"} disabled={processConnTest} onClick={()=>accessTestFromTable(item)}> 연결테스트 </Button></TableCell>
-                                    {authUser.role.index ? <TableCell><Button variant={"outlined"} id={index} color={"primary"} style={{whiteSpace: "nowrap"}} onClick={handleEditDialogOpen}>수정</Button></TableCell> : <TableCell></TableCell>}
-                                </TableRow>})):(<TableRow><TableCell align="center" colSpan={8}>{"현재 등록된 JDBC가 없습니다."}</TableCell></TableRow>)}
-                                
-                    </TableBody>
-                    <Dialog open={jdbcSourceEditDialogOpen} onClose={handleEditDialogClose} >
-                        <DialogTitle id="dialog-title">{"JDBC 소스"}</DialogTitle>
-                        <DialogContent>
-                            <label>설정</label>
-                            <Divider></Divider>
-                            <JdbcSourceEdit 
-                                JdbcList={JdbcList} 
-                                JdbcListIndex={jdbcListIndex}
-                                editId = {editId}
-                                editName = {editName}
-                                editDriver ={editDriver}
-                                editUser = {editUser}
-                                editPassword = {editPassword}
-                                editURL = {editURL}
-                                />
-                        </DialogContent>
-                        <DialogActions >
-                            <Button variant="contained" style={{backgroundColor:"red", color:"white"}} onClick={handleDeleteJdbcSource}>삭제</Button>
-                            <div style={{flex: '1 0 0'}} />
-                            <Button variant="contained" color="default" onClick={handleEditDialogClose}>닫기</Button>
+                            for(let i = 0; i < password.length-3; i++){
+                                star += "*";
+                            }
+
+                            password = password.substring(0, 2) + star + password.substring(password.length-1, password.length);
+                            return <TableRow key={item.sourceAsMap.id}>
+                                <TableCell style={{whiteSpace: "nowrap"}}>{index + 1}</TableCell>
+                                <TableCell style={{whiteSpace: "nowrap"}}>{item.sourceAsMap.id}</TableCell>
+                                <TableCell style={{whiteSpace: "nowrap"}}>{item.sourceAsMap.name}</TableCell>
+                                <TableCell style={{whiteSpace: "nowrap"}} style={{wordBreak:"break-all"}}>{item.sourceAsMap.driver}</TableCell>
+                                <TableCell style={{whiteSpace: "nowrap"}} style={{wordBreak:"break-all"}}>{item.sourceAsMap.url}</TableCell>
+                                <TableCell style={{whiteSpace: "nowrap"}}>{item.sourceAsMap.user}</TableCell>
+                                <TableCell style={{whiteSpace: "nowrap"}}>{password}</TableCell>
+                                {/* <TableCell>{item._source.password}</TableCell> */}
+                                <TableCell style={{whiteSpace: "nowrap"}}>
+                                    <Button variant={"outlined"} color={"primary"} disabled={processConnTest} onClick={()=>accessTestFromTable(item)}> 연결테스트 </Button>
+                                </TableCell>
+                                {authUser.role.index ?
+                                    <TableCell>
+                                        <Button variant={"outlined"} id={index} color={"primary"} style={{whiteSpace: "nowrap"}} onClick={() => handleEditDialogOpen(item.sourceAsMap.id)}>수정</Button>
+                                    </TableCell>
+                                    :
+                                    <TableCell></TableCell>
+                                }
+                            </TableRow>})):(<TableRow><TableCell align="center" colSpan={8}>{"현재 등록된 JDBC가 없습니다."}</TableCell></TableRow>)}
+
+                </TableBody>
+            </Table>
+            <Dialog open={jdbcSourceEditDialogOpen} onClose={handleEditDialogClose} >
+                <DialogTitle id="dialog-title">{"JDBC 소스"}</DialogTitle>
+                <DialogContent>
+                    <label>설정</label>
+                    <Divider></Divider>
+                    <JdbcSourceEdit
+                        JdbcList={JdbcList}
+                        JdbcListIndex={jdbcListIndex}
+                        editId = {editId}
+                        editName = {editName}
+                        editDriver ={editDriver}
+                        editUser = {editUser}
+                        editPassword = {editPassword}
+                        editURL = {editURL}
+                    />
+                </DialogContent>
+                <DialogActions >
+                    <Button variant="contained" style={{backgroundColor:"red", color:"white"}} onClick={handleDeleteJdbcSource}>삭제</Button>
+                    <div style={{flex: '1 0 0'}} />
+                    <Button variant="contained" color="default" onClick={handleEditDialogClose}>닫기</Button>
                     <Button variant="contained" color="primary" onClick={handleEditJdbcSource}>저장</Button>
                 </DialogActions>
             </Dialog>
-        </Table>
+        </React.Fragment>
     );
 }
 
