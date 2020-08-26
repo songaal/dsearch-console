@@ -75,7 +75,7 @@ function BriefResult({resultBrief}){
 }
 
 function DetailResult({resultDetail}){
-    console.log('resultDetail', resultDetail)
+
     if(!resultDetail.result){
         return <Table key="empltyDetail">
             <TableBody>
@@ -90,44 +90,44 @@ function DetailResult({resultDetail}){
         <TableBody>
         <TableRow hover>
             <TableCell>
-                <Typography variant="h4">1. {resultDetail.resutl[2].key}</Typography>
+                <Typography variant="h4">1. {resultDetail.result[2].key}</Typography>
                     <br />
                     <div dangerouslySetInnerHTML={ {__html: resultDetail.resutl[2].value} }></div>
                 </TableCell>
         </TableRow>
         <TableRow hover>
             <TableCell>
-                <Typography variant="h4" >2. {resultDetail.resutl[3].key}</Typography>
+                <Typography variant="h4" >2. {resultDetail.result[3].key}</Typography>
                 <br />
                 <div dangerouslySetInnerHTML={ {__html: resultDetail.resutl[3].value} }></div>
             </TableCell>
         </TableRow>
         <TableRow hover>
             <TableCell>
-                <Typography variant="h4">3. {resultDetail.resutl[4].key}</Typography>
+                <Typography variant="h4">3. {resultDetail.result[4].key}</Typography>
                 <br />
                 <div dangerouslySetInnerHTML={ {__html: resultDetail.resutl[4].value} }></div>
             </TableCell>
         </TableRow>
         <TableRow hover>
             <TableCell>
-            <Typography variant="h4">4. {resultDetail.resutl[5].key}</Typography>
+            <Typography variant="h4">4. {resultDetail.result[5].key}</Typography>
             <br />
                 <div dangerouslySetInnerHTML={ {__html: resultDetail.resutl[5].value} }></div>
             </TableCell>
         </TableRow>
         <TableRow hover>
             <TableCell>
-                <Typography variant="h4">5. {resultDetail.resutl[6].key}</Typography>
+                <Typography variant="h4">5. {resultDetail.result[6].key}</Typography>
                 <br />
                 <div dangerouslySetInnerHTML={ {__html: resultDetail.resutl[6].value} }></div>
             </TableCell>
         </TableRow>
         <TableRow hover>
             <TableCell>
-                <Typography variant="h4">6. {resultDetail.resutl[7].key}</Typography>
+                <Typography variant="h4">6. {resultDetail.result[7].key}</Typography>
                 <br />
-                <div dangerouslySetInnerHTML={ {__html: resultDetail.resutl[7].value} }></div>
+                <div dangerouslySetInnerHTML={ {__html: resultDetail.result[7].value} }></div>
             </TableCell>
         </TableRow>
         </TableBody>
