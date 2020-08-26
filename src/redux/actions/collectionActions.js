@@ -65,12 +65,16 @@ export const setIndexHistoryList = ({ indexA, indexB, from, size }) => dispatch 
                 "should": [
                     {
                         "match": {
-                            "index": indexA
+                            "index": {
+                                "query": indexA,
+                                "boost": 1
+                            }
                         }
                     },
                     {
                         "match": {
-                            "index": indexB
+                            "query": indexB,
+                            "boost": 1
                         }
                     }
                 ],
@@ -79,6 +83,9 @@ export const setIndexHistoryList = ({ indexA, indexB, from, size }) => dispatch 
         },
         "sort": [
             {
+                "_score": {
+                    "order": "desc"
+                },
                 "startTime": {
                     "order": "desc"
                 }
@@ -98,12 +105,14 @@ export const deleteIndexHistoryList = ({indexA, indexB, time}) => dispatch => cl
                 "should": [
                     {
                         "match": {
-                            "index": indexA
+                            "query": indexA,
+                            "boost": 1
                         }
                     },
                     {
                         "match": {
-                            "index": indexB
+                            "query": indexB,
+                            "boost": 1
                         }
                     }
                 ],
