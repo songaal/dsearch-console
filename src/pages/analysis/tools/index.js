@@ -76,7 +76,7 @@ function BriefResult({resultBrief}){
 
 function DetailResult({resultDetail}){
     console.log('resultDetail', resultDetail)
-    if(!resultDetail.resutl){
+    if(!resultDetail.result){
         return <Table key="empltyDetail">
             <TableBody>
             <TableRow>
