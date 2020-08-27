@@ -139,13 +139,13 @@ function Edit({dispatch, template, templates}) {
 
 
         try {
-            JSON.parse(mappingsJson === "" ? "{}" : mappingsJson)
+            JSON.parse(mappingsJson === undefined || mappingsJson === "" ? "{}" : mappingsJson)
         } catch (error) {
             tmpInValid['mappingsJson'] = true
         }
 
         try {
-            JSON.parse(settingsJson === "" ? "{}" : settingsJson)
+            JSON.parse(settingsJson === undefined || settingsJson === "" ? "{}" : settingsJson)
         } catch (error) {
             tmpInValid['settingsJson'] = true
         }
@@ -155,8 +155,8 @@ function Edit({dispatch, template, templates}) {
             return false;
         }
 
-        let tmpSettings = JSON.parse(settingsJson === "" ? "{}" : settingsJson)
-        let tmpMappings = JSON.parse(mappingsJson === "" ? "{}" : mappingsJson)
+        let tmpSettings = JSON.parse(settingsJson === undefined || settingsJson === "" ? "{}" : settingsJson)
+        let tmpMappings = JSON.parse(mappingsJson === undefined || mappingsJson === "" ? "{}" : mappingsJson)
         if (!tmpMappings['properties']) {
             tmpMappings = {properties: tmpMappings}
         }
