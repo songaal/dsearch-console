@@ -82,7 +82,7 @@ function FormCard({settings}) {
                             <TableRow>
                                 <TableCell>{settings['settings']['index']['number_of_shards']}</TableCell>
                                 <TableCell>{settings['settings']['index']['number_of_replicas']}</TableCell>
-                                <TableCell>{settings['defaults']['index']['refresh_interval']}</TableCell>
+                                <TableCell>{settings['defaults']['index']['refresh_interval'] || settings['settings']['index']['refresh_interval']}</TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import styled from "styled-components";
 import {
     Box as MuiBox,
@@ -30,6 +30,9 @@ import {connect} from "react-redux";
 import {editCollectionSourceAction, setCollection} from "../../../redux/actions/collectionActions";
 import {isValidCron} from 'cron-validator'
 import ControlBox from "./ControlBox";
+import AceEditor from "react-ace";
+import "ace-builds/src-noconflict/mode-yaml";
+import "ace-builds/src-noconflict/theme-kuroir";
 
 const Typography = styled(MuiTypography)(spacing, positions);
 const Box = styled(MuiBox)(spacing, positions);
@@ -72,20 +75,42 @@ function Source({dispatch, authUser, collection, JdbcList}) {
 
     const [invalid, setInvalid] = useState({})
 
+    const aceEditor = useRef(null)
+
     useEffect(() => {
         setInvalid({})
         if (collection['sourceName'] === undefined || collection['sourceName'] === null || collection['sourceName'] === "") {
             setMode("FORCE_EDIT");
         } else {
             setSourceName(collection['sourceName']);
-            setLauncherYaml((collection['launcher']||{})['yaml']||"");
             setHost((collection['launcher']||{})['host']||"");
             setPort((collection['launcher']||{})['port']||"");
             // setJdbcId(collection['jdbcId']);
             setJdbcId(collection['jdbcId'] === '' ? NO_SELECTED : collection['jdbcId'])
             setCron(collection['cron']);
+            setLauncherYaml((collection['launcher']||{})['yaml']||"");
+            aceEditor.current.editor.setValue((collection['launcher']||{})['yaml']||"")
+            aceEditor.current.editor.clearSelection()
         }
     }, [])
+
+    useEffect(() => {
+        try {
+            if (mode === "EDIT") {
+                setSourceName(collection['sourceName']);
+                setHost((collection['launcher']||{})['host']||"");
+                setPort((collection['launcher']||{})['port']||"");
+                // setJdbcId(collection['jdbcId']);
+                setJdbcId(collection['jdbcId'] === '' ? NO_SELECTED : collection['jdbcId'])
+                setCron(collection['cron']);
+                setLauncherYaml((collection['launcher']||{})['yaml']||"");
+                aceEditor.current.editor.setValue((collection['launcher']||{})['yaml']||"")
+                aceEditor.current.editor.clearSelection()
+            }
+        } catch (error) {
+            console.log('change ace editor')
+        }
+    }, [mode])
 
 
     function toggleEditModal(event) {
@@ -124,7 +149,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
             cron,
             jdbcId: (jdbcId === NO_SELECTED ? '' : jdbcId),
             launcher: {
-                yaml: launcherYaml,
+                yaml: aceEditor.current.editor.getValue() ||'',
                 host,
                 port,
             }
@@ -215,14 +240,14 @@ function Source({dispatch, authUser, collection, JdbcList}) {
 
                     <Box style={{display: mode === "EDIT" || mode === "FORCE_EDIT" ? "block" : "none"}}>
                         <Grid container>
-                            <Grid item xs={10}>
+                            <Grid item xs={8}>
 
                             </Grid>
-                            <Grid item xs={2} align={"right"}>
+                            <Grid item xs={4} align={"right"}>
                                 <Button mx={1}
                                         variant={"outlined"}
                                         onClick={handleSaveProcess}
-                                        style={{display: authUser.role.index ? 'block' : 'none'}}
+                                        style={{display: authUser.role.index ? 'inline' : 'none'}}
                                 >
                                     저장
                                 </Button>
@@ -252,9 +277,26 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                             <TableRow>
                                                 <TableCell variant={"head"} component={"th"}>파라미터 YAML</TableCell>
                                                 <TableCell>
-                                                    <TextareaAutosize value={launcherYaml}
-                                                                      onChange={event => setLauncherYaml(event.target.value)}
-                                                                      style={{width: "100%", minHeight: "200px"}}
+                                                    {/*<TextareaAutosize value={launcherYaml}*/}
+                                                    {/*                  onChange={event => setLauncherYaml(event.target.value)}*/}
+                                                    {/*                  style={{width: "100%", minHeight: "200px"}}*/}
+                                                    {/*/>*/}
+                                                    <AceEditor
+                                                        ref={aceEditor}
+                                                        mode="yaml"
+                                                        theme="kuroir"
+                                                        fontSize="15px"
+                                                        height={"400px"}
+                                                        width="100%"
+                                                        tabSize={2}
+                                                        placeholder="type: 'jdbc'"
+                                                        setOptions={{ useWorker: false }}
+                                                        onChange={() => {
+                                                            let yaml = aceEditor.current.editor.getValue()
+                                                            if (launcherYaml !== yaml) {
+                                                                setLauncherYaml(yaml)
+                                                            }
+                                                        }}
                                                     />
                                                 </TableCell>
                                             </TableRow>

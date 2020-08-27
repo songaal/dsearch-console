@@ -1,9 +1,12 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import {useHistory, useLocation} from "react-router-dom";
 import styled from "styled-components";
 import Helmet from 'react-helmet';
 import AntTabs from "~/components/AntTabs";
 import Json2html from "~/components/Json2Html"
+import AceEditor from "react-ace";
+import "ace-builds/src-noconflict/mode-json";
+import "ace-builds/src-noconflict/theme-kuroir";
 
 import {
     Box as MuiBox,
@@ -87,12 +90,19 @@ function Edit({dispatch, template, templates}) {
 
     const [deleteConfirmDialog, setDeleteConfirmDialog] = useState(false)
 
+    const mappingsAceEditor = useRef(null);
+    const settingsAceEditor = useRef(null);
 
     useEffect(() => {
         setIndexPatternText("")
         setMappingsJson("")
         setSettingsJson("")
-
+        try {
+            mappingsAceEditor.current.editor.setValue("")
+            settingsAceEditor.current.editor.setValue("")
+        } catch (e) {
+            console.log('change ace editor')
+        }
         if (selectedTemplate !== "") {
             dispatch(setIndexTemplateAction({template: selectedTemplate}))
             dispatch(setIndexTemplatesAction())
@@ -108,14 +118,40 @@ function Edit({dispatch, template, templates}) {
     }, [template['index_patterns']])
 
     useEffect(() => {
-        setMappingsJson(JSON.stringify(((template['mappings'] || {})['properties']), null, 4))
+        try {
+            let json = JSON.stringify(((template['mappings'] || {})['properties']), null, 4)
+            setMappingsJson(json)
+            mappingsAceEditor.current.editor.setValue(json || '', 0)
+            mappingsAceEditor.current.editor.clearSelection()
+        } catch (e) {
+            console.log('change ace editor')
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [template['mappings']])
 
     useEffect(() => {
-        setSettingsJson(JSON.stringify(((template['settings'] || {})['index']), null, 4))
+        try {
+            let json = JSON.stringify(((template['settings'] || {})['index']), null, 4);
+            setSettingsJson(json)
+            settingsAceEditor.current.editor.setValue(json || '', 0)
+            settingsAceEditor.current.editor.clearSelection()
+        } catch (e) {
+            console.log('change ace editor')
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [template['settings']])
+
+    useEffect(() => {
+        if (mappingMode === 'json') {
+            mappingsAceEditor.current.editor.setValue(mappingsJson || '', 0)
+            mappingsAceEditor.current.editor.clearSelection()
+        }
+        if (settingMode === 'json') {
+            settingsAceEditor.current.editor.setValue(settingsJson || '', 0)
+            settingsAceEditor.current.editor.clearSelection()
+        }
+    }, [mappingMode, settingMode])
+
 
     function handleTemplateChange(template) {
         history.push(`../${template}/edit`)
@@ -152,6 +188,7 @@ function Edit({dispatch, template, templates}) {
 
         if (Object.keys(tmpInValid).length > 0) {
             setInvalid(tmpInValid)
+            console.log('tmpInValid', tmpInValid)
             return false;
         }
 
@@ -230,7 +267,6 @@ function Edit({dispatch, template, templates}) {
                 </Grid>
                 <Grid item xs={6}>
                     <Box align={'right'}>
-
 
                         <ButtonGroup variant="contained" color="primary" ref={anchorRef} aria-label="split button">
                             <Button onClick={handleSubmitClick}>저장</Button>
@@ -323,10 +359,33 @@ function Edit({dispatch, template, templates}) {
                         <Card>
                             <CardContent>
                                 <Box>
-                                    <TextareaAutosize className={classes.edit}
-                                                      value={mappingsJson}
-                                                      onChange={event => setMappingsJson(event.target.value)}
-                                                      autoFocus
+                                    {/*<TextareaAutosize className={classes.edit}*/}
+                                    {/*                  value={mappingsJson}*/}
+                                    {/*                  onChange={event => setMappingsJson(event.target.value)}*/}
+                                    {/*                  autoFocus*/}
+                                    {/*/>*/}
+                                    <AceEditor
+                                        ref={mappingsAceEditor}
+                                        mode="json"
+                                        theme="kuroir"
+                                        fontSize="15px"
+                                        tabSize={2}
+                                        height={"600px"}
+                                        width="100%"
+                                        placeholder={
+                                            JSON.stringify({
+                                                "title": {
+                                                    "type": "text"
+                                                }
+                                            })
+                                        }
+                                        setOptions={{ useWorker: false }}
+                                        onChange={() => {
+                                            let json = mappingsAceEditor.current.editor.getValue()
+                                            if (mappingsJson !== json) {
+                                                setMappingsJson(json)
+                                            }
+                                        }}
                                     />
                                 </Box>
                             </CardContent>
@@ -361,9 +420,31 @@ function Edit({dispatch, template, templates}) {
                         <Card>
                             <CardContent>
                                 <Box>
-                                    <TextareaAutosize className={classes.edit}
-                                                      value={settingsJson}
-                                                      onChange={event => setSettingsJson(event.target.value)}
+                                    {/*<TextareaAutosize className={classes.edit}*/}
+                                    {/*                  value={settingsJson}*/}
+                                    {/*                  onChange={event => setSettingsJson(event.target.value)}*/}
+                                    {/*/>*/}
+                                    <AceEditor
+                                        ref={settingsAceEditor}
+                                        mode="json"
+                                        theme="kuroir"
+                                        fontSize="15px"
+                                        tabSize={2}
+                                        height={"600px"}
+                                        width="100%"
+                                        placeholder={
+                                            JSON.stringify({
+                                                "number_of_shards": "3",
+                                                "number_of_replicas": "3"
+                                            })
+                                        }
+                                        setOptions={{ useWorker: false }}
+                                        onChange={() => {
+                                            let json = settingsAceEditor.current.editor.getValue()
+                                            if (mappingsJson !== json) {
+                                                setSettingsJson(json)
+                                            }
+                                        }}
                                     />
                                 </Box>
                             </CardContent>

@@ -9,6 +9,12 @@ export const setDocumentList = (data) => dispatch => client.call({
     data: data
 }).then(response => dispatch({type: SET_RANKING_TUNING_DOCUMENT, payload: response.data}))
 
+export const resetDocumentList = () => dispatch => dispatch({type: SET_RANKING_TUNING_DOCUMENT, payload: {
+        Total : {},
+        SearchResponse: [],
+        analyzerTokensMap: {}
+    }})
+
 
 // export const setDocumentList = (index, data) => dispatch => client.call({
 //     uri: "/elasticsearch/"+ index+ "/_search",

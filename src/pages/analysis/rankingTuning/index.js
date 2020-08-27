@@ -9,7 +9,7 @@ import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-kuroir";
 import {makeStyles} from '@material-ui/core/styles';
 import { setDocumentList } from '@actions/rankingTuningActions'
-import MuiAlert from '@material-ui/lab/Alert';
+
 import {
     Box, Snackbar, Link, CircularProgress,
     Table as MuiTable, TableRow, TableCell, TableHead, TableBody,
@@ -21,13 +21,14 @@ import {
     Grid,
     Button,
     Typography,
-    Zoom, FormControlLabel
+    Zoom, FormControlLabel, Hidden
 } from "@material-ui/core";
 
 import { TreeView, TreeItem, ToggleButton } from '@material-ui/lab';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import IndicesSelect from "../../../components/IndicesSelect";
+import {resetDocumentList} from "../../../redux/actions/rankingTuningActions";
 
 const NavLink = React.forwardRef((props, ref) => (
     <RouterNavLink innerRef={ref} {...props} />
@@ -69,15 +70,14 @@ const getTreeItemsFromData = treeItems => {
 function ScoreTreeView({details, expand, nodeToggle, description}) {
     return (
         <TreeView
-            defaultExpanded
-            id="treeview"
+            defaultExpanded={expand}
             expanded={expand}
             onNodeToggle={nodeToggle}
             style={{ flexGrow: 1 }}
             defaultCollapseIcon={<ExpandMoreIcon />}
             defaultExpandIcon={<ChevronRightIcon />}
         >
-            <TreeItem key={ids} nodeId={ids++} label={description}>
+            <TreeItem key={ids} nodeId={"node" + (ids++)} label={description}>
                 {getTreeItemsFromData(details)}
             </TreeItem>
         </TreeView>
@@ -126,12 +126,12 @@ function ResultDocument({result, item, expand, nodeToggle}) {
         <Table>
             <TableBody>
                 {
-                    dataList.map(data => {
+                    dataList.map((data, index) => {
                         let tokenValue = data['tokens'].join(", ");
                         let text = JSON.stringify(data['text']);
                         let field = data['field'];
                         return (
-                            <TableRow key={text}>
+                            <TableRow key={"data-" + index}>
                                 <TableCell>{field}</TableCell>
                                 <TableCell>{text}</TableCell>
                                 <TableCell>{tokenValue.length > 0 ? tokenValue : text}</TableCell>
@@ -142,7 +142,11 @@ function ResultDocument({result, item, expand, nodeToggle}) {
                 <TableRow>
                     <TableCell>점수</TableCell>
                     <TableCell colSpan={2}>
-                         <ScoreTreeView description={item._explanation.description} details={item._explanation.details} expand={expand} nodeToggle={nodeToggle}></ScoreTreeView> 
+                         <ScoreTreeView description={item._explanation.description}
+                                        details={item._explanation.details}
+                                        expand={expand}
+                                        nodeToggle={nodeToggle}
+                         />
                      </TableCell>
                  </TableRow>
             </TableBody>
@@ -150,38 +154,60 @@ function ResultDocument({result, item, expand, nodeToggle}) {
     )
 }
 
-function RankingTuningResults({pageNum, result, expand, nodeToggle}) {
+function RankingTuningResults({pageNum, result, expand, nodeToggle, errorMessage}) {
     ids = 1;
-    return (
-        <Table style={{ margin: "9px", overflow: "scroll" }}>
-            <TableHead>
-                <TableRow>
-                    <TableCell align="right"> # </TableCell>
-                    <TableCell align="center"> 결과 문서 </TableCell>
-                </TableRow>
-            </TableHead>
-            <TableBody>
-                {result.SearchResponse.length !== 0 ? 
-                    result.SearchResponse.map((item, index) => {
-                        let number = index + ((pageNum-1)*10) + 1;
-                        // return <></>;
-                        return (<TableRow key={"a" + number}>
-                            <TableCell align="right">{number}</TableCell>
-                            <TableCell >
-                                <ResultDocument result={result} item={item} expand={expand} nodeToggle={nodeToggle}/>
+
+    if (errorMessage.length > 0) {
+        return (
+            <Table style={{ margin: "9px", overflow: "scroll" }}>
+                <TableHead>
+                    <TableRow>
+                        <TableCell align="center"> 오류. </TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    <TableRow>
+                        <TableCell>
+                            <pre>
+                                {errorMessage}
+                            </pre>
+                        </TableCell>
+                    </TableRow>
+                </TableBody>
+            </Table>
+        )
+    } else {
+        return (
+            <Table style={{ margin: "9px", overflow: "scroll" }}>
+                <TableHead>
+                    <TableRow>
+                        <TableCell align="right"> # </TableCell>
+                        <TableCell align="center"> 결과 문서 </TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {result.SearchResponse.length !== 0 ?
+                        result.SearchResponse.map((item, index) => {
+                            let number = index + ((pageNum-1)*10) + 1;
+                            // return <></>;
+                            return (<TableRow key={"a" + number}>
+                                <TableCell align="right">{number}</TableCell>
+                                <TableCell >
+                                    <ResultDocument result={result} item={item} expand={expand} nodeToggle={nodeToggle}/>
+                                </TableCell>
+                            </TableRow>);
+                        })
+                        : <TableRow>
+                            <TableCell align="right"></TableCell>
+                            <TableCell align="center">
+                                <Typography>현재 검색된 결과가 없습니다.</Typography>
                             </TableCell>
-                        </TableRow>);
-                    })
-                : <TableRow>
-                    <TableCell align="right"></TableCell>
-                    <TableCell align="center">
-                        <Typography>현재 검색된 결과가 없습니다.</Typography>
-                    </TableCell>
-                </TableRow>
-                }
-            </TableBody>
-        </Table>
-    );
+                        </TableRow>
+                    }
+                </TableBody>
+            </Table>
+        );
+    }
 }
 let eventCode = null
 function RankingTuningCard({dispatch, result, index}) {
@@ -193,11 +219,16 @@ function RankingTuningCard({dispatch, result, index}) {
     const [progress, setProgress] = useState(false);
     const [expand, setExpand] = useState([]);
     const [checked, setChecked] = useState(false);
-    const [alert, setAlert] = useState(false);
     const [autoHeight, setAutoHeight] = useState('600px')
-    
-      
+    const [errorMessage, setErrorMessage] = useState('')
+    const [query, setQuery] = useState("")
+
     useEffect(() => {
+        dispatch(resetDocumentList())
+        setQuery('')
+        setPageNum(0)
+        setErrorMessage('')
+
         if (eventCode !== null) {
             clearInterval(eventCode)
         }
@@ -242,9 +273,14 @@ function RankingTuningCard({dispatch, result, index}) {
         }
     }
     const handleSearchQuery = (event) =>{
+        // dispatch(resetDocumentList())
+        setPageNum(0)
+        setQuery('')
+        setErrorMessage('')
+
         ids = 1;
         if(!isJson(aceEditor.current.editor.getValue())){
-            setAlert(true);
+            setErrorMessage("올바른 JSON 형식이 아닙니다.")
             return;
         }
 
@@ -272,15 +308,18 @@ function RankingTuningCard({dispatch, result, index}) {
             if( result.payload.Total.value > 0 ) setPageNum(1);
             else setPageNum(0);
             setProgress(false);
+            setQuery(aceEditor.current.editor.getValue())
         }).catch((error)=>{
-            //에러표시가 필요 한지?
+            setQuery('')
+            dispatch(resetDocumentList())
             setPageNum(0);
             setProgress(false);
+            try {
+                setErrorMessage(error.response.data.message)
+            } catch (error1) {
+                setErrorMessage(error)
+            }
         })
-    }
-
-    const handleSnackBarClose = (event) =>{
-        setAlert(false);
     }
 
     function nodeToggle(event, expanded) {
@@ -288,18 +327,24 @@ function RankingTuningCard({dispatch, result, index}) {
     }
 
     function handlePagination(pageNum) {
-        
+        // dispatch(resetDocumentList())
+        setErrorMessage('')
         ids = 1;
-        if(!isJson(aceEditor.current.editor.getValue())){
-            setAlert(true);
-            return;
-        }
+        // if(!isJson(aceEditor.current.editor.getValue())){
+        //     setErrorMessage("올바른 JSON 형식이 아닙니다.")
+        //     return;
+        // }
         document.querySelector("#move").scrollTo(0, 0);
         setProgress(true);
-        let jsonData = JSON.parse(aceEditor.current.editor.getValue());
-        jsonData.explain = true;
-        jsonData.from = (pageNum - 1) * 10;
-        jsonData.size = 10;
+        // let jsonData = JSON.parse(aceEditor.current.editor.getValue());
+        let jsonData = Object.assign({
+            explain: true,
+            from: ((pageNum - 1) * 10),
+            size: 10
+        }, JSON.parse(query))
+        // jsonData.explain = true;
+        // jsonData.from = (pageNum - 1) * 10;
+        // jsonData.size = 10;
 
         let data = {};
         if(checked){
@@ -313,117 +358,220 @@ function RankingTuningCard({dispatch, result, index}) {
         data.text = JSON.stringify(jsonData);
         dispatch(setDocumentList(data)).then(() => {
             setProgress(false);
-        });
+        }).catch((error) => {
+            dispatch(resetDocumentList())
+            try {
+                setErrorMessage(error.response.data.message)
+            } catch (error1) {
+                setErrorMessage(error)
+            }
+        })
         setPageNum(pageNum)
     }
 
     return (
         <Card mb={6}>
             <CardContent>
+
                 <Grid container>
-                    <Grid item xs={12}>
-                        <Grid container>
-                            <Grid item xs={12} md={12} lg={4}>
-                                <Box display="flex"  alignItems="center"  justifyContent="space-between" mx={3} mb={2}>
-                                    {checked ? <TextField className={classes.formControl} inputRef={inputIndex} label="인덱스를 입력해주세요"/> : <IndicesSelect />}
-                                    <FormControlLabel
-                                        style={{whiteSpace: "nowrap"}}
-                                        control={
-                                            <Switch
-                                                checked={checked}
-                                                onChange={handleChecked}
-                                                color="primary"
-                                                name="IndexModeSelector"
-                                                inputProps={{ 'aria-label': 'primary checkbox' }}
-                                            />
-                                        }
-                                        label="직접 입력"
-                                    />
-                                </Box>
-                            </Grid>
-                            <Grid item xs={12} md={12} lg={8}>
-                            {/* justifyContent="space-between" */}
-                                <Box display="flex" alignItems="center"  justifyContent="space-between" mx={3}>
-                                <Typography variant="h6">총 {result.Total.value ? result.Total.value : "0"}건의 검색결과</Typography>
-                                <Box display="flex">
-                                    <Box m={2}><Link href="#" onClick={handleExpandAll} > + 점수 펼치기 </Link></Box>
-                                    <Box m={2}><Link href="#" onClick={handleFoldAll}> - 점수 접기 </Link></Box>
-                                </Box>
-                                {/* <FormControlLabel 
-                                    control={<Checkbox checked={checked} onChange={handleExpandChange} name="selected" />}
-                                    label="펼치기"
-                                /> */}
-                                </Box>
-                            </Grid>
-                        </Grid>
-                    </Grid>
+                    <Grid item xs={12} md={12} lg={5}>
 
-                    <Grid item xs={12}>
-                        <Grid container style={{height: autoHeight}}>
-                            <Grid item xs={12} md={12} lg={4}>
-                                <Box mx={3} style={{border: "1px solid silver"}}>
-                                    <AceEditor
-                                        ref={aceEditor}
-                                        id="aceEditor"
-                                        mode="json"
-                                        theme="kuroir"
-                                        fontSize="15px"
-                                        height={autoHeight}
-                                        width="100%"
-                                        placeholder="검색쿼리를 입력해주세요."
-                                        setOptions={{ useWorker: false }}
-                                    />
-                                </Box>
-                            </Grid>
-                            <Grid item xs={12} md={12} lg={8}>
-                                <Box style={{overflow: "scroll", height: autoHeight, border: "1px solid silver"}} mx={3} id="move">
-                                        <RankingTuningResults pageNum={pageNum} result={result} expand={expand} nodeToggle={nodeToggle}/>
-                                </Box>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={12}>
-                    <Grid container>
-                            <Grid item xs={12} md={4}>
-                                <Box align="right" mx={3} mt={3}>
-                                    {progress? <CircularProgress /> : <Button variant="outlined" color="primary" onClick={handleSearchQuery}>검색</Button>}
-                                </Box>
-                                <Snackbar open={alert} autoHideDuration={5000} onClose={handleSnackBarClose}>
-                                    <MuiAlert elevation={6} variant="filled" severity="error">
-                                        올바른 형식의 JSON이 아닙니다.
-                                    </MuiAlert>
-                                </Snackbar>
-                            </Grid>
-
-                            <Grid item xs={12} md={8}>
-                                <Box align="center" mx={3} mt={3}>
-                                    <Button 
-                                        variant="outlined" 
+                        <Box display="flex"  alignItems="center"  justifyContent="space-between" mx={3} mb={2}>
+                            {checked ? <TextField className={classes.formControl} inputRef={inputIndex} label="인덱스를 입력해주세요"/> : <IndicesSelect />}
+                            <FormControlLabel
+                                style={{whiteSpace: "nowrap"}}
+                                control={
+                                    <Switch
+                                        checked={checked}
+                                        onChange={handleChecked}
                                         color="primary"
-                                        onClick={() => handlePagination(pageNum - 1)}
-                                        disabled={pageNum === 0 || pageNum === 1 }
-                                        > 이전 </Button>
-                                    <Box component={"span"} m={3}>
-                                        {pageNum} / {result.Total.value ? ( Math.ceil(Number(result.Total.value) / 10)) : "0" }
-                                    </Box>
-                                    <Button 
-                                        variant="outlined" 
-                                        color="primary"
-                                        onClick={() => handlePagination(pageNum + 1)}
-                                        disabled={pageNum === 0 ? true : Math.ceil(Number(result.Total.value) / 10) === pageNum ? true : false}
-                                        > 다음 </Button>
-                                </Box>
-                            </Grid>
-                        </Grid>
+                                        name="IndexModeSelector"
+                                        inputProps={{ 'aria-label': 'primary checkbox' }}
+                                    />
+                                }
+                                label="직접 입력"
+                            />
+                        </Box>
 
+                        <Box mx={3} style={{border: "1px solid silver"}}>
+                            <AceEditor
+                                ref={aceEditor}
+                                id="aceEditor"
+                                mode="json"
+                                theme="kuroir"
+                                fontSize="15px"
+                                height={autoHeight}
+                                width="100%"
+                                placeholder="검색쿼리를 입력해주세요."
+                                setOptions={{ useWorker: false }}
+                            />
+                        </Box>
+
+                        <Box align="right" mx={3} mt={3} align={"center"}>
+                            {progress? <CircularProgress /> : <Button fullWidth variant="outlined" color="primary" onClick={handleSearchQuery}>검색</Button>}
+                        </Box>
+
+                        {/*<Snackbar open={alert} autoHideDuration={5000} onClose={handleSnackBarClose}>*/}
+                        {/*    <MuiAlert elevation={6} variant="filled" severity="error">*/}
+                        {/*        올바른 형식의 JSON이 아닙니다.*/}
+                        {/*    </MuiAlert>*/}
+                        {/*</Snackbar>*/}
+                    </Grid>
+                    <Grid item xs={12} md={12} lg={7}>
+
+                        <Hidden lgUp>
+                            <Box mt={10}> </Box>
+                        </Hidden>
+
+                        <Box display="flex" alignItems="center"  justifyContent="space-between" mx={3} style={{height: "52px"}}>
+                            <Typography variant="h6">총 {result.Total.value ? result.Total.value : "0"}건의 검색결과</Typography>
+                            <Box display="flex">
+                                <Box m={2}><Link href="#" onClick={handleExpandAll} > + 점수 펼치기 </Link></Box>
+                                <Box m={2}><Link href="#" onClick={handleFoldAll}> - 점수 접기 </Link></Box>
+                            </Box>
+                        </Box>
+                        <Box style={{overflow: "scroll", height: autoHeight, border: "1px solid silver"}} mx={3} id="move">
+                                <RankingTuningResults pageNum={pageNum} result={result} expand={expand} nodeToggle={nodeToggle} errorMessage={errorMessage}/>
+                        </Box>
+                        <Box align="center" mx={3} mt={3}>
+                            <Button
+                                variant="outlined"
+                                color="primary"
+                                onClick={() => handlePagination(pageNum - 1)}
+                                disabled={pageNum === 0 || pageNum === 1 }
+                                > 이전 </Button>
+                            <Box component={"span"} m={3}>
+                                {pageNum} / {result.Total.value ? ( Math.ceil(Number(result.Total.value) / 10)) : "0" }
+                            </Box>
+                            <Button
+                                variant="outlined"
+                                color="primary"
+                                onClick={() => handlePagination(pageNum + 1)}
+                                disabled={pageNum === 0 ? true : Math.ceil(Number(result.Total.value) / 10) === pageNum ? true : false}
+                                > 다음 </Button>
+                        </Box>
                     </Grid>
                 </Grid>
+
+
+
+
+
+
+
+
+
+
+
+
+                {/*<Grid container>*/}
+                {/*    <Grid item xs={12}>*/}
+                {/*        <Grid container>*/}
+                {/*            <Grid item xs={12} md={12} lg={4}>*/}
+                {/*                <Box display="flex"  alignItems="center"  justifyContent="space-between" mx={3} mb={2}>*/}
+                {/*                    {checked ? <TextField className={classes.formControl} inputRef={inputIndex} label="인덱스를 입력해주세요"/> : <IndicesSelect />}*/}
+                {/*                    <FormControlLabel*/}
+                {/*                        style={{whiteSpace: "nowrap"}}*/}
+                {/*                        control={*/}
+                {/*                            <Switch*/}
+                {/*                                checked={checked}*/}
+                {/*                                onChange={handleChecked}*/}
+                {/*                                color="primary"*/}
+                {/*                                name="IndexModeSelector"*/}
+                {/*                                inputProps={{ 'aria-label': 'primary checkbox' }}*/}
+                {/*                            />*/}
+                {/*                        }*/}
+                {/*                        label="직접 입력"*/}
+                {/*                    />*/}
+                {/*                </Box>*/}
+                {/*            </Grid>*/}
+                {/*            <Grid item xs={12} md={12} lg={8}>*/}
+                {/*            /!* justifyContent="space-between" *!/*/}
+                {/*                <Box display="flex" alignItems="center"  justifyContent="space-between" mx={3}>*/}
+                {/*                <Typography variant="h6">총 {result.Total.value ? result.Total.value : "0"}건의 검색결과</Typography>*/}
+                {/*                <Box display="flex">*/}
+                {/*                    <Box m={2}><Link href="#" onClick={handleExpandAll} > + 점수 펼치기 </Link></Box>*/}
+                {/*                    <Box m={2}><Link href="#" onClick={handleFoldAll}> - 점수 접기 </Link></Box>*/}
+                {/*                </Box>*/}
+                {/*                /!* <FormControlLabel */}
+                {/*                    control={<Checkbox checked={checked} onChange={handleExpandChange} name="selected" />}*/}
+                {/*                    label="펼치기"*/}
+                {/*                /> *!/*/}
+                {/*                </Box>*/}
+                {/*            </Grid>*/}
+                {/*        </Grid>*/}
+                {/*    </Grid>*/}
+
+                {/*    <Grid item xs={12}>*/}
+                {/*        <Grid container style={{height: autoHeight}}>*/}
+                {/*            <Grid item xs={12} md={12} lg={4}>*/}
+                {/*                <Box mx={3} style={{border: "1px solid silver"}}>*/}
+                {/*                    <AceEditor*/}
+                {/*                        ref={aceEditor}*/}
+                {/*                        id="aceEditor"*/}
+                {/*                        mode="json"*/}
+                {/*                        theme="kuroir"*/}
+                {/*                        fontSize="15px"*/}
+                {/*                        height={autoHeight}*/}
+                {/*                        width="100%"*/}
+                {/*                        placeholder="검색쿼리를 입력해주세요."*/}
+                {/*                        setOptions={{ useWorker: false }}*/}
+                {/*                    />*/}
+                {/*                </Box>*/}
+                {/*            </Grid>*/}
+                {/*            <Grid item xs={12} md={12} lg={8}>*/}
+                {/*                <Box style={{overflow: "scroll", height: autoHeight, border: "1px solid silver"}} mx={3} id="move">*/}
+                {/*                        <RankingTuningResults pageNum={pageNum} result={result} expand={expand} nodeToggle={nodeToggle}/>*/}
+                {/*                </Box>*/}
+                {/*            </Grid>*/}
+                {/*        </Grid>*/}
+                {/*    </Grid>*/}
+
+                {/*    <Grid item xs={12}>*/}
+                {/*        <Grid container>*/}
+                {/*            <Grid item xs={12} md={4}>*/}
+                {/*                <Box align="right" mx={3} mt={3}>*/}
+                {/*                    {progress? <CircularProgress /> : <Button variant="outlined" color="primary" onClick={handleSearchQuery}>검색</Button>}*/}
+                {/*                </Box>*/}
+                {/*                <Snackbar open={alert} autoHideDuration={5000} onClose={handleSnackBarClose}>*/}
+                {/*                    <MuiAlert elevation={6} variant="filled" severity="error">*/}
+                {/*                        올바른 형식의 JSON이 아닙니다.*/}
+                {/*                    </MuiAlert>*/}
+                {/*                </Snackbar>*/}
+                {/*            </Grid>*/}
+
+                {/*            <Grid item xs={12} md={8}>*/}
+                {/*                <Box align="center" mx={3} mt={3}>*/}
+                {/*                    <Button */}
+                {/*                        variant="outlined" */}
+                {/*                        color="primary"*/}
+                {/*                        onClick={() => handlePagination(pageNum - 1)}*/}
+                {/*                        disabled={pageNum === 0 || pageNum === 1 }*/}
+                {/*                        > 이전 </Button>*/}
+                {/*                    <Box component={"span"} m={3}>*/}
+                {/*                        {pageNum} / {result.Total.value ? ( Math.ceil(Number(result.Total.value) / 10)) : "0" }*/}
+                {/*                    </Box>*/}
+                {/*                    <Button */}
+                {/*                        variant="outlined" */}
+                {/*                        color="primary"*/}
+                {/*                        onClick={() => handlePagination(pageNum + 1)}*/}
+                {/*                        disabled={pageNum === 0 ? true : Math.ceil(Number(result.Total.value) / 10) === pageNum ? true : false}*/}
+                {/*                        > 다음 </Button>*/}
+                {/*                </Box>*/}
+                {/*            </Grid>*/}
+                {/*        </Grid>*/}
+                {/*    </Grid>*/}
+                {/*</Grid>*/}
             </CardContent>
         </Card>
     );
 }
 
 function RankingTuning({ dispatch, result, index}) {
+
+    useEffect(() => {
+        return () => dispatch(resetDocumentList())
+    }, [])
 
     return (
         <React.Fragment>

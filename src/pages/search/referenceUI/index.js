@@ -38,6 +38,9 @@ import {
     deleteReferenceTemplate, actionReferenceTemplate
 } from "../../../redux/actions/referenceSearchActions";
 import utils from '~/utils'
+import AceEditor from "react-ace";
+import "ace-builds/src-noconflict/mode-json";
+import "ace-builds/src-noconflict/theme-kuroir";
 
 const Box = styled(MuiBox)(spacing, palette, sizing, display, borders);
 const Divider = styled(MuiDivider)(spacing, palette, sizing, display, borders);
@@ -60,16 +63,16 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const placeholder = {
-    query: `{
-    "query": {
-        "match" : {
-            "message" : {
-                "query" : "$keyword"
+    query: JSON.stringify({
+        "query": {
+            "match" : {
+                "message" : {
+                    "query" : "$keyword"
+                }
             }
-        }
-    },
-    “aggr”: {}
-}`
+        },
+        "aggr": {}
+    }, null, 4)
 }
 
 function SearchFormPanel({template, authUser, templateIndex, lastTemplateIndex, onDelete, onSave, onUp, onDown, disabledSaveButton, disabledDeleteButton, disabledOrderButton}) {
@@ -83,6 +86,13 @@ function SearchFormPanel({template, authUser, templateIndex, lastTemplateIndex, 
     const [fields, setFields] = useState(template['fields'] && template['fields'].length !== 0 ? template['fields'] : [{}])
     const [aggs, setAggs] = useState(template['aggs'] && template['aggs'].length !== 0 ? template['aggs'] : [{}])
     const [editable, setEditable] = useState(false)
+
+    const aceEditor = useRef(null);
+
+    useEffect(() => {
+        aceEditor.current.editor.setValue(template['query'] || '', 0)
+        aceEditor.current.editor.clearSelection()
+    }, [])
 
     function handleChangeField(event, index, field) {
         let clone = fields.slice()
@@ -241,12 +251,25 @@ function SearchFormPanel({template, authUser, templateIndex, lastTemplateIndex, 
                         </Grid>
                         <Grid item xs={9} md={10}>
                             <Box align={"left"}>
-                                <TextareaAutosize
-                                    className={classes.textarea}
+                                {/*<TextareaAutosize*/}
+                                {/*    className={classes.textarea}*/}
+                                {/*    placeholder={placeholder.query}*/}
+                                {/*    value={query}*/}
+                                {/*    onChange={event => {setQuery(event.target.value); setEditable(true)}}*/}
+                                {/*/>*/}
+                                <AceEditor
+                                    ref={aceEditor}
+                                    mode="json"
+                                    theme="kuroir"
+                                    fontSize="15px"
+                                    height={"600px"}
+                                    width="100%"
+                                    tabSize={2}
                                     placeholder={placeholder.query}
-                                    value={query}
-                                    onChange={event => {setQuery(event.target.value); setEditable(true)}}
+                                    setOptions={{ useWorker: false }}
+                                    onChange={event => {setQuery(aceEditor.current.editor.getValue()); setEditable(true)}}
                                 />
+
                             </Box>
                         </Grid>
                     </Grid>
