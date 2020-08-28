@@ -117,6 +117,11 @@ function DataEditTable({dispatch, index, authUser}) {
                     tmpColumns[key] = null
                 })
             })
+
+            if (keyword === undefined || keyword === null || keyword === '') {
+                setColumns(Object.keys(tmpColumns))
+            }
+
             // setColumns(Object.keys(tmpColumns))
             return {
                 columns: Object.keys(tmpColumns),
