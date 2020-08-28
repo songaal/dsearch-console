@@ -83,7 +83,7 @@ function IndexedDataTable({dispatch, index}) {
 
             if (searchKeyword === undefined || searchKeyword === '') {
                 let tmpColumns = {}
-                tmpColumns['ID'] = null
+                // tmpColumns['ID'] = null
                 hits.forEach(hit => {
                     const source = flat(hit['_source'])
                     Object.keys(source).forEach(key => {
