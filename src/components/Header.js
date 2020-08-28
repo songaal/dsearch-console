@@ -313,8 +313,9 @@ const DashBoardHeader = ({theme, onDrawerToggle}) => {
 
                     dispatch(setAutoCompleteAction(value)).then((data) => {
                         let payload = data.data;
-                        if(payload.keyword !== undefined && payload.result !== undefined && payload.keyword !== null && payload.result !== null) {
-                            handleCache(payload.keyword, payload.result.map(item => item.item))
+                        console.log(payload);
+                        if(payload.query !== undefined && payload.result !== undefined && payload.query !== null && payload.result !== null) {
+                            handleCache(payload.query, payload.result.map(item => item['keyword']))
                         }
                         // if(payload.q !== undefined && payload.result !== undefined && payload.q !== null && payload.result !== null) {
                         //     handleCache(payload.q, payload.result)
