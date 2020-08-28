@@ -107,7 +107,18 @@ export const setIndexDocumentSourceListAction = ({index, from, size, id, columns
         { "query": { "match": { "_id": id } }, from, size, "sort": [{ "_id": { "order": "desc" } }] }
         :
         keyword !== undefined && keyword !== null && keyword !== ""?
-            { "query": { "bool": { "minimum_should_match": 1, "should": (columns.map(c =>  ({ "match": { [c]: keyword } }))  ) } }, from, size, "sort": [{ "_score": { "order": "desc" } }, { "_id": { "order": "desc" } }] }
+            { "query": {
+                // "bool": {
+                //     "minimum_should_match": 1,
+                //     "should": (columns.map(c =>  ({ "match": { [c]: keyword } }))  ) }
+                    "multi_match" : {
+                        "query":    keyword,
+                        "fields": columns,
+                        "operator": "or"
+                    }},
+                from,
+                size,
+                "sort": [{ "_score": { "order": "desc" } }, { "_id": { "order": "desc" } }] }
             :
             { from, size, "sort": [ { "_score": { "order": "desc" } }, { "_id": { "order": "desc" } }] }
 }).then(response => {

@@ -110,7 +110,7 @@ function DataEditTable({dispatch, index, authUser}) {
         return dispatch(setIndexDocumentSourceListAction({index, from: pageNum, size: searchSize||rowSize, columns, keyword})).then(response => {
             // columns 적용
             let tmpColumns = {}
-            tmpColumns['_id'] = null
+            tmpColumns['ID'] = null
             response['hits']['hits'].forEach(hit => {
                 const source = flat(hit['_source'])
                 Object.keys(source).forEach(key => {
