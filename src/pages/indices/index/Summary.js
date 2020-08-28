@@ -34,7 +34,7 @@ function Summary({index, indexInfoList, aliases, settings}) {
     if (indexInfo['index'] !== index) {
         return null;
     }
-    
+
     return (
         <React.Fragment>
             <br />
@@ -60,7 +60,7 @@ function Summary({index, indexInfoList, aliases, settings}) {
                                             {/*</Box>*/}
 
 
-                                            <Box style={{paddingLeft: "30px", marginTop: "2px"}}>
+                                            <Box style={{marginTop: "2px"}}>
                                                 <Avatar style={{backgroundColor: indexInfo['health'] === "green" ? green[500] : indexInfo['health'] === "yellow" ? yellow[700] : red[700],
                                                     width: "40px", fontSize: "0.8em"}}>
                                                     {indexInfo['health'] === "green" ? "정상" : indexInfo['health'] === "yellow" ? "경고" : "오류"}
