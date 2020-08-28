@@ -240,6 +240,11 @@ function IndexedDataTable({dispatch, index}) {
 
                     <TableContainer>
                         <Table size={"small"}>
+                            <colgroup>
+                                <col style={{width:'20%'}}/>
+                                <col style={{width:'40%'}}/>
+                                <col style={{width:'40%'}}/>
+                            </colgroup>
                             <TableHead>
                                 <TableRow>
                                     <TableCell>아이디</TableCell>
