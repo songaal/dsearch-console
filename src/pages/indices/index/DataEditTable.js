@@ -1,8 +1,8 @@
 import React, {forwardRef, useEffect, useState} from "react";
-import {connect} from "react-redux";
+import {connect, useSelector} from "react-redux";
 import styled from "styled-components";
 import {makeStyles} from '@material-ui/core/styles';
-import {Divider as MuiDivider} from "@material-ui/core";
+import {Box, Card, CardContent, Divider as MuiDivider, TextareaAutosize, Typography} from "@material-ui/core";
 import MaterialTable from 'material-table';
 import {spacing} from "@material-ui/system";
 import AddBox from '@material-ui/icons/AddBox';
@@ -51,14 +51,17 @@ const useStyles = makeStyles((theme) => ({}));
 const Divider = styled(MuiDivider)(spacing);
 
 function DataEditTable({dispatch, index, authUser}) {
+    const documentSourceResponse = useSelector(store => ({ ...store.indicesReducers}))['documentSourceResponse']
     const [keyword, setKeyword] = useState("");
     const [pageNum, setPageNum] = useState(0);
     const [rowSize, setRowSize] = useState(5);
     const [columns, setColumns] = useState([])
     const [dataList, setDataList] = useState([])
+    const [selectData, setSelectData] = useState("")
 
     // 인덱스 변경시 호출
     useEffect(() => {
+        setSelectData("")
         setKeyword("")
         setPageNum(0)
         setRowSize(5)
@@ -68,20 +71,53 @@ function DataEditTable({dispatch, index, authUser}) {
         fetchIndexDocumentSourceList({keyword})
     }, [index])
 
+    useEffect(() => {
+        const response = documentSourceResponse;
+        if (!response || !response['hits']) {
+            return false
+        }
 
-    function fetchIndexDocumentSourceList({searchSize=10000, columns=[], keyword=null}) {
-        console.log(columns)
+        let tmpColumns = {}
+        tmpColumns['ID'] = null
+        response['hits']['hits'].forEach(hit => {
+            const source = flat(hit['_source'])
+            Object.keys(source).forEach(key => {
+                tmpColumns[key] = null
+            })
+        })
+
+        const columns = Object.keys(tmpColumns)
+        setColumns(columns)
+
+        setDataList(response['hits']['hits'].map(hit => {
+            const flatHit = flat(hit)
+            let tmpData = {}
+            columns.forEach(column => {
+                tmpData[column.replace(/\./gi, "___")] = flatHit['_source.' + column] || ""
+            })
+            tmpData['ID'] = hit['_id']
+            tmpData['_hitsId'] = hit['_id']
+            return tmpData
+        }))
+
+    }, [])
+
+
+
+
+
+    function fetchIndexDocumentSourceList({searchSize=100, columns=[], keyword=null}) {
         return dispatch(setIndexDocumentSourceListAction({index, from: pageNum, size: searchSize||rowSize, columns, keyword})).then(response => {
             // columns 적용
             let tmpColumns = {}
-            tmpColumns['ID'] = null
+            tmpColumns['_id'] = null
             response['hits']['hits'].forEach(hit => {
                 const source = flat(hit['_source'])
                 Object.keys(source).forEach(key => {
                     tmpColumns[key] = null
                 })
             })
-            setColumns(Object.keys(tmpColumns))
+            // setColumns(Object.keys(tmpColumns))
             return {
                 columns: Object.keys(tmpColumns),
                 hits: response['hits']
@@ -106,6 +142,7 @@ function DataEditTable({dispatch, index, authUser}) {
     }
 
     function handleSearch(keyword) {
+        setDataList([])
         setKeyword(keyword)
         setColumns(columns)
         fetchIndexDocumentSourceList({columns, keyword})
@@ -116,7 +153,6 @@ function DataEditTable({dispatch, index, authUser}) {
             const tmpBody = unflatten(newData)
             let body = {}
             Object.keys(tmpBody).forEach(key => body[key.replace(/___/gi, ".")] = tmpBody[key])
-            console.log(body)
             delete body['ID']
             dispatch(addIndexDocumentSourceAction({ index, body }))
                 .then(() => setTimeout(() => fetchIndexDocumentSourceList({keyword}).then(resolve), 1000))
@@ -131,6 +167,7 @@ function DataEditTable({dispatch, index, authUser}) {
             const id = body['_hitsId']
             delete body['_hitsId']
             delete body['ID']
+            delete body['_id']
             dispatch(editIndexDocumentSourceAction({ index, id, body }))
                 .then(() => setTimeout(() => fetchIndexDocumentSourceList({keyword}).then(resolve), 1000))
                 .catch(reject)
@@ -152,22 +189,58 @@ function DataEditTable({dispatch, index, authUser}) {
                     <MaterialTable
                         icons={tableIcons}
                         title=""
-                        columns={columns.map(column => ({title: column, field: column.replace(/\./gi, "___"), editable: column === "ID" ? 'never' : "always", cellStyle:{whiteSpace: "nowrap"} }))}
+                        columns={columns.map(column => ({
+                            title: column,
+                            field: column.replace(/\./gi, "___"),
+                            editable: column === "ID" ? 'never' : "always",
+                            cellStyle:{whiteSpace: "nowrap", maxWidth: "180px", overflow: "hidden"}
+                        }))}
                         data={dataList}
                         onChangeRowsPerPage={handleChangeRowsPerPage}
                         editable={{ onRowAdd: handleRowAdd, onRowUpdate: handleRowUpdate, onRowDelete: handleRowDelete }}
                         onSearchChange={handleSearch}
+                        options={{
+                            headerStyle: {
+                                maxWidth: "180px"
+                            }
+                        }}
+                        onRowClick={(event, rowData) => {
+                            setSelectData(event.target.innerText || "")
+                        }}
                     />
                     :
                     <MaterialTable
                         icons={tableIcons}
                         title=""
-                        columns={columns.map(column => ({title: column, field: column.replace(/\./gi, "___"), editable: column === "ID" ? 'never' : "always", cellStyle:{whiteSpace: "nowrap"} }))}
+                        columns={columns.map(column => ({
+                            title: column,
+                            field: column.replace(/\./gi, "___"),
+                            editable: column === "ID" ? 'never' : "always",
+                            cellStyle:{whiteSpace: "nowrap", maxWidth: "180px"}
+                        }))}
                         data={dataList}
                         onChangeRowsPerPage={handleChangeRowsPerPage}
                         onSearchChange={handleSearch}
+                        options={{
+                            headerStyle: {
+                                maxWidth: "180px"
+                            }
+                        }}
+                        onRowClick={(event, rowData) => {
+                            setSelectData(event.target.innerText || "")
+                        }}
                     />
             }
+
+            <Card style={{display: selectData === "" ? "none" : "block"}}>
+                <CardContent>
+                    <Box mt={5}>
+                        <Typography variant="h5" gutterBottom >
+                            {selectData}
+                        </Typography>
+                    </Box>
+                </CardContent>
+            </Card>
 
 
         </React.Fragment>

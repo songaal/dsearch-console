@@ -3,7 +3,7 @@ import {Box, FormControl, FormControlLabel, Radio, RadioGroup} from "@material-u
 import DataEditTable from "./DataEditTable";
 import IndexedDataTable from "./IndexedDataTable";
 
-function Index() {
+function Data() {
     const [chk, setChk] = useState('source'); // source, indexed
 
     function handleRadioChange(e) {
@@ -31,4 +31,4 @@ function Index() {
     );
 }
 
-export default Index
+export default Data

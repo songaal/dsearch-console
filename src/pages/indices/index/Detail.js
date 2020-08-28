@@ -21,7 +21,7 @@ import {spacing} from "@material-ui/system";
 import {
     deleteIndexAction,
     setIndexAction,
-    setIndexAliasesAction,
+    setIndexAliasesAction, setIndexDocumentSourceListAction,
     setIndexInfoListAction, setIndexManagedAction,
     setIndexMappingsAction,
     setIndexSettingsAction,
@@ -110,6 +110,7 @@ function Index({indexInfoList, settings}) {
             dispatch(setIndexSettingsAction(index))
             dispatch(setIndexMappingsAction(index))
             dispatch(setIndexStateAction(index))
+            dispatch(setIndexDocumentSourceListAction({index, from: 0, size: 100, columns: [], keyword: ''}))
         }
     }, [index])
 

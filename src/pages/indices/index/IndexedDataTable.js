@@ -39,7 +39,9 @@ const rowSizeList = [5, 10, 20]
 const idKey = "* ID"
 function IndexedDataTable({dispatch, index}) {
     const classes = useStyles()
-    const [id, setId] = useState("");
+    const [keyword, setKeyword] = useState("");
+    const [keywordInput, setKeywordInput] = useState("");
+    const [columns, setColumns] = useState([]);
     const [from, setFrom] = useState(0);
     const [size, setSize] = useState(5);
     const [dataList, setDataList] = useState([])
@@ -48,12 +50,13 @@ function IndexedDataTable({dispatch, index}) {
 
     // 인덱스 변경시 호출
     useEffect(() => {
-        setId("")
+        setKeyword("")
+        setColumns([])
         setFrom(0)
-        fetchDocuments({searchId: "", searchFrom: 0})
+        fetchDocuments({searchKeyword: "", searchFrom: 0})
     }, [index])
 
-    function fetchDocuments({ searchFrom, searchSize, searchId }) {
+    function fetchDocuments({ searchFrom, searchSize, searchKeyword }) {
         setDataList([])
         setLoading(true)
         dispatch(setIndexMappingsAction(index)).then(response => {
@@ -63,19 +66,34 @@ function IndexedDataTable({dispatch, index}) {
                 .forEach(key => {
                     flatMappings[key.replace(/.properties/gi, "")] = flat(mappings)[key]
                 })
-            return {
-                mappings: mappings,
-                flatMappings: flatMappings
-            }
+            return { mappings, flatMappings }
         }).then(payload => {
             return dispatch(setIndexDocumentSourceListAction({
-                index, from: searchFrom||from, size: searchSize||size, id: searchId||id
+                index,
+                from: searchFrom||from,
+                size: searchSize||size,
+                keyword: searchKeyword === undefined ? keyword : searchKeyword,
+                columns
             })).then(documents => ({
                 ...payload,
                 documents: documents
             }))
         }).then(payload => {
             const hits = payload['documents']['hits']['hits']
+
+            if (searchKeyword === undefined || searchKeyword === '') {
+                let tmpColumns = {}
+                tmpColumns['ID'] = null
+                hits.forEach(hit => {
+                    const source = flat(hit['_source'])
+                    Object.keys(source).forEach(key => {
+                        tmpColumns[key] = null
+                    })
+                })
+                setColumns(Object.keys(tmpColumns))
+            }
+
+
             let documentAnalyzerMap = {}
             hits.forEach(hit => {
                 const id = hit['_id']
@@ -140,9 +158,10 @@ function IndexedDataTable({dispatch, index}) {
         fetchDocuments({searchFrom:searchFrom})
     }
 
-    function handleChangeId(searchId) {
-        setId(searchId)
-        fetchDocuments({searchFrom:0, searchId})
+    function handleChangeKeyword(searchKeyword) {
+        setKeyword(searchKeyword)
+        setFrom(0)
+        fetchDocuments({searchFrom:0, searchKeyword: searchKeyword})
     }
     // 인덱스가 없으면 무시.
     if (!index) return null;
@@ -157,11 +176,16 @@ function IndexedDataTable({dispatch, index}) {
                             <Box className={classes.form}>
                                 <InputBase
                                     className={classes.input}
-                                    placeholder="ID"
-                                    value={id}
-                                    onChange={event => handleChangeId(event.target.value)}
+                                    placeholder="Search"
+                                    value={keywordInput}
+                                    onChange={event => setKeywordInput(event.target.value)}
+                                    onKeyUp={event => {
+                                        if (event.keyCode === 13) {
+                                            handleChangeKeyword(keywordInput)
+                                        }
+                                    }}
                                 />
-                                <IconButton  className={classes.iconButton} onClick={() => handleChangeId(id)}>
+                                <IconButton  className={classes.iconButton} onClick={() => handleChangeKeyword(keywordInput)}>
                                     <Search/>
                                 </IconButton>
                             </Box>
@@ -175,13 +199,22 @@ function IndexedDataTable({dispatch, index}) {
                                     이전
                                 </Button>
                                 <Box component={"span"} m={3}>
-                                    { (from / size) + 1 }
+                                    {
+                                        dataList.length > 0 ?
+                                            isNaN((from / size) + 1) ? 0 : (from / size) + 1
+                                            :
+                                            0
+                                    }
                                     /
-                                    {Math.ceil(totalSize / size)}
+                                    {isNaN(Math.ceil(totalSize / size)) ? 0 : Math.ceil(totalSize / size)}
                                 </Box>
                                 <Button variant={"outlined"}
                                         onClick={() => handlePagination(from + size)}
-                                        disabled={(from / size) + 1 >= Math.ceil(totalSize / size)}
+                                        disabled={
+                                            (isNaN((from / size) + 1) ? 0 : (from / size) + 1)
+                                            >=
+                                            (isNaN(Math.ceil(totalSize / size)) ? 0 : Math.ceil(totalSize / size))
+                                        }
                                 >
                                     다음
                                 </Button>
@@ -206,7 +239,7 @@ function IndexedDataTable({dispatch, index}) {
                     </Grid>
 
                     <TableContainer>
-                        <Table size={"small"} style={{whiteSpace: "nowrap"}}>
+                        <Table size={"small"}>
                             <TableHead>
                                 <TableRow>
                                     <TableCell>아이디</TableCell>
@@ -228,9 +261,15 @@ function IndexedDataTable({dispatch, index}) {
                                     dataList.map((data, dataIndex) => {
                                         return (
                                             <TableRow key={`${data['key']}-${dataIndex}`}>
-                                                <TableCell> {data['key']} </TableCell>
-                                                <TableCell> {data['value']} </TableCell>
-                                                <TableCell> {data['term']} </TableCell>
+                                                <TableCell>
+                                                    {data['key']}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {data['value']}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {data['term']}
+                                                </TableCell>
                                             </TableRow>
                                         )
                                     })
@@ -251,13 +290,22 @@ function IndexedDataTable({dispatch, index}) {
                                     이전
                                 </Button>
                                 <Box component={"span"} m={3}>
-                                    { (from / size) + 1 }
+                                    {
+                                        dataList.length > 0 ?
+                                            isNaN((from / size) + 1) ? 0 : (from / size) + 1
+                                            :
+                                            0
+                                    }
                                     /
-                                    {Math.ceil(totalSize / size)}
+                                    {isNaN(Math.ceil(totalSize / size)) ? 0 : Math.ceil(totalSize / size)}
                                 </Box>
                                 <Button variant={"outlined"}
                                         onClick={() => handlePagination(from + size)}
-                                        disabled={(from / size) + 1 >= Math.ceil(totalSize / size)}
+                                        disabled={
+                                            (isNaN((from / size) + 1) ? 0 : (from / size) + 1)
+                                            >=
+                                            (isNaN(Math.ceil(totalSize / size)) ? 0 : Math.ceil(totalSize / size))
+                                        }
                                 >
                                     다음
                                 </Button>

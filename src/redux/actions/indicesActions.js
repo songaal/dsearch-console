@@ -107,9 +107,9 @@ export const setIndexDocumentSourceListAction = ({index, from, size, id, columns
         { "query": { "match": { "_id": id } }, from, size, "sort": [{ "_id": { "order": "desc" } }] }
         :
         keyword !== undefined && keyword !== null && keyword !== ""?
-            { "query": { "bool": { "should": (columns.map(c =>  ({ "match": { [c]: keyword } }))  ) } }, from, size, "sort": [{ "_id": { "order": "desc" } }] }
+            { "query": { "bool": { "minimum_should_match": 1, "should": (columns.map(c =>  ({ "match": { [c]: keyword } }))  ) } }, from, size, "sort": [{ "_score": { "order": "desc" } }, { "_id": { "order": "desc" } }] }
             :
-            { from, size, "sort": [{ "_id": { "order": "desc" } }] }
+            { from, size, "sort": [ { "_score": { "order": "desc" } }, { "_id": { "order": "desc" } }] }
 }).then(response => {
     dispatch({ type: SET_INDEX_DOCUMENT_SOURCE_RESPONSE, payload: response.data })
     return response.data;
@@ -117,7 +117,7 @@ export const setIndexDocumentSourceListAction = ({index, from, size, id, columns
 
 export const editIndexDocumentSourceAction = ({index, id, body}) => dispatch => client.call({
     uri: `/elasticsearch/${index}/_doc/${id}`,
-    method: 'post',
+    method: 'put',
     data: body
 }).then(response => response.data)
 
