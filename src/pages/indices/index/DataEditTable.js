@@ -49,7 +49,7 @@ const tableIcons = {
 };
 const useStyles = makeStyles((theme) => ({}));
 const Divider = styled(MuiDivider)(spacing);
-
+let searchInterval = null
 function DataEditTable({dispatch, index, authUser}) {
     const documentSourceResponse = useSelector(store => ({ ...store.indicesReducers}))['documentSourceResponse']
     const [keyword, setKeyword] = useState("");
@@ -143,9 +143,16 @@ function DataEditTable({dispatch, index, authUser}) {
 
     function handleSearch(keyword) {
         setDataList([])
-        setKeyword(keyword)
-        setColumns(columns)
-        fetchIndexDocumentSourceList({columns, keyword})
+
+        if (searchInterval !== null) {
+            clearTimeout(searchInterval)
+        }
+
+        searchInterval = setTimeout(() => {
+            setKeyword(keyword)
+            setColumns(columns)
+            fetchIndexDocumentSourceList({columns, keyword})
+        }, 500)
     }
 
     function handleRowAdd(newData) {
