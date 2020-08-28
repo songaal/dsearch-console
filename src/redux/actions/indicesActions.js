@@ -79,7 +79,7 @@ export const setIndexStateAction = (index) => dispatch =>
         .catch(error => console.error(error))
 
 export const editDynamicQueryAction = (index, query) => dispatch => client.call({
-    uri: `/${index}/_settings`,
+    uri: `/elasticsearch/${index}/_settings`,
     method: "PUT",
     data: query
 })

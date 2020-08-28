@@ -105,11 +105,11 @@ function Index({indexInfoList, settings}) {
 
     useEffect(() => {
         if (index) {
+            dispatch(setIndexStateAction(index))
             dispatch(setIndexAliasesAction(index))
             dispatch(setIndexInfoListAction(index))
             dispatch(setIndexSettingsAction(index))
             dispatch(setIndexMappingsAction(index))
-            dispatch(setIndexStateAction(index))
             dispatch(setIndexDocumentSourceListAction({index, from: 0, size: 100, columns: [], searchKeyword: ''}))
         }
     }, [index])

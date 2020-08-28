@@ -14,12 +14,14 @@ import {
     TableContainer,
     TableHead,
     TableRow,
+    Avatar,
     Typography,
 } from "@material-ui/core";
 
 import {spacing} from "@material-ui/system";
 import {setIndicesAction} from "../../../redux/actions/indicesActions";
 import {connect} from "react-redux";
+import {green, grey, orange, red, yellow} from "@material-ui/core/colors";
 
 const useStyles = makeStyles((theme) => ({}));
 const Divider = styled(MuiDivider)(spacing);
@@ -88,11 +90,32 @@ function Index({dispatch, indices}) {
                         <TableRow>
                             <TableCell align="center">#</TableCell>
                             <TableCell align="center">이름</TableCell>
+                            <TableCell align="center">샤드</TableCell>
+                            <TableCell align="center">문서 수</TableCell>
+                            <TableCell align="center">용량</TableCell>
                             <TableCell align="center">상태</TableCell>
+                            {/*health*/}
+                        {/*  status  */}
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {sortedIndices.map((index, no) => {
+                            let statusColor = "";
+                            let statusText = "";
+                            if (index['status'] === 'close') {
+                                statusColor = grey[700];
+                                statusText = "닫힘";
+                            } else if (index['health'] === "yellow") {
+                                statusColor = yellow[700];
+                                statusText = "주의";
+                            } else if (index['health'] === "red") {
+                                statusColor = red[700];
+                                statusText = "오류";
+                            } else {
+                                statusColor = green[500];
+                                statusText = "정상";
+                            }
+
                             return (
                                 <TableRow key={index['uuid']}>
                                     <TableCell component="th" scope="row" align="center">{no + 1}</TableCell>
@@ -101,7 +124,28 @@ function Index({dispatch, indices}) {
                                             {index['index']}
                                         </Link>
                                     </TableCell>
-                                    <TableCell align="center">{index['status']}</TableCell>
+                                    <TableCell align="center">
+                                        <Box>
+                                            P[{index['pri']||'-'}] R[{index['rep']||'-'}]
+                                        </Box>
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <Box>
+                                            {index['docs.count']||'-'}
+                                        </Box>
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <Box>
+                                            {index['store.size']||'-'}
+                                        </Box>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Box align="center">
+                                            <Avatar style={{backgroundColor: statusColor, width: "40px", fontSize: "0.8em"}}>
+                                                {statusText}
+                                            </Avatar>
+                                        </Box>
+                                    </TableCell>
                                 </TableRow>
                             )
                         })}

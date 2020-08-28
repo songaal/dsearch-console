@@ -3,6 +3,7 @@ import {connect} from "react-redux";
 import styled from "styled-components";
 import {makeStyles} from '@material-ui/core/styles';
 import {
+    Avatar,
     Box as MuiBox,
     Card,
     CardContent,
@@ -14,6 +15,7 @@ import {
 } from "@material-ui/core";
 
 import {spacing} from "@material-ui/system";
+import {green, grey, red, yellow} from "@material-ui/core/colors";
 
 
 const useStyles = makeStyles((theme) => ({}));
@@ -21,7 +23,7 @@ const useStyles = makeStyles((theme) => ({}));
 const Grid = styled(MuiGrid)(spacing);
 const Box = styled(MuiBox)(spacing);
 
-function Summary({indexInfoList, aliases, settings}) {
+function Summary({index, indexInfoList, aliases, settings}) {
     const classes = useStyles();
     const indexInfo = indexInfoList[0]
 
@@ -29,6 +31,10 @@ function Summary({indexInfoList, aliases, settings}) {
         return null
     }
 
+    if (indexInfo['index'] !== index) {
+        return null;
+    }
+    
     return (
         <React.Fragment>
             <br />
@@ -41,17 +47,27 @@ function Summary({indexInfoList, aliases, settings}) {
                                     <TableRow>
                                         <TableCell>상태</TableCell>
                                         <TableCell>
-                                            {indexInfo['health'] === "green" ?
-                                                <Box style={{backgroundColor: "green", width: "20px", height: "20px", borderRadius: "90px", float: "left"}}> </Box>
-                                                :
-                                                indexInfo['health'] === "yellow" ?
-                                                    <Box style={{backgroundColor: "yellow", width: "20px", height: "20px", borderRadius: "90px", float: "left"}}> </Box>
-                                                    :
-                                                    <Box style={{backgroundColor: "red", width: "20px", height: "20px", borderRadius: "90px", float: "left"}}> </Box>
-                                            }
+                                            {/*{indexInfo['health'] === "green" ?*/}
+                                            {/*    <Box style={{backgroundColor: "green", width: "20px", height: "20px", borderRadius: "90px", float: "left"}}> </Box>*/}
+                                            {/*    :*/}
+                                            {/*    indexInfo['health'] === "yellow" ?*/}
+                                            {/*        <Box style={{backgroundColor: "yellow", width: "20px", height: "20px", borderRadius: "90px", float: "left"}}> </Box>*/}
+                                            {/*        :*/}
+                                            {/*        <Box style={{backgroundColor: "red", width: "20px", height: "20px", borderRadius: "90px", float: "left"}}> </Box>*/}
+                                            {/*}*/}
+                                            {/*<Box style={{paddingLeft: "30px", marginTop: "2px"}}>*/}
+                                            {/*    {indexInfo['health'] === "green" ? "정상" : indexInfo['health'] === "yellow" ? "경고" : "오류"}*/}
+                                            {/*</Box>*/}
+
+
                                             <Box style={{paddingLeft: "30px", marginTop: "2px"}}>
-                                                {indexInfo['health'] === "green" ? "정상" : indexInfo['health'] === "yellow" ? "경고" : "오류"}
+                                                <Avatar style={{backgroundColor: indexInfo['health'] === "green" ? green[500] : indexInfo['health'] === "yellow" ? yellow[700] : red[700],
+                                                    width: "40px", fontSize: "0.8em"}}>
+                                                    {indexInfo['health'] === "green" ? "정상" : indexInfo['health'] === "yellow" ? "경고" : "오류"}
+                                                </Avatar>
                                             </Box>
+
+
                                         </TableCell>
                                         <TableCell></TableCell>
                                         <TableCell></TableCell>

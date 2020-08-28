@@ -256,6 +256,7 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
                             <TableCell align="center">샤드</TableCell>
                             <TableCell align="center">문서 수</TableCell>
                             <TableCell align="center">용량</TableCell>
+                            <TableCell align="center">자동시작</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -319,6 +320,11 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
                                                 {indexB['storeSize']||'-'}
                                             </Box>
                                             <Box style={{display: isActiveA === false && isActiveB === false ? "block" : "none"}}> - </Box>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <Box>
+                                                {collection['scheduled']||'false'}
+                                            </Box>
                                         </TableCell>
                                     </TableRow>
                                 )

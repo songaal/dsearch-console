@@ -29,7 +29,7 @@ import {
 import {makeStyles} from '@material-ui/core/styles';
 import {palette, positions, spacing} from "@material-ui/system";
 import {flatten} from "flat";
-import {editDynamicQueryAction} from "../../../redux/actions/indicesActions";
+import {editDynamicQueryAction, setIndexSettingsAction} from "../../../redux/actions/indicesActions";
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -152,13 +152,20 @@ function Setting({ dispatch, index, authUser, settings }) {
         setModal(!modal)
     }
     function processQuery() {
-        dispatch(editDynamicQueryAction(index, query))
-            .then(response => {
-                setMessage("업데이트 성공")
-            })
-            .catch(error => {
-                setMessage("업데이트 실패"+ error)
-            })
+        try {
+            const parseQueryJson = JSON.parse(query)
+            dispatch(editDynamicQueryAction(index, parseQueryJson))
+                .then(response => {
+                    setMessage("업데이트 성공")
+                    dispatch(setIndexSettingsAction(index))
+                    toggleModal()
+                })
+                .catch(error => {
+                    setMessage("업데이트 실패"+ error)
+                })
+        } catch (err) {
+            setMessage("업데이트 실패 JSON 형식이 잘못 되었습니다.")
+        }
     }
 
     return (
@@ -215,7 +222,7 @@ function Setting({ dispatch, index, authUser, settings }) {
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={processQuery}>추가</Button>
+                    <Button onClick={processQuery}>적용</Button>
                     <Button onClick={toggleModal}>취소</Button>
                 </DialogActions>
             </Dialog>
