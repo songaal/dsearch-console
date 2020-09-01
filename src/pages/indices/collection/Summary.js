@@ -18,12 +18,13 @@ import {
     TableBody,
     TableCell,
     TableRow,
+    TextField,
     Typography as MuiTypography
 } from "@material-ui/core";
 import {makeStyles} from '@material-ui/core/styles';
 import {positions, spacing} from "@material-ui/system";
 import {ArrowDropDown, Check} from "@material-ui/icons";
-import {deleteCollectionAction, setCollectionList} from "../../../redux/actions/collectionActions";
+import {deleteCollectionAction, setCollectionList, editCollectionSourceAction} from "../../../redux/actions/collectionActions";
 import {red} from "@material-ui/core/colors";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -55,6 +56,8 @@ function Summary({dispatch, authUser, collection}) {
     const classes = useStyles();
     const [moreMenu, setMoreMenu] = useState(null)
     const [openRemoveModal, setOpenRemoveModal] = useState(false)
+    const [openEditModal, setOpenEditModal] = useState(false)
+    const [editName, setEditName] = useState(collection['name'])
 
     function toggleMoreMenu(event) {
         setMoreMenu(moreMenu === null ? event.currentTarget : null)
@@ -69,6 +72,18 @@ function Summary({dispatch, authUser, collection}) {
             console.log(error)
         })
     }
+
+    function handleEditNameCollection(event) {
+        toggleMoreMenu(event)
+        collection['name'] = editName;
+        dispatch(editCollectionSourceAction(collection['id'], collection)).then(response => {
+            dispatch(setCollectionList())
+            setTimeout(() => history.push("../indices-collections"), 500)
+        }).catch(error => {
+            console.log(error)
+        })
+    }
+
     const indexA = collection['indexA']
     const indexB = collection['indexB']
     // authUser.role.index =false;
@@ -162,6 +177,9 @@ function Summary({dispatch, authUser, collection}) {
                                             anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
                                             transformOrigin={{ vertical: "top", horizontal: "center" }}
                                         >
+                                            <MenuItem onClick={() => setOpenEditModal(true)}>
+                                                컬렉션 이름 변경
+                                            </MenuItem>
                                             <MenuItem style={{backgroundColor: red["300"]}} onClick={() => setOpenRemoveModal(true)}>
                                                 컬렉션 삭제
                                             </MenuItem>
@@ -352,6 +370,30 @@ function Summary({dispatch, authUser, collection}) {
                 </DialogActions>
             </Dialog>
 
+            <Dialog open={openEditModal} fullWidth={true}>
+                <DialogTitle>컬랙션 이름 변경</DialogTitle>
+                <DialogContent>
+                <TextField 
+                    value={editName}
+                    onChange={(event) => setEditName(event.target.value)}
+                    fullWidth
+                    placeholder={"변경할 이름을 입력해 주세요"} />
+                </DialogContent>
+                <DialogActions>
+                    <Button 
+                        color="primary"
+                        variant="contained"
+                        onClick={handleEditNameCollection}
+                    >
+                        수정
+                    </Button>
+                    <Button onClick={() => setOpenEditModal(false)}
+                            variant="contained"
+                    >
+                        취소
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </React.Fragment>
     );
 }

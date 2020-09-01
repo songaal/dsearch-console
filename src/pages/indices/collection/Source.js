@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const NO_SELECTED = 'NO_SELECTED';
-
+const DEFAULT_CRON = '0 0 * * *'
 function Source({dispatch, authUser, collection, JdbcList}) {
     const classes = useStyles();
     const [editModal, setEditModal] = useState(null)
@@ -135,7 +135,9 @@ function Source({dispatch, authUser, collection, JdbcList}) {
         if (port === "") {
             invalidCheck['port'] = true
         }
-        if (!isValidCron(cron)) {
+        if(cron.length == 0){
+            setCron(DEFAULT_CRON)
+        }else if (!isValidCron(cron)) {
             invalidCheck['cron'] = true
         }
 
@@ -143,13 +145,13 @@ function Source({dispatch, authUser, collection, JdbcList}) {
             setInvalid(invalidCheck)
             return false
         }
-
+        
         dispatch(editCollectionSourceAction(collection['id'], {
             sourceName,
-            cron,
+            cron: (cron.length === 0 ? DEFAULT_CRON : cron),
             jdbcId: (jdbcId === NO_SELECTED ? '' : jdbcId),
             launcher: {
-                yaml: aceEditor.current.editor.getValue() ||'',
+                yaml: aceEditor.current.editor.getValue() || '',
                 host,
                 port,
             }
@@ -353,7 +355,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                             <TextField value={cron}
                                                                        onChange={event => setCron(event.target.value)}
                                                                        fullWidth
-                                                                       placeholder={"분 시 일 월 요일"}
+                                                                       placeholder={"분 시 일 월 요일 (default: 0 0 * * *)"}
                                                                        error={invalid['cron']||false}
                                                             />
                                                         </Grid>
