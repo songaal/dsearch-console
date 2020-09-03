@@ -50,7 +50,7 @@ const tableIcons = {
 const useStyles = makeStyles((theme) => ({}));
 const Divider = styled(MuiDivider)(spacing);
 let searchInterval = null
-function DataEditTable({dispatch, index, authUser}) {
+function DataEditTable({dispatch, index, authUser, mappings}) {
     const documentSourceResponse = useSelector(store => ({ ...store.indicesReducers}))['documentSourceResponse']
     const [keyword, setKeyword] = useState("");
     const [pageNum, setPageNum] = useState(0);
@@ -106,7 +106,7 @@ function DataEditTable({dispatch, index, authUser}) {
 
 
 
-    function fetchIndexDocumentSourceList({searchSize=100, columns=[], keyword=null}) {
+    function fetchIndexDocumentSourceList({searchSize=500, columns=[], keyword=null}) {
         return dispatch(setIndexDocumentSourceListAction({index, from: pageNum, size: searchSize||rowSize, columns, keyword})).then(response => {
             // columns 적용
             let tmpColumns = {}
@@ -155,8 +155,16 @@ function DataEditTable({dispatch, index, authUser}) {
 
         searchInterval = setTimeout(() => {
             setKeyword(keyword)
-            setColumns(columns)
-            fetchIndexDocumentSourceList({columns, keyword})
+            // setColumns(columns)
+            let searchColumns = []
+            if (/[^0-9]/gi.test(keyword)) {
+                // 문자
+                const flatMappings = flat(mappings)
+                searchColumns = columns.filter(c => ['text','keyword'].includes(flatMappings[`${c}.type`]))
+            } else {
+                searchColumns = columns
+            }
+            fetchIndexDocumentSourceList({columns: searchColumns, keyword})
         }, 500)
     }
 

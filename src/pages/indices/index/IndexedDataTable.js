@@ -37,7 +37,7 @@ const Divider = styled(MuiDivider)(spacing);
 
 const rowSizeList = [5, 10, 20]
 const idKey = "* ID"
-function IndexedDataTable({dispatch, index}) {
+function IndexedDataTable({dispatch, index, mappings}) {
     const classes = useStyles()
     const [keyword, setKeyword] = useState("");
     const [keywordInput, setKeywordInput] = useState("");
@@ -68,12 +68,22 @@ function IndexedDataTable({dispatch, index}) {
                 })
             return { mappings, flatMappings }
         }).then(payload => {
+
+            let searchColumns = []
+            if (/[^0-9]/gi.test(keyword)) {
+                // 문자
+                const flatMappings = flat(mappings)
+                searchColumns = columns.filter(c => ['text','keyword'].includes(flatMappings[`${c}.type`]))
+            } else {
+                searchColumns = columns
+            }
+
             return dispatch(setIndexDocumentSourceListAction({
                 index,
                 from: searchFrom||from,
                 size: searchSize||size,
                 keyword: searchKeyword === undefined ? keyword : searchKeyword,
-                columns
+                columns: searchColumns
             })).then(documents => ({
                 ...payload,
                 documents: documents
