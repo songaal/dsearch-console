@@ -186,9 +186,9 @@ function WarningIndex({status, indices}) {
                             :
                             (
                                 <TableRow>
-                                    <TableCell colSpan={2}>
-                                        <Box align={"center"} >
-
+                                    <TableCell colSpan={2} style={{border: "0px"}}>
+                                        <Box align={"center"} style={{height: "24px"}}>
+                                            {/*정상*/}
                                         </Box>
                                     </TableCell>
                                 </TableRow>
