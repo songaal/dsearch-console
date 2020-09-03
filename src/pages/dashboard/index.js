@@ -29,7 +29,6 @@ import {palette, sizing, spacing} from "@material-ui/system";
 import {lighten, makeStyles, withStyles} from "@material-ui/core/styles";
 import {connect} from "react-redux";
 import Brightness1Icon from '@material-ui/icons/Brightness1';
-import ErrorIcon from '@material-ui/icons/Error';
 
 const useStyles = makeStyles((theme) => ({
     headerField: {fontSize: '1.2em', fontWeight: "bold"},
@@ -115,9 +114,9 @@ const untilTime = (time) => {
     }else if(h >= 24){
         let d = h / 24;
         return  Math.ceil(d) + '일'
-    }else if(h != 0 && m != 0) {
+    }else if(h !== 0 && m !== 0) {
         return h+'시간 ' + m+'분'
-    }else if(h != 0 && m == 0) {
+    }else if(h !== 0 && m === 0) {
         return h+'시간'
     }else{
         return m+'분' 
@@ -138,10 +137,10 @@ function WarningIndex({status, indices}) {
 
     let list = [];
     Object.values(status).map(row => {
-        if(row.health != 'green'){
+        if(row.health !== 'green'){
             let uuid = "";
             Object.values(indices).forEach(item => {
-                if (item.index == row.index) {
+                if (item.index === row.index) {
                     uuid = item.uuid;
                 }
             })
@@ -161,7 +160,7 @@ function WarningIndex({status, indices}) {
             </Typography>
             <br/><br/>
             <Table>
-                <TableHead></TableHead>
+
                 <TableBody>
                     {list.map(row =>{
                          return(
@@ -175,33 +174,13 @@ function WarningIndex({status, indices}) {
                                 </Box>
                             </TableCell>
                             <TableCell align="center">
-                                {row.health == 'yellow' ? <font color="orange"> 레플리카 샤드 이상 </font> :
+                                {row.health === 'yellow' ? <font color="orange"> 레플리카 샤드 이상 </font> :
                                 <font color="red"> 프라이머리 샤드 이상 </font>}
                             </TableCell>
                                 </TableRow>
 
                         )
                     })}
-
-                    {/* {Object.values(status).map(row => {
-                        if(row.health != 'green') {
-                            return(
-                                <TableRow key={row.index}>
-                                <TableCell align="center">
-                                    <Box display="flex" justifyContent="center" >
-                                        <Brightness1Icon style={{color:row.health}} />
-                                        <Typography variant="h5">{row.index}</Typography>
-                                    </Box>
-                                </TableCell>
-                                <TableCell align="center">
-                                    {row.health == 'yellow' ? <font color="orange"> 레플리카 샤드 이상 </font> :
-                                    <font color="red"> 프라이머리 샤드 이상 </font>}
-                                </TableCell>
-                                    </TableRow>
-
-                        }
-                    }
-                    )} */}
                 </TableBody>
             </Table>
             </CardContent>
@@ -218,14 +197,14 @@ function RunningIndex({result, running, status, indices}) {
     let indexList = []
     let successIndexList = {};
 
-    const getElapsed = (time) => {
+    const getElapsed = time => {
         // epoch_millis to epoch_seconds
         time = time / 1000;
 
         var hours   = Math.floor(time / 3600);
         var minutes = Math.ceil((time - (hours * 3600)) / 60);
         
-        if(hours != 0) {
+        if(hours !== 0) {
             return hours+'시간 ' + minutes+'분' 
         }else{
             return minutes+'분' 
@@ -246,7 +225,7 @@ function RunningIndex({result, running, status, indices}) {
             if(server !== undefined){
                 let uuid = "";
                 Object.values(indices).forEach(item => {
-                    if (item.index == server.index) {
+                    if (item.index === server.index) {
                         uuid = item.uuid;
                     }
                 })
@@ -280,7 +259,6 @@ function RunningIndex({result, running, status, indices}) {
             </Typography>
             <br/><br/>
             <Table>
-                <TableHead></TableHead>
                 <TableBody>
                     {indexList.length === 0 ? <TableRow><TableCell align="center"> <Box display="flex" alignItems="center" justifyContent="center"> <Typography>현재 실행중인 색인 작업이 없습니다.</Typography></Box>  </TableCell></TableRow> : 
                         Object.values(indexList).map(row =>
@@ -302,7 +280,7 @@ function RunningIndex({result, running, status, indices}) {
                                             />
                                         </Box>
                                         <Box minWidth={15}>
-                                            <Typography variant="body2" color="textSecondary"></Typography>
+                                            <Typography variant="body2" color="textSecondary"> </Typography>
                                         </Box>
                                     </Box>
                                     {row.estimatedTime !== undefined ? <> 예상 종료 시간 : {getElapsed(row.estimatedTime)} <br/> </> : <>예상 종료 시간 : - <br /></> }
@@ -312,33 +290,7 @@ function RunningIndex({result, running, status, indices}) {
                             </TableRow>
                         )
                     }
-                
-                    {/* {Object.values(indexList).map(row =>
-                        <TableRow key={row.index}>
-                            <TableCell>
-                                {row.index}
-                            </TableCell>
-                            <TableCell>
-                                <Box display="flex" alignItems="center">
-                                    <Box width="100%" mr={1}>
-                                    <BorderLinearProgress
-                                        className={classes.margin}
-                                        variant="determinate"
-                                        color="secondary"
-                                        //value={`${Math.round((125210 / row.lastDoc)*100)}`}
-                                        value={`${Math.round((row.currentDoc / row.lastDoc)*100)}`}
-                                    />
-                                    </Box>
-                                    <Box minWidth={15}>
-                                        <Typography variant="body2" color="textSecondary">{`${Math.round((row.currentDoc / row.lastDoc)*100)}%`}</Typography>
-                                    </Box>
-                                </Box>
-                                {numberWithCommas(row.currentDoc)} 건 <br/>
-                                시작시간 {untilTime(row.startTime)} 전 시작 <br/>
-                                예상문서 약 {numberWithCommas(row.lastDoc)} 건<br/>
-                            </TableCell>
-                        </TableRow>
-                    )} */}
+
                 </TableBody>
             </Table>
             </CardContent>
@@ -384,7 +336,7 @@ function BottomArea({result, alias, indices}) {
         var hours   = Math.floor(time / 3600);
         var minutes = Math.ceil((time - (hours * 3600)) / 60);
         
-        if(hours != 0) {
+        if(hours !== 0) {
             return hours+'시간 ' + minutes+'분' 
         }else{
             return minutes+'분' 
@@ -397,14 +349,14 @@ function BottomArea({result, alias, indices}) {
         let aliasName = ""
         Object.values(alias).forEach(row2 =>  {
 
-            if(row._source.index == row2.index) {
+            if(row._source.index === row2.index) {
                 aliasName = row2.alias
             }
         })
 
         let uuid = ""
         Object.values(indices).forEach(item => {
-            if(item.index == row._source.index){
+            if(item.index === row._source.index){
                 uuid = item.uuid;
             }
         })
@@ -458,7 +410,7 @@ function BottomArea({result, alias, indices}) {
                                         <TableCell align="center">
                                             <Box display="flex" justifyContent="left" alignItems="center">
                                                 {
-                                                    row['status'] && row['status'] == 'SUCCESS' ?
+                                                    row['status'] && row['status'] === 'SUCCESS' ?
                                                         <Brightness1Icon color="primary"/>
                                                         :
                                                         <Brightness1Icon style={{color: 'red'}}/>
@@ -504,7 +456,7 @@ function DashBoard({dispatch, result, running, status, alias, indices}) {
 
     useEffect(() => {
         dispatch(setIndexResultActions())
-        const resultActions = setInterval(()=>{dispatch(setIndexResultActions());}, 1000 * 60 * 3);
+        setInterval(()=>{dispatch(setIndexResultActions());}, 1000 * 60 * 3);
         dispatch(setRunningIndexActions())
         dispatch(setIndexStatusActions())
         dispatch(setIndexAliasActions())
