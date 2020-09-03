@@ -70,7 +70,7 @@ function IndexedDataTable({dispatch, index, mappings}) {
         }).then(payload => {
 
             let searchColumns = []
-            if (/[^0-9]/gi.test(keyword)) {
+            if (/[^0-9]/gi.test(searchKeyword)) {
                 // 문자
                 const flatMappings = flat(mappings)
                 searchColumns = columns.filter(c => ['text','keyword'].includes(flatMappings[`${c}.type`]))
