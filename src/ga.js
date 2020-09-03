@@ -7,6 +7,6 @@ export const initGA = () => {
 }
 
 export const GApageView = (page) => {
-    // console.log(page)
+    console.log('ga >>', page)
     ReactGA.pageview(page);
 }
