@@ -150,7 +150,7 @@ function WarningIndex({status, indices}) {
         }
     })
 
-    console.log(list);
+    // console.log(list);
 
     return(
         <Card>
@@ -162,25 +162,38 @@ function WarningIndex({status, indices}) {
             <Table>
 
                 <TableBody>
-                    {list.map(row =>{
-                         return(
-                            <TableRow key={row.index}>
-                            <TableCell align="center">
-                                <Box display="flex" justifyContent="left" alignItems="center">
-                                    <Brightness1Icon style={{color:row.health, marginRight:"5px"}} />
-                                    <Link style={{cursor: "pointer"}} onClick={() => moveDetail(row['uuid'])}>
-                                        <Typography variant="h5">{row.index}</Typography>
-                                    </Link>
-                                </Box>
-                            </TableCell>
-                            <TableCell align="center">
-                                {row.health === 'yellow' ? <font color="orange"> 레플리카 샤드 이상 </font> :
-                                <font color="red"> 프라이머리 샤드 이상 </font>}
-                            </TableCell>
-                                </TableRow>
+                    {
+                        list.length > 0 ?
+                            list.map(row =>{
+                                return(
+                                    <TableRow key={row.index}>
+                                        <TableCell align="center">
+                                            <Box display="flex" justifyContent="left" alignItems="center">
+                                                <Brightness1Icon style={{color:row.health, marginRight:"5px"}} />
+                                                <Link style={{cursor: "pointer"}} onClick={() => moveDetail(row['uuid'])}>
+                                                    <Typography variant="h5">{row.index}</Typography>
+                                                </Link>
+                                            </Box>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            {row.health === 'yellow' ? <font color="orange"> 레플리카 샤드 이상 </font> :
+                                                <font color="red"> 프라이머리 샤드 이상 </font>}
+                                        </TableCell>
+                                    </TableRow>
 
-                        )
-                    })}
+                                )
+                            })
+                            :
+                            (
+                                <TableRow>
+                                    <TableCell colSpan={2}>
+                                        <Box align={"center"} >
+
+                                        </Box>
+                                    </TableCell>
+                                </TableRow>
+                            )
+                    }
                 </TableBody>
             </Table>
             </CardContent>

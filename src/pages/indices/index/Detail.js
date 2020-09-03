@@ -110,7 +110,7 @@ function Index({indexInfoList, settings}) {
             dispatch(setIndexInfoListAction(index))
             dispatch(setIndexSettingsAction(index))
             dispatch(setIndexMappingsAction(index))
-            dispatch(setIndexDocumentSourceListAction({index, from: 0, size: 100, columns: [], searchKeyword: ''}))
+            dispatch(setIndexDocumentSourceListAction({index, from: 0, size: 500, columns: [], searchKeyword: ''}))
         }
     }, [index])
 
