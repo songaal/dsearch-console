@@ -15,7 +15,7 @@ export default function asyncComponent(importComponent) {
         }
 
         async componentDidMount() {
-            await sleep(150);
+            await sleep(250);
 
             const {default: component} = await importComponent();
 
