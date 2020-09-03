@@ -11,9 +11,7 @@ import {isWidthUp} from "@material-ui/core/withWidth";
 import maTheme from "../theme";
 import {ThemeProvider as MuiThemeProvider} from "@material-ui/styles";
 import {setDsearchAuthUser} from "../redux/actions/dsearchActions";
-// import Footer from "../components/Footer";
-// import Settings from "../components/Settings";
-
+import Footer from "../components/Footer";
 
 const drawerWidth = 260;
 
@@ -71,6 +69,7 @@ const MainContent = styled(Paper)`
   }
 `;
 
+
 function Main({dispatch,authUser, children, routes, width}) {
     const [mobileOpen, setMobileOpen] = useState(false)
 
@@ -114,7 +113,7 @@ function Main({dispatch,authUser, children, routes, width}) {
                         <MainContent p={isWidthUp("lg", width) ? 10 : 5}>
                             {children}
                         </MainContent>
-                        {/*<Footer/>*/}
+                        <Footer/>
                     </AppContent>
                     {/*<Settings/>*/}
                 </Root>

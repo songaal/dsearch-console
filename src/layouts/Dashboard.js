@@ -1,7 +1,6 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import styled, {createGlobalStyle, ThemeProvider} from "styled-components";
-
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 
@@ -12,6 +11,8 @@ import {isWidthUp} from "@material-ui/core/withWidth";
 import maTheme from "../theme";
 import {ThemeProvider as MuiThemeProvider} from "@material-ui/styles";
 import {setDsearchAuthUser} from "../redux/actions/dsearchActions";
+import Footer from "../components/Footer";
+
 
 const drawerWidth = 260;
 
@@ -112,7 +113,7 @@ function Dashboard({dispatch, authUser, children, routes, width}) {
                         <MainContent p={isWidthUp("lg", width) ? 10 : 5}>
                             {children}
                         </MainContent>
-                        {/*<Footer/>*/}
+                        <Footer />
                     </AppContent>
                     {/*<Settings/>*/}
                 </Root>

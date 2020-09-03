@@ -4,6 +4,7 @@ import {createGlobalStyle, ThemeProvider} from "styled-components";
 import {CssBaseline} from "@material-ui/core";
 import maTheme from "../theme";
 import {ThemeProvider as MuiThemeProvider} from "@material-ui/styles";
+import Footer from "../components/Footer";
 
 const GlobalStyle = createGlobalStyle`
   html,
@@ -18,6 +19,7 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 function Landing({children}) {
+
     return (
         <MuiThemeProvider theme={maTheme[0]}>
             <ThemeProvider theme={maTheme[0]}>
@@ -25,6 +27,7 @@ function Landing({children}) {
                     <CssBaseline/>
                     <GlobalStyle/>
                     {children}
+                    <Footer />
                 </React.Fragment>
             </ThemeProvider>
         </MuiThemeProvider>
