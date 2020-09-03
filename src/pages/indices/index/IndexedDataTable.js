@@ -70,13 +70,15 @@ function IndexedDataTable({dispatch, index, mappings}) {
         }).then(payload => {
 
             let searchColumns = []
+            const flatMappings = flat(mappings)
             if (/[^0-9]/gi.test(searchKeyword)) {
                 // 문자
-                const flatMappings = flat(mappings)
                 searchColumns = columns.filter(c => ['text','keyword'].includes(flatMappings[`${c}.type`]))
             } else {
                 searchColumns = columns
             }
+            // 포멧 형식이 있으면 무시.
+            searchColumns = searchColumns.filter(c => !flatMappings[`${c}.format`])
 
             return dispatch(setIndexDocumentSourceListAction({
                 index,
