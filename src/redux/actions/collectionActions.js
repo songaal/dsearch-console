@@ -85,10 +85,10 @@ export const setIndexHistoryList = ({ indexA, indexB, from, size }) => dispatch 
         },
         "sort": [
             {
-                "_score": {
+                "startTime": {
                     "order": "desc"
                 },
-                "startTime": {
+                "_score": {
                     "order": "desc"
                 }
             }
