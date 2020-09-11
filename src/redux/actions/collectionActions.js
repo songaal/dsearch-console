@@ -64,18 +64,30 @@ export const setIndexHistoryList = ({ indexA, indexB, from, size }) => dispatch 
             "bool": {
                 "should": [
                     {
-                        "match": {
+                        "term": {
                             "index": {
-                                "query": indexA,
-                                "boost": 1
+                                "value": indexA
                             }
                         }
                     },
                     {
-                        "match": {
+                        "term": {
                             "index": {
-                                "query": indexB,
-                                "boost": 1
+                                "value": indexB
+                            }
+                        }
+                    },
+                    {
+                        "term": {
+                            "index.keyword": {
+                                "value": indexA
+                            }
+                        }
+                    },
+                    {
+                        "term": {
+                            "index.keyword": {
+                                "value": indexB
                             }
                         }
                     }
