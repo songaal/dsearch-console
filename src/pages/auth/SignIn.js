@@ -118,102 +118,105 @@ function SignIn({dispatch}) {
     }
 
     return (
-        <Wrapper>
-            <Helmet title="로그인"/>
-            <Box align={"center"}>
-                <img alt="dsearch" src="/static/img/dsearch/danawa_m_login.png" />
-            </Box>
-            <Box style={{marginTop: "12px"}}>
-                <Typography style={{fontSize: "1.45rem"}} component="h1" variant="h4" align="center" gutterBottom>
-                    로그인
-                </Typography>
-            </Box>
-            {/*<Typography component="h2" variant="body1" align="center">*/}
-            {/*    Sign in to your account to continue*/}
-            {/*</Typography>*/}
-            <form>
-                <FormControl margin="normal" required fullWidth>
-                    <InputLabel htmlFor="server">서버</InputLabel>
-                    <Input id="server"
-                           name="server"
-                           autoComplete="server"
-                           autoFocus
-                           value={server}
-                           onChange={event => setServer(event.target.value)}
-                           onBlur={checkServer}
-                           error={serverError}
+        <React.Fragment>
+            <Wrapper>
+                <Helmet title="로그인"/>
+                <Box align={"center"}>
+                    <img alt="dsearch" src="/static/img/dsearch/danawa_m_login.png" />
+                </Box>
+                <Box style={{marginTop: "12px"}}>
+                    <Typography style={{fontSize: "1.45rem"}} component="h1" variant="h4" align="center" gutterBottom>
+                        로그인
+                    </Typography>
+                </Box>
+                {/*<Typography component="h2" variant="body1" align="center">*/}
+                {/*    Sign in to your account to continue*/}
+                {/*</Typography>*/}
+                <form>
+                    <FormControl margin="normal" required fullWidth>
+                        <InputLabel htmlFor="server">서버</InputLabel>
+                        <Input id="server"
+                               name="server"
+                               autoComplete="server"
+                               autoFocus
+                               value={server}
+                               onChange={event => setServer(event.target.value)}
+                               onBlur={checkServer}
+                               error={serverError}
+                        />
+                    </FormControl>
+                    <FormControl margin="normal" required fullWidth>
+                        <InputLabel htmlFor="server">이메일</InputLabel>
+                        <Input id="email"
+                               name="email"
+                               autoComplete="email"
+                               value={email}
+                               onChange={event => setEmail(event.target.value)}
+                               error={inValid}
+                               onKeyUp={event => event.keyCode === 13 ? handleSignIn() : null}
+                        />
+                    </FormControl>
+                    <FormControl margin="normal" required fullWidth>
+                        <InputLabel htmlFor="password">비밀번호</InputLabel>
+                        <Input
+                            name="password"
+                            type="password"
+                            id="password"
+                            autoComplete="current-password"
+                            value={password}
+                            onChange={event => setPassword(event.target.value)}
+                            error={inValid}
+                            onKeyUp={event => event.keyCode === 13 ? handleSignIn() : null}
+                        />
+                    </FormControl>
+                    <FormControlLabel
+                        control={<Checkbox color="primary"
+                                           checked={loginSave}
+                                           onChange={() => setLoginSave(!loginSave)}
+                        />}
+                        label="로그인 저장"
                     />
-                </FormControl>
-                <FormControl margin="normal" required fullWidth>
-                    <InputLabel htmlFor="server">이메일</InputLabel>
-                    <Input id="email"
-                           name="email"
-                           autoComplete="email"
-                           value={email}
-                           onChange={event => setEmail(event.target.value)}
-                           error={inValid}
-                           onKeyUp={event => event.keyCode === 13 ? handleSignIn() : null}
-                    />
-                </FormControl>
-                <FormControl margin="normal" required fullWidth>
-                    <InputLabel htmlFor="password">비밀번호</InputLabel>
-                    <Input
-                        name="password"
-                        type="password"
-                        id="password"
-                        autoComplete="current-password"
-                        value={password}
-                        onChange={event => setPassword(event.target.value)}
-                        error={inValid}
-                        onKeyUp={event => event.keyCode === 13 ? handleSignIn() : null}
-                    />
-                </FormControl>
-                <FormControlLabel
-                    control={<Checkbox color="primary"
-                                       checked={loginSave}
-                                       onChange={() => setLoginSave(!loginSave)}
-                    />}
-                    label="로그인 저장"
-                />
-                <Grid container>
-                    <Grid item xs={12}>
-                        <Box>
-                            <Button
-                                fullWidth
-                                variant="contained"
-                                color="primary"
-                                mb={2}
-                                onClick={handleSignIn}
-                            >
-                                로그인
-                            </Button>
-                        </Box>
+                    <Grid container>
+                        <Grid item xs={12}>
+                            <Box>
+                                <Button
+                                    fullWidth
+                                    variant="contained"
+                                    color="primary"
+                                    mb={2}
+                                    onClick={handleSignIn}
+                                >
+                                    로그인
+                                </Button>
+                            </Box>
+                        </Grid>
+                        {/*<Grid item xs={6}>*/}
+                        {/*    <Button*/}
+                        {/*        fullWidth*/}
+                        {/*        variant="contained"*/}
+                        {/*        color="primary"*/}
+                        {/*        mb={2}*/}
+                        {/*        onClick={handleSignIn}*/}
+                        {/*    >*/}
+                        {/*        로그인*/}
+                        {/*    </Button>*/}
+                        {/*</Grid>*/}
+                        {/*<Grid item xs={6}>*/}
+                        {/*    <Button*/}
+                        {/*        fullWidth*/}
+                        {/*        color="primary"*/}
+                        {/*    >*/}
+                        {/*        취소*/}
+                        {/*    </Button>*/}
+                        {/*</Grid>*/}
                     </Grid>
-                    {/*<Grid item xs={6}>*/}
-                    {/*    <Button*/}
-                    {/*        fullWidth*/}
-                    {/*        variant="contained"*/}
-                    {/*        color="primary"*/}
-                    {/*        mb={2}*/}
-                    {/*        onClick={handleSignIn}*/}
-                    {/*    >*/}
-                    {/*        로그인*/}
-                    {/*    </Button>*/}
-                    {/*</Grid>*/}
-                    {/*<Grid item xs={6}>*/}
-                    {/*    <Button*/}
-                    {/*        fullWidth*/}
-                    {/*        color="primary"*/}
-                    {/*    >*/}
-                    {/*        취소*/}
-                    {/*    </Button>*/}
-                    {/*</Grid>*/}
-                </Grid>
-            </form>
-            <Box mt={4}>
-                © 2020. danawa Co., Ltd. All Rights Reserved.
-            </Box>
-        </Wrapper>
+                </form>
+
+                <Box style={{position: "relative", top: "60px", height: "0px", textAlign: "center", fontSize: "1.2em"}}>
+                    © 2020. danawa Co., Ltd. All Rights Reserved.
+                </Box>
+            </Wrapper>
+        </React.Fragment>
     );
 }
 
