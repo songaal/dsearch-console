@@ -212,7 +212,7 @@ function SignIn({dispatch}) {
                     </Grid>
                 </form>
 
-                <Box style={{position: "relative", top: "60px", height: "0px", textAlign: "center", fontSize: "1.2em"}}>
+                <Box style={{position: "relative", top: "60px", height: "0px", textAlign: "center", fontSize: "0.8em"}}>
                     © 2020. danawa Co., Ltd. All Rights Reserved.
                 </Box>
             </Wrapper>
