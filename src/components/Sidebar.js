@@ -340,8 +340,10 @@ function Sidebar(props) {
     return (
         <Drawer variant="permanent" {...other}>
             <Brand>
-                <BrandIcon/>
-                <Box ml={1}> {title}
+                {/*<BrandIcon/>*/}
+                <img src={"/static/img/dsearch/danawa_m.png"} />
+                <Box style={{marginLeft: "12px"}}>
+                    {title}
                     {/* <BrandChip label="X" /> */}
                 </Box>
             </Brand>

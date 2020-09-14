@@ -120,10 +120,14 @@ function SignIn({dispatch}) {
     return (
         <Wrapper>
             <Helmet title="로그인"/>
-
-            <Typography component="h1" variant="h4" align="center" gutterBottom>
-                로그인
-            </Typography>
+            <Box align={"center"}>
+                <img alt="dsearch" src="/static/img/dsearch/danawa_m_login.png" />
+            </Box>
+            <Box style={{marginTop: "12px"}}>
+                <Typography style={{fontSize: "1.45rem"}} component="h1" variant="h4" align="center" gutterBottom>
+                    로그인
+                </Typography>
+            </Box>
             {/*<Typography component="h2" variant="body1" align="center">*/}
             {/*    Sign in to your account to continue*/}
             {/*</Typography>*/}
@@ -206,6 +210,9 @@ function SignIn({dispatch}) {
                     {/*</Grid>*/}
                 </Grid>
             </form>
+            <Box mt={4}>
+                © 2020. danawa Co., Ltd. All Rights Reserved.
+            </Box>
         </Wrapper>
     );
 }
