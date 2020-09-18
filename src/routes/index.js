@@ -38,6 +38,7 @@ const IndexDetail = async(() => import("../pages/indices/index/Detail"));
 const Collection = async(() => import("../pages/indices/collection"));
 const CollectionDetail = async(() => import("../pages/indices/collection/Detail"));
 const Jdbc = async(() => import("../pages/indices/jdbc"));
+const Pipeline = async(() => import("../pages/indices/pipeline"));
 
 // Search components
 const QueryTest = async(() => import("../pages/search/queryTest"));
@@ -85,6 +86,7 @@ const indicesRoutes = [
     {id: "인덱스상세", path: `${clusterContext}/indices/*`, component: IndexDetail, children: null, hidden: true},
 
     {id: "JDBC", path: `${clusterContext}/indices-jdbc`, icon: <Icon.Storage/>, component: Jdbc, children: null},
+    {id: "파이프라인", path: `${clusterContext}/indices-pipeline`, icon: <Icon.Storage/>, component: Pipeline, children: null},
 ];
 
 const searchRoutes = [

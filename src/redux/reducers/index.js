@@ -19,6 +19,7 @@ import toolsReducers from "./toolsReducers";
 import rankingTuningReducers from "./rankingTuningReducers"
 import jdbcReducers from "./jdbcReducers"
 import dsearchPluginReducers from "./dsearchPluginReducers"
+import pipelineReducers from "./pipelineReducers"
 export default combineReducers({
     indicesReducers,
     dictionaryReducers,
@@ -38,5 +39,6 @@ export default combineReducers({
     toolsReducers,
     rankingTuningReducers,
     jdbcReducers,
-    dsearchPluginReducers
+    dsearchPluginReducers,
+    pipelineReducers
 });
