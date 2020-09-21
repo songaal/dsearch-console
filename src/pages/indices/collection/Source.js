@@ -58,6 +58,53 @@ const useStyles = makeStyles((theme) => ({
 
 const NO_SELECTED = 'NO_SELECTED';
 const DEFAULT_CRON = '0 0 * * *'
+const DEFAULT_YAML = `
+============================= ndjson / csv template
+scheme: http
+host: localhost
+port: 9200
+type: ndjson /csv
+path: /data/source/search-prod.ndjson   or   /data/source/search-prod.csv
+encoding: utf-8
+bulkSize: 10000
+reset: false
+threadSize: 1
+
+============================= rsync template
+scheme: http
+host: localhost
+port: 9200
+type: procedure
+bulkSize: 1000
+driverClassName: "Altibase.jdbc.driver.AltibaseDriver"
+filterClass: "com.danawa.fastcatx.indexer.filter.DanawaProductFilter"
+url: "jdbc:Altibase://localhost:20200/DANAWA_ALTI"
+user: "root"
+password: "qwerty123456"
+procedureName: "procedureName1"
+dumpFormat: "konan"
+groupSeq: 1
+bwlimit: "10240"
+path: "/data/product/VM"
+rsyncIp: "remote server IP"
+rsyncPath: "search_data_alti"
+encoding: CP949
+procedureSkip: true
+rsyncSkip: true
+threadSize: 1
+
+============================= DB template
+scheme: http
+host: localhost
+port: 9200
+bulkSize: 10000
+fetchSize: 10000
+type: jdbc
+pipeLine: "pipeline"
+threadSize: 1
+dataSQL : "SELECT * FROM myTable"
+`;
+
 function Source({dispatch, authUser, collection, JdbcList}) {
     const classes = useStyles();
     const [editModal, setEditModal] = useState(null)
@@ -80,7 +127,9 @@ function Source({dispatch, authUser, collection, JdbcList}) {
     useEffect(() => {
         setInvalid({})
         if (collection['sourceName'] === undefined || collection['sourceName'] === null || collection['sourceName'] === "") {
+            /* FORCE_EDIT(생성하고 아무런 데이터가 없을 때) 모드일때만 */
             setMode("FORCE_EDIT");
+            aceEditor.current.editor.setValue(DEFAULT_YAML)
         } else {
             setSourceName(collection['sourceName']);
             setHost((collection['launcher']||{})['host']||"");

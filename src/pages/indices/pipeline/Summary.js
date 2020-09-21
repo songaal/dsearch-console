@@ -18,9 +18,8 @@ import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-kuroir";
 import { setPipelineList, deletePipeline, addPipeline, editPipeline} from '@actions/pipelineActions'
-import utils from "../../../utils";
 
-function Summary({ dispatch, list }) {
+function Summary({ dispatch, authUser, list }) {
     useEffect(() => {
         dispatch(setPipelineList())
     }, [])
@@ -135,7 +134,6 @@ function Summary({ dispatch, list }) {
             dispatch(setPipelineList());
         })
         closeModal()
-        // delete list[key]
     }
 
     return (
@@ -144,12 +142,15 @@ function Summary({ dispatch, list }) {
                 <CardContent>
                     <Box>
                         <Box align={'right'} paddingRight={"30px"}>
-                            <Link
-                                onClick={openModalAdd}
-                                style={{ cursor: "pointer" }}
-                                color={"primary"}>
-                                파이프라인 추가
-                            </Link>
+                            {authUser.role.index ? 
+                                <Link
+                                    onClick={openModalAdd}
+                                    style={{ cursor: "pointer" }}
+                                    color={"primary"}>
+                                    파이프라인 추가
+                                </Link> 
+                                : <></>
+                            }
                         </Box>
                         
                         <Table>
@@ -177,12 +178,20 @@ function Summary({ dispatch, list }) {
                                                         <TableCell align={"center"}>
                                                             <Link onClick={() => openModal(item)} variant={"inherit"} style={{ cursor: "pointer" }} color={"primary"} id={item} >{item}</Link>
                                                         </TableCell>
-                                                        <TableCell align={"center"}>
-                                                            <Button variant={"outlined"} color={"primary"} style={{ whiteSpace: "nowrap" }} onClick={()=> openModalEdit(item)} >수정</Button>
-                                                        </TableCell>
-                                                        <TableCell align={"center"}>
-                                                            <Button variant="outlined" style={{ whiteSpace: "nowrap", borderColor:"red", color: "red"}} onClick={() => openModalDelete(item)}>삭제</Button>
-                                                        </TableCell>
+                                                        {/* <TableCell align={"center"}>
+                                                                <Button variant={"outlined"} color={"primary"} style={{ whiteSpace: "nowrap" }} onClick={()=> openModalEdit(item)} >수정</Button>
+                                                            </TableCell>
+                                                            <TableCell align={"center"}>
+                                                                <Button variant="outlined" style={{ whiteSpace: "nowrap", borderColor:"red", color: "red"}} onClick={() => openModalDelete(item)}>삭제</Button>
+                                                            </TableCell> */}
+                                                        {authUser.role.index ? 
+                                                            <TableCell align={"center"}>
+                                                                <Button variant={"outlined"} color={"primary"} style={{ whiteSpace: "nowrap" }} onClick={()=> openModalEdit(item)} >수정</Button>
+                                                            </TableCell> : <TableCell></TableCell> }
+                                                        {authUser.role.index ? 
+                                                            <TableCell align={"center"}>
+                                                                <Button variant="outlined" style={{ whiteSpace: "nowrap", borderColor:"red", color: "red"}} onClick={() => openModalDelete(item)}>삭제</Button>
+                                                            </TableCell> : <TableCell></TableCell> }
                                                     </TableRow>
                                         })
                                 }
