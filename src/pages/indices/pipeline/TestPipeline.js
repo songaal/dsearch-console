@@ -11,7 +11,7 @@ import {
     TableCell, Link,
     TableBody, Grid,
     Checkbox, Snackbar,FormControlLabel,
-    FormControl, InputLabel, MenuItem, Select, Typography
+    FormControl, InputLabel, MenuItem, Select, Typography, TextField
 } from "@material-ui/core";
 import MuiAlert from '@material-ui/lab/Alert';
 import AceEditor from "react-ace";
@@ -142,13 +142,12 @@ function TestPipeline({ dispatch, pipeline, pipelineList}) {
                                 </Box>
                             </Grid>
                             <Grid item xs={12} md={12} lg={7}>
-                                <Box display="flex" alignItems="center" justifyContent="space-between" mx={3} mb={3}>
-                                    <br />
-                                    <br />
+                                <Box display="flex" alignItems="center" justifyContent="center" mx={3} mb={8}>
+                                    <Typography variant="h6">파이프라인 테스트 결과</Typography>
                                 </Box>
                                 <Box style={{ overflow: "scroll", border: "1px solid silver" }} mx={3} id="move">
                                     <pre style={{height:"500px", width:"100%", fontFamily: "monospace", fontSize:"15px"}}>
-                                        {JSON.stringify(result,null,2)}
+                                        {JSON.stringify(result).length === 2 ? "입력한 내용이 없습니다." : JSON.stringify(result,null,2)}
                                     </pre>
                                 </Box>
                             </Grid>
