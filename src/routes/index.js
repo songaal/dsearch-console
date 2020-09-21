@@ -86,7 +86,7 @@ const indicesRoutes = [
     {id: "인덱스상세", path: `${clusterContext}/indices/*`, component: IndexDetail, children: null, hidden: true},
 
     {id: "JDBC", path: `${clusterContext}/indices-jdbc`, icon: <Icon.Storage/>, component: Jdbc, children: null},
-    {id: "파이프라인", path: `${clusterContext}/indices-pipeline`, icon: <Icon.Storage/>, component: Pipeline, children: null},
+    {id: "파이프라인", path: `${clusterContext}/indices-pipeline`, icon: <Icon.FilterList/>, component: Pipeline, children: null},
 ];
 
 const searchRoutes = [
