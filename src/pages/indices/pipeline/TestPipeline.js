@@ -13,6 +13,7 @@ import {
     Checkbox, Snackbar,FormControlLabel,
     FormControl, InputLabel, MenuItem, Select, Typography
 } from "@material-ui/core";
+import MuiAlert from '@material-ui/lab/Alert';
 import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-kuroir";
@@ -25,11 +26,23 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
+const aceEditorPlaceHolder = {
+    "docs": [
+      {
+        "_source": {
+          "keyword": "<p>hello world</p>"
+        }
+      }
+    ]
+  }
 
-function TestPipeline({ dispatch, pipeline, pipelineList, result}) {
+function TestPipeline({ dispatch, pipeline, pipelineList}) {
     const classes = useStyles()
     const aceEditor = useRef(null);
     const [checked, setChecked] = useState(false);
+    const [progress, setProgress] = useState(false);
+    const [result, setResult] = useState({});
+    const [snackbarFlag, setSnackbarFlag] = useState(false)
 
     const handleChange = (event) => {
         dispatch(setPipelineAction(event.target.value))
@@ -50,15 +63,33 @@ function TestPipeline({ dispatch, pipeline, pipelineList, result}) {
 
     function handleTest(){
         if( pipeline.length == 0 ){
+            setSnackbarFlag(true)
             return;
         }
+
         if( JSON.stringify(aceEditor.current.editor.getValue()).length > 0 && isJson(aceEditor.current.editor.getValue())){
+            setProgress(true)
             if( checked ){
-                dispatch(getPipelineDetail(pipeline, aceEditor.current.editor.getValue())) 
+                dispatch(getPipelineDetail(pipeline, aceEditor.current.editor.getValue()))
+                .then((result) => {
+                    setProgress(false)
+                    setResult(result.payload);
+                })
+                .catch((error) => {
+                    setProgress(false)
+                })
             }else{
                 dispatch(getPipeline(pipeline, aceEditor.current.editor.getValue())) 
+                .then((result) => {
+                    setProgress(false)
+                    setResult(result.payload);
+                })
+                .catch((error) => {
+                    setProgress(false)
+                })
             }
-            
+        } else {
+            setSnackbarFlag(true)
         }
     }
 
@@ -101,13 +132,13 @@ function TestPipeline({ dispatch, pipeline, pipelineList, result}) {
                                         fontSize="15px"
                                         height={"500px"}
                                         tabSize={2}
+                                        placeholder={JSON.stringify(aceEditorPlaceHolder, null, 2) }
                                         width="100%"
                                         setOptions={{ useWorker: false }}
                                     />
                                 </Box>
                                 <Box align="right" mx={3} mt={3} align={"center"}>
-                                    <Button fullWidth variant="outlined" color="primary" onClick={() => handleTest()}> 테스트 </Button>
-                                    {/* {progress? <CircularProgress /> : <Button fullWidth variant="outlined" color="primary" onClick={handleSearchQuery}>검색</Button>} */}
+                                    {progress? <CircularProgress /> : <Button fullWidth variant="outlined" color="primary" onClick={() => handleTest()}> 테스트 </Button>}
                                 </Box>
                             </Grid>
                             <Grid item xs={12} md={12} lg={7}>
@@ -116,13 +147,16 @@ function TestPipeline({ dispatch, pipeline, pipelineList, result}) {
                                     <br />
                                 </Box>
                                 <Box style={{ overflow: "scroll", border: "1px solid silver" }} mx={3} id="move">
-                                    <pre style={{height:"500px", width:"100%"}}>
+                                    <pre style={{height:"500px", width:"100%", fontFamily: "monospace", fontSize:"15px"}}>
                                         {JSON.stringify(result,null,2)}
                                     </pre>
                                 </Box>
                             </Grid>
                         </Grid>
                     </Box>
+                    <Snackbar open={snackbarFlag} autoHideDuration={3000} onClose={() => { setSnackbarFlag(false); }}>
+                        <MuiAlert elevation={6} variant="filled" severity="error"> {"인덱스를 선택하였는지 혹은 json 을 제대로 입력하였는지 확인해주세요"} </MuiAlert> 
+                    </Snackbar>
                 </CardContent>
             </Card>
         </React.Fragment>

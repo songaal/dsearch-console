@@ -5,14 +5,15 @@ import {
     Card,
     CardContent,
     Button,
-    Table,
+    Table, Grid,
     TableHead,
     TableRow,
-    TableCell, Link,
+    TableCell, Link, 
     TableBody,Typography,
     Dialog, DialogTitle,DialogContent, DialogActions,
     Checkbox, Snackbar, TextField, TextareaAutosize, Divider
 } from "@material-ui/core";
+import MuiAlert from '@material-ui/lab/Alert';
 import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-kuroir";
@@ -26,10 +27,22 @@ function Summary({ dispatch, list }) {
 
     const name = useRef(null);
     const aceEditor = useRef(null);
+    const [nameError, setNameError] = useState(false)
     const [modalFlag, setModalFlag] = useState(false)
-    
+    const [successFlag, setSuccessFlag] = useState(false)
+    const [snackbarFlag, setSnackbarFlag] = useState(false)
+    const [message, setMessage] = useState('')
     const [key, setKey] = useState('')
     const [flag, setFlag] = useState(0);
+
+    function isJson(str) {
+        try {
+            let json = JSON.parse(str);
+            return (typeof json === 'object');
+        } catch (e) {
+            return false;
+        }
+    }
 
     function closeModal(){
         setModalFlag(false)
@@ -59,23 +72,69 @@ function Summary({ dispatch, list }) {
     }
 
     function handleAddPipeline(){
-        dispatch(addPipeline(name.current.value, aceEditor.current.editor.getValue()))
+        let pipelineName = name.current.value;
+        if(pipelineName.length !== pipelineName.replace(/\s| /gi, "").length){
+            setNameError(true);
+            return ;
+        }
+
+        if(!isJson(aceEditor.current.editor.getValue())){
+            return ;
+        }
+
+        setMessage("추가")
+        
+        dispatch(
+            addPipeline(name.current.value, aceEditor.current.editor.getValue())
+        ).then((res)=>{
+            setSnackbarFlag(true)
+            setSuccessFlag(true)
+            dispatch(setPipelineList());
+        })
+        .catch((err) => {
+            setSnackbarFlag(true)
+            setSuccessFlag(false)
+            dispatch(setPipelineList());
+        })
         closeModal()
-        utils.sleep(1000).then(() => {dispatch(setPipelineList());})
-        // list[name.current.value] = JSON.parse(aceEditor.current.editor.getValue())
     }
 
     function handleEditPipeline(){
-        dispatch(editPipeline(key, aceEditor.current.editor.getValue()))
+        if(!isJson(aceEditor.current.editor.getValue())){
+            return ;
+        }
+
+        setMessage("수정")
+        dispatch(
+            editPipeline(key, aceEditor.current.editor.getValue())
+        ).then((res)=>{
+            setSnackbarFlag(true)
+            setSuccessFlag(true)
+            dispatch(setPipelineList());
+        })
+        .catch((err) => {
+            setSnackbarFlag(true)
+            setSuccessFlag(false)
+            dispatch(setPipelineList());
+        })
         closeModal()
-        utils.sleep(1000).then(() => {dispatch(setPipelineList());})
-        // list[name.current.value] = JSON.parse(aceEditor.current.editor.getValue())
     }
 
     function handleDeletePipeline(){
-        dispatch(deletePipeline(key))
+        setMessage("삭제")
+        dispatch(
+            deletePipeline(key)
+        ).then((res)=>{
+            setSnackbarFlag(true)
+            setSuccessFlag(true)
+            dispatch(setPipelineList());
+        })
+        .catch((err) => {
+            setSnackbarFlag(true)
+            setSuccessFlag(false)
+            dispatch(setPipelineList());
+        })
         closeModal()
-        utils.sleep(1000).then(() => {dispatch(setPipelineList());})
         // delete list[key]
     }
 
@@ -130,6 +189,10 @@ function Summary({ dispatch, list }) {
                             </TableBody>
                         </Table>
                     </Box>
+                    <Snackbar open={snackbarFlag} autoHideDuration={3000} onClose={() => { setSnackbarFlag(false); }}>
+                        {successFlag ? <MuiAlert elevation={6} variant="filled" severity="info"> {message} {" 성공"} </MuiAlert> 
+                                     : <MuiAlert elevation={6} variant="filled" severity="error"> {message}  {" 실패"} </MuiAlert> }
+                    </Snackbar>
                 </CardContent>
             </Card>
 
@@ -149,10 +212,12 @@ function Summary({ dispatch, list }) {
                     {
                         flag == 1 ? <pre> {JSON.stringify(list[key], null, 2)} </pre> :
                             flag == 2 ? <Box style={{width: "100%"}}>
-                                            <Typography>파이프라인 이름 입력</Typography>
-                                            <TextField fullWidth inputRef={name}></TextField>
-                                            <br />
-                                            <Divider></Divider>
+                                            <TextField
+                                                fullWidth inputRef={name} error={nameError}
+                                                placeholder={"파이프라인 명칭을 입력해 주세요."}
+                                                label="파이프라인 명칭 입력"
+                                                helperText="공백을 넣지 말아주세요"
+                                            />
                                             <br />
                                             <AceEditor
                                                 ref={aceEditor}
@@ -167,10 +232,12 @@ function Summary({ dispatch, list }) {
                                             /> 
                                         </Box>: 
                                 flag == 3 ? <Box style={{width: "100%"}}>
-                                                <Typography>파이프라인 이름</Typography>
-                                                <TextField disabled={true} fullWidth value={key}> </TextField>
-                                                <br />
-                                                <Divider></Divider>
+                                                <TextField
+                                                    fullWidth 
+                                                    disabled={true} value={key}
+                                                    label="파이프라인 명칭"
+                                                    helperText="명칭은 수정할 수 없습니다."
+                                                />
                                                 <br />
                                                 <AceEditor
                                                     ref={aceEditor}
