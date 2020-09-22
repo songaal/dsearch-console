@@ -219,7 +219,7 @@ function Summary({ dispatch, authUser, list }) {
                 </DialogTitle>
                 <DialogContent>
                     {
-                        flag == 1 ? <pre> {JSON.stringify(list[key], null, 2)} </pre> :
+                        flag == 1 ? <pre style={{fontFamily: "godic", fontSize:"15px"}}> {JSON.stringify(list[key], null, 2)} </pre> :
                             flag == 2 ? <Box style={{width: "100%"}}>
                                             <TextField
                                                 fullWidth inputRef={name} error={nameError}

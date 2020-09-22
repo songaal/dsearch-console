@@ -26,11 +26,13 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const aceEditorPlaceHolder = {
+const aceEditorTemplate = {
     "docs": [
       {
         "_source": {
-          "keyword": "<p>hello world</p>"
+          "field1": "<h1>hello world</h1>",
+          "field2": "<h2>hello world</h2>",
+          "field3": "<h3>hello world</h3>"
         }
       }
     ]
@@ -38,7 +40,7 @@ const aceEditorPlaceHolder = {
 
 function TestPipeline({ dispatch, pipeline, pipelineList}) {
     const classes = useStyles()
-    const aceEditor = useRef(null);
+    const aceEditor = useRef(aceEditorTemplate);
     const [checked, setChecked] = useState(false);
     const [progress, setProgress] = useState(false);
     const [result, setResult] = useState({});
@@ -130,9 +132,10 @@ function TestPipeline({ dispatch, pipeline, pipelineList}) {
                                         mode="json"
                                         theme="kuroir"
                                         fontSize="15px"
-                                        height={"500px"}
+                                        height={"400px"}
                                         tabSize={2}
-                                        placeholder={JSON.stringify(aceEditorPlaceHolder, null, 2) }
+                                        defaultValue={JSON.stringify(aceEditorTemplate, null, 2) }
+                                        // placeholder={JSON.stringify(aceEditorPlaceHolder, null, 2) }
                                         width="100%"
                                         setOptions={{ useWorker: false }}
                                     />
@@ -143,10 +146,10 @@ function TestPipeline({ dispatch, pipeline, pipelineList}) {
                             </Grid>
                             <Grid item xs={12} md={12} lg={7}>
                                 <Box display="flex" alignItems="center" justifyContent="center" mx={3} mb={8}>
-                                    <Typography variant="h6">파이프라인 테스트 결과</Typography>
+                                    <Typography color={"textPrimary"} variant="h6" >파이프라인 테스트 결과</Typography>
                                 </Box>
                                 <Box style={{ overflow: "scroll", border: "1px solid silver" }} mx={3} id="move">
-                                    <pre style={{height:"500px", width:"100%", fontFamily: "monospace", fontSize:"15px"}}>
+                                    <pre style={{height:"400px", width:"100%", fontFamily: "godic", fontSize:"15px"}}>
                                         {JSON.stringify(result).length === 2 ? "입력한 내용이 없습니다." : JSON.stringify(result,null,2)}
                                     </pre>
                                 </Box>
