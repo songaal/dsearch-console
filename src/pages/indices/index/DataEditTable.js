@@ -110,8 +110,8 @@ function DataEditTable({dispatch, index, authUser, mappings}) {
         return dispatch(setIndexDocumentSourceListAction({index, from: pageNum, size: searchSize||rowSize, columns, keyword})).then(response => {
             // columns 적용
             let tmpColumns = {}
-            tmpColumns['ID'] = null
-            response['hits']['hits'].forEach(hit => {
+            tmpColumns['ID'] = null;
+            ((response['hits']||{})['hits']).forEach(hit => {
                 const source = flat(hit['_source'])
                 Object.keys(source).forEach(key => {
                     tmpColumns[key] = null
@@ -128,16 +128,20 @@ function DataEditTable({dispatch, index, authUser, mappings}) {
                 hits: response['hits']
             }
         }).then(payload => {
-            setDataList(payload['hits']['hits'].map(hit => {
-                const flatHit = flat(hit)
-                let tmpData = {}
-                payload['columns'].forEach(column => {
-                    tmpData[column.replace(/\./gi, "___")] = flatHit['_source.' + column] || ""
-                })
-                tmpData['ID'] = hit['_id']
-                tmpData['_hitsId'] = hit['_id']
-                return tmpData
-            }))
+            if(payload) {
+                setDataList((payload['hits']||{})['hits'].map(hit => {
+                    const flatHit = flat(hit)
+                    let tmpData = {}
+                    payload['columns'].forEach(column => {
+                        tmpData[column.replace(/\./gi, "___")] = flatHit['_source.' + column] || ""
+                    })
+                    tmpData['ID'] = hit['_id']
+                    tmpData['_hitsId'] = hit['_id']
+                    return tmpData
+                }))
+            } else {
+                setDataList([])
+            }
         })
     }
 

@@ -65,8 +65,9 @@ export const setIndexMappingsAction = (index) => dispatch =>
             format: "json",
         }
     })
-        .then(response => dispatch({type: SET_INDEX_MAPPINGS, payload: ((response.data[index] || {})['mappings']||{})['properties'] }))
+        .then(response => dispatch({type: SET_INDEX_MAPPINGS, payload: ((response.data[index] || {})['mappings']||{}) }))
         .catch(error => console.error(error))
+    // dispatch({type: SET_INDEX_MAPPINGS, payload: ((response.data[index] || {})['mappings']||{})['properties'] })
 
 export const setIndexStateAction = (index) => dispatch =>
     client.call({

@@ -125,12 +125,15 @@ function FormCard({json}) {
     // if (json) {
     //     dataMap = parsing(flatten(json['properties'] ? json['properties'] : json))
     // }
-    console.log(json, typeof json)
+    // console.log(json, typeof json)
     return (
         <div>
             <Card>
                 <CardContent m={0}>
-                    {Json2html({json: JSON.stringify(json), type: "mappings"})}
+                    <Box style={{overflow: "auto", minWidth: "700px"}}>
+                        {Json2html({json: JSON.stringify(json), type: "mappings"})}
+                    </Box>
+
 
                     {/*<Box style={{overflow: "auto"}}>*/}
                     {/*    <table cellPadding="0" cellSpacing="0"*/}
@@ -238,7 +241,10 @@ function Mapping({mappings}) {
 
             <Box mt={2}>
                 {
-                    chk === "form" ? <FormCard json={mappings}/> : <JsonCard json={mappings}/>
+                    chk === "form" ?
+                        <FormCard json={mappings}/>
+                        :
+                        <JsonCard json={mappings}/>
                 }
             </Box>
 

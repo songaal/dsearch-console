@@ -116,15 +116,15 @@ function Summary({dispatch, authUser, collection}) {
                                 </Grid>
                                 <Grid item xs={9}>
                                     <Link style={{cursor: "pointer"}}
-                                          onClick={() => {history.push(`../indices-templates/${collection['indexA']['index']}`)}}
+                                          onClick={() => {history.push(`../indices-templates/${collection['baseId']}`)}}
                                     >
-                                        {collection['indexA']['index']}
+                                        {collection['baseId']}
                                     </Link>,
-                                    <Link style={{cursor: "pointer"}}
-                                          onClick={() => {history.push(`../indices-templates/${collection['indexB']['index']}`)}}
-                                    >
-                                        {collection['indexB']['index']}
-                                    </Link>
+                                    {/*<Link style={{cursor: "pointer"}}*/}
+                                    {/*      onClick={() => {history.push(`../indices-templates/${collection['indexB']['index']}`)}}*/}
+                                    {/*>*/}
+                                    {/*    {collection['indexB']['index']}*/}
+                                    {/*</Link>*/}
                                 </Grid>
                             </Grid>
                             <Grid container my={3}>

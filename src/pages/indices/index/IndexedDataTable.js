@@ -60,7 +60,7 @@ function IndexedDataTable({dispatch, index, mappings}) {
         setDataList([])
         setLoading(true)
         dispatch(setIndexMappingsAction(index)).then(response => {
-            const mappings = response.payload
+            const mappings = (((response||{})['payload']||{})['properties']||{})
             let flatMappings = {}
             Object.keys(flat(mappings))
                 .forEach(key => {
@@ -91,7 +91,7 @@ function IndexedDataTable({dispatch, index, mappings}) {
                 documents: documents
             }))
         }).then(payload => {
-            const hits = payload['documents']['hits']['hits']
+            const hits = ((((payload||{})['documents']||{})['hits']||{})['hits']||[])
 
             if (searchKeyword === undefined || searchKeyword === '') {
                 let tmpColumns = {}
@@ -113,11 +113,11 @@ function IndexedDataTable({dispatch, index, mappings}) {
                 documentAnalyzerMap[id] = []
                 Object.keys(flatSource).forEach(flatField => {
                     let analyzer = ""
-                    if(payload['flatMappings'][flatField + ".type"] === "text") {
+                    if(((payload||{})['flatMappings']||{})[flatField + ".type"] === "text") {
                         analyzer = "standard"
                     }
-                    if (payload['flatMappings'][flatField + ".analyzer"]) {
-                        analyzer = payload['flatMappings'][flatField + ".analyzer"]
+                    if (((payload||{})['flatMappings']||{})[flatField + ".analyzer"]) {
+                        analyzer = (payload||{})['flatMappings'][flatField + ".analyzer"]
                     }
 
                     if (analyzer && analyzer !== "") {
@@ -128,14 +128,14 @@ function IndexedDataTable({dispatch, index, mappings}) {
                 })
             })
             return {
-                ...payload,
-                totalSize: payload['documents']['hits']['total']['value'],
+                ...payload||{},
+                totalSize: ((((payload||{})['documents']||{})['hits']||{})['total']||{})['value']||0,
                 documentAnalyzerMap: documentAnalyzerMap
             }
         }).then(payload => {
-            dispatch(analyzerDocumentSourceAction(index, payload['documentAnalyzerMap'])).then(response => {
-                let tmpDataList = []
-                payload['documents']['hits']['hits'].forEach(hit => {
+            dispatch(analyzerDocumentSourceAction(index, (payload||{})['documentAnalyzerMap']||{})).then(response => {
+                let tmpDataList = [];
+                ((((payload||{})['documents']||{})['hits']||{})['hits']||[]).forEach(hit => {
                     const source = flat(hit['_source'])
                     tmpDataList.push({key: idKey, value: hit['_id'], term: "-"})
                     Object.keys(source).forEach(key => {
@@ -155,8 +155,8 @@ function IndexedDataTable({dispatch, index, mappings}) {
             })
         }).catch(error => {
             setLoading(false)
-            alert("실패." + error)
-            console.log('error')
+            // alert("실패." + error)
+            console.log('error', error)
         })
     }
 

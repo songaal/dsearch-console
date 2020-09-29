@@ -84,7 +84,9 @@ function View({ dispatch, template, templates}) {
     }, [template['index_patterns']])
 
     useEffect(() => {
-        setMappingsJson(JSON.stringify(((template['mappings'] || {})['properties']), null, 4))
+        setMappingsJson(JSON.stringify((template['mappings'] || {}), null, 4))
+        // setMappingsJson(JSON.stringify(((template['mappings'] || {})['properties']), null, 4))
+
     }, [template['mappings']])
 
     useEffect(() => {
@@ -183,7 +185,9 @@ function View({ dispatch, template, templates}) {
                     mappingMode === "form" ?
                         <Card>
                             <CardContent m={0}>
-                                {Json2html({json: mappingsJson, type: "mappings"})}
+                                <Box style={{overflow: "auto", minWidth: "700px"}}>
+                                    {Json2html({json: mappingsJson, type: "mappings"})}
+                                </Box>
                             </CardContent>
                         </Card>
                         :

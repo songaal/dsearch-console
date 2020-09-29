@@ -119,7 +119,8 @@ function Edit({dispatch, template, templates}) {
 
     useEffect(() => {
         try {
-            let json = JSON.stringify(((template['mappings'] || {})['properties']), null, 4)
+            // let json = JSON.stringify(((template['mappings'] || {})['properties']), null, 4)
+            let json = JSON.stringify(((template['mappings'] || {})), null, 4)
             setMappingsJson(json)
             mappingsAceEditor.current.editor.setValue(json || '', 0)
             mappingsAceEditor.current.editor.clearSelection()
@@ -352,7 +353,9 @@ function Edit({dispatch, template, templates}) {
                     mappingMode === "form" ?
                         <Card>
                             <CardContent m={0}>
-                                {Json2html({json: mappingsJson, type: "mappings"})}
+                                <Box style={{overflow: "auto", minWidth: "700px"}}>
+                                    {Json2html({json: mappingsJson, type: "mappings"})}
+                                </Box>
                             </CardContent>
                         </Card>
                         :
