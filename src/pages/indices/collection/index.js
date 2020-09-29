@@ -64,7 +64,10 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
     const [openAddModal, setOpenAddModal] = useState(false)
     const [createName, setCreateName] = useState("")
     const [createBaseId, setCreateBaseId] = useState("")
-    const [applyIndexTemplates, setApplyIndexTemplates] = useState([])
+
+
+    const [applyIndexTemplate, setApplyIndexTemplate] = useState("")
+    // const [applyIndexTemplates, setApplyIndexTemplates] = useState([])
     const [createNameError, setCreateNameError] = useState(false)
     const [createBaseIdError, setCreateBaseIdError] = useState(false)
     const [modalMessage,setModalMessage] = useState(null)
@@ -84,7 +87,8 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
         setModalMessage(null)
         setCreateNameError(false)
         setCreateBaseIdError(false)
-        setApplyIndexTemplates([])
+        // setApplyIndexTemplates([])
+        setApplyIndexTemplate("")
         setCreateName("")
         setCreateBaseId("")
         setOpenAddModal(!openAddModal)
@@ -146,7 +150,9 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
             }
 
             // console.log(tmpMatched)
-            setApplyIndexTemplates(tmpMatched.map(matched => `${matched['name']} (${matched['index_patterns'].join(',')})`))
+            setApplyIndexTemplate(event.target.value)
+            // setApplyIndexTemplates(tmpMatched.map(matched => `${matched['name']} (${matched['index_patterns'].join(',')})`))
+            // setApplyIndexTemplates(tmpMatched.map(matched => matched['name']))
             // tmpMatched.map(matched => matched['name'])
             // setApplyIndexTemplates([event.target.value + indexSuffixA, event.target.value + indexSuffixB])
 
@@ -158,7 +164,8 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
 
         } else {
             setAddBtnDisabled(true)
-            setApplyIndexTemplates([])
+            // setApplyIndexTemplates([])
+            setApplyIndexTemplate("")
         }
     }
 
@@ -375,17 +382,18 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
                             인덱스 템플릿
                         </Grid>
                         <Grid item xs={8}>
-                            <ul>
-                                {
-                                    applyIndexTemplates.map((applyIndexTemplate, index) => {
-                                        return (
-                                            <li key={index}>
-                                                {applyIndexTemplate}
-                                            </li>
-                                        )
-                                    })
-                                }
-                            </ul>
+                            {applyIndexTemplate||""}
+                            {/*<ul>*/}
+                            {/*    {*/}
+                            {/*        applyIndexTemplates.map((applyIndexTemplate, index) => {*/}
+                            {/*            return (*/}
+                            {/*                <li key={index}>*/}
+                            {/*                    {applyIndexTemplate}*/}
+                            {/*                </li>*/}
+                            {/*            )*/}
+                            {/*        })*/}
+                            {/*    }*/}
+                            {/*</ul>*/}
                         </Grid>
                     </Grid>
                     <Grid container my={3}>
