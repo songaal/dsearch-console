@@ -122,7 +122,8 @@ function View({ dispatch, template, templates}) {
                                     style={{minWidth: 250}}
                             >
                                 {
-                                    templates.map(template => <MenuItem key={template['name']} value={template['name']}>{template['name']}</MenuItem>)
+                                    templates.map(template => template['name']).sort().map(name => <MenuItem key={name} value={name}>{name}</MenuItem>)
+                                    // templates.map(template => <MenuItem key={template['name']} value={template['name']}>{template['name']}</MenuItem>)
                                 }
                             </Select>
                         </FormControl>

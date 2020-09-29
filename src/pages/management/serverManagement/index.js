@@ -104,7 +104,11 @@ function Server({dispatch, server}) {
                         onChange={handleChange}
                     >
                         <MenuItem value={SUMMARY} disabled>서버를 선택하세요.</MenuItem>
-                        {Object.entries(server.nodes).map((node,index) => (
+                        {Object.entries(server.nodes).sort((a, b) => {
+                            if(a[1].name > b[1].name) return 1;
+                            else if(a[1].name < b[1].name) return -1;
+                            else return 0;
+                        }).map((node,index) => (
                             <MenuItem value={node[0]}>{node[1].name}</MenuItem>
                         ))};
                     </Select>

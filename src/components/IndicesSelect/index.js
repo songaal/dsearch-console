@@ -32,8 +32,10 @@ function IndicesSelect({dispatch, indices, index, enableSystem=true}) {
                         onChange={handleChange}
                     >
                         {
-                            indices.filter(index => !enableSystem ? !index['index'].startsWith(".") : true )
-                                .map((index, i) => (<MenuItem key={i} value={index['index']}>{index['index']}</MenuItem>))
+                            indices.filter(index => !enableSystem ? !index['index'].startsWith(".") : true ).map(index => index['index']).sort()
+                                .map((index, i) => (<MenuItem key={i} value={index}>{index}</MenuItem>))
+                            // indices.filter(index => !enableSystem ? !index['index'].startsWith(".") : true )
+                            //     .map((index, i) => (<MenuItem key={i} value={index['index']}>{index['index']}</MenuItem>))
                         }
                     </Select>
                 </FormControl>
