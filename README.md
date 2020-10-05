@@ -1,40 +1,27 @@
 # Dsearch Console
 
-UI
+## 소개
 
-### Cloud
+DSearch 콘솔입니다.
 
-We are offering a cloud app for free.
-
-Start now!
-
-[https://ds.danawa.io](https://ds.danawa.io)
+DSearch 서버의 다양한 API를 사용자 손쉽게 활용할 수 있도록 UI로 제공합니다. 
 
 
-## Quick Start
+## 서비스
 
-### `npm start`
-
-Runs the app in the development mode.
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.
-You will also see any lint errors in the console.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+[dsearch.danawa.io](https://dsearch.danawa.io)
 
 
-### `Chrome extension App`
+## 사용방법
 
-1. React Developer Tools 
-2. Redux DevTools
+1. [Dsearch Server](https://github.com/danawalab/dsearch-server) 를 설치합니다.
 
-컴포넌트 확인은 1번을 사용하고, redux 데이터 변화를 확인할땐 2번을 사용하면됩니다.
+2. dsearch.danawa.io 접속하여 회원가입을 합니다.
+
+3. dsearch 서버 정보와 가입시 입력한 계정정보로 로그인을 합니다.
+
+4. 엘라스틱서치의 클러스터를 등록합니다.
+
+5. 등록된 클러스터에 접속하면 됩니다.
+
+
