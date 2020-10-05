@@ -15,10 +15,12 @@ class Client {
                 server = localStorage.getItem(SET_DSEARCH_SERVER)
             }
             // eslint-disable-next-line no-restricted-globals
-            if (server === null && location.pathname !== process.env.PUBLIC_URL) {
+            if (server === null && location.pathname !== "/") {
                 // eslint-disable-next-line no-restricted-globals
-                location.href = process.env.PUBLIC_URL
-                return
+                location.href = "/"
+                console.log("server: is null and pathname: ", location.pathname)
+                // location.href = process.env.PUBLIC_URL
+                // return new Promise(async (resolve, reject) => reject())
             } else {
                     config.url = `${server}${config.uri}`
             }
@@ -32,6 +34,7 @@ class Client {
                 "cluster-id": clusterId
             })
         }
+
         return new Promise(async (resolve, reject) => {
             try {
                 config.withCredentials = true
@@ -42,10 +45,16 @@ class Client {
                 console.log(error);
                 if (error.response && error.response.status === 401 && config.uri !== '/auth') {
                     // eslint-disable-next-line no-restricted-globals
-                    location.href = process.env.PUBLIC_URL
+                    location.href = "/"
+                    // location.href = process.env.PUBLIC_URL
                 } else {
                     reject(error)
                 }
+                // if (axios.isCancel(error)) {
+                //     console.log('Request canceled', error.message);
+                // } else {
+                //
+                // }
             }
         })
     }

@@ -2,7 +2,6 @@
   "name": "dsearch-console",
   "version": "1.0.0",
   "description": "ElasticSearch Managed Service",
-  "homepage": "https://danawalab.github.io/dsearch-console.github.io",
   "author": "danawa <support@danawa.com>",
   "private": true,
   "scripts": {

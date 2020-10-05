@@ -132,7 +132,7 @@ function SignIn({dispatch}) {
             <Wrapper>
                 <Helmet title="로그인"/>
                 <Box align={"center"}>
-                    <img alt="dsearch" src="/static/img/dsearch/danawa_m_login.png" />
+                    <img alt="dsearch" src={"/static/img/dsearch/danawa_m_login.png"} />
                 </Box>
                 <Box style={{marginTop: "12px"}}>
                     <Typography style={{fontSize: "1.45rem"}} component="h1" variant="h4" align="center" gutterBottom>
