@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import {useHistory} from "react-router-dom"
 import {connect} from "react-redux";
 import styled from "styled-components";
 
@@ -33,6 +34,7 @@ const Wrapper = styled(Paper)`
 let authenticatedRoute = "/cluster"
 
 function SignIn({dispatch}) {
+    const history = useHistory()
     const [server, setServer] = useState("")
     const [serverError, setServerError] = useState(false)
     const [email, setEmail] = useState("")
@@ -44,24 +46,32 @@ function SignIn({dispatch}) {
         const dsearchServer = localStorage.getItem(SET_DSEARCH_SERVER)
         const hash = JSON.parse(localStorage.getItem(SET_DSEARCH_AUTH_USER) || "{}")
         // 서버의 세션 유무 체크.
-        dispatch(setDsearchAuthUser())
-            .then(response => {
-                console.log("authenticated")
-                sessionStorage.setItem(SET_DSEARCH_SERVER, localStorage.getItem(SET_DSEARCH_SERVER));
-                location.replace(authenticatedRoute)
-            })
+        try {
+            dispatch(setDsearchAuthUser())
+                .then(response => {
+                    console.log("authenticated")
+                    sessionStorage.setItem(SET_DSEARCH_SERVER, localStorage.getItem(SET_DSEARCH_SERVER));
+                    // location.replace(authenticatedRoute)
+                    history.replace(authenticatedRoute)
+                })
 
-        // 자동로그인 (로컬 스토리지 정보 로그인 시도)
-        if (hash['hash1']) {
-            console.log("auto login")
-            setLoginSave(hash['hash1'])
-            signInProcess(atob(atob(atob(hash['hash2']))), atob(atob(atob(hash['hash3']))), atob(atob(atob(hash['hash4']))))
+            // 자동로그인 (로컬 스토리지 정보 로그인 시도)
+            if (hash['hash1']) {
+                console.log("auto login")
+                setLoginSave(hash['hash1'])
+                signInProcess(atob(atob(atob(hash['hash2']))), atob(atob(atob(hash['hash3']))), atob(atob(atob(hash['hash4']))))
+            }
+
+            // 마지막 서버 접속 정보
+            if (dsearchServer) {
+                setServer(dsearchServer)
+            }
+        } catch(error) {
+            console.error(error)
+            sessionStorage.removeItem(SET_DSEARCH_SERVER);
+            localStorage.removeItem(SET_DSEARCH_SERVER)
         }
 
-        // 마지막 서버 접속 정보
-        if (dsearchServer) {
-            setServer(dsearchServer)
-        }
     }, [])
 
     function checkServer() {

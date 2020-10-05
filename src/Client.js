@@ -1,27 +1,30 @@
 import axios from 'axios'
+import { Link } from 'react-router-dom';
+
 import {SET_DSEARCH_SERVER} from "./redux/constants";
 
-export default class Client {
-    constructor(props) {
+
+class Client {
+    constructor() {
         this.server = null
     }
     call(config) {
         if (config.uri) {
-
             let server = sessionStorage.getItem(SET_DSEARCH_SERVER)
             if (server === null) {
                 server = localStorage.getItem(SET_DSEARCH_SERVER)
             }
             // eslint-disable-next-line no-restricted-globals
-            if (server === null && location.pathname !== "/") {
+            if (server === null && location.pathname !== process.env.PUBLIC_URL) {
                 // eslint-disable-next-line no-restricted-globals
-                location.href = "/"
+                location.href = process.env.PUBLIC_URL
                 return
             } else {
                     config.url = `${server}${config.uri}`
             }
         }
         // eslint-disable-next-line no-restricted-globals
+
         if (location.pathname.split("/").length >= 3) {
             // eslint-disable-next-line no-restricted-globals
             const clusterId = location.pathname.substring(1, location.pathname.indexOf("/", 1))
@@ -39,7 +42,7 @@ export default class Client {
                 console.log(error);
                 if (error.response && error.response.status === 401 && config.uri !== '/auth') {
                     // eslint-disable-next-line no-restricted-globals
-                    location.href = "/"
+                    location.href = process.env.PUBLIC_URL
                 } else {
                     reject(error)
                 }
@@ -47,7 +50,7 @@ export default class Client {
         })
     }
 }
-
+export default Client
 //   url?: string;
 //   method?: Method;
 //   baseURL?: string;

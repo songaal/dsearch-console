@@ -40,19 +40,20 @@ const childRoutes = (Layout, routes) =>
 
 
 const Routes = () => {
+    console.log(process.env.PUBLIC_URL)
     return (
-        <Router>
+        <Router basename={process.env.PUBLIC_URL}>
             <Switch>
                 {childRoutes(DashboardLayout, dashboardRoutes)}
                 {childRoutes(IntroLayout, introRoutes)}
                 {childRoutes(AuthLayout, authRoutes)}
-                <Route
-                    render={() => (
-                        <AuthLayout>
-                            <Page404/>
-                        </AuthLayout>
-                    )}
-                />
+                {/*<Route*/}
+                {/*    render={() => (*/}
+                {/*        <AuthLayout>*/}
+                {/*            <Page404/>*/}
+                {/*        </AuthLayout>*/}
+                {/*    )}*/}
+                {/*/>*/}
             </Switch>
         </Router>
     );
