@@ -2,6 +2,7 @@
   "name": "dsearch-console",
   "version": "1.0.0",
   "description": "ElasticSearch Managed Service",
+  "homepage": "https://dsearch.danawa.io",
   "author": "danawa <support@danawa.com>",
   "private": true,
   "scripts": {
