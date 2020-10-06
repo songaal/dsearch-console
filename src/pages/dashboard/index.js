@@ -206,7 +206,6 @@ function WarningIndex({status, indices}) {
 function RunningIndex({result, running, status, indices}) {
     const history = useHistory();
     const classes = useStyles();
-    let indexMap = new Map()
     let indexList = []
     let successIndexList = {};
 

@@ -1,5 +1,6 @@
 import { SET_INDEX_RESULT, SET_RUNNING_INDEX, SET_INDEX_STATUS, SET_INDEX_ALIAS, SET_DASHBOARD_INDICES_INFO } from "../constants";
 import Client from '~/Client'
+import { size } from "polished";
 
 const client = new Client()
 
@@ -24,13 +25,14 @@ export const setIndexResultActions = key => dispatch => client.call({
         ]
       }
     },
-    sort: [
+    "sort": [
       {
-        endTime: {
-          order: "desc"
+        "endTime": {
+          "order": "desc"
         }
       }
-    ]
+    ],
+    "size" : 10000
     // ,
     // collapse: {
     //   field: "index",

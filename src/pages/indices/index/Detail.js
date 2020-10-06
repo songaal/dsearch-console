@@ -32,6 +32,10 @@ import Menu from "@material-ui/core/Menu";
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import {red} from "@material-ui/core/colors";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
+import Dialog from "@material-ui/core/Dialog";
 
 const useStyles = makeStyles((theme) => ({}));
 const Divider = styled(MuiDivider)(spacing);
@@ -83,6 +87,8 @@ function Index({indexInfoList, settings}) {
     const { indices, index } = useSelector(store => ({...store.indicesReducers}))
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [process, setProcess] = React.useState(false);
+    const [openRemoveModal, setOpenRemoveModal] = React.useState(false)
+    const [deleteIndex, setDeleteIndex] = React.useState('')
     const [state, setState] = React.useState({
         open: false,
         vertical: 'top',
@@ -127,16 +133,18 @@ function Index({indexInfoList, settings}) {
         handleClose()
 
         if ('delete' === action) {
-            dispatch(deleteIndexAction(index))
-                .then(response => {
-                    setProcess(false)
-                    setState({ ...state, open: true, message: "삭제되었습니다." })
-                    history.push('../indices')
-                })
-                .catch(error => {
-                    setProcess(false)
-                    setState({ ...state, open: true, message: "요청이 실패하였습니다." })
-                })
+            setDeleteIndex(index)
+            setOpenRemoveModal(true);
+            // dispatch(deleteIndexAction(index))
+            //     .then(response => {
+            //         setProcess(false)
+            //         setState({ ...state, open: true, message: "삭제되었습니다." })
+            //         history.push('../indices')
+            //     })
+            //     .catch(error => {
+            //         setProcess(false)
+            //         setState({ ...state, open: true, message: "요청이 실패하였습니다." })
+            //     })
         } else {
             dispatch(setIndexManagedAction(action, index))
                 .then(response => {
@@ -160,6 +168,26 @@ function Index({indexInfoList, settings}) {
                     }, 1000)
                 })
         }
+    }
+
+    function handleCancel(){
+        setProcess(false);
+        setOpenRemoveModal(false);
+    }
+
+    function handleDeleteIndex(event) {
+        
+        dispatch(deleteIndexAction(deleteIndex))
+            .then(response => {
+                setProcess(false)
+                setState({ ...state, open: true, message: "삭제되었습니다." })
+                history.push('../indices')
+            })
+            .catch(error => {
+                setProcess(false)
+                setState({ ...state, open: true, message: "요청이 실패하였습니다." })
+            })
+            setOpenRemoveModal(false);
     }
 
     return (
@@ -243,13 +271,33 @@ function Index({indexInfoList, settings}) {
                     </Box>
                 </Grid>
             </Grid>
-
+            
 
 
             <Divider my={6} />
 
             <AntTabs tabs={tabs} tabIndex={0} />
 
+
+            <Dialog open={openRemoveModal} fullWidth={true}>
+                <DialogTitle>인덱스 삭제</DialogTitle>
+                <DialogContent>
+                    <Box style={{color: red['500']}}> 선택하신 인덱스를 삭제 하시겠습니까? </Box>
+                </DialogContent>
+                <DialogActions>
+                    <Button style={{backgroundColor: red['200']}}
+                            variant="contained"
+                            onClick={handleDeleteIndex}
+                    >
+                        삭제
+                    </Button>
+                    <Button onClick={() => handleCancel()}
+                            variant="contained"
+                    >
+                        취소
+                    </Button>
+                </DialogActions>
+            </Dialog>
 
             <Snackbar
                 color={"info"}

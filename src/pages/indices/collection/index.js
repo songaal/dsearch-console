@@ -268,7 +268,15 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
                     </TableHead>
                     <TableBody>
                         {
-                            collectionList.map((collection, num) => {
+                            collectionList.sort((a, b) => {
+                                if(a['name'] > b['name']){
+                                    return 1;
+                                }else if(a['name'] < b['name']){
+                                    return -1;
+                                }else{
+                                    return 0;
+                                }
+                            }).map((collection, num) => {
                                 const id = collection['id']
                                 const name = collection['name']
                                 const baseId = collection['baseId']
