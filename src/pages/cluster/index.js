@@ -302,7 +302,7 @@ function AddGuideCard(props) {
                          justifyContent="center"
                          m={3}
                     >
-                        <Link target="_blank" href="https://github.com/danawalab/dsearch/blob/master/README.md">
+                        <Link target="_blank" href="https://github.com/danawalab/dsearch-server/blob/master/README.md">
                             바로가기
                         </Link>
                     </Box>
