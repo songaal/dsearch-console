@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { Link } from 'react-router-dom';
 
-import {SET_DSEARCH_SERVER} from "./redux/constants";
+import {SET_DSEARCH_SERVER, SET_DSEARCH_AUTH_USER} from "./redux/constants";
 
 
 class Client {
@@ -34,12 +34,22 @@ class Client {
                 "cluster-id": clusterId
             })
         }
+        const authUser = JSON.parse(sessionStorage.getItem(SET_DSEARCH_AUTH_USER)||"{}")
+        if (authUser && authUser['token']) {
+            config.headers = Object.assign(config.headers||{}, {
+                "x-bearer-token": authUser['token']
+            })
+        }
 
         return new Promise(async (resolve, reject) => {
             try {
                 config.withCredentials = true
                 let response = await axios.request(config)
-                // console.log('response >>> ', response)
+                let token = (response['headers']||{})['x-bearer-token']
+                if (token) {
+                    authUser["token"] = token
+                    sessionStorage.setItem(SET_DSEARCH_AUTH_USER, JSON.stringify(authUser))
+                }
                 resolve(response)
             } catch (error) {
                 console.log(error);

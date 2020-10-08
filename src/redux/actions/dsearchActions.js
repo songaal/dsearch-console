@@ -24,7 +24,9 @@ export const setDsearchAuthUser = () => dispatch => client.call({
     uri: `/auth`,
 }).then(response => {
     const authUser = response.data
-    if(authUser['sessionId']) {
+    let token = (response['headers']||{})['x-bearer-token']
+    if(token) {
+        authUser["token"] = token
         sessionStorage.setItem(SET_DSEARCH_AUTH_USER, JSON.stringify(authUser))
         dispatch({type: SET_DSEARCH_AUTH_USER, payload: authUser})
         return authUser

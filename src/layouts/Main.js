@@ -73,7 +73,7 @@ const MainContent = styled(Paper)`
 function Main({dispatch,authUser, children, routes, width}) {
     const [mobileOpen, setMobileOpen] = useState(false)
 
-    if (!authUser['sessionId']) {
+    if (!authUser['token']) {
         dispatch(setDsearchAuthUser()).catch(() => location.replace("/"))
         return null
     }
