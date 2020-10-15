@@ -97,7 +97,7 @@ function MappingsJson2html(json) {
         {title: "ignore_above", key: "ignore_above", component: (val) => {return val}},
         {title: "null_value", key: "null_value", component: (val) => {return val}},
         {title: "doc_values", key: "doc_values", component: (val) => {return val}},
-        {title: "similarity", key: "similarity", component: (val) => {return val||"BM25"}},
+        {title: "similarity", key: "similarity", component: (val) => {return val||""}},
         {title: "term_vector", key: "term_vector", component: (val) => {return val}},
         {title: "store", key: "store", component: (val) => {return <Checkbox style={{cursor: "default"}} checked={val||true}/>}}
     ]
