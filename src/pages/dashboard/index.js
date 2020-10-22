@@ -462,17 +462,29 @@ function BottomArea({result, alias, indices}) {
         </React.Fragment>
     );
 }
-
+let eventCode = null
 function DashBoard({dispatch, result, running, status, alias, indices}) {
     const classes = useStyles();
 
-    useEffect(() => {
+    function loopFunc() {
         dispatch(setIndexResultActions())
-        setInterval(()=>{dispatch(setIndexResultActions());}, 1000 * 60 * 3);
+        eventCode = setTimeout(()=>{
+            loopFunc()
+        }, 1000 * 60 * 3);
+    }
+
+    useEffect(() => {
+
         dispatch(setRunningIndexActions())
         dispatch(setIndexStatusActions())
         dispatch(setIndexAliasActions())
         dispatch(setIndicesActions());
+        loopFunc()
+        return () => {
+            if (eventCode != null) {
+                clearTimeout(eventCode)
+            }
+        }
     }, [])
     
     return (
