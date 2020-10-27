@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 import {connect} from "react-redux";
-import { useLocation } from "react-router-dom"
+import { useLocation, useHistory } from "react-router-dom"
 import styled from "styled-components";
 import Helmet from 'react-helmet';
 import Async from "~/components/Async";
@@ -12,11 +12,12 @@ import {
     Divider as MuiDivider,
     Grid as MuiGrid,
     Typography as MuiTypography,
+    FormControl, InputLabel, Select, MenuItem
 } from "@material-ui/core";
 import {makeStyles} from '@material-ui/core/styles';
 import {positions, spacing} from "@material-ui/system";
 import AntTabs from "~/components/AntTabs"
-import {setCollection, setCollectionIndexSuffix} from "../../../redux/actions/collectionActions";
+import {setCollection, setCollectionIndexSuffix, setCollectionList} from "../../../redux/actions/collectionActions";
 import {setJDBCList} from "../../../redux/actions/jdbcActions";
 
 const Divider = styled(MuiDivider)(spacing, positions);
@@ -45,15 +46,17 @@ const tabs = [
     {label: "히스토리", component: Async(() => import("./History"))},
 ]
 
-function Detail({dispatch, collection}) {
+function Detail({dispatch, collection, collectionList}) {
     const classes = useStyles();
     const location = useLocation();
-
+    const history = useHistory()
+    
     useEffect(() => {
         const collectionId = location.pathname.substring(location.pathname.lastIndexOf("/") + 1)
         dispatch(setCollection(collectionId))
         dispatch(setCollectionIndexSuffix())
         dispatch(setJDBCList())
+        dispatch(setCollectionList())
     }, [])
 
     if (Object.keys(collection).length === 0) {
@@ -63,6 +66,20 @@ function Detail({dispatch, collection}) {
     function handleChange() {
         const collectionId = location.pathname.substring(location.pathname.lastIndexOf("/") + 1)
         dispatch(setCollection(collectionId))
+    }
+
+    function handleCollectionChange(collectionBaseId) {
+        
+        let id = "";
+        collectionList.forEach(item => {
+            if(item['baseId'] === collectionBaseId){
+                id = item['id'];
+            }
+        })
+
+        if(id !== ""){
+            window.location.replace(`../indices-collections/${id}`);
+        }
     }
 
     return (
@@ -76,7 +93,19 @@ function Detail({dispatch, collection}) {
             </Typography>
 
             <Typography variant="h4" mt={2}>
-                {collection['baseId']}
+                {/* 원본  */}
+                {/* {collection['baseId']} */}
+
+                <FormControl>
+                    <InputLabel>컬렉션 아이디</InputLabel>
+                    <Select value={collection['baseId']}
+                        onChange={event => handleCollectionChange(event.target.value)}
+                        style={{ minWidth: 250 }} >
+                        {
+                            collectionList.map(item =>  item['baseId'] ).sort().map(name => <MenuItem key={name} value={name}>{name}</MenuItem>)
+                        }
+                    </Select>
+                </FormControl>
             </Typography>
 
             <Divider my={6}/>
