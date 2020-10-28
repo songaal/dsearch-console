@@ -131,7 +131,7 @@ function Index({dispatch, indices}) {
                                     </TableCell>
                                     <TableCell align="center">
                                         <Box>
-                                            {index['docs.count']||'-'}
+                                            {Number(index['docs.count']).toLocaleString()||'-'}
                                         </Box>
                                     </TableCell>
                                     <TableCell align="center">

@@ -62,9 +62,9 @@ function SummaryTable({summary, makeCheckedIdList, makeCheckedList}){
             <TableCell> {info.type === systemInfo.type ? <></> : <Checkbox id={info.documentId} name={"checkbox"} value={info.id} onChange={handleCheckBox}/>} </TableCell>
             <TableCell>{info.name}</TableCell>
             <TableCell>{info.type}</TableCell>
-            <TableCell>{info.indexCount ? info.indexCount : "0"}</TableCell>
+            <TableCell>{info.indexCount ? Number(info.indexCount).toLocaleString() : "0"}</TableCell>
             <TableCell> {info.updatedTime ? new Date(info.updatedTime).toLocaleString() : "-"} </TableCell>
-            <TableCell>{info.count}</TableCell>
+            <TableCell>{Number(info.count).toLocaleString()}</TableCell>
             <TableCell> {info.appliedTime ? new Date(info.appliedTime).toLocaleString() : "-"} </TableCell>
             <TableCell> {info.tokenType ? info.tokenType : "-"} </TableCell>
             <TableCell> {info.ignoreCase ? info.ignoreCase ? "Y": "N" : "-"} </TableCell>

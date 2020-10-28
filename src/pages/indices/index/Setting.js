@@ -80,8 +80,8 @@ function FormCard({settings}) {
                         </TableHead>
                         <TableBody>
                             <TableRow>
-                                <TableCell>{settings['settings']['index']['number_of_shards']}</TableCell>
-                                <TableCell>{settings['settings']['index']['number_of_replicas']}</TableCell>
+                                <TableCell>{Number(settings['settings']['index']['number_of_shards']).toLocaleString()}</TableCell>
+                                <TableCell>{Number(settings['settings']['index']['number_of_replicas']).toLocaleString()}</TableCell>
                                 <TableCell>{settings['defaults']['index']['refresh_interval'] || settings['settings']['index']['refresh_interval']}</TableCell>
                             </TableRow>
                         </TableBody>

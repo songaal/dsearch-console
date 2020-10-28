@@ -283,8 +283,8 @@ function OsInfoTable({nodes}) {
                                         <StyledTableCell>{(row.os || {}).name || ""} , {(row.os || {}).pretty_name || ""}</StyledTableCell>
                                         <StyledTableCell>{(row.os || {}).arch || ""}</StyledTableCell>
                                         <StyledTableCell>{(row.os || {}).version || ""}</StyledTableCell>
-                                        <StyledTableCell>{(row.os || {}).allocated_processors || ""}</StyledTableCell>
-                                        <StyledTableCell>{(row.os || {}).refresh_interval_in_millis || ""}</StyledTableCell>
+                                        <StyledTableCell>{Number((row.os || {}).allocated_processors).toLocaleString() || ""}</StyledTableCell>
+                                        <StyledTableCell>{Number((row.os || {}).refresh_interval_in_millis).toLocaleString() || ""}</StyledTableCell>
                                     </TableRow>
                                 })
                             }

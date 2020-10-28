@@ -239,15 +239,15 @@ function Summary({dispatch, authUser, collection}) {
                                         </TableRow>
                                         <TableRow style={{display: indexA['uuid'] ? "table-row" : "none"}}>
                                             <TableCell variant={"head"} component={"th"}>프라이머리</TableCell>
-                                            <TableCell>{indexA['pri']}</TableCell>
+                                            <TableCell>{Number(indexA['pri']).toLocaleString()}</TableCell>
                                             <TableCell variant={"head"} component={"th"}>레플리카</TableCell>
-                                            <TableCell>{indexA['rep']}</TableCell>
+                                            <TableCell>{Number(indexA['rep']).toLocaleString()}</TableCell>
                                         </TableRow>
                                         <TableRow style={{display: indexA['uuid'] ? "table-row" : "none"}}>
                                             <TableCell variant={"head"} component={"th"}>문서 수</TableCell>
-                                            <TableCell>{indexA['docsCount']}</TableCell>
+                                            <TableCell>{Number(indexA['docsCount']).toLocaleString()}</TableCell>
                                             <TableCell variant={"head"} component={"th"}>삭제문서 수</TableCell>
-                                            <TableCell>{indexA['docsDeleted']}</TableCell>
+                                            <TableCell>{Number(indexA['docsDeleted']).toLocaleString()}</TableCell>
                                         </TableRow>
                                         <TableRow style={{display: indexA['uuid'] ? "table-row" : "none"}}>
                                             <TableCell variant={"head"} component={"th"}>스토리지 용량</TableCell>
