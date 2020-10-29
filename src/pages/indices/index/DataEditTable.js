@@ -221,7 +221,15 @@ function DataEditTable({dispatch, index, authUser, mappings}) {
                             editable: column === "ID" ? 'never' : "always",
                             cellStyle:{whiteSpace: "nowrap", maxWidth: "180px", overflow: "hidden"}
                         }))}
-                        data={dataList}
+                        data={dataList.map(data => {
+                            let tmpData = {}
+                            Object.keys(data).forEach(key => {
+                                if (typeof data[key] !== 'object') {
+                                    tmpData[key] = data[key]
+                                }
+                            })
+                            return tmpData
+                        })}
                         onChangeRowsPerPage={handleChangeRowsPerPage}
                         editable={{ onRowAdd: handleRowAdd, onRowUpdate: handleRowUpdate, onRowDelete: handleRowDelete }}
                         onSearchChange={handleSearch}

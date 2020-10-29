@@ -61,7 +61,8 @@ function FormCard({settings}) {
         return null
     }
 
-    const flatMap = flatten(settings['defaults'])
+    const defaultsFlatMap = flatten(settings['defaults']||{})
+    const settingsFlatMap = flatten(settings['settings']||{})
 
     return (
         <React.Fragment>
@@ -88,34 +89,69 @@ function FormCard({settings}) {
                     </Table>
                 </CardContent>
             </Card>
-            <br/>
-            <Card>
-                <CardContent>
-                    <Typography variant={"h5"} mt={5}>
-                        기타항목
-                    </Typography>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>키</TableCell>
-                                <TableCell>값</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {
-                                Object.keys(flatMap).map(key => {
-                                    return (
-                                        <TableRow key={key}>
-                                            <TableCell>{key}</TableCell>
-                                            <TableCell>{flatMap[key]}</TableCell>
-                                        </TableRow>
-                                    )
-                                })
-                            }
-                        </TableBody>
-                    </Table>
-                </CardContent>
-            </Card>
+
+            <Box style={{display: Object.keys(settingsFlatMap).length > 0 ? "block" : "none"}}>
+                <br/>
+                <Card>
+                    <CardContent>
+                        <Typography variant={"h5"} mt={5}>
+                            설정값
+                        </Typography>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>키</TableCell>
+                                    <TableCell>값</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {
+                                    Object.keys(settingsFlatMap).map(key => {
+                                        return (
+                                            <TableRow key={key}>
+                                                <TableCell>{key}</TableCell>
+                                                <TableCell>{settingsFlatMap[key]}</TableCell>
+                                            </TableRow>
+                                        )
+                                    })
+                                }
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                </Card>
+            </Box>
+
+            <Box style={{display: Object.keys(defaultsFlatMap).length > 0 ? "block" : "none"}}>
+                <br/>
+                <Card>
+                    <CardContent>
+                        <Typography variant={"h5"} mt={5}>
+                            기본값
+                        </Typography>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>키</TableCell>
+                                    <TableCell>값</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {
+                                    Object.keys(defaultsFlatMap).map(key => {
+                                        return (
+                                            <TableRow key={key}>
+                                                <TableCell>{key}</TableCell>
+                                                <TableCell>{defaultsFlatMap[key]}</TableCell>
+                                            </TableRow>
+                                        )
+                                    })
+                                }
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                </Card>
+            </Box>
+
         </React.Fragment>
     )
 }
