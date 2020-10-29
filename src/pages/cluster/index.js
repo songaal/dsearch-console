@@ -165,7 +165,7 @@ function ClusterCard({classes, cluster, onEditClick, onRemoveClick, to, newTo, s
                                 </Grid>
                                 <Grid item xs={8}>
                                     <Box style={{whiteSpace: "nowrap"}}>
-                                        {Number(nodes).toLocaleString()}
+                                        {nodes ? Number(nodes).toLocaleString() : "-"}
                                     </Box>
                                 </Grid>
                             </Grid>
@@ -178,7 +178,7 @@ function ClusterCard({classes, cluster, onEditClick, onRemoveClick, to, newTo, s
                                 </Grid>
                                 <Grid item xs={8}>
                                     <Box style={{whiteSpace: "nowrap"}}>
-                                        {Number(indices).toLocaleString()}
+                                        {indices ? Number(indices).toLocaleString() : "-"}
                                     </Box>
                                 </Grid>
                             </Grid>
@@ -191,7 +191,7 @@ function ClusterCard({classes, cluster, onEditClick, onRemoveClick, to, newTo, s
                                 </Grid>
                                 <Grid item xs={8}>
                                     <Box style={{whiteSpace: "nowrap"}}>
-                                        {Number(shards).toLocaleString()}
+                                        {shards ? Number(shards).toLocaleString() : "-"}
                                     </Box>
                                 </Grid>
                             </Grid>

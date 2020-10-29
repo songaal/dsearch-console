@@ -239,15 +239,15 @@ function Summary({dispatch, authUser, collection}) {
                                         </TableRow>
                                         <TableRow style={{display: indexA['uuid'] ? "table-row" : "none"}}>
                                             <TableCell variant={"head"} component={"th"}>프라이머리</TableCell>
-                                            <TableCell>{Number(indexA['pri']).toLocaleString()}</TableCell>
+                                            <TableCell>{indexA['pri'] ? Number(indexA['pri']).toLocaleString() : "-"}</TableCell>
                                             <TableCell variant={"head"} component={"th"}>레플리카</TableCell>
-                                            <TableCell>{Number(indexA['rep']).toLocaleString()}</TableCell>
+                                            <TableCell>{indexA['rep'] ? Number(indexA['rep']).toLocaleString() : "-"}</TableCell>
                                         </TableRow>
                                         <TableRow style={{display: indexA['uuid'] ? "table-row" : "none"}}>
                                             <TableCell variant={"head"} component={"th"}>문서 수</TableCell>
-                                            <TableCell>{Number(indexA['docsCount']).toLocaleString()}</TableCell>
+                                            <TableCell>{indexA['docsCount'] ? Number(indexA['docsCount']).toLocaleString() : "0"}</TableCell>
                                             <TableCell variant={"head"} component={"th"}>삭제문서 수</TableCell>
-                                            <TableCell>{Number(indexA['docsDeleted']).toLocaleString()}</TableCell>
+                                            <TableCell>{indexA['docsDeleted'] ? Number(indexA['docsDeleted']).toLocaleString() : "0"}</TableCell>
                                         </TableRow>
                                         <TableRow style={{display: indexA['uuid'] ? "table-row" : "none"}}>
                                             <TableCell variant={"head"} component={"th"}>스토리지 용량</TableCell>
@@ -311,15 +311,15 @@ function Summary({dispatch, authUser, collection}) {
                                         </TableRow>
                                         <TableRow style={{display: indexB['uuid'] ? "table-row" : "none"}}>
                                             <TableCell variant={"head"} component={"th"}>프라이머리</TableCell>
-                                            <TableCell>{indexB['pri']}</TableCell>
+                                            <TableCell>{indexB['pri'] ? Number(indexA['pri']).toLocaleString() : "-"}</TableCell>
                                             <TableCell variant={"head"} component={"th"}>레플리카</TableCell>
-                                            <TableCell>{indexB['rep']}</TableCell>
+                                            <TableCell>{indexB['rep'] ? Number(indexB['rep']).toLocaleString() : "-"}</TableCell>
                                         </TableRow>
                                         <TableRow style={{display: indexB['uuid'] ? "table-row" : "none"}}>
                                             <TableCell variant={"head"} component={"th"}>문서 수</TableCell>
-                                            <TableCell>{indexB['docsCount']}</TableCell>
+                                            <TableCell>{indexB['docsCount'] ? Number(indexB['docsCount']).toLocaleString() : "0"}</TableCell>
                                             <TableCell variant={"head"} component={"th"}>삭제문서 수</TableCell>
-                                            <TableCell>{indexB['docsDeleted']}</TableCell>
+                                            <TableCell>{indexB['docsDeleted'] ? Number(indexB['docsDeleted']).toLocaleString() : "0"}</TableCell>
                                         </TableRow>
                                         <TableRow style={{display: indexB['uuid'] ? "table-row" : "none"}}>
                                             <TableCell variant={"head"} component={"th"}>스토리지 용량</TableCell>

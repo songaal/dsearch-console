@@ -67,15 +67,15 @@ function Summary({index, indexInfoList, aliases, settings}) {
 
                                     <TableRow>
                                         <TableCell>프라이머리</TableCell>
-                                        <TableCell>{Number(indexInfo['pri']).toLocaleString()}</TableCell>
+                                        <TableCell>{indexInfo['pri'] ? Number(indexInfo['pri']).toLocaleString() : "-"}</TableCell>
                                         <TableCell>레플리카</TableCell>
-                                        <TableCell>{Number(indexInfo['rep']).toLocaleString()}</TableCell>
+                                        <TableCell>{indexInfo['rep'] ? Number(indexInfo['rep']).toLocaleString() : "-"}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell>문서 수</TableCell>
-                                        <TableCell>{Number(indexInfo['docs.count']).toLocaleString()}</TableCell>
+                                        <TableCell>{indexInfo['docs.count'] ? Number(indexInfo['docs.count']).toLocaleString() : "0"}</TableCell>
                                         <TableCell>삭제문서 수</TableCell>
-                                        <TableCell>{Number(indexInfo['docs.deleted']).toLocaleString()}</TableCell>
+                                        <TableCell>{indexInfo['docs.deleted'] ? Number(indexInfo['docs.deleted']).toLocaleString() : "0"}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell>스토리지 용량</TableCell>

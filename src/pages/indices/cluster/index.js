@@ -7,7 +7,7 @@ import {
     setShardsInfoActions
 } from '@actions/clusterInfoActions'
 import Helmet from "react-helmet";
-
+import {useHistory} from "react-router-dom";
 import {
     Box,
     Button,
@@ -25,6 +25,7 @@ import {
     TableRow as MuiTableRow,
     TextField,
     Typography,
+    Link,
 } from "@material-ui/core";
 import {palette, sizing, spacing} from "@material-ui/system";
 import {makeStyles} from "@material-ui/core/styles";
@@ -73,28 +74,28 @@ function ClusterSummary({cluster}) {
                             <Typography className={classes.headerField}>노드</Typography>
                         </Grid>
                         <Grid item xs={3} md={1}>
-                            <Typography className={classes.headerValue}>{cluster.nodes.count.total}</Typography>
+                            <Typography className={classes.headerValue}>{cluster.nodes.count.total ? Number(cluster.nodes.count.total).toLocaleString() : "0"}</Typography>
                         </Grid>
 
                         <Grid item xs={3} md={1}>
                             <Typography className={classes.headerField}>인덱스</Typography>
                         </Grid>
                         <Grid item xs={3} md={1}>
-                            <Typography className={classes.headerValue}>{cluster.indices.count}</Typography>
+                            <Typography className={classes.headerValue}>{cluster.indices.count ? Number(cluster.indices.count).toLocaleString() : "0"}</Typography>
                         </Grid>
 
                         <Grid item xs={3} md={1}>
                             <Typography className={classes.headerField}>샤드</Typography>
                         </Grid>
                         <Grid item xs={3} md={1}>
-                            <Typography className={classes.headerValue}>{cluster.indices.shards.total}</Typography>
+                            <Typography className={classes.headerValue}>{cluster.indices.shards.total ? Number(cluster.indices.shards.total).toLocaleString() : "0"}</Typography>
                         </Grid>
 
                         <Grid item xs={3} md={1}>
                             <Typography className={classes.headerField}>문서</Typography>
                         </Grid>
                         <Grid item xs={3} md={1}>
-                            <Typography className={classes.headerValue}>{cluster.indices.docs.count}</Typography>
+                            <Typography className={classes.headerValue}>{cluster.indices.docs.count ? Number(cluster.indices.docs.count).toLocaleString() : "0"}</Typography>
                         </Grid>
 
                         <Grid item xs={3} md={1}>
@@ -211,6 +212,17 @@ function ClusterShardMap({indices, nodes, shards}) {
     }
 
     const matchedCount = Object.values(indicesArr).filter(indexObj => !isFilterIndex(indexObj['index'])).length;
+    
+    const history = useHistory();
+    
+    function moveIndexDetail(uuid) {
+        history.push(`./indices/${uuid}`)
+    }
+
+    function moveServerDetail(nodeName) {
+        history.push(`./management/server?nodename=${nodeName}`);
+    }
+    
     return (
         <React.Fragment>
             <Typography variant="h4" gutterBottom display="inline">
@@ -282,9 +294,9 @@ function ClusterShardMap({indices, nodes, shards}) {
                                                             textAlign: "left",
                                                             backgroundColor: indicesInfo.health === 'red' ? pink['100'] : indicesInfo.health === 'yellow' ? yellow['A400'] : '#ffffff'
                                                         }}>
-                                                            <Typography style={{fontWeight: "bold"}}>{indicesInfo.index}</Typography>
-                                                            <Typography>샤드: P({indicesInfo.pri}) R({indicesInfo.rep})</Typography>
-                                                            <Typography>문서: {indicesInfo['docs.count']}</Typography>
+                                                            <Link style={{cursor: "pointer"}} onClick={() => moveIndexDetail(indicesInfo.uuid)}>{indicesInfo.index}</Link>
+                                                            <Typography>샤드: P({indicesInfo.pri ? Number(indicesInfo.pri).toLocaleString() : "0"}) R({indicesInfo.rep ? Number(indicesInfo.rep).toLocaleString() : "0"})</Typography>
+                                                            <Typography>문서: {indicesInfo['docs.count'] ? Number(indicesInfo['docs.count']).toLocaleString() : "0"}</Typography>
                                                             <Typography>크기: {indicesInfo['store.size']}</Typography>
                                                             {/*<Typography>상태: {indicesInfo.health}</Typography>*/}
                                                         </TableCell>
@@ -324,7 +336,7 @@ function ClusterShardMap({indices, nodes, shards}) {
                                     {Object.values(nodes).map((nodeRow, nodeRowIndex) =>
                                         <TableRow key={nodeRowIndex}>
                                             <TableCell align="center">
-                                                <Typography>{nodeRow.name}</Typography>
+                                            <Link style={{cursor: "pointer"}} onClick={() => moveServerDetail(nodeRow.name)}>{nodeRow.name}</Link>
                                                 <Typography>{nodeRow.ip}</Typography>
                                                 <Typography>{nodeRow.master === '*' ? '마스터노드' : ''}</Typography>
                                                 <Typography>{nodeRow.role}</Typography>
