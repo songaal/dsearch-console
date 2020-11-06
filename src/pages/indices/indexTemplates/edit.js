@@ -160,6 +160,14 @@ function Edit({dispatch, template, templates}) {
     }
 
     function handleTabChane(index) {
+        if(index === 0 && settingMode === 'json'){ // setting -> mapping
+            console.log(index, settingsAceEditor.current.editor.getValue());
+            setSettingsJson(settingsAceEditor.current.editor.getValue())
+        }else if(index === 1 && mappingMode === 'json') { // mapping-> setting
+            console.log(index, mappingsAceEditor.current.editor.getValue());
+            setMappingsJson(mappingsAceEditor.current.editor.getValue()) 
+        }
+        
         setTabIndex(index)
     }
 
@@ -385,7 +393,7 @@ function Edit({dispatch, template, templates}) {
                                         setOptions={{ useWorker: false }}
                                         onChange={() => {
                                             let json = mappingsAceEditor.current.editor.getValue()
-                                            if (mappingsJson !== json) {
+                                            if (json.length !== 0 && mappingsJson !== json) {
                                                 setMappingsJson(json)
                                             }
                                         }}
@@ -444,7 +452,8 @@ function Edit({dispatch, template, templates}) {
                                         setOptions={{ useWorker: false }}
                                         onChange={() => {
                                             let json = settingsAceEditor.current.editor.getValue()
-                                            if (mappingsJson !== json) {
+                                            
+                                            if (json.length !== 0 && mappingsJson !== json) {
                                                 setSettingsJson(json)
                                             }
                                         }}
