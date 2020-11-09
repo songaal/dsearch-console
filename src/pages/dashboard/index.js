@@ -416,7 +416,15 @@ function BottomArea({result, alias, indices}) {
                         <TableBody>
 
                             {resultList.length === 0 ? <TableRow><TableCell colSpan={7} align="center"> <Box display="flex" alignItems="center" justifyContent="center"> <Typography>전체 색인 결과가 없습니다.</Typography></Box> </TableCell></TableRow> : 
-                            Object.values(resultList).map(row => {
+                            Object.values(resultList).sort((a, b) => {
+                                if(a.endTime > b.endTime){
+                                    return -1;
+                                }else if(a.endTime == b.endTime){
+                                    return 0;
+                                }else{
+                                    return 1;
+                                }
+                            }).map(row => {
                                 return (
                                     <TableRow key={row.index}>
                                         <TableCell align="center">
