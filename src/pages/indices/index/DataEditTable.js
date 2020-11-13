@@ -24,9 +24,11 @@ import {
     addIndexDocumentSourceAction,
     deleteIndexDocumentSourceAction,
     editIndexDocumentSourceAction,
-    setIndexDocumentSourceListAction
+    setIndexDocumentSourceListAction,
+    setIndexMappingsAction
 } from "../../../redux/actions/indicesActions";
 import flat, {unflatten} from 'flat'
+import Utils from "../../../utils";
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref}/>),
@@ -77,8 +79,9 @@ function DataEditTable({dispatch, index, authUser, mappings}) {
             return false
         }
 
-        let tmpColumns = {}
+        let tmpColumns = {};
         tmpColumns['ID'] = null
+        // tmpColumns = Object.assign(tmpColumns, mappings['properties']);
         response['hits']['hits'].forEach(hit => {
             const source = flat(hit['_source'])
             Object.keys(source).forEach(key => {
@@ -99,50 +102,51 @@ function DataEditTable({dispatch, index, authUser, mappings}) {
             tmpData['_hitsId'] = hit['_id']
             return tmpData
         }))
-
     }, [])
 
 
-
-
-
     function fetchIndexDocumentSourceList({searchSize=500, columns=[], keyword=null}) {
-        return dispatch(setIndexDocumentSourceListAction({index, from: pageNum, size: searchSize||rowSize, columns, keyword})).then(response => {
-            // columns 적용
-            let tmpColumns = {}
-            tmpColumns['ID'] = null;
-            ((response['hits']||{})['hits']).forEach(hit => {
-                const source = flat(hit['_source'])
-                Object.keys(source).forEach(key => {
-                    tmpColumns[key] = null
-                })
-            })
-
-            if (keyword === undefined || keyword === null || keyword === '') {
-                setColumns(Object.keys(tmpColumns))
-            }
-
-            // setColumns(Object.keys(tmpColumns))
-            return {
-                columns: Object.keys(tmpColumns),
-                hits: response['hits']
-            }
-        }).then(payload => {
-            if(payload) {
-                setDataList((payload['hits']||{})['hits'].map(hit => {
-                    const flatHit = flat(hit)
-                    let tmpData = {}
-                    payload['columns'].forEach(column => {
-                        tmpData[column.replace(/\./gi, "___")] = flatHit['_source.' + column] || ""
+            return dispatch(setIndexMappingsAction(index)).then((response)=> {
+                let indexMapping = response.payload;
+                dispatch(setIndexDocumentSourceListAction({index, from: pageNum, size: searchSize||rowSize, columns, keyword})).then(response => {
+                // columns 적용
+                let tmpColumns = {};
+                // let tmpColumns = {}
+                tmpColumns['ID'] = null;
+                
+                tmpColumns = Object.assign(tmpColumns, indexMapping['properties']);
+                ((response['hits']||{})['hits']).forEach(hit => {
+                    const source = flat(hit['_source'])
+                    Object.keys(source).forEach(key => {
+                        tmpColumns[key] = null
                     })
-                    tmpData['ID'] = hit['_id']
-                    tmpData['_hitsId'] = hit['_id']
-                    return tmpData
-                }))
-            } else {
-                setDataList([])
-            }
-        })
+                })
+    
+                if (keyword === undefined || keyword === null || keyword === '') {
+                    setColumns(Object.keys(tmpColumns))
+                }
+    
+                // setColumns(Object.keys(tmpColumns))
+                return {
+                    columns: Object.keys(tmpColumns),
+                    hits: response['hits']
+                }
+            }).then(payload => {
+                if(payload) {
+                    setDataList((payload['hits']||{})['hits'].map(hit => {
+                        const flatHit = flat(hit)
+                        let tmpData = {}
+                        payload['columns'].forEach(column => {
+                            tmpData[column.replace(/\./gi, "___")] = flatHit['_source.' + column] || ""
+                        })
+                        tmpData['ID'] = hit['_id']
+                        tmpData['_hitsId'] = hit['_id']
+                        return tmpData
+                    }))
+                } else {
+                    setDataList([])
+                }
+            })}) 
     }
 
     function handleChangeRowsPerPage(row) {
@@ -208,6 +212,15 @@ function DataEditTable({dispatch, index, authUser, mappings}) {
         })
     }
 
+    function customSort(a, b){
+        if(a == "ID") return -1;
+        if(b == "ID") return 1;
+
+        if (a.length > b.length) return 1;
+        if (b.length > a.length) return -1;
+        return 0;
+    }
+    
     return (
         <React.Fragment>
             {
@@ -215,11 +228,11 @@ function DataEditTable({dispatch, index, authUser, mappings}) {
                     <MaterialTable
                         icons={tableIcons}
                         title=""
-                        columns={columns.map(column => ({
+                        columns={columns.sort((a, b) => customSort(a,b) ).map(column => ({
                             title: column,
                             field: column.replace(/\./gi, "___"),
                             editable: column === "ID" ? 'never' : "always",
-                            cellStyle:{whiteSpace: "nowrap", maxWidth: "180px", overflow: "hidden"}
+                            cellStyle:{whiteSpace: "nowrap", maxWidth: "180px", overflow: "hidden"},
                         }))}
                         data={dataList.map(data => {
                             let tmpData = {}
@@ -246,11 +259,11 @@ function DataEditTable({dispatch, index, authUser, mappings}) {
                     <MaterialTable
                         icons={tableIcons}
                         title=""
-                        columns={columns.map(column => ({
+                        columns={columns.sort((a, b) => customSort(a,b) ).map(column => ({
                             title: column,
                             field: column.replace(/\./gi, "___"),
                             editable: column === "ID" ? 'never' : "always",
-                            cellStyle:{whiteSpace: "nowrap", maxWidth: "180px"}
+                            cellStyle:{whiteSpace: "nowrap", maxWidth: "180px"},
                         }))}
                         data={dataList}
                         onChangeRowsPerPage={handleChangeRowsPerPage}
