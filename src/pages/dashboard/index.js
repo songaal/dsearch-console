@@ -123,6 +123,25 @@ const untilTime = (time) => {
     }
 }
 
+const getElapsed = time => {
+    // epoch_millis to epoch_seconds
+    time = time / 1000;
+
+    let hours   = Math.floor(time / 3600);
+    let minutes = Math.ceil((time - (hours * 3600)) / 60);
+    if(minutes >= 60){
+        hours += 1;
+        minutes = 0;
+    }
+
+    if(hours !== 0) {
+        return hours+'시간 ' + minutes+'분' 
+    }else{
+        return minutes+'분' 
+    }
+}
+
+
 function numberWithCommas(num) {
     if(num === undefined || num === null) return "";
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -208,20 +227,6 @@ function RunningIndex({result, running, status, indices}) {
     const classes = useStyles();
     let indexList = []
     let successIndexList = {};
-
-    const getElapsed = time => {
-        // epoch_millis to epoch_seconds
-        time = time / 1000;
-
-        var hours   = Math.floor(time / 3600);
-        var minutes = Math.ceil((time - (hours * 3600)) / 60);
-        
-        if(hours !== 0) {
-            return hours+'시간 ' + minutes+'분' 
-        }else{
-            return minutes+'분' 
-        }
-    }
 
     if(result.hits.hits.length >= 0){
         for(let item of result.hits.hits){
@@ -355,19 +360,6 @@ function BottomArea({result, alias, indices}) {
         ('0' + (date.getSeconds())).slice(-2)
     }
 
-    const getElapsed = (time) => {
-        // epoch_millis to epoch_seconds
-        time = time / 1000;
-
-        var hours   = Math.floor(time / 3600);
-        var minutes = Math.ceil((time - (hours * 3600)) / 60);
-        
-        if(hours !== 0) {
-            return hours+'시간 ' + minutes+'분' 
-        }else{
-            return minutes+'분' 
-        }
-    }
 
     let resultList = []
     Object.values(result.hits.hits).forEach(row => {
