@@ -226,6 +226,20 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
         }
     }
 
+    function convertHumanReadableCount(docSize){
+        let size = docSize+"";
+        if(size.length <= 3) {
+            return size;
+        }
+        var count = Math.ceil(size.length / 3);
+
+        var newSize = [];
+        for(var i=0; i<count; i++) {
+            newSize.unshift(size.slice(-3*(i+1), size.length-(3*i)));
+        }
+        return newSize.join(',');
+    }
+    
     return (
         <React.Fragment>
             <Helmet title="컬렉션"/>
@@ -320,10 +334,10 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
                                         </TableCell>
                                         <TableCell align="center">
                                             <Box style={{display: isActiveA ? "block" : "none"}}>
-                                                {indexA['docsCount']||'-'}
+                                                {convertHumanReadableCount(indexA['docsCount']||'-')}
                                             </Box>
                                             <Box style={{display: isActiveB ? "block" : "none"}}>
-                                                {indexB['docsCount']||'-'}
+                                                {convertHumanReadableCount(indexB['docsCount']||'-')}
                                             </Box>
                                             <Box style={{display: isActiveA === false && isActiveB === false ? "block" : "none"}}> - </Box>
                                         </TableCell>

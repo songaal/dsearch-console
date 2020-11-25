@@ -263,6 +263,20 @@ function RunningIndex({result, running, status, indices}) {
         history.push(`./indices/${uuid}`)
     }
     
+    function convertHumanReadableCount(docSize){
+        let size = docSize+"";
+        if(size.length <= 3) {
+            return size;
+        }
+        var count = Math.ceil(size.length / 3);
+
+        var newSize = [];
+        for(var i=0; i<count; i++) {
+            newSize.unshift(size.slice(-3*(i+1), size.length-(3*i)));
+        }
+        return newSize.join(',');
+    }
+
     return(
         <Card>
             <CardContent>
@@ -296,7 +310,7 @@ function RunningIndex({result, running, status, indices}) {
                                         </Box>
                                     </Box>
                                     {row.estimatedTime !== undefined ? <> 예상 종료 시간 : {getElapsed(row.estimatedTime)} <br/> </> : <>예상 종료 시간 : - <br /></> }
-                                    {row.docSize !== undefined ? <> 예상 처리 문서 건수 : {row.docSize} <br/> </> : <>예상 처리 문서 건수 : - <br /></> }
+                                    {row.docSize !== undefined ? <> 예상 처리 문서 건수 : {convertHumanReadableCount(row.docSize)} <br/> </> : <>예상 처리 문서 건수 : - <br /></> }
                                     시작시간 : {untilTime(row.startTime)} 전 시작<br/>
                                 </TableCell>
                             </TableRow>
