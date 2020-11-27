@@ -60,7 +60,7 @@ export const setIndexAliasActions = key => dispatch => client.call({ uri: `/elas
   .catch(err => console.error(err))
 
 export const setRunningIndexActions = key => dispatch => client.call({ uri: `/dashboard/indexing` })
-  .then(response => dispatch({ type: SET_RUNNING_INDEX, payload: response.data }))
+  .then(response => dispatch({ type: SET_RUNNING_INDEX, payload: response.data }) )
   .catch(err => console.error(err))
 
 export const setIndicesActions = () => dispatch =>
@@ -72,3 +72,6 @@ export const setIndicesActions = () => dispatch =>
   })
     .then(response => dispatch({ type: SET_DASHBOARD_INDICES_INFO, payload: response.data }))
     .catch(error => console.error(error))
+
+
+export const setRunningPropagateIndexActions = (index) => dispatch => client.call({ uri: `/elasticsearch/${index}/_recovery?format=json&filter_path=**.shards.index.size.percent` })

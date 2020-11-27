@@ -1,11 +1,12 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import {
     setIndexAliasActions,
     setIndexResultActions,
     setIndexStatusActions,
     setRunningIndexActions,
-    setIndicesActions
+    setIndicesActions,
+    setRunningPropagateIndexActions,
 } from '@actions/dashBoardActions'
 import Helmet from "react-helmet";
 import {useHistory} from "react-router-dom"
@@ -222,7 +223,7 @@ function WarningIndex({status, indices}) {
 }
 
 
-function RunningIndex({result, running, status, indices}) {
+function RunningIndex({result, running, status, indices, indexPercent}) {
     const history = useHistory();
     const classes = useStyles();
     let indexList = []
@@ -232,6 +233,18 @@ function RunningIndex({result, running, status, indices}) {
         for(let item of result.hits.hits){
             successIndexList[item._source.index] = item._source;
         }
+    }
+
+    function convertStep(step){
+        let result = "";
+        if(step === "FULL_INDEX"){
+            result = "색인";
+        }else if(step === "PROPAGATE"){
+            result = "전파";
+        }else if(step === "EXPOSE"){
+            result = "교체";
+        }
+        return result;
     }
 
     let keyList = Object.keys(running);
@@ -247,6 +260,18 @@ function RunningIndex({result, running, status, indices}) {
                     }
                 })
 
+                let nextStep = server.nextStep;
+                let currentStep = server.currentStep;
+                if(currentStep == "FULL_INDEX"){
+                    currentStep = "색인";
+                }else if(currentStep === "PROPAGATE"){
+                    currentStep = "전파";
+                }else if(currentStep === "EXPOSE"){
+                    currentStep = "교체";
+                }else{
+                    currentStep = "";
+                }
+
                 if( successIndexList[server.index] !== undefined
                     && successIndexList[server.index].endTime !== undefined 
                     && successIndexList[server.index].startTime !== undefined
@@ -254,11 +279,11 @@ function RunningIndex({result, running, status, indices}) {
                     
                     let estimatedTime = successIndexList[server.index].endTime - successIndexList[server.index].startTime;
                     let docSize = successIndexList[server.index].docSize;
-                    
+
                     getFinishTime(server.startTime, estimatedTime);
-                    indexList.push({startTime: server.startTime, index: server.index, estimatedTime: estimatedTime, docSize: docSize, uuid : uuid});
+                    indexList.push({startTime: server.startTime, index: server.index, estimatedTime: estimatedTime, docSize: docSize, uuid : uuid, currentStep: currentStep, nextStep: nextStep});
                 }else{
-                    indexList.push({startTime: server.startTime, index: server.index, uuid: uuid});
+                    indexList.push({startTime: server.startTime, index: server.index, uuid: uuid, currentStep: currentStep, nextStep: nextStep});
                 }
             }
         }
@@ -281,6 +306,8 @@ function RunningIndex({result, running, status, indices}) {
         }
         return newSize.join(',');
     }
+
+    
 
     return(
         <Card>
@@ -317,6 +344,15 @@ function RunningIndex({result, running, status, indices}) {
                                     {row.estimatedTime !== undefined ? <> 예상 종료 시간 : {getElapsed(row.estimatedTime)} <br/> </> : <>예상 종료 시간 : - <br /></> }
                                     {row.docSize !== undefined ? <> 예상 처리 문서 건수 : {convertHumanReadableCount(row.docSize)} <br/> </> : <>예상 처리 문서 건수 : - <br /></> }
                                     시작시간 : {untilTime(row.startTime)} 전 시작<br/>
+                                    현재 진행중인 상태 :   <b>
+                                        {row.currentStep} 
+                                        {row.currentStep == "전파" ? <><br />{indexPercent[row.index]} </>: <> </>}
+                                        {row.currentStep == "전파" ? " %" : <> </>}
+                                    </b>
+                                    <br />
+                                    다음 진행 :
+                                    {(row.nextStep === undefined || row.nextStep === null || row.nextStep.length === 0) ? "없음" : " " + convertStep(row.nextStep[0])}
+                                    <br />
                                 </TableCell>
                             </TableRow>
                         )
@@ -330,13 +366,13 @@ function RunningIndex({result, running, status, indices}) {
 
 }
 
-function TopArea({ result, running, status, indices}) {
+function TopArea({dispatch, result, running, status, indices, indexPercent}) {
     const classes = useStyles();
 
     return (
         <Grid container spacing={3} >
             <Grid item xs={6}>
-                <RunningIndex result={result} running={running} status={status} indices={indices} />
+                <RunningIndex result={result} running={running} status={status} indices={indices} indexPercent={indexPercent}/>
             </Grid>
             <Grid item xs={6}>
                 <WarningIndex status={status} indices={indices} />
@@ -480,15 +516,47 @@ let eventCode = null
 function DashBoard({dispatch, result, running, status, alias, indices}) {
     const classes = useStyles();
 
+    const [indexPercent, setIndexPercent] = useState({});
+
     function loopFunc() {
         dispatch(setIndexResultActions())
+        getPropagateIndexPercent()
+
         eventCode = setTimeout(()=>{
             loopFunc()
         }, 1000 * 60 * 3);
     }
 
-    useEffect(() => {
+    function getPropagateIndexPercent() {
+        let keyList = Object.keys(running);
+        if (keyList.length !== 0) {
+            for (let key of keyList) {
+                let index = running[key].server.index;
+                dispatch(setRunningPropagateIndexActions(index))
+                    .then((response) => {
+                        // console.log(index, response['data'][index]['shards']);
+                        let shardsList = response['data'][index]['shards'];
+                        let percent = 0;
+                        let count = 0;
 
+                        shardsList.forEach(item => {
+                            let shardPercent = item['index']['size']['percent'];
+                            percent += Number(shardPercent.substring(0, shardPercent.length - 1));
+                            count++;
+                        });
+
+                        let ip = indexPercent;
+                        ip[index] = Math.ceil(percent / count) 
+                        setIndexPercent(ip);
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
+            }
+        }
+    }
+
+    useEffect(() => {
         dispatch(setRunningIndexActions())
         dispatch(setIndexStatusActions())
         dispatch(setIndexAliasActions())
@@ -500,6 +568,7 @@ function DashBoard({dispatch, result, running, status, alias, indices}) {
             }
         }
     }, [])
+    getPropagateIndexPercent();
     
     return (
         <React.Fragment>
@@ -508,7 +577,7 @@ function DashBoard({dispatch, result, running, status, alias, indices}) {
             <Typography variant="h3" gutterBottom display="inline"> 대시보드 </Typography>
 
             <Divider my={6} />
-            <TopArea result={result} running={running} status={status} indices={indices}/>
+            <TopArea dispatch={dispatch} result={result} running={running} status={status} indices={indices} indexPercent={indexPercent}/>
             <BottomArea result={result} alias={alias} status={status} indices={indices} />
         </React.Fragment>
     );
