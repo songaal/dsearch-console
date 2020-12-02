@@ -144,7 +144,7 @@ const getElapsed = time => {
 
 
 function numberWithCommas(num) {
-    if(num === undefined || num === null) return "";
+    if(num === undefined || num === null || num === "null") return "";
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 

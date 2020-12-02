@@ -4,6 +4,7 @@ let initState = {
     persistent: {},
     transient: {},
     defaults: {},
+    dsearch: {}
 };
 
 export default function reducer(state = initState, actions) {
@@ -15,6 +16,11 @@ export default function reducer(state = initState, actions) {
                 transient: actions.payload['transient'],
                 defaults: actions.payload['defaults'],
             };
+        case types.SET_DSEARCH_SETTINGS:
+                return {
+                    ...state,
+                    dsearch: actions.payload,
+                };
         default:
             return state
     }
