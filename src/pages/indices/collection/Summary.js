@@ -176,7 +176,7 @@ function Summary({dispatch, authUser, collection}) {
                             </Grid>
                             <Grid container my={3}>
                                 <Grid item xs={3}>
-                                    <b>디서치 서버 설정</b>
+                                    <b>인덱스 설정</b>
                                 </Grid>
                                 <Grid item xs={9}>
                                     <Box component={"span"}
@@ -191,7 +191,7 @@ function Summary({dispatch, authUser, collection}) {
                                 <Grid item xs={9}>
                                     <Box component={"span"}
                                          style={{display: "inline"}}>
-                                        세그먼트 생성 주기: {collection['refresh_interval'] ? collection['refresh_interval'] + "s" : "1s"}
+                                        리프레시 주기: {collection['refresh_interval'] ? collection['refresh_interval'] + "s" : "1s"}
                                     </Box>
                                 </Grid>
                             </Grid>
