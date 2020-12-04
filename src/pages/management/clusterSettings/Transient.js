@@ -6,8 +6,7 @@ import {Box as MuiBox, Button, Card as MuiCard, CardContent, Grid, Typography, D
 
 import {spacing} from "@material-ui/system";
 import {Cached} from "@material-ui/icons";
-import AceEditor from "react-ace";
-import {setClusterSettingsAction, getDsearchSettingsAction, setDsearchSettingsAction} from "../../../redux/actions/clusterSettingsActions";
+import {setClusterSettingsAction} from "../../../redux/actions/clusterSettingsActions";
 import Loader from "~/components/Loader";
 
 const Card = styled(MuiCard)(spacing);
@@ -15,16 +14,11 @@ const Box = styled(MuiBox)(spacing);
 
 function Transient({dispatch, transient, dsearch}) {
     const [data, setData] = useState({})
-    const [modalFlag, setModalFlag] = useState(false)
-    const [flag, setFlag] = useState(0);
-    // const [dsearchSettings, setDsearchSettings] = useState(dsearch);
 
-    // console.log(dsearch);
     const aceEditor = useRef(null);
 
     useEffect(() => {
         dispatch(setClusterSettingsAction())
-        dispatch(getDsearchSettingsAction())
     }, [])
 
     useEffect(() => {
@@ -46,49 +40,48 @@ function Transient({dispatch, transient, dsearch}) {
     function refresh() {
         setData({})
         dispatch(setClusterSettingsAction())
-        dispatch(getDsearchSettingsAction())
     }
 
-    function openModal(flag){
-        setFlag(flag);
-        setModalFlag(true);
-    }
+    // function openModal(flag){
+    //     setFlag(flag);
+    //     setModalFlag(true);
+    // }
 
-    function closeModal(){
-        setModalFlag(false);
-    }
+    // function closeModal(){
+    //     setModalFlag(false);
+    // }
 
-    function isJson(str) {
-        try {
-            let json = JSON.parse(str);
-            return (typeof json === 'object');
-        } catch (e) {
-            return false;
-        }
-    }
+    // function isJson(str) {
+    //     try {
+    //         let json = JSON.parse(str);
+    //         return (typeof json === 'object');
+    //     } catch (e) {
+    //         return false;
+    //     }
+    // }
 
-    function changeSettings(){
-        if(!isJson(aceEditor.current.editor.getValue())){
-            return ;
-        }
-        if(flag == 0) return;
+    // function changeSettings(){
+    //     if(!isJson(aceEditor.current.editor.getValue())){
+    //         return ;
+    //     }
+    //     if(flag == 0) return;
 
-        let type = "indexing";
-        if(flag === -1){
-            type = "indexing";
-        }else{
-            type = "propagate";
-        }
+    //     let type = "indexing";
+    //     if(flag === -1){
+    //         type = "indexing";
+    //     }else{
+    //         type = "propagate";
+    //     }
 
-        console.log(type, JSON.parse(aceEditor.current.editor.getValue()));
-        dispatch(setDsearchSettingsAction(type, JSON.parse(aceEditor.current.editor.getValue())))
-            .then((res) => {
-                dispatch(getDsearchSettingsAction())
-            })
-            .catch((err) => {console.log(err)})
+    //     console.log(type, JSON.parse(aceEditor.current.editor.getValue()));
+    //     dispatch(setDsearchSettingsAction(type, JSON.parse(aceEditor.current.editor.getValue())))
+    //         .then((res) => {
+    //             dispatch(getDsearchSettingsAction())
+    //         })
+    //         .catch((err) => {console.log(err)})
             
-        setModalFlag(false);
-    }
+    //     setModalFlag(false);
+    // }
 
     return (
         <React.Fragment>
@@ -98,19 +91,6 @@ function Transient({dispatch, transient, dsearch}) {
                         size={"small"}
                         onClick={refresh}
                 ><Cached/> 설정 리로드</Button>
-                <Button 
-                    style={{marginLeft: 4, marginRight: 4}}
-                    variant={"outlined"}
-                        color={"primary"}
-                        size={"small"}
-                        onClick={() => openModal(-1)}>
-                             <Cached/> 디서치 색인 설정 변경 </Button>
-                <Button 
-                    style={{marginLeft: 4, marginRight: 4}}
-                    variant={"outlined"}
-                    color={"primary"}
-                    onClick={() => openModal(1)}
-                    size={"small"}> <Cached/> 디서치 전파 설정 변경 </Button>
             </Box>
             {
                 Object.keys(data).map((key, index) => {
@@ -145,7 +125,7 @@ function Transient({dispatch, transient, dsearch}) {
                     )
                 })
             }
-            <Dialog open={modalFlag}
+            {/* <Dialog open={modalFlag}
                     fullWidth
                     onClose={() => closeModal()}
             >
@@ -183,7 +163,7 @@ function Transient({dispatch, transient, dsearch}) {
                     >수정</Button>
                     <Button onClick={() => closeModal()}>닫기</Button>
                 </DialogActions>
-            </Dialog>
+            </Dialog> */}
         </React.Fragment>
     );
 }
