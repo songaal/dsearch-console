@@ -198,7 +198,9 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
         setProcess(true)
         dispatch(addCollectionList({
             name: createName,
-            baseId: createBaseId
+            baseId: createBaseId,
+            refresh_interval: 1,
+            replicas: 1,
         })).then(response => {
             toggleOpenAddModal()
             setTimeout(() => {

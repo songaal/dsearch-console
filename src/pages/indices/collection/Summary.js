@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useRef} from "react";
 import {connect} from "react-redux";
 import {useHistory} from "react-router-dom"
 import styled from "styled-components";
@@ -25,11 +25,12 @@ import {makeStyles} from '@material-ui/core/styles';
 import {positions, spacing} from "@material-ui/system";
 import {ArrowDropDown, Check} from "@material-ui/icons";
 import {deleteCollectionAction, setCollectionList, editCollectionSourceAction} from "../../../redux/actions/collectionActions";
-import {red} from "@material-ui/core/colors";
+import {red, blue} from "@material-ui/core/colors";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
 import Dialog from "@material-ui/core/Dialog";
+import AceEditor from "react-ace";
 
 const Divider = styled(MuiDivider)(spacing, positions);
 const Typography = styled(MuiTypography)(spacing, positions);
@@ -54,9 +55,15 @@ const useStyles = makeStyles((theme) => ({
 function Summary({dispatch, authUser, collection}) {
     const history = useHistory();
     const classes = useStyles();
+
+    console.log(collection)
+    const replicas = useRef(null);
+    const refresh_interval = useRef(null);
+
     const [moreMenu, setMoreMenu] = useState(null)
     const [openRemoveModal, setOpenRemoveModal] = useState(false)
     const [openEditModal, setOpenEditModal] = useState(false)
+    const [openDsearchModal, setOpenDsearchModal] = useState(false)
     const [editName, setEditName] = useState(collection['name'])
 
     function toggleMoreMenu(event) {
@@ -79,6 +86,21 @@ function Summary({dispatch, authUser, collection}) {
         dispatch(editCollectionSourceAction(collection['id'], collection)).then(response => {
             dispatch(setCollectionList())
             setTimeout(() => history.push("../indices-collections"), 500)
+        }).catch(error => {
+            console.log(error)
+        })
+    }
+
+    function handleEditDsearchSettings(event) {
+        toggleMoreMenu(event)
+        
+        collection['replicas'] = replicas.current.value;
+        collection['refresh_interval'] = refresh_interval.current.value;
+        console.log(collection)
+        dispatch(editCollectionSourceAction(collection['id'], collection)).then(response => {
+            dispatch(setCollectionList())
+            setOpenDsearchModal(false)
+            // setTimeout(() => history.push("../indices-collections"), 500)
         }).catch(error => {
             console.log(error)
         })
@@ -152,7 +174,27 @@ function Summary({dispatch, authUser, collection}) {
                                     </Box>
                                 </Grid>
                             </Grid>
-
+                            <Grid container my={3}>
+                                <Grid item xs={3}>
+                                    <b>디서치 서버 설정</b>
+                                </Grid>
+                                <Grid item xs={9}>
+                                    <Box component={"span"}
+                                         style={{display: "inline"}}>
+                                         레플리카 갯수: {collection['replicas'] ? collection['replicas'] : "1"}
+                                    </Box>
+                                </Grid>
+                            </Grid>
+                            <Grid container my={3}>
+                                <Grid item xs={3}>
+                                </Grid>
+                                <Grid item xs={9}>
+                                    <Box component={"span"}
+                                         style={{display: "inline"}}>
+                                        세그먼트 생성 주기: {collection['refresh_interval'] ? collection['refresh_interval'] + "s" : "1s"}
+                                    </Box>
+                                </Grid>
+                            </Grid>
                         </Grid>
                         <Grid item xs={2} align={"right"}>
                             {
@@ -174,6 +216,9 @@ function Summary({dispatch, authUser, collection}) {
                                         >
                                             <MenuItem onClick={() => setOpenEditModal(true)}>
                                                 컬렉션 이름 변경
+                                            </MenuItem>
+                                            <MenuItem onClick={() => setOpenDsearchModal(true)}>
+                                                디서치 설정 변경
                                             </MenuItem>
                                             <MenuItem style={{backgroundColor: red["300"]}} onClick={() => setOpenRemoveModal(true)}>
                                                 컬렉션 삭제
@@ -385,6 +430,43 @@ function Summary({dispatch, authUser, collection}) {
                     <Button onClick={() => setOpenEditModal(false)}
                             variant="contained"
                     >
+                        취소
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog open={openDsearchModal} fullWidth={true}>
+                <DialogTitle>디서치 설정</DialogTitle>
+                <DialogContent>
+                    <Box flex={true}>
+                        <b>레플리카 갯수 설정</b>
+                        <TextField 
+                            fullWidth  
+                            defaultValue={collection['replicas'] ? collection['replicas'] : 1}  
+                            inputRef={replicas}
+                            placeholder={"레플리카 갯수를 설정해 주세요"} 
+                        />
+                        <br />
+                        <br />
+                        <b>세그먼트 생성 주기</b>
+                        <TextField 
+                            fullWidth
+                            placeholder={"세그먼트 생성 주기를 입력해주세요"} 
+                            defaultValue={collection['refresh_interval'] ? collection['refresh_interval'] : 1} 
+                            inputRef={refresh_interval} />
+                    </Box>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        style={{ backgroundColor: blue['200'] }}
+                        onClick={handleEditDsearchSettings}
+                        variant="contained">
+                        수정
+                    </Button>
+                    <Button
+                        onClick={() => setOpenDsearchModal(false)}
+                        variant="contained">
+
                         취소
                     </Button>
                 </DialogActions>

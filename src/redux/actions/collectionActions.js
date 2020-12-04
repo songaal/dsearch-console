@@ -11,7 +11,7 @@ const client = new Client()
 
 export const setCollectionList = () => dispatch => client.call({
     uri: "/collections"
-}).then(response => dispatch({type: SET_COLLECTION_LIST, payload: response.data}))
+}).then(response => { console.log(response.data); dispatch({type: SET_COLLECTION_LIST, payload: response.data})} )
 
 export const addCollectionList = (collection) => dispatch => client.call({
     uri: `/collections`,
