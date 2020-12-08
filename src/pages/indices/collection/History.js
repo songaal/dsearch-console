@@ -21,7 +21,7 @@ import {
 import {makeStyles} from '@material-ui/core/styles';
 import {positions, spacing} from "@material-ui/system";
 import {ArrowDropDown} from "@material-ui/icons";
-import {deleteIndexHistoryList, setIndexHistoryList} from "../../../redux/actions/collectionActions";
+import {deleteIndexHistoryList, setIndexHistoryList, setIndexHistoryTypeList} from "../../../redux/actions/collectionActions";
 
 const Divider = styled(MuiDivider)(spacing, positions);
 const Typography = styled(MuiTypography)(spacing, positions);
@@ -61,6 +61,7 @@ function History({dispatch, authUser, collection, history}) {
     const classes = useStyles();
     const [moreMenu, setMoreMenu] = useState(null)
     const [from, setFrom] = useState(0)
+    const [typeName, setTypeName] = useState("ALL");
 
     function toggleMoreMenu(event) {
         setMoreMenu(moreMenu === null ? event.currentTarget : null)
@@ -75,14 +76,26 @@ function History({dispatch, authUser, collection, history}) {
         }))
     }, [])
 
-    function handleSetIndexHistoryList(editFrom) {
+    function handleSetIndexHistoryList(editFrom, type) {
         setFrom(editFrom)
-        dispatch(setIndexHistoryList({
-            indexA: collection['indexA']['index'],
-            indexB: collection['indexB']['index'],
-            size: paginationSize,
-            from: editFrom,
-        }))
+
+        if(type === "ALL"){
+            dispatch(setIndexHistoryList({
+                indexA: collection['indexA']['index'],
+                indexB: collection['indexB']['index'],
+                size: paginationSize,
+                from: editFrom,
+            }))
+        }else {
+            dispatch(setIndexHistoryTypeList({
+                indexA: collection['indexA']['index'],
+                indexB: collection['indexB']['index'],
+                size: paginationSize,
+                from: editFrom,
+                type: type
+            }))
+        }
+        setMoreMenu(null);
     }
 
     function handleIndexHistoryList(date) {
@@ -93,12 +106,22 @@ function History({dispatch, authUser, collection, history}) {
         })).then(response => {
             setFrom(0)
             setTimeout(() => {
-                dispatch(setIndexHistoryList({
-                    indexA: collection['indexA']['index'],
-                    indexB: collection['indexB']['index'],
-                    size: paginationSize,
-                    from: 0,
-                }))
+                if(typeName === "ALL"){
+                    dispatch(setIndexHistoryList({
+                        indexA: collection['indexA']['index'],
+                        indexB: collection['indexB']['index'],
+                        size: paginationSize,
+                        from: 0,
+                    }))
+                }else {
+                    dispatch(setIndexHistoryTypeList({
+                        indexA: collection['indexA']['index'],
+                        indexB: collection['indexB']['index'],
+                        size: paginationSize,
+                        from: 0,
+                        type: typeName
+                    }))
+                }
             }, 1000)
             toggleMoreMenu()
         }).catch(error => {
@@ -194,7 +217,7 @@ function History({dispatch, authUser, collection, history}) {
                                 <Box align={"center"}>
                                     <Button variant={"outlined"}
                                             disabled={nowPage === 1}
-                                            onClick={() => handleSetIndexHistoryList(((nowPage - 1) * paginationSize) - paginationSize)}
+                                            onClick={() => handleSetIndexHistoryList(((nowPage - 1) * paginationSize) - paginationSize, typeName)}
                                     >
                                         이전
                                     </Button>
@@ -203,7 +226,7 @@ function History({dispatch, authUser, collection, history}) {
                                     </Box>
                                     <Button variant={"outlined"}
                                             disabled={nowPage === (lastPage === 0 ? 1 : lastPage)}
-                                            onClick={() => handleSetIndexHistoryList(nowPage * paginationSize)}
+                                            onClick={() => handleSetIndexHistoryList(nowPage * paginationSize, typeName)}
                                     >
                                         다음
                                     </Button>
@@ -223,6 +246,15 @@ function History({dispatch, authUser, collection, history}) {
                                         open={Boolean(moreMenu)}
                                         onClose={toggleMoreMenu}
                                     >
+                                        <MenuItem onClick={() => { setTypeName("ALL"); setTimeout(() => { handleSetIndexHistoryList(0, "ALL")}, 500) } }>
+                                            전체보기
+                                        </MenuItem>
+                                        <MenuItem onClick={() => {setTypeName("FULL_INDEX"); setTimeout(() => {handleSetIndexHistoryList(0, "FULL_INDEX")}, 500) } }>
+                                            색인만 보기
+                                        </MenuItem>
+                                        <MenuItem onClick={() => {setTypeName("PROPAGATE"); setTimeout(() => { handleSetIndexHistoryList(0, "PROPAGATE")}, 500) }}>
+                                            전파만 보기
+                                        </MenuItem>
                                         <MenuItem onClick={() => handleIndexHistoryList(new Date())}>
                                             초기화
                                         </MenuItem>
