@@ -92,6 +92,16 @@ export const setIndexHistoryTypeList = ({ indexA, indexB, from, size, type }) =>
                     // },
                     {
                         "match": {
+                            "index": indexA
+                        }
+                    },
+                    {
+                        "match": {
+                            "index": indexB
+                        }
+                    },
+                    {
+                        "match": {
                             "index.keyword": indexA
                         }
                     },
@@ -103,6 +113,11 @@ export const setIndexHistoryTypeList = ({ indexA, indexB, from, size, type }) =>
                     {
                         "match": {
                             "jobType.keyword": type
+                        }
+                    },
+                    {
+                        "match": {
+                            "jobType": type
                         }
                     }
                 ],
@@ -135,20 +150,20 @@ export const setIndexHistoryList = ({ indexA, indexB, from, size }) => dispatch 
         "query": {
             "bool": {
                 "should": [
-                    // {
-                    //     "term": {
-                    //         "index": {
-                    //             "value": indexA
-                    //         }
-                    //     }
-                    // },
-                    // {
-                    //     "term": {
-                    //         "index": {
-                    //             "value": indexB
-                    //         }
-                    //     }
-                    // },
+                    {
+                        "term": {
+                            "index": {
+                                "value": indexA
+                            }
+                        }
+                    },
+                    {
+                        "term": {
+                            "index": {
+                                "value": indexB
+                            }
+                        }
+                    },
                     {
                         "term": {
                             "index.keyword": {
