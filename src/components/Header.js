@@ -26,10 +26,11 @@ import { setDsearchSignOut } from "../redux/actions/dsearchActions";
 import { setAutoCompleteAction, setAutoCompleteStoreAction, getAutoCompleteURLAction } from "../redux/actions/dsearchPluginActions";
 
 import {SET_DSEARCH_AUTH_USER} from "../redux/constants";
-import {setClusterList} from "../redux/actions/clusterActions";
+import {setClusterList, setClusterServerCheck} from "../redux/actions/clusterActions";
 import { textAlign, maxHeight, height, width } from "@material-ui/system";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
+import {initGA} from "../ga";
 
 const AppBar = styled(MuiAppBar)`
   background: ${props => props.theme.header.background};
@@ -410,8 +411,34 @@ const DashBoardHeader = ({theme, onDrawerToggle}) => {
     )
 }
 
-
+let eventCode = null
 const Header = ({theme, layout, onDrawerToggle, serverCheck}) => {
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        if (layout !== "main") {
+            handleServerCheck()
+        }
+
+        return () => {
+            if (eventCode) {
+                clearTimeout(eventCode)
+                eventCode = null
+            }
+        }
+    }, [])
+
+    function handleServerCheck() {
+        dispatch(setClusterServerCheck())
+        if (!eventCode) {
+            clearTimeout(eventCode)
+            eventCode = null
+        }
+        eventCode = setTimeout(() => {
+            handleServerCheck()
+        }, 5 * 60 * 1000)
+    }
+
     return layout === "main" ?
         <MainHeader theme={theme} onDrawerToggle={onDrawerToggle}/>
         :
@@ -425,7 +452,7 @@ const Header = ({theme, layout, onDrawerToggle, serverCheck}) => {
                     onClose={() => {}}
                 >
                     <MuiAlert elevation={6} variant="filled" severity="warning">
-                        클러스터를 점검 중입니다.
+                        클러스터 점검 중입니다.
                     </MuiAlert>
                 </Snackbar>
             </React.Fragment>

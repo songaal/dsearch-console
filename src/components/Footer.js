@@ -31,21 +31,12 @@ import {withTheme} from "styled-components";
 //   }
 // `;
 let isListen = false
-let eventCode = null
 function Footer({serverCheck}) {
     const history = useHistory()
     const dispatch = useDispatch()
 
     useEffect(() => {
         initGA()
-        console.log(location.pathname)
-        // handleServerCheck()
-        return () => {
-            if (eventCode) {
-                clearTimeout(eventCode)
-                eventCode = null
-            }
-        }
     }, [])
 
     if (!isListen) {
@@ -54,18 +45,6 @@ function Footer({serverCheck}) {
             GApageView(location.pathname)
         });
     }
-
-    function handleServerCheck() {
-        dispatch(setClusterServerCheck())
-        if (!eventCode) {
-            clearTimeout(eventCode)
-            eventCode = null
-        }
-        eventCode = setTimeout(() => {
-            handleServerCheck()
-        }, 5 * 60 * 1000)
-    }
-
     return (
         <React.Fragment>
 
