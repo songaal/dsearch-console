@@ -1,9 +1,15 @@
 import React, {useEffect, useState} from "react";
+import {connect, useDispatch, useSelector} from "react-redux";
 // import styled from "styled-components";
 
 // import {Grid, Hidden, List, ListItem as MuiListItem, ListItemText} from "@material-ui/core";
 import {GApageView, initGA} from "../ga";
 import {useHistory} from "react-router-dom";
+import MuiAlert from "@material-ui/lab/Alert";
+import Snackbar from "@material-ui/core/Snackbar";
+import {setClusterServerCheck} from "../redux/actions/clusterActions"
+import {withTheme} from "styled-components";
+// import { setAutoCompleteAction, setAutoCompleteStoreAction, getAutoCompleteURLAction } from "../redux/actions/dsearchPluginActions";
 //
 // const Wrapper = styled.div`
 //   padding: ${props => props.theme.spacing(1) / 4}px
@@ -25,11 +31,20 @@ import {useHistory} from "react-router-dom";
 //   }
 // `;
 let isListen = false
-function Footer() {
+let eventCode = null
+function Footer({serverCheck}) {
     const history = useHistory()
+    const dispatch = useDispatch()
 
     useEffect(() => {
         initGA()
+        handleServerCheck()
+        return () => {
+            if (eventCode) {
+                clearTimeout(eventCode)
+                eventCode = null
+            }
+        }
     }, [])
 
     if (!isListen) {
@@ -39,8 +54,33 @@ function Footer() {
         });
     }
 
+    function handleServerCheck() {
+        dispatch(setClusterServerCheck())
+        if (!eventCode) {
+            clearTimeout(eventCode)
+            eventCode = null
+        }
+        eventCode = setTimeout(() => {
+            handleServerCheck()
+        }, 5 * 60 * 1000)
+    }
+
     return (
-        <div> </div>
+        <React.Fragment>
+
+
+            <Snackbar
+                anchorOrigin={{vertical: 'top', horizontal: 'center'}}
+                open={serverCheck}
+                autoHideDuration={99999999}
+                onClose={() => {}}
+            >
+                <MuiAlert elevation={6} variant="filled" severity="warning">
+                    클러스터를 점검 중입니다.
+                </MuiAlert>
+            </Snackbar>
+
+        </React.Fragment>
         // <Wrapper>
         //     <Grid container spacing={0}>
         //         <Hidden smDown>
@@ -72,5 +112,8 @@ function Footer() {
         // </Wrapper>
     );
 }
+// export default Footer;
+export default connect(store => ({
+    serverCheck: store.clusterReducers.serverCheck
+}))(Footer);
 
-export default Footer;

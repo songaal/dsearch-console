@@ -1,4 +1,4 @@
-import {SET_CLUSTER, SET_CLUSTER_LIST} from "../constants";
+import {SET_CLUSTER, SET_CLUSTER_LIST, SET_SERVER_CHECK} from "../constants";
 import Client from '~/Client'
 
 const client = new Client()
@@ -38,3 +38,45 @@ export const editCluster = (id, cluster) => dispatch => client.call({
     dispatch({type: SET_CLUSTER, payload: response.data})
     return response.data
 })
+
+export const setClusterServerCheck = () => dispatch => client.call({
+    uri: "/elasticsearch/_cluster/settings?filter_path=transient.cluster.routing.allocation",
+    method: "GET"
+}).then(response => {
+    //{
+    //   "transient" : {
+    //     "cluster" : {
+    //       "routing" : {
+    //         "allocation" : {
+    //           "enable" : "all"
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
+    const data = response.data
+    const enable = ((((data['transient']||{})['cluster']||{})['routing']||{})['allocation']||{})['enable']||"all"
+    dispatch({type: SET_SERVER_CHECK, payload: enable !== "all"})
+    return response.data
+})
+
+export const editClusterServerCheck = (flag) => dispatch => client.call({
+    uri: "/elasticsearch/_cluster/settings",
+    method: "PUT",
+    data: {
+        transient : {
+            cluster : {
+                routing : {
+                    allocation : {
+                        enable : flag
+                    }
+                }
+            }
+        }
+    }
+}).then(response => response.data)
+
+export const editClusterFlush = () => dispatch => client.call({
+    uri: "/elasticsearch/_flush/synced",
+    method: "POST"
+}).then(response => response.data)

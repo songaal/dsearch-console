@@ -3,7 +3,8 @@ import * as types from '../constants';
 let initState = {
     cluster: {},
     clusterList: [],
-    clusterStatus: {}
+    clusterStatus: {},
+    serverCheck: false
 };
 
 export default function reducer(state = initState, actions) {
@@ -18,6 +19,11 @@ export default function reducer(state = initState, actions) {
                 ...state,
                 clusterList: actions.payload
             };
+        case types.SET_SERVER_CHECK:
+            return {
+                ...state,
+                serverCheck: actions.payload
+            }
         default:
             return state
     }
