@@ -38,7 +38,8 @@ function Footer({serverCheck}) {
 
     useEffect(() => {
         initGA()
-        handleServerCheck()
+        console.log(location.pathname)
+        // handleServerCheck()
         return () => {
             if (eventCode) {
                 clearTimeout(eventCode)
@@ -69,16 +70,16 @@ function Footer({serverCheck}) {
         <React.Fragment>
 
 
-            <Snackbar
-                anchorOrigin={{vertical: 'top', horizontal: 'center'}}
-                open={serverCheck}
-                autoHideDuration={99999999}
-                onClose={() => {}}
-            >
-                <MuiAlert elevation={6} variant="filled" severity="warning">
-                    클러스터를 점검 중입니다.
-                </MuiAlert>
-            </Snackbar>
+            {/*<Snackbar*/}
+            {/*    anchorOrigin={{vertical: 'top', horizontal: 'center'}}*/}
+            {/*    open={serverCheck}*/}
+            {/*    autoHideDuration={99999999}*/}
+            {/*    onClose={() => {}}*/}
+            {/*>*/}
+            {/*    <MuiAlert elevation={6} variant="filled" severity="warning">*/}
+            {/*        클러스터를 점검 중입니다.*/}
+            {/*    </MuiAlert>*/}
+            {/*</Snackbar>*/}
 
         </React.Fragment>
         // <Wrapper>
@@ -112,8 +113,8 @@ function Footer({serverCheck}) {
         // </Wrapper>
     );
 }
-// export default Footer;
-export default connect(store => ({
-    serverCheck: store.clusterReducers.serverCheck
-}))(Footer);
+export default Footer;
+// export default connect(store => ({
+//     serverCheck: store.clusterReducers.serverCheck
+// }))(Footer);
 

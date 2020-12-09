@@ -28,6 +28,8 @@ import { setAutoCompleteAction, setAutoCompleteStoreAction, getAutoCompleteURLAc
 import {SET_DSEARCH_AUTH_USER} from "../redux/constants";
 import {setClusterList} from "../redux/actions/clusterActions";
 import { textAlign, maxHeight, height, width } from "@material-ui/system";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
 
 const AppBar = styled(MuiAppBar)`
   background: ${props => props.theme.header.background};
@@ -409,11 +411,27 @@ const DashBoardHeader = ({theme, onDrawerToggle}) => {
 }
 
 
-const Header = ({theme, layout, onDrawerToggle}) => {
+const Header = ({theme, layout, onDrawerToggle, serverCheck}) => {
     return layout === "main" ?
         <MainHeader theme={theme} onDrawerToggle={onDrawerToggle}/>
         :
-        <DashBoardHeader theme={theme} onDrawerToggle={onDrawerToggle}/>
+        (
+            <React.Fragment>
+                <DashBoardHeader theme={theme} onDrawerToggle={onDrawerToggle}/>
+                <Snackbar
+                    anchorOrigin={{vertical: 'top', horizontal: 'center'}}
+                    open={serverCheck}
+                    autoHideDuration={99999999}
+                    onClose={() => {}}
+                >
+                    <MuiAlert elevation={6} variant="filled" severity="warning">
+                        클러스터를 점검 중입니다.
+                    </MuiAlert>
+                </Snackbar>
+            </React.Fragment>
+        )
 }
 
-export default connect()(withTheme(Header));
+export default connect(store => ({
+    serverCheck: store.clusterReducers.serverCheck
+}))(withTheme(Header));
