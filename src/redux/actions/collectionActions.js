@@ -256,3 +256,11 @@ export const editCollectionAction = (id, action) => dispatch => client.call({
 }).then(response => {
     return response.data
 })
+
+export const editCollectionAliasAction = (actions) => dispatch => client.call({
+    uri: `/elasticsearch/_aliases`,
+    method: 'POST',
+    data: { actions }
+}).then(response => {
+    return response.data
+})

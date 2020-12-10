@@ -6,6 +6,7 @@ import styled from "styled-components";
 import {
     Box as MuiBox,
     Button as MuiButton,
+    IconButton as MuiIconButton,
     Card as MuiCard,
     CardContent,
     Chip,
@@ -24,8 +25,8 @@ import {
 import {makeStyles} from '@material-ui/core/styles';
 import {positions, spacing} from "@material-ui/system";
 import {ArrowDropDown, Check} from "@material-ui/icons";
-import {deleteCollectionAction, setCollectionList, editCollectionSourceAction} from "../../../redux/actions/collectionActions";
-import {red, blue} from "@material-ui/core/colors";
+import {setCollection, deleteCollectionAction, setCollectionList, editCollectionSourceAction, editCollectionAliasAction} from "../../../redux/actions/collectionActions";
+import {red, blue, orange} from "@material-ui/core/colors";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -38,6 +39,8 @@ const Card = styled(MuiCard)(spacing, positions);
 const Button = styled(MuiButton)(spacing, positions);
 const Grid = styled(MuiGrid)(spacing, positions);
 const Box =  styled(MuiBox)(spacing, positions);
+const IconButton = styled(MuiIconButton)(spacing, positions);
+
 const useStyles = makeStyles((theme) => ({
     formControl: {
         minWidth: 250,
@@ -65,6 +68,8 @@ function Summary({dispatch, authUser, collection}) {
     const [openEditModal, setOpenEditModal] = useState(false)
     const [openDsearchModal, setOpenDsearchModal] = useState(false)
     const [editName, setEditName] = useState(collection['name'])
+    const [selectedAlias, setSelectedAlias] = useState({})
+    const [openUpdateAliasModal, setOpenUpdateAliasModal] = useState(false)
 
     function toggleMoreMenu(event) {
         setMoreMenu(moreMenu === null ? event.currentTarget : null)
@@ -104,6 +109,36 @@ function Summary({dispatch, authUser, collection}) {
         }).catch(error => {
             console.log(error)
         })
+    }
+
+    function handleUpdateAlias() {
+        const alias       = selectedAlias['alias']
+        const addIndex    = selectedAlias['add']
+        const removeIndex = selectedAlias['remove']
+
+        let actions = []
+        actions.push({
+            add: {
+                index: addIndex,
+                alias: alias
+            }
+        })
+
+        if (removeIndex) {
+            actions.push({
+                remove: {
+                    index: removeIndex,
+                    alias: alias
+                }
+            })
+        }
+
+        dispatch(editCollectionAliasAction(actions))
+            .then(body => {
+                dispatch(setCollection(collection['id']))
+                setOpenUpdateAliasModal(false)
+            })
+
     }
 
     const indexA = collection['indexA']
@@ -254,10 +289,29 @@ function Summary({dispatch, authUser, collection}) {
                                                 {
                                                     Object.keys(indexA['aliases']||{}).find(o => o === collection['baseId']) ?
                                                         <Box component={"span"} style={{marginLeft: "20px"}}>
-                                                            <Chip color="primary" icon={<Check />} label={"사용"}/>
+                                                            <Chip color="primary" icon={<Check />} label={"사용 중"}/>
                                                         </Box>
                                                         :
-                                                        null
+                                                        indexA['uuid'] ?
+                                                            <Box component={"span"} style={{marginLeft: "20px"}}>
+                                                                <Chip icon={<Check />}
+                                                                      label={"사용하기"}
+                                                                      style={{cursor: "pointer"}}
+                                                                      onClick={() => {
+                                                                          setSelectedAlias({
+                                                                              alias: collection['baseId'],
+                                                                              add: indexA['index'],
+                                                                              remove: indexB['uuid'] ? indexB['index'] : null
+                                                                          })
+                                                                          setOpenUpdateAliasModal(true);
+                                                                      }}
+                                                                />
+                                                                {/*<Box component={"span"} style={{marginLeft: "20px"}}>*/}
+                                                                {/*    <Chip color="secondary" icon={<Check />} label={"사용하기"}/>*/}
+                                                                {/*</Box>*/}
+                                                            </Box>
+                                                            :
+                                                            null
                                                 }
 
                                             </TableCell>
@@ -326,10 +380,26 @@ function Summary({dispatch, authUser, collection}) {
                                                 {
                                                     Object.keys(indexB['aliases']||{}).find(o => o === collection['baseId']) ?
                                                         <Box component={"span"} style={{marginLeft: "20px"}}>
-                                                            <Chip color="primary" icon={<Check />} label={"사용"}/>
+                                                            <Chip color="primary" icon={<Check />} label={"사용 중"}/>
                                                         </Box>
                                                         :
-                                                        null
+                                                        indexB['uuid'] ?
+                                                            <Box component={"span"} style={{marginLeft: "20px"}}>
+                                                                <Chip icon={<Check />}
+                                                                      label={"사용하기"}
+                                                                      style={{cursor: "pointer"}}
+                                                                      onClick={() => {
+                                                                          setSelectedAlias({
+                                                                              alias: collection['baseId'],
+                                                                              add: indexB['index'],
+                                                                              remove: indexA['uuid'] ? indexA['index'] : null
+                                                                          })
+                                                                          setOpenUpdateAliasModal(true);
+                                                                      }}
+                                                                />
+                                                            </Box>
+                                                            :
+                                                            null
                                                 }
 
                                             </TableCell>
@@ -465,6 +535,34 @@ function Summary({dispatch, authUser, collection}) {
                     </Button>
                     <Button
                         onClick={() => setOpenDsearchModal(false)}
+                        variant="contained">
+
+                        취소
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+
+            <Dialog open={openUpdateAliasModal}
+                    fullWidth={true}
+                    onClose={() => setOpenUpdateAliasModal(false)}
+            >
+                <DialogTitle>별칭 교체</DialogTitle>
+                <DialogContent>
+                    별칭을 교체하시겠습니까?<br />
+                    <p style={{color: "red"}}>
+                        * 기존 스왑인덱스에 할당된 별칭은 제거 됩니다.
+                    </p>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        style={{ backgroundColor: orange['200'] }}
+                        onClick={() => handleUpdateAlias()}
+                        variant="contained">
+                        교체
+                    </Button>
+                    <Button
+                        onClick={() => setOpenUpdateAliasModal(false)}
                         variant="contained">
 
                         취소
