@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {useHistory} from "react-router-dom";
 import {connect} from "react-redux";
 import styled from "styled-components";
@@ -16,7 +16,8 @@ import {
     TableHead,
     TableRow,
     Typography as MuiTypography,
-    Button
+    Button,
+    TableSortLabel,
 } from "@material-ui/core";
 import {makeStyles} from '@material-ui/core/styles';
 import {positions, spacing} from "@material-ui/system";
@@ -39,23 +40,38 @@ const Divider = styled(MuiDivider)(spacing);
 const Box = styled(MuiBox)(spacing, positions);
 const Typography = styled(MuiTypography)(spacing, positions);
 
-function createData(name, pattern) {
-    return { name, pattern};
-}
+const fields = [
+    { id: "no", label: "#", sorting: true},
+    { id: "name", label: "이름", sorting: true},
+    { id: "id", label: "아이디", sorting: true},
+    { id: "edit", label: "", sorting: false},
+]
 
 function Templates({dispatch, authUser, templates}) {
     const history = useHistory();
     const classes = useStyles();
+    const [orderBy, setOrderBy] = useState("")
+    const [order, setOrder] = useState("asc")
 
     useEffect(() => {
         dispatch(setIndexTemplatesAction())
     }, [])
+        // .map((c, i) => ({...c, no: collectionList.length - 1 - i}))
+    let list = templates.sort((a, b) => {
+        if(a['name'] > b['name']){
+            return 1;
+        }else if(a['name'] < b['name']){
+            return -1;
+        }else{
+            return 0;
+        }
+    }).map((template, i) => {
+        return {
+            name: template['name'],
+            pattern: template['index_patterns'],
+            no: i
+    }})
 
-    let list = templates.map(template => createData(template['name'], template['index_patterns']));
-    const rows = list.sort(function (a,b){
-        if(a['name'] >= b['name']) return 1;
-        else return -1;
-    })
     return (
         <React.Fragment>
             <Helmet title="템플릿"/>
@@ -86,34 +102,66 @@ function Templates({dispatch, authUser, templates}) {
                 <Table className={classes.table} aria-label="simple table">
                     <TableHead>
                         <TableRow>
-                            <TableCell align="center">#</TableCell>
-                            <TableCell align="center">이름</TableCell>
-                            <TableCell align="center">패턴</TableCell>
-                            <TableCell align="center"></TableCell>
+                            {
+                                fields.map(field =>
+                                    <TableCell align="center" key={field['id']}>
+                                        {
+                                            field["sorting"] ?
+                                                <TableSortLabel
+                                                    active={orderBy === field['id']}
+                                                    direction={orderBy === field['id'] ? order : 'asc'}
+                                                    onClick={event => {
+                                                        setOrderBy(field['id'])
+                                                        const isAsc = orderBy === field['id'] && order === 'asc';
+                                                        setOrder(isAsc ? 'desc' : 'asc');
+                                                    }}
+                                                >
+                                                    {field['label']}
+                                                </TableSortLabel>
+                                                :
+                                                field['label']
+                                        }
+                                    </TableCell>)
+                            }
+                            {/*<TableCell align="center">#</TableCell>*/}
+                            {/*<TableCell align="center">이름</TableCell>*/}
+                            {/*<TableCell align="center">패턴</TableCell>*/}
+                            {/*<TableCell align="center"></TableCell>*/}
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows.map((row, i) => (
-                            <TableRow key={row.name}>
-                                <TableCell component="th" scope="row" align="center">{i + 1}</TableCell>
-                                <TableCell align="center">
-                                    <Link onClick={() => history.push(`./indices-templates/${row.name}`)}
-                                          style={{cursor: "pointer"}} >
-                                        {row.name}
-                                    </Link>
-                                </TableCell>
-                                <TableCell align="center">{row.pattern}</TableCell>
-                                <TableCell align="center">
-                                    {authUser.role.index ?
-                                        <Button variant={"outlined"} color={"primary"} onClick={() => history.push(`./indices-templates/${row.name}/edit`)}
-                                              style={{cursor: "pointer"}}
-                                              color={"primary"}>수정</Button>
-                                        :
-                                        <></>
+                        {
+                            list.sort((a, b) => {
+                                if (orderBy && order) {
+                                    if (order === 'asc') {
+                                        return a[orderBy] > b[orderBy] ? 1 : -1
+                                    } else {
+                                        return a[orderBy] > b[orderBy] ? -1 : 1
                                     }
-                                </TableCell>
-                            </TableRow>
-                        ))}
+                                } else {
+                                    return 0
+                                }
+                            }).map((row, i) => (
+                                <TableRow key={row.name}>
+                                    <TableCell component="th" scope="row" align="center">{row['no'] + 1}</TableCell>
+                                    <TableCell align="center">
+                                        <Link onClick={() => history.push(`./indices-templates/${row.name}`)}
+                                              style={{cursor: "pointer"}} >
+                                            {row.name}
+                                        </Link>
+                                    </TableCell>
+                                    <TableCell align="center">{row.pattern}</TableCell>
+                                    <TableCell align="center">
+                                        {authUser.role.index ?
+                                            <Button variant={"outlined"} color={"primary"} onClick={() => history.push(`./indices-templates/${row.name}/edit`)}
+                                                  style={{cursor: "pointer"}}
+                                                  color={"primary"}>수정</Button>
+                                            :
+                                            <></>
+                                        }
+                                    </TableCell>
+                                </TableRow>
+                            ))}
                     </TableBody>
                 </Table>
             </TableContainer>

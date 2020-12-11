@@ -24,6 +24,8 @@ import {
     TableRow,
     TextField,
     Typography as MuiTypography,
+    Tooltip,
+    TableSortLabel,
 } from "@material-ui/core";
 import {makeStyles} from '@material-ui/core/styles';
 import {positions, spacing} from "@material-ui/system";
@@ -55,8 +57,27 @@ const useStyles = makeStyles((theme) => ({
     },
     link: {
         cursor: "pointer"
-    }
+    },
+    fab: {
+        margin: theme.spacing(2),
+    },
+    absolute: {
+        position: 'absolute',
+        bottom: theme.spacing(2),
+        right: theme.spacing(3),
+    },
 }));
+
+const fields = [
+    { id: "no", label: "#", sorting: true},
+    { id: "name", label: "이름", sorting: true},
+    { id: "id", label: "아이디", sorting: true},
+    { id: "index", label: "선택 인덱스", sorting: true},
+    { id: "shard", label: "샤드", sorting: true},
+    { id: "docCount", label: "문서 수", sorting: true },
+    { id: "size", label: "용량", sorting: true },
+    { id: "autoRun", label: "자동시작", sorting: true },
+]
 
 function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionList, catIndexTemplateList}) {
     const history = useHistory();
@@ -73,6 +94,9 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
     const [modalMessage,setModalMessage] = useState(null)
     const [process, setProcess] = useState(false)
     const [addBtnDisabled, setAddBtnDisabled] = useState(true)
+
+    const [orderBy, setOrderBy] = useState("")
+    const [order, setOrder] = useState("asc")
 
     useEffect(() => {
         dispatch(setCollectionIndexSuffix())
@@ -241,7 +265,16 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
         }
         return newSize.join(',');
     }
-    
+
+    const viewCollectionList = collectionList.sort((a, b) => {
+        if(a['name'] > b['name']){
+            return 1;
+        }else if(a['name'] < b['name']){
+            return -1;
+        }else{
+            return 0;
+        }
+    }).map((c, i) => ({...c, no: i }))
     return (
         <React.Fragment>
             <Helmet title="컬렉션"/>
@@ -272,25 +305,50 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
                 <Table className={classes.table} aria-label="simple table">
                     <TableHead>
                         <TableRow>
-                            <TableCell align="center">#</TableCell>
-                            <TableCell align="center">이름</TableCell>
-                            <TableCell align="center">아이디</TableCell>
-                            <TableCell align="center">선택 인덱스</TableCell>
-                            <TableCell align="center">샤드</TableCell>
-                            <TableCell align="center">문서 수</TableCell>
-                            <TableCell align="center">용량</TableCell>
-                            <TableCell align="center">자동시작</TableCell>
+                            {/*<TableCell align="center">#</TableCell>*/}
+
+                            {
+                                fields.map(field =>
+                                    <TableCell align="center" key={field['id']}>
+                                        {
+                                            field["sorting"] ?
+                                                <TableSortLabel
+                                                    active={orderBy === field['id']}
+                                                    direction={orderBy === field['id'] ? order : 'asc'}
+                                                    onClick={event => {
+                                                        setOrderBy(field['id'])
+                                                        const isAsc = orderBy === field['id'] && order === 'asc';
+                                                        setOrder(isAsc ? 'desc' : 'asc');
+                                                    }}
+                                                >
+                                                    {field['label']}
+                                                </TableSortLabel>
+                                                :
+                                                field['label']
+                                        }
+                                    </TableCell>)
+                            }
+
+                            {/*<TableCell align="center">이름</TableCell>*/}
+                            {/*<TableCell align="center">아이디</TableCell>*/}
+                            {/*<TableCell align="center">선택 인덱스</TableCell>*/}
+                            {/*<TableCell align="center">샤드</TableCell>*/}
+                            {/*<TableCell align="center">문서 수</TableCell>*/}
+                            {/*<TableCell align="center">용량</TableCell>*/}
+                            {/*<TableCell align="center">자동시작</TableCell>*/}
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {
-                            collectionList.sort((a, b) => {
-                                if(a['name'] > b['name']){
-                                    return 1;
-                                }else if(a['name'] < b['name']){
-                                    return -1;
-                                }else{
-                                    return 0;
+                            viewCollectionList.sort((a, b) => {
+                                if (orderBy && order) {
+                                    if (order === 'asc') {
+                                        return a[orderBy] > b[orderBy] ? 1 : -1
+                                    } else {
+                                        return a[orderBy] > b[orderBy] ? -1 : 1
+                                    }
+                                } else {
+                                    return 0
                                 }
                             }).map((collection, num) => {
                                 const id = collection['id']
@@ -307,7 +365,7 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
 
                                 return (
                                     <TableRow key={collection['id']}>
-                                        <TableCell align="center">{num + 1}</TableCell>
+                                        <TableCell align="center">{collection['no'] + 1}</TableCell>
                                         <TableCell align="center">
                                             <Link className={classes.link} onClick={() => moveDetail(id)}>{name}</Link>
                                         </TableCell>
@@ -354,7 +412,16 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
                                         </TableCell>
                                         <TableCell align="center">
                                             <Box>
-                                                {collection['scheduled']||'false'}
+
+                                                {
+                                                    (collection['scheduled']||false) ? `활성화 (${collection['cron']})` : "비활성화"
+                                                }
+
+                                                {/*<Tooltip title="Delete" className={classes.fab}>*/}
+                                                {/*    {*/}
+                                                {/*        (collection['scheduled']||false) ? "활성화" : "비활성화"*/}
+                                                {/*    }*/}
+                                                {/*</Tooltip>*/}
                                             </Box>
                                         </TableCell>
                                     </TableRow>
