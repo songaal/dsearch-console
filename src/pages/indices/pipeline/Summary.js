@@ -1,23 +1,35 @@
-import React, {useEffect, useState, useRef} from "react";
-import { connect } from "react-redux";
+import React, {useEffect, useRef, useState} from "react";
+import {connect} from "react-redux";
 import {
-    Box, CircularProgress,
+    Box,
+    Button,
     Card,
     CardContent,
-    Button,
-    Table, Grid,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Link,
+    Snackbar,
+    Table,
+    TableBody,
+    TableCell,
     TableHead,
-    TableRow,
-    TableCell, Link, 
-    TableBody,Typography,
-    Dialog, DialogTitle,DialogContent, DialogActions,
-    Checkbox, Snackbar, TextField, TextareaAutosize, Divider
+    TableRow, TableSortLabel,
+    TextField,
 } from "@material-ui/core";
 import MuiAlert from '@material-ui/lab/Alert';
 import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-kuroir";
-import { setPipelineList, deletePipeline, addPipeline, editPipeline} from '@actions/pipelineActions'
+import {addPipeline, deletePipeline, editPipeline, setPipelineList} from '@actions/pipelineActions'
+
+const fields = [
+    { id: "no", label: "#", sorting: false},
+    { id: "name", label: "파이프라인 이름", sorting: true},
+    { id: "edit", label: "수정", sorting: false},
+    { id: "delete", label: "삭제", sorting: false},
+]
 
 function Summary({ dispatch, authUser, list }) {
     useEffect(() => {
@@ -33,6 +45,8 @@ function Summary({ dispatch, authUser, list }) {
     const [message, setMessage] = useState('')
     const [key, setKey] = useState('')
     const [flag, setFlag] = useState(0);
+    const [orderBy, setOrderBy] = useState("")
+    const [order, setOrder] = useState("asc")
 
     function isJson(str) {
         try {
@@ -162,15 +176,49 @@ function Summary({ dispatch, authUser, list }) {
                             </colgroup>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell align={"center"} >#</TableCell>
-                                    <TableCell align={"center"} >파이프라인 이름</TableCell>
-                                    <TableCell align={"center"} >수정</TableCell>
-                                    <TableCell align={"center"} >삭제</TableCell>
+                                    {
+                                        fields.map(field =>
+                                            <TableCell align="center" key={field['id']}>
+                                                {
+                                                    field["sorting"] ?
+                                                        <TableSortLabel
+                                                            active={orderBy === field['id']}
+                                                            direction={orderBy === field['id'] ? order : 'asc'}
+                                                            onClick={event => {
+                                                                setOrderBy(field['id'])
+                                                                const isAsc = orderBy === field['id'] && order === 'asc';
+                                                                setOrder(isAsc ? 'desc' : 'asc');
+                                                            }}
+                                                        >
+                                                            {field['label']}
+                                                        </TableSortLabel>
+                                                        :
+                                                        field['label']
+                                                }
+                                            </TableCell>)
+                                    }
+                                    {/*<TableCell align={"center"} >#</TableCell>*/}
+                                    {/*<TableCell align={"center"} >파이프라인 이름</TableCell>*/}
+                                    {/*<TableCell align={"center"} >수정</TableCell>*/}
+                                    {/*<TableCell align={"center"} >삭제</TableCell>*/}
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 {
-                                        Object.keys(list).sort().map((item, index) => {
+                                        Object.keys(list)
+                                            .sort((a, b) => {
+                                                if (orderBy && order) {
+                                                    let x = a
+                                                    let y = b
+                                                    if (order === 'asc') {
+                                                        return x > y ? 1 : -1
+                                                    } else {
+                                                        return x > y ? -1 : 1
+                                                    }
+                                                } else {
+                                                    return 0
+                                                }})
+                                            .map((item, index) => {
                                             return  <TableRow key={index}>
                                                         <TableCell align={"center"}> 
                                                             {index + 1} 

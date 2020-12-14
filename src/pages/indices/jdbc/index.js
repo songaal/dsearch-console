@@ -19,7 +19,8 @@ import {
     TextField as MuiTextField,
     DialogContent,
     DialogActions,
-    Snackbar
+    Snackbar,
+    TableSortLabel,
 } from "@material-ui/core";
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import {spacing} from "@material-ui/system";
@@ -48,10 +49,24 @@ const Divider = styled(MuiDivider)(spacing);
 
 const TextField = styled(MuiTextField)(spacing);
 
+
+const fields = [
+    { id: "no", label: "#", sorting: false},
+    { id: "id", label: "아이디", sorting: true},
+    { id: "name", label: "이름", sorting: true},
+    { id: "driver", label: "드라이버", sorting: true},
+    { id: "url", label: "URL", sorting: false},
+    { id: "user", label: "사용자", sorting: false},
+    { id: "password", label: "비밀번호", sorting: false},
+    { id: "test", label: "테스트", sorting: false},
+]
+
 function JdbcTable({dispatch, authUser, JdbcList, handleAccessFlag}){
     const [jdbcSourceEditDialogOpen, setJdbcSourceEditDialogOpenAction] = useState(false)
     const [jdbcListIndex, setJdbcListIndex] = useState(-1)
     const [processConnTest, setProcessConnTest] = useState(false)
+    const [orderBy, setOrderBy] = useState("")
+    const [order, setOrder] = useState("asc")
 
     let editId = useRef("");
     let editName = useRef("");
@@ -106,6 +121,30 @@ function JdbcTable({dispatch, authUser, JdbcList, handleAccessFlag}){
         }, 500)
     }
 
+    // let sortedIndices = indices
+    //     .filter(index => checked ? true : index['index'].startsWith(".") === false )
+    //     .map((index, no) => { return index; })
+    //     .sort((a, b) => {
+    //         if(a['index'] > b['index']){
+    //             return 1;
+    //         }else if(a['index'] < b['index']){
+    //             return -1;
+    //         }else{
+    //             return 0;
+    //         }
+    //     })
+    //     .map((c, i) => ({...c, no: i }))
+
+    const viewJdbcList = ((JdbcList['hits']||{})['hits']||[]).sort((a, b) => {
+        if(((a['sourceAsMap']||{})['id']||'') > ((b['sourceAsMap']||{})['id']||'')){
+            return 1;
+        }else if(((a['sourceAsMap']||{})['id']||'') < ((b['sourceAsMap']||{})['id']||'')){
+            return -1;
+        }else{
+            return 0;
+        }
+    }).map((v, i) => ({...v, no: i }))
+
     return (
         <React.Fragment>
             <Table>
@@ -121,48 +160,91 @@ function JdbcTable({dispatch, authUser, JdbcList, handleAccessFlag}){
                 </colgroup>
                 <TableHead>
                     <TableRow>
-                        <TableCell>#</TableCell>
-                        <TableCell>아이디</TableCell>
-                        <TableCell>이름</TableCell>
-                        <TableCell>드라이버</TableCell>
-                        <TableCell>URL</TableCell>
-                        <TableCell>사용자</TableCell>
-                        <TableCell>비밀번호</TableCell>
-                        <TableCell align={"center"}>테스트</TableCell>
+
+                        {
+                            fields.map(field =>
+                                <TableCell align="center" key={field['id']}>
+                                    {
+                                        field["sorting"] ?
+                                            <TableSortLabel
+                                                active={orderBy === field['id']}
+                                                direction={orderBy === field['id'] ? order : 'asc'}
+                                                onClick={event => {
+                                                    setOrderBy(field['id'])
+                                                    const isAsc = orderBy === field['id'] && order === 'asc';
+                                                    setOrder(isAsc ? 'desc' : 'asc');
+                                                }}
+                                            >
+                                                {field['label']}
+                                            </TableSortLabel>
+                                            :
+                                            field['label']
+                                    }
+                                </TableCell>)
+                        }
+                        {/*<TableCell>#</TableCell>*/}
+                        {/*<TableCell>아이디</TableCell>*/}
+                        {/*<TableCell>이름</TableCell>*/}
+                        {/*<TableCell>드라이버</TableCell>*/}
+                        {/*<TableCell>URL</TableCell>*/}
+                        {/*<TableCell>사용자</TableCell>*/}
+                        {/*<TableCell>비밀번호</TableCell>*/}
+                        {/*<TableCell align={"center"}>테스트</TableCell>*/}
+
                         {authUser.role.index ? <TableCell align={"center"}> 액션</TableCell> : null}
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {JdbcList.hits.hits.length > 0 ?  (
-                        JdbcList.hits.hits.map((item, index)=>{
-                            let password = item.sourceAsMap.password;
-                            let star = "";
+                    {
+                        viewJdbcList.length > 0 ?
+                            viewJdbcList
+                                .sort((a, b) => {
+                                    if (orderBy && order) {
+                                        let x = (a['sourceAsMap']||{})[orderBy]||''
+                                        let y = (b['sourceAsMap']||{})[orderBy]||''
+                                        if (order === 'asc') {
+                                            return x > y ? 1 : -1
+                                        } else {
+                                            return x > y ? -1 : 1
+                                        }
+                                    } else {
+                                        return 0
+                                    }})
+                                .map((item, index)=>{
+                                    let password = item.sourceAsMap.password;
+                                    let star = "";
 
-                            for(let i = 0; i < password.length-3; i++){
-                                star += "*";
-                            }
+                                    for(let i = 0; i < password.length-3; i++){
+                                        star += "*";
+                                    }
 
-                            password = password.substring(0, 2) + star + password.substring(password.length-1, password.length);
-                            return <TableRow key={item.sourceAsMap.id}>
-                                <TableCell style={{whiteSpace: "nowrap"}}>{index + 1}</TableCell>
-                                <TableCell style={{whiteSpace: "nowrap"}}>{item.sourceAsMap.id}</TableCell>
-                                <TableCell style={{whiteSpace: "nowrap"}}>{item.sourceAsMap.name}</TableCell>
-                                <TableCell style={{whiteSpace: "nowrap"}} style={{wordBreak:"break-all"}}>{item.sourceAsMap.driver}</TableCell>
-                                <TableCell style={{whiteSpace: "nowrap"}} style={{wordBreak:"break-all"}}>{item.sourceAsMap.url}</TableCell>
-                                <TableCell style={{whiteSpace: "nowrap"}}>{item.sourceAsMap.user}</TableCell>
-                                <TableCell style={{whiteSpace: "nowrap"}}>{password}</TableCell>
-                                {/* <TableCell>{item._source.password}</TableCell> */}
-                                <TableCell style={{whiteSpace: "nowrap"}}>
-                                    <Button variant={"outlined"} color={"primary"} disabled={processConnTest} onClick={()=>accessTestFromTable(item)}> 연결테스트 </Button>
-                                </TableCell>
-                                {authUser.role.index ?
-                                    <TableCell>
-                                        <Button variant={"outlined"} id={index} color={"primary"} style={{whiteSpace: "nowrap"}} onClick={() => handleEditDialogOpen(index)}>수정</Button>
-                                    </TableCell>
-                                    :
-                                    <TableCell></TableCell>
-                                }
-                            </TableRow>})):(<TableRow><TableCell align="center" colSpan={9}>{"현재 등록된 JDBC가 없습니다."}</TableCell></TableRow>)}
+                                    password = password.substring(0, 2) + star + password.substring(password.length-1, password.length);
+                                    return <TableRow key={item.sourceAsMap.id}>
+                                        <TableCell style={{whiteSpace: "nowrap"}}>{item['no'] + 1}</TableCell>
+                                        <TableCell style={{whiteSpace: "nowrap"}}>{item.sourceAsMap.id}</TableCell>
+                                        <TableCell style={{whiteSpace: "nowrap"}}>{item.sourceAsMap.name}</TableCell>
+                                        <TableCell style={{whiteSpace: "nowrap"}} style={{wordBreak:"break-all"}}>{item.sourceAsMap.driver}</TableCell>
+                                        <TableCell style={{whiteSpace: "nowrap"}} style={{wordBreak:"break-all"}}>{item.sourceAsMap.url}</TableCell>
+                                        <TableCell style={{whiteSpace: "nowrap"}}>{item.sourceAsMap.user}</TableCell>
+                                        <TableCell style={{whiteSpace: "nowrap"}}>{password}</TableCell>
+                                        {/* <TableCell>{item._source.password}</TableCell> */}
+                                        <TableCell style={{whiteSpace: "nowrap"}}>
+                                            <Button variant={"outlined"} color={"primary"} disabled={processConnTest} onClick={()=>accessTestFromTable(item)}> 연결테스트 </Button>
+                                        </TableCell>
+                                        {authUser.role.index ?
+                                            <TableCell>
+                                                <Button variant={"outlined"} id={index} color={"primary"} style={{whiteSpace: "nowrap"}} onClick={() => handleEditDialogOpen(index)}>수정</Button>
+                                            </TableCell>
+                                            :
+                                            <TableCell></TableCell>
+                                        }
+                                    </TableRow>
+                                })
+                                :
+                                (
+                                    <TableRow><TableCell align="center" colSpan={9}>{"현재 등록된 JDBC가 없습니다."}</TableCell></TableRow>
+                                )
+                    }
 
                 </TableBody>
             </Table>
