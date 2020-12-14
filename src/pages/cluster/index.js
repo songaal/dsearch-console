@@ -66,11 +66,14 @@ function ClusterCard({classes, cluster, onEditClick, onRemoveClick, to, newTo, s
     let indices = "N/A"
     let shards = "N/A"
     let store = "N/A"
+    let kibana = "N/A"
+    console.log(cluster);
     if (connection) {
         nodes = Object.keys((cluster['status']||{})['nodes']||{}).length
         indices = cluster['status']['state']['indices']
         shards = cluster['status']['state']['shards']
         store = cluster['status']['state']['store']
+        kibana = cluster['cluster']['kibana']
     }
 
     const [openMenu, setOpenMenu] = React.useState(null);
@@ -212,6 +215,19 @@ function ClusterCard({classes, cluster, onEditClick, onRemoveClick, to, newTo, s
                             <Grid container mt={1}>
                                 <Grid item xs={4}>
                                     <Box style={{whiteSpace: "nowrap"}}>
+                                        키바나
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={8}>
+                                    <Box style={{whiteSpace: "nowrap"}}>
+                                        {kibana}
+                                    </Box>
+                                </Grid>
+                            </Grid>
+
+                            <Grid container mt={1}>
+                                <Grid item xs={4}>
+                                    <Box style={{whiteSpace: "nowrap"}}>
                                         색상
                                     </Box>
                                 </Grid>
@@ -255,7 +271,8 @@ function AddClusterCard(props) {
     return (
         <React.Fragment>
             <Grid item xs={12} md={6} lg={4} xl={3} style={{display: display}}>
-                <Card variant="outlined" style={{minHeight: "245px"}}>
+                {/* <Card variant="outlined" style={{minHeight: "245px"}}> */}
+                <Card variant="outlined" style={{minHeight: "269px"}}>
                     <CardContent>
                         <Box display="flex"
                              justifyContent="center"
@@ -288,7 +305,8 @@ function AddGuideCard(props) {
     const classes = props.className
     return (
         <Grid item xs={12} md={6} lg={4} xl={3}>
-            <Card variant="outlined" style={{minHeight: "245px"}}>
+            <Card variant="outlined" style={{minHeight: "269px"}}>
+            {/* <Card variant="outlined" style={{minHeight: "245px"}}> */}
                 <CardContent>
                     <Box display="flex"
                          justifyContent="center"
