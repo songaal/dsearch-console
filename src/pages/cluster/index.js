@@ -38,7 +38,8 @@ import {
     editCluster,
     removeClusterAction,
     setClusterList,
-    setClusterStatus
+    setClusterStatus,
+    setKibanaStatus
 } from "../../redux/actions/clusterActions";
 import {red} from "@material-ui/core/colors";
 
@@ -398,6 +399,37 @@ function Cluster({ dispatch, clusterList, authUser }) {
         })
     }
 
+    function handleKibanaTestProcess() {
+        // setConnTest(false)
+        // setModalMessage("")
+        let url = "";
+        if( kibana.startsWith("http://") || kibana.startsWith("https://")){
+            url = kibana;
+        }else{
+            url = "http://" + kibana;
+        }
+    
+        console.log(url);
+
+        dispatch(setKibanaStatus(`${url}/api/status`))
+        .then((response) => {
+            let status = response.data;
+            console.log("status: ", status);
+            if(status['status']['overall']['state'] === "green"){
+                setModalMessage("[연결 성공] 키바나 ");
+            }else{
+                setModalMessage("[연결 실패] 키바나 상태 불안정");
+            }
+            
+        }).catch((error) => {
+            // setConnTest(false);
+            // setModalMessage("");
+            setModalMessage("[연결 실패] 키바나");
+            console.error(error);
+        });
+       
+    }
+
     function resetError() {
         setNameError(false); setHostError(false); setPortError(false)
         setUsernameError(false); setPasswordError(false)
@@ -685,7 +717,8 @@ function Cluster({ dispatch, clusterList, authUser }) {
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant={"outlined"} onClick={handleClusterTestProcess}> 연결테스트 </Button>
+                    <Button variant={"outlined"} color={"primary"} onClick={handleClusterTestProcess}> 연결테스트 </Button>
+                    <Button variant={"outlined"} color={"primary"} style={{color: "#EE0000"}} onClick={handleKibanaTestProcess}> 키바나테스트 </Button>
                     <Box display={mode === "ADD" ? "block" : "none"}>
                         <Button color="primary"
                                 variant="contained"

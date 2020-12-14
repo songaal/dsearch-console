@@ -13,6 +13,13 @@ export const setClusterStatus = (cluster) => dispatch => client.call({
     data: cluster,
 }).then(response => response.data)
 
+
+export const setKibanaStatus = (url) => dispatch => client.call({
+    uri: "/kibana/status",
+    method: "POST",
+    data: {"url": url},
+})
+
 export const addCluster = (cluster) => dispatch => client.call({
     uri: "/clusters",
     method: "POST",
