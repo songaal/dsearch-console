@@ -150,6 +150,8 @@ function Summary({ dispatch, authUser, list }) {
         closeModal()
     }
 
+    const viewList = Object.keys(list).map((l, n) => ({title: l, no: n}))
+
     return (
         <React.Fragment>
             <Card>
@@ -205,11 +207,11 @@ function Summary({ dispatch, authUser, list }) {
                             </TableHead>
                             <TableBody>
                                 {
-                                        Object.keys(list)
+                                    viewList
                                             .sort((a, b) => {
                                                 if (orderBy && order) {
-                                                    let x = a
-                                                    let y = b
+                                                    let x = a['title']
+                                                    let y = b['title']
                                                     if (order === 'asc') {
                                                         return x > y ? 1 : -1
                                                     } else {
@@ -221,10 +223,10 @@ function Summary({ dispatch, authUser, list }) {
                                             .map((item, index) => {
                                             return  <TableRow key={index}>
                                                         <TableCell align={"center"}> 
-                                                            {index + 1} 
+                                                            {item['no'] + 1}
                                                         </TableCell>
                                                         <TableCell align={"center"}>
-                                                            <Link onClick={() => openModal(item)} variant={"inherit"} style={{ cursor: "pointer" }} color={"primary"} id={item} >{item}</Link>
+                                                            <Link onClick={() => openModal(item['title'])} variant={"inherit"} style={{ cursor: "pointer" }} color={"primary"} id={item['title']} >{item['title']}</Link>
                                                         </TableCell>
                                                         {/* <TableCell align={"center"}>
                                                                 <Button variant={"outlined"} color={"primary"} style={{ whiteSpace: "nowrap" }} onClick={()=> openModalEdit(item)} >수정</Button>
@@ -234,11 +236,11 @@ function Summary({ dispatch, authUser, list }) {
                                                             </TableCell> */}
                                                         {authUser.role.index ? 
                                                             <TableCell align={"center"}>
-                                                                <Button variant={"outlined"} color={"primary"} style={{ whiteSpace: "nowrap" }} onClick={()=> openModalEdit(item)} >수정</Button>
+                                                                <Button variant={"outlined"} color={"primary"} style={{ whiteSpace: "nowrap" }} onClick={()=> openModalEdit(item['title'])} >수정</Button>
                                                             </TableCell> : <TableCell></TableCell> }
                                                         {authUser.role.index ? 
                                                             <TableCell align={"center"}>
-                                                                <Button variant="outlined" style={{ whiteSpace: "nowrap", borderColor:"red", color: "red"}} onClick={() => openModalDelete(item)}>삭제</Button>
+                                                                <Button variant="outlined" style={{ whiteSpace: "nowrap", borderColor:"red", color: "red"}} onClick={() => openModalDelete(item['title'])}>삭제</Button>
                                                             </TableCell> : <TableCell></TableCell> }
                                                     </TableRow>
                                         })
