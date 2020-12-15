@@ -413,6 +413,7 @@ function Cluster({ dispatch, clusterList, authUser }) {
         console.log(url);
 
         axios.get(`${url}`, {
+            withCredentials: true,
             timeout: 3000
         }).then((response) => {
             let status = response.data;
