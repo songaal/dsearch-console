@@ -42,6 +42,7 @@ import {
     setKibanaStatus
 } from "../../redux/actions/clusterActions";
 import {red} from "@material-ui/core/colors";
+import axios from "axios";
 
 const Card = styled(MuiCard)(spacing);
 const Divider = styled(MuiDivider)(spacing);
@@ -404,15 +405,16 @@ function Cluster({ dispatch, clusterList, authUser }) {
         // setModalMessage("")
         let url = "";
         if( kibana.startsWith("http://") || kibana.startsWith("https://")){
-            url = kibana;
+            url = kibana + "/api/status";
         }else{
-            url = "http://" + kibana;
+            url = "http://" + kibana + "/api/status";
         }
-    
+        
         console.log(url);
 
-        dispatch(setKibanaStatus(`${url}/api/status`))
-        .then((response) => {
+        axios.get(`${url}`, {
+            timeout: 3000
+        }).then((response) => {
             let status = response.data;
             console.log("status: ", status);
             if(status['status']['overall']['state'] === "green"){
@@ -420,12 +422,11 @@ function Cluster({ dispatch, clusterList, authUser }) {
             }else{
                 setModalMessage("[연결 실패] 키바나 상태 불안정");
             }
-            
         }).catch((error) => {
-            // setConnTest(false);
-            // setModalMessage("");
-            setModalMessage("[연결 실패] 키바나");
-            console.error(error);
+                setModalMessage("");
+                setModalMessage("[연결 실패] 키바나");
+                console.error(error);
+            
         });
        
     }
