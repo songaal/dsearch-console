@@ -552,6 +552,7 @@ function Cluster({ dispatch, clusterList, authUser }) {
 
     return (
         <React.Fragment>
+            <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" /> 
             <Helmet title="클러스터"/>
             <Typography variant="h3" gutterBottom display="inline">
                 클러스터
