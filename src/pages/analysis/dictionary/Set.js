@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {connect, useDispatch, useSelector} from 'react-redux';
+import {connect, useDispatch} from 'react-redux';
 import styled from "styled-components";
 import {
     Box as MuiBox,
@@ -57,7 +57,7 @@ function Set({ dictionary, authUser, setting, dataSet }) {
     const [isMatch, setMatch] = useState(false);
     const [mode, setMode] = useState("view")  //view, edit
     const [pageNum, setPageNum] = useState(0);
-    const [rowSize, setRowSize] = useState(40);
+    const [rowSize] = useState(40);
 
     const [createId, setCreateId] = useState("");
     const [createKeyword, setCreateKeyword] = useState("");

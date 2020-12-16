@@ -42,7 +42,6 @@ import {
     setRoleListAction
 } from "../../redux/actions/roleManagementActions";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import dsearchReducers from "../../redux/reducers/dsearchReducers";
 
 const Card = styled(MuiCard)(spacing);
 const Divider = styled(MuiDivider)(spacing);

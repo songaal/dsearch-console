@@ -1,12 +1,9 @@
 import React from "react";
 import {connect} from "react-redux";
-import styled from "styled-components";
-import {makeStyles} from '@material-ui/core/styles';
 import {
     Box,
     Card,
     CardContent,
-    Divider as MuiDivider,
     Table,
     TableBody,
     TableCell,
@@ -14,15 +11,13 @@ import {
     Typography
 } from "@material-ui/core";
 
-import {spacing} from "@material-ui/system";
+// import {spacing} from "@material-ui/system";
 import {flatten} from "flat";
 
-const useStyles = makeStyles((theme) => ({}));
+// const useStyles = makeStyles((theme) => ({}));
 
-const Divider = styled(MuiDivider)(spacing);
 
 function Statistics({index, indexState}) {
-    const classes = useStyles();
     if (!index || indexState['indices'] === undefined) {
         return null
     }

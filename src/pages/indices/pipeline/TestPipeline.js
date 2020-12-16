@@ -4,14 +4,9 @@ import {
     Box, CircularProgress,
     Card,
     CardContent,
-    Button,Hidden,
-    Table,
-    TableHead,
-    TableRow,
-    TableCell, Link,
-    TableBody, Grid,
+    Button, Grid,
     Checkbox, Snackbar,FormControlLabel,
-    FormControl, InputLabel, MenuItem, Select, Typography, TextField
+    FormControl, InputLabel, MenuItem, Select, Typography
 } from "@material-ui/core";
 import MuiAlert from '@material-ui/lab/Alert';
 import AceEditor from "react-ace";
@@ -64,7 +59,7 @@ function TestPipeline({ dispatch, pipeline, pipelineList}) {
     }
 
     function handleTest(){
-        if( pipeline.length == 0 ){
+        if( pipeline.length === 0 ){
             setSnackbarFlag(true)
             return;
         }
@@ -113,7 +108,7 @@ function TestPipeline({ dispatch, pipeline, pipelineList}) {
                                             onChange={handleChange}
                                         >
                                             {
-                                                pipelineList == null || pipelineList == undefined || Object.keys(pipelineList).length == 0 ?
+                                                pipelineList === null || pipelineList === undefined || Object.keys(pipelineList).length == 0 ?
                                                     <></>
                                                     : Object.keys(pipelineList).sort().map((p, i) => (<MenuItem key={i} value={p}>{p}</MenuItem>))
                                             }
@@ -140,7 +135,7 @@ function TestPipeline({ dispatch, pipeline, pipelineList}) {
                                         setOptions={{ useWorker: false }}
                                     />
                                 </Box>
-                                <Box align="right" mx={3} mt={3} align={"center"}>
+                                <Box align="right" mx={3} mt={3}>
                                     {progress? <CircularProgress /> : <Button fullWidth variant="outlined" color="primary" onClick={() => handleTest()}> 테스트 </Button>}
                                 </Box>
                             </Grid>

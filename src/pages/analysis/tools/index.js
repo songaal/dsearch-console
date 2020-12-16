@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from "react";
 import styled from "styled-components";
-import { NavLink as RouterNavLink } from "react-router-dom";
 import { connect } from "react-redux";
 import Helmet from 'react-helmet';
 import {makeStyles} from '@material-ui/core/styles';
@@ -13,7 +12,6 @@ import {
     Divider as MuiDivider,
     FormControl, FormControlLabel,RadioGroup, Radio,
     Table, TableRow, TableCell,
-    InputLabel,
     Select,
     Grid,
     MenuItem,
@@ -23,7 +21,6 @@ import {
 } from "@material-ui/core";
 
 import { spacing } from "@material-ui/system";
-import { CollectionsBookmarkOutlined } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -31,10 +28,6 @@ const useStyles = makeStyles((theme) => ({
     },
     select: { minWidth: 120, marginLeft: theme.spacing(1), flex: 1, borderBottom: "1px solid gray", '&:hover': { borderBottom: "1px solid black" } },
 }));
-
-const NavLink = React.forwardRef((props, ref) => (
-    <RouterNavLink innerRef={ref} {...props} />
-));
 
 const Card = styled(MuiCard)(spacing);
 

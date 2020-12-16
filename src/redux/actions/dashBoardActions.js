@@ -1,6 +1,5 @@
 import { SET_INDEX_RESULT, SET_RUNNING_INDEX, SET_INDEX_STATUS, SET_INDEX_ALIAS, SET_DASHBOARD_INDICES_INFO } from "../constants";
 import Client from '~/Client'
-import { size } from "polished";
 
 const client = new Client()
 

@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {connect, useDispatch, useSelector, useStore} from "react-redux";
+import {connect, useDispatch, useSelector} from "react-redux";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import Helmet from 'react-helmet';
@@ -11,10 +11,8 @@ import {
     Typography as MuiTypography,
     Card as MuiCard,
     CardContent as MuiCardContent,
-    Hidden,
     List as MuiList,
     ListItem as MuiListItem,
-    Link
 } from "@material-ui/core";
 
 import * as Color from '@material-ui/core/colors';
@@ -241,15 +239,15 @@ function Result({resultList, authUser, pluginResponse}) {
     }
 
     let resultACList = pluginResponse.result;
-    let listStr = "";
-    if(resultACList !== undefined && resultACList !== null && resultACList.length > 0 ){
-        resultACList.forEach(
-            item => { 
-                listStr += (item + ", ")
-            }
-        )
-        listStr = listStr.substring(0, listStr.length-2);
-    }
+    // let listStr = "";
+    // if(resultACList !== undefined && resultACList !== null && resultACList.length > 0 ){
+    //     resultACList.forEach(
+    //         item => { 
+    //             listStr += (item + ", ")
+    //         }
+    //     )
+    //     listStr = listStr.substring(0, listStr.length-2);
+    // }
     
     return (
         <React.Fragment>
@@ -279,7 +277,6 @@ function Result({resultList, authUser, pluginResponse}) {
     )
 }
 
-{/* 추가된 부분 : pluginResponse */}
 export default connect(store => ({
     ...store.referenceSearchReducers, 
     ...store.dsearchReducers,

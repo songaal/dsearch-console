@@ -15,7 +15,6 @@ import {
     Popper, Snackbar,
     Switch,
 } from "@material-ui/core";
-import {makeStyles} from '@material-ui/core/styles';
 import {positions, spacing} from "@material-ui/system";
 import Alert from '@material-ui/lab/Alert';
 import {
@@ -31,21 +30,21 @@ const Box = styled(MuiBox)(spacing, positions);
 const Button = styled(MuiButton)(spacing, positions);
 const Grid = styled(MuiGrid)(spacing, positions);
 
-const useStyles = makeStyles((theme) => ({
-    formControl: {
-        minWidth: 250,
-    },
-    root: {
-        flexGrow: 1,
-        width: '100%',
-    },
-    edit: {
-        width: '100%'
-    },
-    typography: {
-        padding: theme.spacing(2),
-    },
-}));
+// const useStyles = makeStyles((theme) => ({
+//     formControl: {
+//         minWidth: 250,
+//     },
+//     root: {
+//         flexGrow: 1,
+//         width: '100%',
+//     },
+//     edit: {
+//         width: '100%'
+//     },
+//     typography: {
+//         padding: theme.spacing(2),
+//     },
+// }));
 
 const options = ['연속실행', '색인실행', '전파실행', '교체실행'];
 

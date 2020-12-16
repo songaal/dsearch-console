@@ -16,12 +16,7 @@ import {
 import {spacing} from "@material-ui/system";
 import AntTabs from "../../../components/AntTabs";
 import async from "../../../components/Async";
-import {Cached} from "@material-ui/icons";
-import {red, orange, green} from "@material-ui/core/colors";
-import Snackbar from '@material-ui/core/Snackbar';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
-import MuiAlert from '@material-ui/lab/Alert';
+import {orange, green} from "@material-ui/core/colors";
 import {connect, useDispatch} from "react-redux";
 import {setClusterServerCheck, editClusterServerCheck, editClusterFlush} from "../../../redux/actions/clusterActions"
 const Divider = styled(MuiDivider)(spacing);

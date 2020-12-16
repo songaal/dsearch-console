@@ -22,7 +22,7 @@ import {
 import {spacing} from "@material-ui/system";
 import {setIndicesAction} from "../../../redux/actions/indicesActions";
 import {connect} from "react-redux";
-import {green, grey, orange, red, yellow} from "@material-ui/core/colors";
+import {green, grey, red, yellow} from "@material-ui/core/colors";
 
 const useStyles = makeStyles((theme) => ({}));
 const Divider = styled(MuiDivider)(spacing);

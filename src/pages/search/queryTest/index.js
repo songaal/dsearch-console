@@ -11,7 +11,7 @@ function QueryTest({authUser}) {
         if(!kibana.startsWith("http")) {
             kibana = "http://" + kibana
         }
-        open(kibana, '_blank', "menubar=no,addressbar=no,statusbar=no")
+        window.open(kibana, '_blank', "menubar=no,addressbar=no,statusbar=no")
         history.go(-1)
         return null
     } else {

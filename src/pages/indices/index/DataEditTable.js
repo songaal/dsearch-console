@@ -1,10 +1,7 @@
 import React, {forwardRef, useEffect, useState} from "react";
 import {connect, useSelector} from "react-redux";
-import styled from "styled-components";
-import {makeStyles} from '@material-ui/core/styles';
-import {Box, Card, CardContent, Divider as MuiDivider, TextareaAutosize, Typography} from "@material-ui/core";
+import {Box, Card, CardContent, Typography} from "@material-ui/core";
 import MaterialTable from 'material-table';
-import {spacing} from "@material-ui/system";
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
 import Check from '@material-ui/icons/Check';
@@ -28,7 +25,6 @@ import {
     setIndexMappingsAction
 } from "../../../redux/actions/indicesActions";
 import flat, {unflatten} from 'flat'
-import Utils from "../../../utils";
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref}/>),
@@ -49,8 +45,6 @@ const tableIcons = {
     ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref}/>),
     ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref}/>)
 };
-const useStyles = makeStyles((theme) => ({}));
-const Divider = styled(MuiDivider)(spacing);
 let searchInterval = null
 function DataEditTable({dispatch, index, authUser, mappings}) {
     const documentSourceResponse = useSelector(store => ({ ...store.indicesReducers}))['documentSourceResponse']
@@ -103,7 +97,6 @@ function DataEditTable({dispatch, index, authUser, mappings}) {
             return tmpData
         }))
     }, [])
-
 
     function fetchIndexDocumentSourceList({searchSize=500, columns=[], keyword=null}) {
             return dispatch(setIndexMappingsAction(index)).then((response)=> {
@@ -213,8 +206,8 @@ function DataEditTable({dispatch, index, authUser, mappings}) {
     }
 
     function customSort(a, b){
-        if(a == "ID") return -1;
-        if(b == "ID") return 1;
+        if(a === "ID") return -1;
+        if(b === "ID") return 1;
 
         if (a.length > b.length) return 1;
         if (b.length > a.length) return -1;

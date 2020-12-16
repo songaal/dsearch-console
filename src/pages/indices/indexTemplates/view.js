@@ -7,9 +7,9 @@ import Json2html from "~/components/Json2Html"
 
 import {
     Box as MuiBox,
-    Button as MuiButton, ButtonGroup,
+    Button as MuiButton, 
     Card as MuiCard,
-    CardContent, ClickAwayListener,
+    CardContent, 
     Dialog,
     DialogActions,
     DialogContent,
@@ -17,9 +17,9 @@ import {
     Divider as MuiDivider,
     FormControl,
     FormControlLabel,
-    Grid, Grow,
+    Grid, 
     InputLabel,
-    MenuItem, MenuList, Paper, Popper,
+    MenuItem, 
     Radio,
     RadioGroup,
     Select,
@@ -32,7 +32,6 @@ import {makeStyles} from '@material-ui/core/styles';
 import {palette, positions, spacing} from "@material-ui/system";
 import {connect} from "react-redux";
 import {setIndexTemplateAction, setIndexTemplatesAction} from "../../../redux/actions/indexTemplateActions";
-import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 
 const useStyles = makeStyles((theme) => ({
     formControl: {

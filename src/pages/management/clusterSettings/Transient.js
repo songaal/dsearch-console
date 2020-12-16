@@ -1,21 +1,18 @@
-import React, {useEffect, useState, useRef} from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import {connect} from "react-redux";
-import {Box as MuiBox, Button, Card as MuiCard, CardContent, Grid, Typography, Dialog, DialogTitle,DialogContent, DialogActions,
-    Checkbox, Snackbar, TextField, TextareaAutosize, Divider} from "@material-ui/core";
+import {Box as MuiBox, Button, Card as MuiCard, CardContent, Grid, Typography} from "@material-ui/core";
 
 import {spacing} from "@material-ui/system";
 import {Cached} from "@material-ui/icons";
 import {setClusterSettingsAction} from "../../../redux/actions/clusterSettingsActions";
-import Loader from "~/components/Loader";
+// import Loader from "~/components/Loader";
 
 const Card = styled(MuiCard)(spacing);
 const Box = styled(MuiBox)(spacing);
 
 function Transient({dispatch, transient, dsearch}) {
     const [data, setData] = useState({})
-
-    const aceEditor = useRef(null);
 
     useEffect(() => {
         dispatch(setClusterSettingsAction())

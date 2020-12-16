@@ -1,5 +1,4 @@
 import * as types from '../constants';
-import { string } from 'prop-types';
 
 let initState = {
     server: {

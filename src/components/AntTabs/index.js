@@ -3,7 +3,7 @@ import React from "react";
 import PropTypes from 'prop-types';
 // Material components
 import {withStyles} from '@material-ui/core/styles';
-import {Box as MuiBox, Divider as MuiDivider, Tab as AntTab, Tabs, Typography, Card, CardContent} from "@material-ui/core";
+import {Box as MuiBox, Divider as MuiDivider, Tab as AntTab, Tabs, Typography} from "@material-ui/core";
 import styled from "styled-components";
 import {spacing} from "@material-ui/system";
 

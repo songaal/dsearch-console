@@ -11,7 +11,6 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-    Divider as MuiDivider,
     FormControl,
     FormControlLabel,
     Grid,
@@ -50,7 +49,6 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const Divider = styled(MuiDivider)(spacing);
 const Box = styled(MuiBox)(spacing, positions);
 const Card = styled(MuiCard)(spacing);
 const Typography = styled(MuiTypography)(spacing, positions);
@@ -174,7 +172,6 @@ function JsonCard({json}) {
 }
 
 function Setting({ dispatch, index, authUser, settings }) {
-    const classes = useStyles();
     const [chk, setChk] = React.useState('form');
     const [modal, setModal] = React.useState(false)
     const [query, setQuery] = React.useState("")

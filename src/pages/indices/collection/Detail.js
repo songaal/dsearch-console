@@ -1,20 +1,16 @@
 import React, {useEffect} from "react";
 import {connect} from "react-redux";
-import { useLocation, useHistory } from "react-router-dom"
+import { useLocation } from "react-router-dom"
 import styled from "styled-components";
 import Helmet from 'react-helmet';
 import Async from "~/components/Async";
 
 import {
-    Box as MuiBox,
-    Button as MuiButton,
-    Card as MuiCard,
     Divider as MuiDivider,
     Grid as MuiGrid,
     Typography as MuiTypography,
     FormControl, InputLabel, Select, MenuItem
 } from "@material-ui/core";
-import {makeStyles} from '@material-ui/core/styles';
 import {positions, spacing} from "@material-ui/system";
 import AntTabs from "~/components/AntTabs"
 import {setCollection, setCollectionIndexSuffix, setCollectionList} from "../../../redux/actions/collectionActions";
@@ -22,23 +18,20 @@ import {setJDBCList} from "../../../redux/actions/jdbcActions";
 
 const Divider = styled(MuiDivider)(spacing, positions);
 const Typography = styled(MuiTypography)(spacing, positions);
-const Box = styled(MuiBox)(spacing, positions);
-const Card = styled(MuiCard)(spacing, positions);
-const Button = styled(MuiButton)(spacing, positions);
 const Grid = styled(MuiGrid)(spacing, positions);
 
-const useStyles = makeStyles((theme) => ({
-    formControl: {
-        minWidth: 250,
-    },
-    root: {
-        flexGrow: 1,
-        width: '100%',
-    },
-    edit: {
-        width: '100%'
-    }
-}));
+// const useStyles = makeStyles((theme) => ({
+//     formControl: {
+//         minWidth: 250,
+//     },
+//     root: {
+//         flexGrow: 1,
+//         width: '100%',
+//     },
+//     edit: {
+//         width: '100%'
+//     }
+// }));
 
 const tabs = [
     {label: "개요", component: Async(() => import("./Summary"))},
@@ -47,9 +40,7 @@ const tabs = [
 ]
 
 function Detail({dispatch, collection, collectionList}) {
-    const classes = useStyles();
     const location = useLocation();
-    const history = useHistory()
     
     useEffect(() => {
         const collectionId = location.pathname.substring(location.pathname.lastIndexOf("/") + 1)

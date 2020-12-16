@@ -15,7 +15,6 @@ import {
     Menu,
     MenuItem,
     Toolbar,
-    TextField
 } from "@material-ui/core";
 
 import {ArrowDropDown, Menu as MenuIcon} from "@material-ui/icons";
@@ -27,7 +26,6 @@ import { setAutoCompleteAction, setAutoCompleteStoreAction, getAutoCompleteURLAc
 
 import {SET_DSEARCH_AUTH_USER} from "../redux/constants";
 import {setClusterList, setClusterServerCheck} from "../redux/actions/clusterActions";
-import { textAlign, maxHeight, height, width } from "@material-ui/system";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 import {initGA} from "../ga";
@@ -260,7 +258,6 @@ const MainHeader = ({theme, onDrawerToggle}) => (
     </React.Fragment>)
 
 
-const options = ['Option 1', 'Option 2'];
 
 const DashBoardHeader = ({theme, onDrawerToggle}) => {
     const references = useSelector(store => ({...store.referenceSearchReducers}))

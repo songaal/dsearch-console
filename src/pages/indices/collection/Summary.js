@@ -6,11 +6,9 @@ import styled from "styled-components";
 import {
     Box as MuiBox,
     Button as MuiButton,
-    IconButton as MuiIconButton,
     Card as MuiCard,
     CardContent,
     Chip,
-    Divider as MuiDivider,
     Grid as MuiGrid,
     Link,
     Menu,
@@ -22,7 +20,6 @@ import {
     TextField,
     Typography as MuiTypography
 } from "@material-ui/core";
-import {makeStyles} from '@material-ui/core/styles';
 import {positions, spacing} from "@material-ui/system";
 import {ArrowDropDown, Check} from "@material-ui/icons";
 import {setCollection, deleteCollectionAction, setCollectionList, editCollectionSourceAction, editCollectionAliasAction} from "../../../redux/actions/collectionActions";
@@ -31,33 +28,29 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
 import Dialog from "@material-ui/core/Dialog";
-import AceEditor from "react-ace";
 
-const Divider = styled(MuiDivider)(spacing, positions);
 const Typography = styled(MuiTypography)(spacing, positions);
 const Card = styled(MuiCard)(spacing, positions);
 const Button = styled(MuiButton)(spacing, positions);
 const Grid = styled(MuiGrid)(spacing, positions);
 const Box =  styled(MuiBox)(spacing, positions);
-const IconButton = styled(MuiIconButton)(spacing, positions);
 
-const useStyles = makeStyles((theme) => ({
-    formControl: {
-        minWidth: 250,
-    },
-    root: {
-        flexGrow: 1,
-        width: '100%',
-    },
-    edit: {
-        width: '100%'
-    }
-}));
+// const useStyles = makeStyles((theme) => ({
+//     formControl: {
+//         minWidth: 250,
+//     },
+//     root: {
+//         flexGrow: 1,
+//         width: '100%',
+//     },
+//     edit: {
+//         width: '100%'
+//     }
+// }));
 
 
 function Summary({dispatch, authUser, collection}) {
     const history = useHistory();
-    const classes = useStyles();
 
     console.log(collection)
     const replicas = useRef(null);

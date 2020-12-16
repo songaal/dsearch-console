@@ -6,7 +6,7 @@ import {Box as MuiBox, Button, Card as MuiCard, CardContent, Grid, Typography} f
 import {spacing} from "@material-ui/system";
 import {Cached} from "@material-ui/icons";
 import {setClusterSettingsAction} from "../../../redux/actions/clusterSettingsActions";
-import Loader from "~/components/Loader";
+// import Loader from "~/components/Loader";
 
 const Card = styled(MuiCard)(spacing);
 const Box = styled(MuiBox)(spacing);

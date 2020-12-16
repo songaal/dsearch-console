@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import {connect, useDispatch, useSelector} from "react-redux";
 import styled from "styled-components";
 import {darken, rgba} from "polished";
 
@@ -28,9 +27,6 @@ import {ExpandLess, ExpandMore, Launch} from "@material-ui/icons";
 // import {green} from "@material-ui/core/colors";
 
 import {dashboard as dashboardRoutes, intro as introRoutes} from "../routes/index";
-
-import {Layers} from "react-feather";
-import dsearchReducers from "../redux/reducers/dsearchReducers";
 
 const NavLink = React.forwardRef((props, ref) => (
     <RouterNavLink innerRef={ref} {...props} />
@@ -73,11 +69,6 @@ const Brand = styled(ListItem)`
   ${props => props.theme.breakpoints.up("sm")} {
     min-height: 64px;
   }
-`;
-
-const BrandIcon = styled(Layers)`
-  margin-right: ${props => props.theme.spacing(2)}px;
-  color: ${props => props.theme.sidebar.header.brand.color};
 `;
 
 // const BrandChip = styled(Chip)`

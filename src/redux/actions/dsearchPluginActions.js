@@ -3,7 +3,7 @@ import {
   SET_PLUGIN_KEYWORD,
   SET_AUTOCOMPLETE_URL
 } from "../constants";
-import { PostAdd } from '@material-ui/icons';
+// import { PostAdd } from '@material-ui/icons';
 
 const client = new Client()
 

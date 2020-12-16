@@ -1,7 +1,6 @@
 import React, {useEffect} from "react";
 import { useHistory } from 'react-router-dom';
 import styled from "styled-components";
-import {NavLink as RouterNavLink} from "react-router-dom";
 import {setServerSummaryActions} from '@actions/serverSummaryActions'
 import Async from '~/components/Async';
 
@@ -10,18 +9,13 @@ import Helmet from 'react-helmet';
 import {
     Box,
     Breadcrumbs as MuiBreadcrumbs,
-    Card as MuiCard,
-    CardContent,
-    Divider as MuiDivider,
     FormControl,
-    Grid,
     Link,
     MenuItem,
     Select,
-    TableCell
 } from "@material-ui/core";
 
-import {makeStyles, withStyles} from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import {spacing} from "@material-ui/system";
 import {connect} from "react-redux";
 
@@ -40,20 +34,20 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const StyledTableCell = withStyles((theme) => ({
-    body: {
-        fontSize: 12
-    },
-}))(TableCell);
+// const StyledTableCell = withStyles((theme) => ({
+//     body: {
+//         fontSize: 12
+//     },
+// }))(TableCell);
 
 
-const NavLink = React.forwardRef((props, ref) => (
-    <RouterNavLink innerRef={ref} {...props} />
-));
+// const NavLink = React.forwardRef((props, ref) => (
+//     <RouterNavLink innerRef={ref} {...props} />
+// ));
 
-const Card = styled(MuiCard)(spacing);
+// const Card = styled(MuiCard)(spacing);
 
-const Divider = styled(MuiDivider)(spacing);
+// const Divider = styled(MuiDivider)(spacing);
 
 const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
 
@@ -70,6 +64,7 @@ const SUMMARY = 'NO_SELECTED';
 
 function Server({dispatch, server}) {
     const classes = useStyles();
+    const history = useHistory();
 
     const [indices, setIndices] = React.useState(SUMMARY);
 
@@ -86,9 +81,9 @@ function Server({dispatch, server}) {
     }, [server.nodes])
 
     const selectNode =()=>{
-        if(location.search != "" || location.search != undefined){
+        if(history.location.search != "" || history.location.search != undefined){
             const nodes = (Object.entries(server.nodes));
-            const nodeName = location.search.split("=")[1];
+            const nodeName = history.location.search.split("=")[1];
             for(let i=0; i<nodes.length; i++){
                 if(nodeName == nodes[i][1].name){
                     setIndices(nodes[i][0]);

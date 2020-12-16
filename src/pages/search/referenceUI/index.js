@@ -6,10 +6,8 @@ import {
     Box as MuiBox,
     Button as MuiButton,
     Divider as MuiDivider,
-    FormControl as MuiFormControl,
     Grid as MuiGrid,
     IconButton as MuiIconButton,
-    TextareaAutosize as MuiTextareaAutosize,
     TextField as MuiTextField,
     Typography as MuiTypography,
     Card as MuiCard,
@@ -49,8 +47,6 @@ const Typography = styled(MuiTypography)(spacing, palette, sizing, display, bord
 const TextField = styled(MuiTextField)(spacing, palette, sizing, display, borders);
 const IconButton = styled(MuiIconButton)(spacing, palette, sizing, display, borders);
 const Button = styled(MuiButton)(spacing, palette, sizing, display, borders);
-const TextareaAutosize = styled(MuiTextareaAutosize)(spacing, palette, sizing, display, borders);
-const FormControl = styled(MuiFormControl)(spacing, palette, sizing, display, borders);
 const Card = styled(MuiCard)(spacing, palette, sizing, display, borders);
 const CardContent = styled(MuiCardContent)(spacing, palette, sizing, display, borders);
 const List = styled(MuiList)(spacing, palette, sizing, display, borders);

@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
-import styled from "styled-components";
 import {makeStyles} from '@material-ui/core/styles';
 import flat from "flat"
 import {
@@ -8,7 +7,6 @@ import {
     Button,
     Card,
     CardContent,
-    Divider as MuiDivider,
     FormControl,
     Grid,
     IconButton,
@@ -24,7 +22,6 @@ import {
     CircularProgress
 } from "@material-ui/core";
 import {Search} from "@material-ui/icons";
-import {spacing} from "@material-ui/system";
 import {
     analyzerDocumentSourceAction,
     setIndexDocumentSourceListAction,
@@ -32,8 +29,6 @@ import {
 } from "../../../redux/actions/indicesActions";
 
 const useStyles = makeStyles((theme) => ({}));
-
-const Divider = styled(MuiDivider)(spacing);
 
 const rowSizeList = [5, 10, 20]
 const idKey = "* ID"

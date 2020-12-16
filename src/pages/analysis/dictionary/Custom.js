@@ -54,7 +54,7 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
     const [isMatch, setMatch] = useState(false);
     const [mode, setMode] = useState("view")  //view, edit
     const [pageNum, setPageNum] = useState(0);
-    const [rowSize, setRowSize] = useState(20);
+    const [rowSize] = useState(20);
 
     const [createId, setCreateId] = useState("");
     const [createKeyword, setCreateKeyword] = useState("");

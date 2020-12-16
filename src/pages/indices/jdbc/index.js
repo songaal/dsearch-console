@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useRef} from "react";
 import styled from "styled-components";
-import {NavLink as RouterNavLink} from "react-router-dom";
 import { connect } from "react-redux";
 import Helmet from 'react-helmet';
 import utils from "../../../utils";
@@ -22,7 +21,6 @@ import {
     Snackbar,
     TableSortLabel,
 } from "@material-ui/core";
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import {spacing} from "@material-ui/system";
 import { setJDBCList, setJDBCAccessTest, addJdbcIndex, deleteJdbcSource, updateJdbcSource } from '@actions/jdbcActions'
 
@@ -39,9 +37,9 @@ const JdbcDriversURL = {
 }
 
 
-const NavLink = React.forwardRef((props, ref) => (
-    <RouterNavLink innerRef={ref} {...props} />
-));
+// const NavLink = React.forwardRef((props, ref) => (
+//     <RouterNavLink innerRef={ref} {...props} />
+// ));
 
 const Card = styled(MuiCard)(spacing);
 

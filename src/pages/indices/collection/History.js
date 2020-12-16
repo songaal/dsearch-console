@@ -7,7 +7,6 @@ import {
     Button as MuiButton,
     Card as MuiCard,
     CardContent,
-    Divider as MuiDivider,
     Grid as MuiGrid,
     Menu,
     MenuItem,
@@ -16,32 +15,29 @@ import {
     TableCell,
     TableHead,
     TableRow,
-    Typography as MuiTypography,
 } from "@material-ui/core";
 import {makeStyles} from '@material-ui/core/styles';
 import {positions, spacing} from "@material-ui/system";
 import {ArrowDropDown} from "@material-ui/icons";
 import {deleteIndexHistoryList, setIndexHistoryList, setIndexHistoryTypeList} from "../../../redux/actions/collectionActions";
 
-const Divider = styled(MuiDivider)(spacing, positions);
-const Typography = styled(MuiTypography)(spacing, positions);
 const Box = styled(MuiBox)(spacing, positions);
 const Card = styled(MuiCard)(spacing, positions);
 const Button = styled(MuiButton)(spacing, positions);
 const Grid = styled(MuiGrid)(spacing, positions);
 
-const useStyles = makeStyles((theme) => ({
-    formControl: {
-        minWidth: 250,
-    },
-    root: {
-        flexGrow: 1,
-        width: '100%',
-    },
-    edit: {
-        width: '100%'
-    }
-}));
+// const useStyles = makeStyles((theme) => ({
+//     formControl: {
+//         minWidth: 250,
+//     },
+//     root: {
+//         flexGrow: 1,
+//         width: '100%',
+//     },
+//     edit: {
+//         width: '100%'
+//     }
+// }));
 
 function rpad(str, padLen, padStr) {
     if (padStr.length > padLen) {
@@ -58,7 +54,6 @@ function rpad(str, padLen, padStr) {
 const paginationSize = 10
 
 function History({dispatch, authUser, collection, history}) {
-    const classes = useStyles();
     const [moreMenu, setMoreMenu] = useState(null)
     const [from, setFrom] = useState(0)
     const [typeName, setTypeName] = useState("ALL");

@@ -1,5 +1,4 @@
 import * as types from '../constants';
-import { updateDictionary } from '../actions/dictionaryActions';
 
 let initState = {
     

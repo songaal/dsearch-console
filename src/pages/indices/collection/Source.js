@@ -20,7 +20,6 @@ import {
     TableBody,
     TableCell,
     TableRow,
-    TextareaAutosize,
     TextField,
     Typography as MuiTypography,
 } from "@material-ui/core";
@@ -184,7 +183,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
         if (port === "") {
             invalidCheck['port'] = true
         }
-        if(cron.length == 0){
+        if(cron.length === 0){
             setCron(DEFAULT_CRON)
         }else if (!isValidCron(cron)) {
             invalidCheck['cron'] = true

@@ -32,7 +32,6 @@ import {
     Radio,
     RadioGroup,
     Select,
-    TextareaAutosize,
     TextField,
     Typography as MuiTypography
 } from "@material-ui/core";

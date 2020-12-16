@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect, createRef} from "react";
+import React, {useState, useEffect} from "react";
 import PropTypes from "prop-types"
 
 import {
@@ -11,13 +11,11 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    TextField,
     IconButton, InputBase
 } from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import {
     Delete as DeleteIcon,
-    SaveAlt as SaveAltIcon,
     OfflinePin as OfflinePinIcon
 } from "@material-ui/icons";
 

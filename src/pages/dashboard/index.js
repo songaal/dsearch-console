@@ -13,7 +13,6 @@ import {useHistory} from "react-router-dom"
 import {
     Link,
     Box,
-    Button,
     Card as MuiCard,
     CardContent,
     Divider as MuiDivider,
@@ -66,34 +65,34 @@ const TableCell = styled(MuiTableCell)`
     border: 1px solid rgba(224, 224, 224, 1);
     padding: 3px;
 `;
-const Shard = styled(Button)`
-    min-width: 25px;
-    max-width: 25px;
-    width: 25px;
-    margin: 2px;
-    min-height: 25px;
-    max-height: 25px;
-    height: 25px;
-    font-size: 0.9em;
-    padding: 2px;
-`;
+// const Shard = styled(Button)`
+//     min-width: 25px;
+//     max-width: 25px;
+//     width: 25px;
+//     margin: 2px;
+//     min-height: 25px;
+//     max-height: 25px;
+//     height: 25px;
+//     font-size: 0.9em;
+//     padding: 2px;
+// `;
 
 
-const idxRunning = [
-    {index:"shop-c",  docs:40000, lastIndex:"1시간 5분", exportDoc:200000},
-    {index:"community",  docs:16331, lastIndex:"30분", exportDoc:20000}
-]
+// const idxRunning = [
+//     {index:"shop-c",  docs:40000, lastIndex:"1시간 5분", exportDoc:200000},
+//     {index:"community",  docs:16331, lastIndex:"30분", exportDoc:20000}
+// ]
 
 
-const idxWarning = [
-    {status:"yellow", index:"shop-a", desc:"레플리카 샤드 이상"},
-    {status:"red", index:"prod", desc:"프라이머리 샤드 이상"}
-]
+// const idxWarning = [
+//     {status:"yellow", index:"shop-a", desc:"레플리카 샤드 이상"},
+//     {status:"red", index:"prod", desc:"프라이머리 샤드 이상"}
+// ]
 
-const idxResult = [
-    {status:"success", index:"shop-a", alias:"shop", lastSuccess:"5분전", elapsed:"1시간 20분", docs:140000, storage:"530mb"},
-    {status:"fail", index:"shop-b", alias:"shop", lastSuccess:"56분전", elapsed:"1초", docs:0, storage:"10kb"},
-]
+// const idxResult = [
+//     {status:"success", index:"shop-a", alias:"shop", lastSuccess:"5분전", elapsed:"1시간 20분", docs:140000, storage:"530mb"},
+//     {status:"fail", index:"shop-b", alias:"shop", lastSuccess:"56분전", elapsed:"1초", docs:0, storage:"10kb"},
+// ]
 
 const getFinishTime = (startTime, estimatedTime) => {
     var date = new Date().getTime() - new Date(startTime).getTime();
@@ -149,7 +148,6 @@ function numberWithCommas(num) {
 }
 
 function WarningIndex({status, indices}) {
-    const classes = useStyles();
     const history = useHistory();
     function moveDetail(uuid) {
         history.push(`./indices/${uuid}`)
@@ -168,6 +166,7 @@ function WarningIndex({status, indices}) {
             item.uuid = uuid;
             list.push(item);
         }
+        return row;
     })
 
     // console.log(list);
@@ -262,7 +261,7 @@ function RunningIndex({result, running, status, indices, indexPercent}) {
 
                 let nextStep = server.nextStep;
                 let currentStep = server.currentStep;
-                if(currentStep == "FULL_INDEX"){
+                if(currentStep === "FULL_INDEX"){
                     currentStep = "색인";
                 }else if(currentStep === "PROPAGATE"){
                     currentStep = "전파";
@@ -346,8 +345,8 @@ function RunningIndex({result, running, status, indices, indexPercent}) {
                                     시작시간 : {untilTime(row.startTime)} 전 시작<br/>
                                     현재 진행중인 상태 :   <b>
                                         {row.currentStep} 
-                                        {row.currentStep == "전파" ? <><br />{indexPercent[row.index]} </>: <> </>}
-                                        {row.currentStep == "전파" ? " %" : <> </>}
+                                        {row.currentStep === "전파" ? <><br />{indexPercent[row.index]} </>: <> </>}
+                                        {row.currentStep === "전파" ? " %" : <> </>}
                                     </b>
                                     <br />
                                     다음 진행 :
@@ -367,8 +366,6 @@ function RunningIndex({result, running, status, indices, indexPercent}) {
 }
 
 function TopArea({dispatch, result, running, status, indices, indexPercent}) {
-    const classes = useStyles();
-
     return (
         <Grid container spacing={3} >
             <Grid item xs={6}>
@@ -461,7 +458,7 @@ function BottomArea({result, alias, indices}) {
                             Object.values(resultList).sort((a, b) => {
                                 if(a.endTime > b.endTime){
                                     return -1;
-                                }else if(a.endTime == b.endTime){
+                                }else if(a.endTime === b.endTime){
                                     return 0;
                                 }else{
                                     return 1;
@@ -514,8 +511,6 @@ function BottomArea({result, alias, indices}) {
 }
 let eventCode = null
 function DashBoard({dispatch, result, running, status, alias, indices}) {
-    const classes = useStyles();
-
     const [indexPercent, setIndexPercent] = useState({});
 
     function loopFunc() {
@@ -563,7 +558,7 @@ function DashBoard({dispatch, result, running, status, alias, indices}) {
         dispatch(setIndicesActions());
         loopFunc()
         return () => {
-            if (eventCode != null) {
+            if (eventCode !== null) {
                 clearTimeout(eventCode)
             }
         }

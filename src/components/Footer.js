@@ -1,14 +1,9 @@
-import React, {useEffect, useState} from "react";
-import {connect, useDispatch, useSelector} from "react-redux";
+import React, {useEffect} from "react";
 // import styled from "styled-components";
 
 // import {Grid, Hidden, List, ListItem as MuiListItem, ListItemText} from "@material-ui/core";
 import {GApageView, initGA} from "../ga";
 import {useHistory} from "react-router-dom";
-import MuiAlert from "@material-ui/lab/Alert";
-import Snackbar from "@material-ui/core/Snackbar";
-import {setClusterServerCheck} from "../redux/actions/clusterActions"
-import {withTheme} from "styled-components";
 // import { setAutoCompleteAction, setAutoCompleteStoreAction, getAutoCompleteURLAction } from "../redux/actions/dsearchPluginActions";
 //
 // const Wrapper = styled.div`
@@ -33,7 +28,6 @@ import {withTheme} from "styled-components";
 let isListen = false
 function Footer({serverCheck}) {
     const history = useHistory()
-    const dispatch = useDispatch()
 
     useEffect(() => {
         initGA()

@@ -1,7 +1,6 @@
 import React from "react";
 import {connect} from "react-redux";
 import styled from "styled-components";
-import {makeStyles} from '@material-ui/core/styles';
 import {
     Avatar,
     Box as MuiBox,
@@ -15,16 +14,12 @@ import {
 } from "@material-ui/core";
 
 import {spacing} from "@material-ui/system";
-import {green, grey, red, yellow} from "@material-ui/core/colors";
-
-
-const useStyles = makeStyles((theme) => ({}));
+import {green, red, yellow} from "@material-ui/core/colors";
 
 const Grid = styled(MuiGrid)(spacing);
 const Box = styled(MuiBox)(spacing);
 
 function Summary({index, indexInfoList, aliases, settings}) {
-    const classes = useStyles();
     const indexInfo = indexInfoList[0]
 
     if (!indexInfo) {

@@ -1,6 +1,5 @@
 import Client from '~/Client'
 import * as types from "../constants";
-import { ChildFriendlyTwoTone } from '@material-ui/icons';
 
 const client = new Client()
 

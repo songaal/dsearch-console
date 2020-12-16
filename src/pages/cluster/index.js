@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
-import {useHistory} from "react-router-dom";
 import {makeStyles, useTheme} from '@material-ui/core/styles';
 import styled from "styled-components";
 
@@ -38,8 +37,7 @@ import {
     editCluster,
     removeClusterAction,
     setClusterList,
-    setClusterStatus,
-    setKibanaStatus
+    setClusterStatus
 } from "../../redux/actions/clusterActions";
 import {red} from "@material-ui/core/colors";
 import axios from "axios";
@@ -333,7 +331,6 @@ function AddGuideCard(props) {
 }
 
 function Cluster({ dispatch, clusterList, authUser }) {
-    const history = useHistory()
     const classes = useStyles();
     const fullScreen = useMediaQuery(useTheme().breakpoints.down('sm'));
     const [openEditModal, setOpenEditModal] = useState(false);

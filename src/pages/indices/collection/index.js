@@ -7,7 +7,6 @@ import Helmet from 'react-helmet';
 import {
     Box as MuiBox,
     Button as MuiButton,
-    Card as MuiCard,
     Dialog,
     DialogActions,
     DialogContent,
@@ -24,7 +23,6 @@ import {
     TableRow,
     TextField,
     Typography as MuiTypography,
-    Tooltip,
     TableSortLabel,
 } from "@material-ui/core";
 import {makeStyles} from '@material-ui/core/styles';
@@ -33,14 +31,12 @@ import {
     addCollectionList, setCatIndexTemplateList,
     setCollectionIndexSuffix,
     setCollectionList,
-    setMatchedIndexTemplates
 } from "../../../redux/actions/collectionActions";
 import {setIndexTemplatesAction} from "../../../redux/actions/indexTemplateActions";
 
 const Divider = styled(MuiDivider)(spacing, positions);
 const Typography = styled(MuiTypography)(spacing, positions);
 const Box = styled(MuiBox)(spacing, positions);
-const Card = styled(MuiCard)(spacing, positions);
 const Button = styled(MuiButton)(spacing, positions);
 const Grid = styled(MuiGrid)(spacing, positions);
 

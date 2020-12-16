@@ -371,7 +371,6 @@ function ClusterShardMap({indices, nodes, shards}) {
 }
 
 function ClusterInfo({dispatch, shards, nodes, indices, cluster}) {
-    const classes = useStyles();
     useEffect(() => {
         dispatch(setIndicesInfoActions())
         dispatch(setClusterInfoActions())

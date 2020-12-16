@@ -2,7 +2,7 @@ import React, {useEffect} from "react";
 import {connect, useDispatch, useSelector} from "react-redux";
 import Async from '~/components/Async';
 import styled from "styled-components";
-import {makeStyles, withStyles} from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
 import Helmet from 'react-helmet';
 import AntTabs from "~/components/AntTabs"
 import IndicesSelect from "~/components/IndicesSelect";
@@ -11,8 +11,6 @@ import {
     Grid,
     Button,
     Divider as MuiDivider,
-    MenuList,
-    Select,
     Typography,
     CircularProgress, Snackbar
 } from "@material-ui/core";
@@ -29,7 +27,6 @@ import {
 } from "../../../redux/actions/indicesActions";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import {red} from "@material-ui/core/colors";
 import DialogTitle from "@material-ui/core/DialogTitle";
@@ -37,7 +34,6 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
 import Dialog from "@material-ui/core/Dialog";
 
-const useStyles = makeStyles((theme) => ({}));
 const Divider = styled(MuiDivider)(spacing);
 const StyledMenu = withStyles({
     paper: {
@@ -83,7 +79,6 @@ function Index({indexInfoList, settings}) {
     const dispatch = useDispatch();
     const location = useLocation();
     const history = useHistory();
-    const classes = useStyles();
     const { indices, index } = useSelector(store => ({...store.indicesReducers}))
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [process, setProcess] = React.useState(false);

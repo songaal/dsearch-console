@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import styled from "styled-components";
-import { NavLink as RouterNavLink, useLocation} from "react-router-dom";
+// import { NavLink as RouterNavLink} from "react-router-dom";
 import Helmet from 'react-helmet';
 import { spacing } from "@material-ui/system";
 import AceEditor from "react-ace";
@@ -11,28 +11,27 @@ import {makeStyles} from '@material-ui/core/styles';
 import { setDocumentList } from '@actions/rankingTuningActions'
 
 import {
-    Box, Snackbar, Link, CircularProgress,
+    Box, Link, CircularProgress,
     Table as MuiTable, TableRow, TableCell, TableHead, TableBody,
     TextField, Switch,
-    TextareaAutosize as MuiTextareaAutosize,
     Card as MuiCard,
     CardContent,
     Divider as MuiDivider,
     Grid,
     Button,
     Typography,
-    Zoom, FormControlLabel, Hidden
+    FormControlLabel, Hidden
 } from "@material-ui/core";
 
-import { TreeView, TreeItem, ToggleButton } from '@material-ui/lab';
+import { TreeView, TreeItem } from '@material-ui/lab';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import IndicesSelect from "../../../components/IndicesSelect";
 import {resetDocumentList} from "../../../redux/actions/rankingTuningActions";
 
-const NavLink = React.forwardRef((props, ref) => (
-    <RouterNavLink innerRef={ref} {...props} />
-));
+// const NavLink = React.forwardRef((props, ref) => (
+//     <RouterNavLink innerRef={ref} {...props} />
+// ));
 
 const useStyles = makeStyles((theme) => ({
     formControl: {

@@ -15,10 +15,10 @@ const Dashboard = async(() => import("../pages/dashboard"));
 
 // Auth components
 const SignIn = async(() => import("../pages/auth/SignIn"));
-const SignUp = async(() => import("../pages/auth/SignUp"));
-const ResetPassword = async(() => import("../pages/auth/ResetPassword"));
-const Page404 = async(() => import("../pages/auth/Page404"));
-const Page500 = async(() => import("../pages/auth/Page500"));
+// const SignUp = async(() => import("../pages/auth/SignUp"));
+// const ResetPassword = async(() => import("../pages/auth/ResetPassword"));
+// const Page404 = async(() => import("../pages/auth/Page404"));
+// const Page500 = async(() => import("../pages/auth/Page500"));
 const EditUser = async(() => import("../pages/userManagement/EditUser"));
 
 // Analysis components

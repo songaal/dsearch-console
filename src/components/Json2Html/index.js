@@ -1,11 +1,9 @@
 import React from "react";
 import {
     Box,
-    Button as MuiButton,
     Card as MuiCard,
     CardContent,
     Checkbox,
-    Divider as MuiDivider,
     Table,
     TableBody,
     TableCell,
@@ -15,12 +13,10 @@ import {
 } from "@material-ui/core";
 import flat from "flat";
 import styled from "styled-components";
-import {palette, positions, spacing} from "@material-ui/system";
+import {positions, spacing} from "@material-ui/system";
 
-const Divider = styled(MuiDivider)(spacing);
 const Card = styled(MuiCard)(spacing);
 const Typography = styled(MuiTypography)(spacing, positions);
-const Button = styled(MuiButton)(spacing, positions, palette);
 
 function SettingsJson2html(settings) {
     if (!settings) {

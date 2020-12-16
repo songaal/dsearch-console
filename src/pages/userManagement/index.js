@@ -15,7 +15,7 @@ import {
     DialogContent,
     DialogTitle,
     Divider as MuiDivider,
-    FormControl as MuiFormControl, FormControlLabel,
+    FormControl as MuiFormControl, 
     Grid,
     ListItemIcon,
     ListItemText,
@@ -43,7 +43,6 @@ import {
     setUserListAction
 } from "../../redux/actions/userManagementActions";
 import red from "@material-ui/core/colors/red";
-import roleManagementReducers from "../../redux/reducers/roleManagementReducers";
 import {setRoleListAction} from "../../redux/actions/roleManagementActions";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 

@@ -1,14 +1,12 @@
 import React from "react";
 import {connect} from "react-redux"
 import styled from "styled-components";
-import {flatten} from "flat"
 import Json2html from "~/components/Json2Html"
 
 import {
     Box as MuiBox,
     Card as MuiCard,
     CardContent,
-    Checkbox,
     FormControl,
     FormControlLabel,
     Radio,
@@ -220,7 +218,6 @@ function JsonCard({json}) {
 }
 
 function Mapping({mappings}) {
-    const classes = useStyles();
     const [chk, setChk] = React.useState('form');
 
     function handleRadioChange(e) {
