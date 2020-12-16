@@ -30,7 +30,7 @@ function SummaryTable({summary, makeCheckedIdList, makeCheckedList}){
     let tableInfo = [];
 
     for(let i in infoDict){
-        if(infoDict[i].type == systemInfo.type){
+        if(infoDict[i].type === systemInfo.type){
             var info = infoDict[i];
             info.name = systemInfo.name;
             tableInfo.push(info);
@@ -41,7 +41,7 @@ function SummaryTable({summary, makeCheckedIdList, makeCheckedList}){
     for(let i in settings){
         let info = settings[i];
         for(var j in infoDict){
-            if(settings[i].id == infoDict[j].type){
+            if(settings[i].id === infoDict[j].type){
                 info.count = infoDict[j].count;
                 info.words = infoDict[j].words;
                 info.indexCount = infoDict[j].indexCount;

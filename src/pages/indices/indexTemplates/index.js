@@ -154,8 +154,7 @@ function Templates({dispatch, authUser, templates}) {
                                     <TableCell align="center">
                                         {authUser.role.index ?
                                             <Button variant={"outlined"} color={"primary"} onClick={() => history.push(`./indices-templates/${row.name}/edit`)}
-                                                  style={{cursor: "pointer"}}
-                                                  color={"primary"}>수정</Button>
+                                                  style={{cursor: "pointer"}}>수정</Button>
                                             :
                                             <></>
                                         }

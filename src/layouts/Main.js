@@ -1,4 +1,5 @@
 import React, {useState} from "react";
+import {useHistory} from "react-router-dom";
 import {connect} from "react-redux";
 import styled, {createGlobalStyle, ThemeProvider} from "styled-components";
 
@@ -71,10 +72,11 @@ const MainContent = styled(Paper)`
 
 
 function Main({dispatch,authUser, children, routes, width}) {
+  const history = useHistory();
     const [mobileOpen, setMobileOpen] = useState(false)
 
     if (!authUser['token']) {
-        dispatch(setDsearchAuthUser()).catch(() => location.replace("/"))
+        dispatch(setDsearchAuthUser()).catch(() => history.location.replace("/"))
         return null
     }
 

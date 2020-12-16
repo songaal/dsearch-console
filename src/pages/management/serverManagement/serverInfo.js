@@ -47,7 +47,7 @@ const propertyCheck = (property) => {
         return '-'
     } else if (typeof property == 'undefined' || typeof property == undefined) {
         return '-'
-    } else if (property == 'undefined' || property == undefined) {
+    } else if (property === 'undefined' || property === undefined) {
         return '-'
     } else {
         return property
@@ -83,9 +83,9 @@ function NodeSettingTable(node) {
                                     <StyledTableCell>{row.host}</StyledTableCell>
                                     <StyledTableCell>{row.ip}</StyledTableCell>
                                     <StyledTableCell>{(row["roles"] || []).join(", ")}</StyledTableCell>
-                                    <StyledTableCell>{(row.attributes || {})["xpack.installed"] == 'true' ?
+                                    <StyledTableCell>{(row.attributes || {})["xpack.installed"] === 'true' ?
                                         <font color="blue">설치됨</font> : <font color="red">미설치</font>}</StyledTableCell>
-                                    <StyledTableCell>{propertyCheck((((row.settings || {}).xpack || {}).security || {}).enabled) == 'true' ?
+                                    <StyledTableCell>{propertyCheck((((row.settings || {}).xpack || {}).security || {}).enabled) === 'true' ?
                                         <font color="blue">활성</font> : <font color="red">비활성</font>}</StyledTableCell>
 
                                     <StyledTableCell>
@@ -354,7 +354,7 @@ function PluginInfoTable({node}) {
                                     <StyledTableCell>{plugin.description}</StyledTableCell>
                                     <StyledTableCell>{plugin.classname}</StyledTableCell>
                                     <StyledTableCell>{plugin["extended_plugins"].join(", ")}</StyledTableCell>
-                                    <StyledTableCell>{plugin.has_native_controller == 'false' ? '아니오' : '예'}</StyledTableCell>
+                                    <StyledTableCell>{plugin.has_native_controller === 'false' ? '아니오' : '예'}</StyledTableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -399,7 +399,7 @@ function ModuleInfoTable({node}) {
                                     <StyledTableCell>{module.description}</StyledTableCell>
                                     <StyledTableCell>{module.classname}</StyledTableCell>
                                     <StyledTableCell>{module["extended_plugins"].join(", ")}</StyledTableCell>
-                                    <StyledTableCell>{module.has_native_controller == 'false' ? '아니오' : '예'}</StyledTableCell>
+                                    <StyledTableCell>{module.has_native_controller === 'false' ? '아니오' : '예'}</StyledTableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

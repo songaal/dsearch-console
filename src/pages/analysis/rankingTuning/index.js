@@ -406,7 +406,7 @@ function RankingTuningCard({dispatch, result, index}) {
                             />
                         </Box>
 
-                        <Box align="right" mx={3} mt={3} align={"center"}>
+                        <Box align="right" mx={3} mt={3}>
                             {progress? <CircularProgress /> : <Button fullWidth variant="outlined" color="primary" onClick={handleSearchQuery}>검색</Button>}
                         </Box>
 

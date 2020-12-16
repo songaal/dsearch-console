@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {useHistory, useLocation} from "react-router-dom";
+import {useHistory} from "react-router-dom";
 import styled from "styled-components";
 import Helmet from 'react-helmet';
 import AntTabs from "~/components/AntTabs";
@@ -50,7 +50,6 @@ const tabs = [{label: "매핑"}, {label: "셋팅"}]
 
 let message = ""
 function New({ dispatch }) {
-    const location = useLocation();
     const history = useHistory();
     const classes = useStyles();
     const [templateText, setTemplateText] = useState('')

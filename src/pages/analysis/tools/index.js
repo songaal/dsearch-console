@@ -140,6 +140,7 @@ function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetai
             if (analysis !== undefined && analysis.analyzer !== undefined) {
                 Object.keys(analysis.analyzer).map(analyzer => index2AnalyzerList.push(analyzerKey + "/" + analyzer))
             }
+            return <></>;
         })
     }
 
@@ -249,7 +250,7 @@ function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetai
                     <Typography variant="h4" display="inline" >분석 결과</Typography>
                 </Box>
                 <Box p={2}>
-                    {toolsTypeAction == 'brief' ? <BriefResult resultBrief={resultBrief} /> :  <DetailResult resultDetail={resultDetail}/>}
+                    {toolsTypeAction === 'brief' ? <BriefResult resultBrief={resultBrief} /> :  <DetailResult resultDetail={resultDetail}/>}
                 </Box>
             </CardContent>
         </Card>

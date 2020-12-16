@@ -16,7 +16,6 @@ import {
     TableHead,
     TableRow,
 } from "@material-ui/core";
-import {makeStyles} from '@material-ui/core/styles';
 import {positions, spacing} from "@material-ui/system";
 import {ArrowDropDown} from "@material-ui/icons";
 import {deleteIndexHistoryList, setIndexHistoryList, setIndexHistoryTypeList} from "../../../redux/actions/collectionActions";

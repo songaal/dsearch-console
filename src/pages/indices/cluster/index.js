@@ -323,6 +323,8 @@ function ClusterShardMap({indices, nodes, shards}) {
                                                                             return (
                                                                                 <ShardButton prirep={data.prirep} label={data.shard} key={dataIndex} />
                                                                             )
+                                                                        }else{
+                                                                            return <></>;
                                                                         }
                                                                     })
                                                                 }
@@ -333,7 +335,7 @@ function ClusterShardMap({indices, nodes, shards}) {
                                             </TableRow>
                                             : <></>
                                     }
-                                    {Object.values(nodes).map((nodeRow, nodeRowIndex) =>
+                                    {Object.values(nodes).map((nodeRow, nodeRowIndex) => 
                                         <TableRow key={nodeRowIndex}>
                                             <TableCell align="center">
                                             <Link style={{cursor: "pointer"}} onClick={() => moveServerDetail(nodeRow.name)}>{nodeRow.name}</Link>
@@ -352,6 +354,8 @@ function ClusterShardMap({indices, nodes, shards}) {
                                                                 Object.values(newMap.get(nodeRow.name)).map((data, dataIndex) => {
                                                                     if (element.index === data.index) {
                                                                         return <ShardButton key={dataIndex} prirep={data.prirep} label={data.shard} />
+                                                                    }else{
+                                                                        return <></>
                                                                     }
                                                                 })
                                                             }

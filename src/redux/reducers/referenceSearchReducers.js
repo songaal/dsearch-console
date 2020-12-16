@@ -1,5 +1,5 @@
 import * as types from '../constants';
-import {SET_REFERENCE_RESULT_ALL} from "../constants";
+// import {SET_REFERENCE_RESULT_ALL} from "../constants";
 
 let initState = {
     keyword: '',

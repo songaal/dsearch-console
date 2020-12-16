@@ -238,7 +238,7 @@ function Result({resultList, authUser, pluginResponse}) {
         history.push(`/${authUser['cluster']['id']}/search/reference-ui`)
     }
 
-    let resultACList = pluginResponse.result;
+    // let resultACList = pluginResponse.result;
     // let listStr = "";
     // if(resultACList !== undefined && resultACList !== null && resultACList.length > 0 ){
     //     resultACList.forEach(

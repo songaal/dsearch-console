@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 
 import {SET_DSEARCH_SERVER, SET_DSEARCH_AUTH_USER} from "./redux/constants";
 
@@ -17,8 +17,8 @@ class Client {
             // eslint-disable-next-line no-restricted-globals
             if (server === null && location.pathname !== "/") {
                 // eslint-disable-next-line no-restricted-globals
-                location.href = "/"
-                console.log("server: is null and pathname: ", location.pathname)
+                window.location.href = "/"
+                console.log("server: is null and pathname: ", window.location.pathname)
                 // location.href = process.env.PUBLIC_URL
                 // return new Promise(async (resolve, reject) => reject())
             } else {
@@ -27,9 +27,9 @@ class Client {
         }
         // eslint-disable-next-line no-restricted-globals
 
-        if (location.pathname.split("/").length >= 3) {
+        if (window.location.pathname.split("/").length >= 3) {
             // eslint-disable-next-line no-restricted-globals
-            const clusterId = location.pathname.substring(1, location.pathname.indexOf("/", 1))
+            const clusterId = window.location.pathname.substring(1, window.location.pathname.indexOf("/", 1))
             config.headers = Object.assign(config.headers||{}, {
                 "cluster-id": clusterId
             })

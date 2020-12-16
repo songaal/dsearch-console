@@ -1,5 +1,5 @@
 import * as types from '../constants';
-import {SET_USER_LIST} from "../constants";
+// import {SET_USER_LIST} from "../constants";
 
 let initState = {
     user: {},

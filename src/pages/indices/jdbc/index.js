@@ -221,8 +221,8 @@ function JdbcTable({dispatch, authUser, JdbcList, handleAccessFlag}){
                                         <TableCell style={{whiteSpace: "nowrap"}}>{item['no'] + 1}</TableCell>
                                         <TableCell style={{whiteSpace: "nowrap"}}>{item.sourceAsMap.id}</TableCell>
                                         <TableCell style={{whiteSpace: "nowrap"}}>{item.sourceAsMap.name}</TableCell>
-                                        <TableCell style={{whiteSpace: "nowrap"}} style={{wordBreak:"break-all"}}>{item.sourceAsMap.driver}</TableCell>
-                                        <TableCell style={{whiteSpace: "nowrap"}} style={{wordBreak:"break-all"}}>{item.sourceAsMap.url}</TableCell>
+                                        <TableCell style={{whiteSpace: "nowrap", wordBreak:"break-all"}}>{item.sourceAsMap.driver}</TableCell>
+                                        <TableCell style={{whiteSpace: "nowrap", wordBreak:"break-all"}}>{item.sourceAsMap.url}</TableCell>
                                         <TableCell style={{whiteSpace: "nowrap"}}>{item.sourceAsMap.user}</TableCell>
                                         <TableCell style={{whiteSpace: "nowrap"}}>{password}</TableCell>
                                         {/* <TableCell>{item._source.password}</TableCell> */}

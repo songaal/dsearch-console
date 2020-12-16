@@ -54,7 +54,7 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
     const [isMatch, setMatch] = useState(false);
     const [mode, setMode] = useState("view")  //view, edit
     const [pageNum, setPageNum] = useState(0);
-    const [rowSize, setRowSize] = useState(20);
+    const [rowSize] = useState(20);
 
     const [createId, setCreateId] = useState("");
     const [createKeyword, setCreateKeyword] = useState("");
@@ -131,7 +131,7 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
     }
 
     async function handleDeleteButton(id) {
-        if (!confirm("해당 라인을 삭제 하시겠습니까?")) {
+        if (!window.confirm("해당 라인을 삭제 하시겠습니까?")) {
             return false;
         }
         checkedList = checkedList.filter(checkedListId => checkedListId !== id)
@@ -140,8 +140,9 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
         handlePagination(pageNum)
     }
 
+    
     async function handleUpdateButton(id, row, columns) {
-        if (!confirm("해당 라인을 수정 하시겠습니까?")) {
+        if (!window.confirm("해당 라인을 수정 하시겠습니까?")) {
             return false;
         }
 

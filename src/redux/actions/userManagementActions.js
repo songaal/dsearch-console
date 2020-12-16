@@ -1,4 +1,4 @@
-import {SET_API_MANAGEMENT, SET_USER, SET_USER_LIST} from "../constants";
+import {SET_USER, SET_USER_LIST} from "../constants";
 import Client from '~/Client'
 
 const client = new Client()

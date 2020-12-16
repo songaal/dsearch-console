@@ -108,7 +108,7 @@ function TestPipeline({ dispatch, pipeline, pipelineList}) {
                                             onChange={handleChange}
                                         >
                                             {
-                                                pipelineList === null || pipelineList === undefined || Object.keys(pipelineList).length == 0 ?
+                                                pipelineList === null || pipelineList === undefined || Object.keys(pipelineList).length === 0 ?
                                                     <></>
                                                     : Object.keys(pipelineList).sort().map((p, i) => (<MenuItem key={i} value={p}>{p}</MenuItem>))
                                             }

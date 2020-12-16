@@ -107,7 +107,7 @@ function DictionarySearch ({dispatch, settings, searchResult}) {
                         <ul>
                             {/* 기초 사전 */}
                             {searchResult.result.length === 0 ? <li> 현재 입력된 내용이 없습니다. </li> : searchResult.result.map((item) => {
-                                if("SYSTEM" == item.type) return <li key={item.type}> {item.posTag} {" : "} {item.prob} </li>;
+                                if("SYSTEM" === item.type) return <li key={item.type}> {item.posTag} {" : "} {item.prob} </li>;
                                 return <></>;
                             })}
 

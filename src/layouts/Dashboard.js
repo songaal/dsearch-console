@@ -1,4 +1,5 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
+import {useHistory} from "react-router-dom"
 import {connect} from "react-redux";
 import styled, {createGlobalStyle, ThemeProvider} from "styled-components";
 import Sidebar from "../components/Sidebar";
@@ -71,9 +72,9 @@ const MainContent = styled(Paper)`
 
 function Dashboard({dispatch, authUser, children, routes, width}) {
     const [mobileOpen, setMobileOpen] = useState(false)
-
+    const history = useHistory();
     if (!authUser['token']) {
-        dispatch(setDsearchAuthUser()).catch(() => location.replace("/"))
+        dispatch(setDsearchAuthUser()).catch(() => history.location.replace("/"))
         return null
     }
 

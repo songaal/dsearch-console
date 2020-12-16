@@ -1,4 +1,4 @@
-import {SET_JDBC_INDEX, SET_JDBC_LIST, SET_JDBC_ACCESS_TEST, SET_JDBC_ADD_RESULT, SET_JDBC_DELETE_RESULT, SET_JDBC_UPDATE_RESULT} from "../constants";
+import {SET_JDBC_LIST, SET_JDBC_ACCESS_TEST, SET_JDBC_ADD_RESULT, SET_JDBC_DELETE_RESULT, SET_JDBC_UPDATE_RESULT} from "../constants";
 import Client from '~/Client'
 
 const client = new Client()

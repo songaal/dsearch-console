@@ -34,7 +34,6 @@ export const setDsearchAuthUser = () => dispatch => client.call({
         console.error('error', response)
         throw new Error()
     }
-    return response
 })
 
 export const setDsearchSignIn = user => dispatch => client.call({

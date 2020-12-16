@@ -43,9 +43,10 @@ function getLists(nodes){
     let sortList = [];
     let rowList = {};
 
-    Object.values(nodes).map((row, index) =>{
+    Object.values(nodes).map((row) => {
         sortList.push(row.name);
         rowList[row.name] = row;
+        return row;
     })
     
     sortList = sortList.sort(function(a,b){
@@ -96,9 +97,9 @@ function NodeSettingTable({server}) {
                                  <StyledTableCell>{row.host}</StyledTableCell>
                                  <StyledTableCell>{row.ip}</StyledTableCell>
                                  <StyledTableCell>{(row["roles"] || []).join(", ")}</StyledTableCell>
-                                 <StyledTableCell>{(row.attributes || {})["xpack.installed"] == 'true' ?
+                                 <StyledTableCell>{(row.attributes || {})["xpack.installed"] === 'true' ?
                                      <font color="blue">설치됨</font> : <font color="red">미설치</font>}</StyledTableCell>
-                                 <StyledTableCell>{(((row.settings || {}).xpack || {}).security || {}).enabled == 'true' ?
+                                 <StyledTableCell>{(((row.settings || {}).xpack || {}).security || {}).enabled === 'true' ?
                                      <font color="blue">활성</font> : <font color="red">비활성</font>}</StyledTableCell>
 
                                  <StyledTableCell>

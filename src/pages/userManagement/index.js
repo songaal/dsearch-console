@@ -15,7 +15,6 @@ import {
     DialogContent,
     DialogTitle,
     Divider as MuiDivider,
-    FormControl as MuiFormControl, 
     Grid,
     ListItemIcon,
     ListItemText,
@@ -77,7 +76,7 @@ const StyledTableRow = withStyles((theme) => ({
     },
 }))(TableRow);
 
-const FormControl = styled(MuiFormControl)(spacing);
+// const FormControl = styled(MuiFormControl)(spacing);
 const TextFieldSpacing = styled(MuiTextField)(spacing);
 
 const TextField = styled(TextFieldSpacing)`
@@ -186,7 +185,8 @@ function UserManagement({dispatch, userList, userRolesList, roleList, authUser})
         setUsernameError(false)
         setRoleIdError(false)
 
-        const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        // const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         if (email === "" || !re.test(email)) {
             setEmailError(true)
             return false
