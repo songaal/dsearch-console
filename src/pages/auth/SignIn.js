@@ -119,7 +119,7 @@ function SignIn({dispatch}) {
                         hash4: btoa(btoa(btoa(password)))
                     }))
                 }
-                history.location.replace(authenticatedRoute)
+                history.replace(authenticatedRoute)
             })
             .catch(err => {
                 setInValid(true);
