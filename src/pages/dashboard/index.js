@@ -463,9 +463,9 @@ function BottomArea({result, alias, indices}) {
                                 }else{
                                     return 1;
                                 }
-                            }).map(row => {
+                            }).map((row, index) => {
                                 return (
-                                    <TableRow key={row.index + "_" + row.alias}>
+                                    <TableRow key={row.index + "_" + index}>
                                         <TableCell align="center">
                                             <Box display="flex" justifyContent="left" alignItems="center">
                                                 {
