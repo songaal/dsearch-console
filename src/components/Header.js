@@ -102,7 +102,7 @@ function ClusterMenu() {
 
     useEffect(() => {
         dispatch(setClusterList())
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     function toggleMenu(event) {
         setClusterListMenu(event.currentTarget)
@@ -423,7 +423,7 @@ const Header = ({theme, layout, onDrawerToggle, serverCheck}) => {
                 eventCode = null
             }
         }
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     function handleServerCheck() {
         dispatch(setClusterServerCheck())

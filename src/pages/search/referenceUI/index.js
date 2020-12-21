@@ -88,7 +88,7 @@ function SearchFormPanel({template, authUser, templateIndex, lastTemplateIndex, 
     useEffect(() => {
         aceEditor.current.editor.setValue(template['query'] || '', 0)
         aceEditor.current.editor.clearSelection()
-    }, [])
+    }, [])  // eslint-disable-line react-hooks/exhaustive-deps
 
     function handleChangeField(event, index, field) {
         let clone = fields.slice()
@@ -539,7 +539,7 @@ function ReferenceUI({dispatch, authUser, acUrl}) {
         dispatch(setReferenceTemplateList())
             .then(response => setTemplateList(response.payload))
             .catch(error => console.error(error))
-    }, [])
+    }, [])  // eslint-disable-line react-hooks/exhaustive-deps
 
 
     function addTemplatePanel() {

@@ -55,7 +55,7 @@ function Templates({dispatch, authUser, templates}) {
 
     useEffect(() => {
         dispatch(setIndexTemplatesAction())
-    }, [])
+    }, [])  // eslint-disable-line react-hooks/exhaustive-deps
         // .map((c, i) => ({...c, no: collectionList.length - 1 - i}))
     let list = templates.sort((a, b) => {
         if(a['name'] > b['name']){

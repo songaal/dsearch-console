@@ -34,7 +34,7 @@ const fields = [
 function Summary({ dispatch, authUser, list }) {
     useEffect(() => {
         dispatch(setPipelineList())
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     const name = useRef(null);
     const aceEditor = useRef(null);
@@ -58,11 +58,12 @@ function Summary({ dispatch, authUser, list }) {
     }
 
     function closeModal(){
+        console.log(key);
         setModalFlag(false)
     }
 
     function openModal(id){
-        setKey(event.target.id);
+        setKey(id);
         setModalFlag(true);
         setFlag(1);
     }
@@ -261,16 +262,16 @@ function Summary({ dispatch, authUser, list }) {
             >
                 <DialogTitle>
                     {
-                        flag == 1 ? "파이프라인 설정" :
-                            flag == 2 ? "파이프라인 추가" : 
-                                flag == 3? "파이프라인 수정":
+                        flag === 1 ? "파이프라인 설정" :
+                            flag === 2 ? "파이프라인 추가" : 
+                                flag === 3? "파이프라인 수정":
                                     "파이프라인 삭제"
                     }
                 </DialogTitle>
                 <DialogContent>
                     {
-                        flag == 1 ? <pre style={{fontFamily: "godic", fontSize:"15px"}}> {JSON.stringify(list[key], null, 2)} </pre> :
-                            flag == 2 ? <Box style={{width: "100%"}}>
+                        flag === 1 ? <pre style={{fontFamily: "godic", fontSize:"15px"}}> {JSON.stringify(list[key], null, 2)} </pre> :
+                            flag === 2 ? <Box style={{width: "100%"}}>
                                             <TextField
                                                 fullWidth inputRef={name} error={nameError}
                                                 placeholder={"파이프라인 명칭을 입력해 주세요."}
@@ -290,7 +291,7 @@ function Summary({ dispatch, authUser, list }) {
                                                 setOptions={{ useWorker: false }}
                                             /> 
                                         </Box>: 
-                                flag == 3 ? <Box style={{width: "100%"}}>
+                                flag === 3 ? <Box style={{width: "100%"}}>
                                                 <TextField
                                                     fullWidth 
                                                     disabled={true} value={key}
@@ -315,9 +316,9 @@ function Summary({ dispatch, authUser, list }) {
                 </DialogContent>
                 <DialogActions>
                     {
-                        flag == 1 ? <></> :
-                            flag == 2 ? <Button variant={"outlined"} color={"primary"} onClick={() => handleAddPipeline()}>추가</Button> : 
-                                flag == 3 ? <Button variant={"outlined"} color={"primary"} onClick={() => handleEditPipeline()}>수정</Button> :
+                        flag === 1 ? <></> :
+                            flag === 2 ? <Button variant={"outlined"} color={"primary"} onClick={() => handleAddPipeline()}>추가</Button> : 
+                                flag === 3 ? <Button variant={"outlined"} color={"primary"} onClick={() => handleEditPipeline()}>수정</Button> :
                                 <Button variant="outlined" style={{ whiteSpace: "nowrap", borderColor:"red", color: "red"}} onClick={() => handleDeletePipeline()}>삭제</Button>
                     }
                     <Button onClick={() => closeModal()}>닫기</Button>

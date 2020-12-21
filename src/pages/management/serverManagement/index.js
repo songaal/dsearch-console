@@ -74,11 +74,11 @@ function Server({dispatch, server}) {
 
     useEffect(() => {
         dispatch(setServerSummaryActions());
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         selectNode();
-    }, [server.nodes])
+    }, [server.nodes]) // eslint-disable-line react-hooks/exhaustive-deps
 
     const selectNode =()=>{
         if(history.location.search !== "" || history.location.search !== undefined){

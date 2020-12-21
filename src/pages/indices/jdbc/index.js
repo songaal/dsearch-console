@@ -584,7 +584,7 @@ function JdbcCard({dispatch, authUser, JdbcList, JdbcAccessTest, changedJdbcList
 function JDBC({dispatch, authUser, JdbcList, JdbcAccessTest, changedJdbcList}) {
     useEffect(() => {
         dispatch(setJDBCList())
-    }, [])
+    }, [dispatch])
 
     return (
         <React.Fragment>

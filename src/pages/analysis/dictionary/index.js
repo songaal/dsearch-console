@@ -27,7 +27,7 @@ function Dictionary({dispatch, authUser, settings, active}) {
 
     useEffect(() => {
         dispatch(setSettings())
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     function handleTabChange(index) {
         dispatch(setActiveSettingIndex(index - firstTabs.length))

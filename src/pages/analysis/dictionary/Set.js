@@ -71,7 +71,7 @@ function Set({ dictionary, authUser, setting, dataSet }) {
     
     useEffect(() => {
         dispatch(setDictionary(dictionary, pageNum, rowSize, isMatch, keyword, searchColumns))
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     function handleColumnChange(event) {
         checkedList = []

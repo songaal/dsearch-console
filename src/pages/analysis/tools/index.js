@@ -259,9 +259,9 @@ function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetai
 
 function Tools({ dispatch, analyzerList, pluginList, resultBrief, resultDetail }) {
     useEffect(() => {
-            dispatch(setAnalyzerList())
-            dispatch(setPluginList())
-    }, [])
+        dispatch(setAnalyzerList())
+        dispatch(setPluginList())
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <React.Fragment>

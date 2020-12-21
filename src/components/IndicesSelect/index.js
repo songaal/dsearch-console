@@ -18,7 +18,7 @@ function IndicesSelect({dispatch, indices, index, enableSystem=true}) {
 
     useEffect(() => {
         dispatch(setIndicesAction())
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <React.Fragment>

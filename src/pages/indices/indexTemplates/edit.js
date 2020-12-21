@@ -109,7 +109,7 @@ function Edit({dispatch, template, templates}) {
             let pathname = location.pathname.substring(0, location.pathname.lastIndexOf("/"))
             setSelectedTemplate(pathname.substring(pathname.lastIndexOf("/") + 1))
         }
-    }, [selectedTemplate])
+    }, [selectedTemplate]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         setIndexPatternText((template['index_patterns'] || []).join(","))
@@ -150,7 +150,7 @@ function Edit({dispatch, template, templates}) {
             settingsAceEditor.current.editor.setValue(settingsJson || '', 0)
             settingsAceEditor.current.editor.clearSelection()
         }
-    }, [mappingMode, settingMode])
+    }, [mappingMode, settingMode]) // eslint-disable-line react-hooks/exhaustive-deps
 
 
     function handleTemplateChange(template) {

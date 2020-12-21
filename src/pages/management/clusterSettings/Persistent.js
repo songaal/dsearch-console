@@ -16,7 +16,7 @@ function Persistent({dispatch, persistent}) {
 
     useEffect(() => {
         dispatch(setClusterSettingsAction())
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         let settings = {}

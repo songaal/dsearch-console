@@ -70,7 +70,7 @@ function Space({ dictionary, authUser, setting, dataSet }) {
     // authUser.role.analysis = false;
     useEffect(() => {
         dispatch(setDictionary(dictionary, pageNum, rowSize, isMatch, keyword, searchColumns))
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     function handleColumnChange(event) {
         checkedList = []

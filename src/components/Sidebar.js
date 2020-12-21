@@ -296,7 +296,7 @@ function Sidebar(props) {
             //     [index]: isActive || isOpen || isHome
             // }));
         });
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     function toggle(index) {
         // Collapse all elements

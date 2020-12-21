@@ -34,7 +34,7 @@ function ApiManagement({dispatch, cat}) {
         if (selected !== null) {
             dispatch(setApiManagementActions(selected))
         }
-    }, [selected])
+    }, [selected]) // eslint-disable-line react-hooks/exhaustive-deps
 
     const handleChange = (event) => {
         setSelected(event.target.value);

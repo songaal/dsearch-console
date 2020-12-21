@@ -49,7 +49,7 @@ function IndexedDataTable({dispatch, index, mappings}) {
         setColumns([])
         setFrom(0)
         fetchDocuments({searchKeyword: "", searchFrom: 0})
-    }, [index])
+    }, [index]) // eslint-disable-line react-hooks/exhaustive-deps
 
     function fetchDocuments({ searchFrom, searchSize, searchKeyword }) {
         setDataList([])

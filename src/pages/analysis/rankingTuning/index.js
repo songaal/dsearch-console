@@ -245,7 +245,7 @@ function RankingTuningCard({dispatch, result, index}) {
                 clearInterval(eventCode)
             }
         }
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
 
     const handleChecked = (evnet) =>{
@@ -570,7 +570,7 @@ function RankingTuning({ dispatch, result, index}) {
 
     useEffect(() => {
         return () => dispatch(resetDocumentList())
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <React.Fragment>

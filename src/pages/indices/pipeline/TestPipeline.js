@@ -47,7 +47,7 @@ function TestPipeline({ dispatch, pipeline, pipelineList}) {
 
     useEffect(() => {
         dispatch(setPipelineList())
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     function isJson(str) {
         try {

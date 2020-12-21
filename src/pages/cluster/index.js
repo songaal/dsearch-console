@@ -361,7 +361,7 @@ function Cluster({ dispatch, clusterList, authUser }) {
 
     useEffect(() => {
         dispatch(setClusterList())
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     function toggleOpenAddModal() {
         setProcess(false)

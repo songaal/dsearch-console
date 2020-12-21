@@ -46,7 +46,7 @@ function Index({dispatch, indices}) {
 
     useEffect(() => {
         dispatch(setIndicesAction())
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
 
     function moveDetail(uuid) {

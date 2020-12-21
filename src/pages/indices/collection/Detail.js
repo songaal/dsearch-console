@@ -48,7 +48,7 @@ function Detail({dispatch, collection, collectionList}) {
         dispatch(setCollectionIndexSuffix())
         dispatch(setJDBCList())
         dispatch(setCollectionList())
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     if (Object.keys(collection).length === 0) {
         return null

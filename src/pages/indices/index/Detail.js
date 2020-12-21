@@ -102,7 +102,7 @@ function Index({indexInfoList, settings}) {
         if (searchIndex) {
             dispatch(setIndexAction(searchIndex['index']))
         }
-    }, [indices])
+    }, [indices]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         if (index) {
@@ -113,7 +113,7 @@ function Index({indexInfoList, settings}) {
             dispatch(setIndexMappingsAction(index))
             dispatch(setIndexDocumentSourceListAction({index, from: 0, size: 500, columns: [], searchKeyword: ''}))
         }
-    }, [index])
+    }, [index]) // eslint-disable-line react-hooks/exhaustive-deps
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);

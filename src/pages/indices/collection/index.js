@@ -99,7 +99,7 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
         dispatch(setIndexTemplatesAction())
         dispatch(setCollectionList())
         dispatch(setCatIndexTemplateList())
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     function toggleOpenAddModal() {
         setAddBtnDisabled(true)

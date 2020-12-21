@@ -140,7 +140,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
             aceEditor.current.editor.setValue((collection['launcher']||{})['yaml']||"")
             aceEditor.current.editor.clearSelection()
         }
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         try {
@@ -158,7 +158,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
         } catch (error) {
             console.log('change ace editor')
         }
-    }, [mode])
+    }, [mode]) // eslint-disable-line react-hooks/exhaustive-deps
 
 
     function toggleEditModal(event) {

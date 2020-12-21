@@ -465,7 +465,7 @@ function BottomArea({result, alias, indices}) {
                                 }
                             }).map(row => {
                                 return (
-                                    <TableRow key={row.index}>
+                                    <TableRow key={row.index + "_" + row.alias}>
                                         <TableCell align="center">
                                             <Box display="flex" justifyContent="left" alignItems="center">
                                                 {
@@ -562,7 +562,7 @@ function DashBoard({dispatch, result, running, status, alias, indices}) {
                 clearTimeout(eventCode)
             }
         }
-    }, [])
+    }, [])  // eslint-disable-line react-hooks/exhaustive-deps
     getPropagateIndexPercent();
     
     return (

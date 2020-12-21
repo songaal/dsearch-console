@@ -380,7 +380,7 @@ function ClusterInfo({dispatch, shards, nodes, indices, cluster}) {
         dispatch(setClusterInfoActions())
         dispatch(setNodesInfoActions())
         dispatch(setShardsInfoActions())
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <React.Fragment>

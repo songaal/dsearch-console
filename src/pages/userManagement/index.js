@@ -138,7 +138,7 @@ function UserManagement({dispatch, userList, userRolesList, roleList, authUser})
     useEffect(() => {
         dispatch(setRoleListAction())
         dispatch(setUserListAction())
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     function toggleDropDownButton(event) {
         if (openDropDown === null) {

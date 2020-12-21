@@ -132,7 +132,7 @@ function Role({dispatch, roleList, userRolesList, authUser}) {
 
     useEffect(() => {
         dispatch(setRoleListAction())
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
 
     function handleSelectCheckbox(id) {

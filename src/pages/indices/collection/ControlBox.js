@@ -109,8 +109,7 @@ function ControlBox({dispatch, authUser, collection, job}) {
                 // ignore..
             }
         }
-
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     const handleMenuItemClick = (event, option, index) => {
         if ('연속실행' === option) {

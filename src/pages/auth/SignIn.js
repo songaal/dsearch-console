@@ -72,7 +72,7 @@ function SignIn({dispatch}) {
             localStorage.removeItem(SET_DSEARCH_SERVER)
         }
 
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     function checkServer() {
         if (server.length === 0) {

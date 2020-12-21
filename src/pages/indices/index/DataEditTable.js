@@ -65,7 +65,7 @@ function DataEditTable({dispatch, index, authUser, mappings}) {
             return
         }
         fetchIndexDocumentSourceList({keyword})
-    }, [index])
+    }, [index]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         const response = documentSourceResponse;
@@ -96,7 +96,7 @@ function DataEditTable({dispatch, index, authUser, mappings}) {
             tmpData['_hitsId'] = hit['_id']
             return tmpData
         }))
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     function fetchIndexDocumentSourceList({searchSize=500, columns=[], keyword=null}) {
             return dispatch(setIndexMappingsAction(index)).then((response)=> {

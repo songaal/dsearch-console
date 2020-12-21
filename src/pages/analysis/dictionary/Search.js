@@ -56,7 +56,7 @@ function DictionarySearch ({dispatch, settings, searchResult}) {
     useEffect(() => {
         dispatch(setSettings())
         searchResult.result = []
-    }, [])
+    }, [])  // eslint-disable-line react-hooks/exhaustive-deps
     
     const [showSearchInput, setShowSearchInput] = useState("")
     const searchInput = useRef("");

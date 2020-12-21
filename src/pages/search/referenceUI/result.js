@@ -112,7 +112,7 @@ function SearchPanel(documents, aggregations, template, pagination) {
                                                                     backgroundColor: "#F7F9FC",
                                                                     borderRadius: '5px'
                                                                 }}>
-                                                                    <a href={clickUrl} target="_blank">
+                                                                    <a href={clickUrl} rel="noopener noreferrer" target="_blank">
                                                                         <Typography variant={"h5"} display={"inline"}>
                                                                             <div dangerouslySetInnerHTML={{__html: title}}></div>
                                                                         </Typography>

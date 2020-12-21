@@ -68,7 +68,7 @@ function History({dispatch, authUser, collection, history}) {
             size: paginationSize,
             from,
         }))
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     function handleSetIndexHistoryList(editFrom, type) {
         setFrom(editFrom)

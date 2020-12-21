@@ -81,7 +81,7 @@ function SummaryTable({summary, makeCheckedIdList, makeCheckedList}){
 
     useEffect(() => {
         dispatch(setSummary())
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     function makeCheckedIdList(key, value){
         let cList = {};

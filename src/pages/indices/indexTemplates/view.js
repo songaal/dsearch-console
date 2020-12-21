@@ -76,21 +76,21 @@ function View({ dispatch, template, templates}) {
             // eslint-disable-next-line no-restricted-globals
             setSelectedTemplate(location.pathname.substring(location.pathname.lastIndexOf("/") + 1))
         }
-    }, [selectedTemplate])
+    }, [selectedTemplate]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         setIndexPatternText((template['index_patterns'] || []).join(","))
-    }, [template['index_patterns']])
+    }, [template['index_patterns']]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         setMappingsJson(JSON.stringify((template['mappings'] || {}), null, 4))
         // setMappingsJson(JSON.stringify(((template['mappings'] || {})['properties']), null, 4))
 
-    }, [template['mappings']])
+    }, [template['mappings']]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         setSettingsJson(JSON.stringify(((template['settings'] || {})['index']), null, 4))
-    }, [template['settings']])
+    }, [template['settings']]) // eslint-disable-line react-hooks/exhaustive-deps
 
     function handleTemplateChange(template) {
         history.push(`../indices-templates/${template}`)
