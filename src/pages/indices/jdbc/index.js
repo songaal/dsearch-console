@@ -219,10 +219,15 @@ function JdbcTable({dispatch, authUser, JdbcList, handleAccessFlag}){
                                     password = password.substring(0, 2) + star + password.substring(password.length-1, password.length);
                                     return <TableRow key={item.sourceAsMap.id}>
                                         <TableCell style={{whiteSpace: "nowrap"}}>{item['no'] + 1}</TableCell>
-                                        <TableCell style={{whiteSpace: "nowrap"}}>{item.sourceAsMap.id}</TableCell>
+                                        {/* <TableCell style={{whiteSpace: "nowrap"}}>{item.sourceAsMap.id}</TableCell>
                                         <TableCell style={{whiteSpace: "nowrap"}}>{item.sourceAsMap.name}</TableCell>
                                         <TableCell style={{whiteSpace: "nowrap", wordBreak:"break-all"}}>{item.sourceAsMap.driver}</TableCell>
-                                        <TableCell style={{whiteSpace: "nowrap", wordBreak:"break-all"}}>{item.sourceAsMap.url}</TableCell>
+                                        <TableCell style={{whiteSpace: "nowrap", wordBreak:"break-all"}}>{item.sourceAsMap.url}</TableCell> */}
+                                        <TableCell style={{wordBreak: "break-word"}}>{item.sourceAsMap.id}</TableCell>
+                                        <TableCell style={{wordBreak: "break-word"}}>{item.sourceAsMap.name}</TableCell>
+                                        <TableCell style={{wordBreak: "break-all"}}>{item.sourceAsMap.driver}</TableCell>
+                                        <TableCell style={{wordBreak: "break-all"}}>{item.sourceAsMap.url}</TableCell>
+
                                         <TableCell style={{whiteSpace: "nowrap"}}>{item.sourceAsMap.user}</TableCell>
                                         <TableCell style={{whiteSpace: "nowrap"}}>{password}</TableCell>
                                         {/* <TableCell>{item._source.password}</TableCell> */}
