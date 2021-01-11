@@ -55,7 +55,7 @@ class Client {
                 console.log(error);
                 if (error.response && error.response.status === 401 && config.uri !== '/auth') {
                     // eslint-disable-next-line no-restricted-globals
-                    location.href = "/"
+                    window.location.href = "/"
                     // location.href = process.env.PUBLIC_URL
                 } else {
                     reject(error)
