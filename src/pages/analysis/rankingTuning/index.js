@@ -574,7 +574,7 @@ function RankingTuning({ dispatch, result, index}) {
 
     return (
         <React.Fragment>
-            <Helmet title="Blank" />
+            <Helmet title="랭킹튜닝"/>
             <Typography variant="h3" gutterBottom display="inline">
                 랭킹튜닝
             </Typography>

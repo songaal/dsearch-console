@@ -265,7 +265,7 @@ function Tools({ dispatch, analyzerList, pluginList, resultBrief, resultDetail }
 
     return (
         <React.Fragment>
-            <Helmet title="Blank" />
+            <Helmet title="분석도구"/>
             <Typography variant="h3" display="inline">
                 분석도구
             </Typography>
