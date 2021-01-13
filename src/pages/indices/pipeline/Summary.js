@@ -31,13 +31,67 @@ const fields = [
     { id: "delete", label: "삭제", sorting: false},
 ]
 
+const TEMPLATE = 
+`{
+    "description": "",
+    "processors": [
+      {
+        "lowercase": {
+            "field": "field"
+        }
+      },
+      {
+        "html_strip": {
+          "field": "field"
+        }
+      },
+      {
+        "set": {
+          "field": "field",
+          "value": "value"
+        }
+      },
+      {
+        "trim": {
+          "field": "field"
+        }
+      },
+      {
+        "split": {
+          "field": "field",
+          "separator": ","
+        }
+      },
+      {
+        "gsub": {
+          "field": "field",
+          "pattern": "pattern",
+          "replacement": "replacement"
+        }
+      },
+      {
+        "remove": {
+          "field": "field"
+        }
+      },
+      {
+        "script": {
+          "lang": "painless",
+          "source": ""
+        }
+      }
+    ]
+  }`;
+
 function Summary({ dispatch, authUser, list }) {
+    const aceEditor = useRef(null)
+
     useEffect(() => {
         dispatch(setPipelineList())
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     const name = useRef(null);
-    const aceEditor = useRef(null);
+    
     const [nameError, setNameError] = useState(false)
     const [modalFlag, setModalFlag] = useState(false)
     const [successFlag, setSuccessFlag] = useState(false)
@@ -289,6 +343,7 @@ function Summary({ dispatch, authUser, list }) {
                                                 tabSize={2}
                                                 width="100%"
                                                 setOptions={{ useWorker: false }}
+                                                value={TEMPLATE}
                                             /> 
                                         </Box>: 
                                 flag === 3 ? <Box style={{width: "100%"}}>

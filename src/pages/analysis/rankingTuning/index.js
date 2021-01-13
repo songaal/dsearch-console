@@ -44,6 +44,18 @@ const Divider = styled(MuiDivider)(spacing);
 const Table = styled(MuiTable)(spacing);
 
 let ids = 1;
+const DEFAULT_TEMPLATE = `
+{
+    "query": {
+      "match": {
+        "keyword": "keyword"
+      }
+    },
+    "from": 0,
+    "size": 100
+}
+`;
+
 
 const getTreeItemsFromData = treeItems => {
     return treeItems.map(detail => {
@@ -211,7 +223,7 @@ function RankingTuningResults({pageNum, result, expand, nodeToggle, errorMessage
 let eventCode = null
 function RankingTuningCard({dispatch, result, index}) {
     const classes = useStyles()
-    let aceEditor = useRef("");
+    const aceEditor = useRef("");
     let inputIndex = useRef('');
 
     const [pageNum, setPageNum] = useState(0);
@@ -227,6 +239,7 @@ function RankingTuningCard({dispatch, result, index}) {
         setQuery('')
         setPageNum(0)
         setErrorMessage('')
+        aceEditor.current.editor.setValue(DEFAULT_TEMPLATE)
 
         if (eventCode !== null) {
             clearInterval(eventCode)

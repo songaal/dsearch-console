@@ -22,6 +22,8 @@ import {
     TableRow,
     TextField,
     Typography as MuiTypography,
+    FormControl,
+    InputLabel,
 } from "@material-ui/core";
 import {makeStyles} from '@material-ui/core/styles';
 import {positions, spacing} from "@material-ui/system";
@@ -55,6 +57,65 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+const TEMPLATE_LIST = ["ndjson", "csv", "procedure", "database"]
+const TEMPLATE = {
+    "ndjson" : 
+`scheme: http
+host: localhost
+port: 9200
+type: ndjson
+path: /data/source/search-prod.ndjson
+encoding: utf-8
+bulkSize: 10000
+reset: true
+threadSize: 1`,
+
+    "csv" : 
+`scheme: http
+host: localhost
+port: 9200
+type: csv
+path: /data/source/search-prod.csv
+encoding: utf-8
+bulkSize: 10000
+reset: true
+threadSize: 1`,
+
+    "procedure": 
+`scheme: http
+host: localhost
+port: 9200
+type: procedure
+bulkSize: 1000
+driverClassName: "Altibase.jdbc.driver.AltibaseDriver"
+filterClass: "com.danawa.fastcatx.indexer.filter.DanawaProductFilter"
+url: "jdbc:Altibase://localhost:20200/DANAWA_ALTI"
+user: "root"
+password: "qwerty123456"
+procedureName: "procedureName1"
+dumpFormat: "konan"
+groupSeq: 1
+bwlimit: "10240"
+path: "/data/product/VM"
+rsyncIp: "remote server IP"
+rsyncPath: "search_data_alti"
+encoding: CP949
+procedureSkip: true
+rsyncSkip: true
+threadSize: 1
+`,
+
+    "database": 
+`scheme: http
+host: localhost
+port: 9200
+bulkSize: 10000
+fetchSize: 10000
+type: jdbc
+pipeLine: "pipeline"
+threadSize: 1
+dataSQL : "SELECT * FROM myTable"`
+};
 const NO_SELECTED = 'NO_SELECTED';
 const DEFAULT_CRON = '0 0 * * *'
 const DEFAULT_YAML = `
@@ -118,6 +179,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
     const [port, setPort] = useState("")
     const [jdbcId, setJdbcId] = useState(NO_SELECTED)
     const [cron, setCron] = useState("")
+    const [templateValue, setTemplateValue] = useState(TEMPLATE_LIST[0]);
 
     const [invalid, setInvalid] = useState({})
 
@@ -128,7 +190,8 @@ function Source({dispatch, authUser, collection, JdbcList}) {
         if (collection['sourceName'] === undefined || collection['sourceName'] === null || collection['sourceName'] === "") {
             /* FORCE_EDIT(생성하고 아무런 데이터가 없을 때) 모드일때만 */
             setMode("FORCE_EDIT");
-            aceEditor.current.editor.setValue(DEFAULT_YAML)
+            // aceEditor.current.editor.setValue(DEFAULT_YAML)
+            aceEditor.current.editor.setValue(TEMPLATE[TEMPLATE_LIST[0]]);
         } else {
             setSourceName(collection['sourceName']);
             setHost((collection['launcher']||{})['host']||"");
@@ -210,6 +273,11 @@ function Source({dispatch, authUser, collection, JdbcList}) {
             console.log(error)
             alert(error)
         })
+    }
+
+    const handleTemplateValue = (event) => {
+        setTemplateValue(event.target.value);
+        aceEditor.current.editor.setValue(TEMPLATE[event.target.value]);
     }
 
     let jdbcHitList = [
@@ -331,6 +399,22 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                     {/*                  onChange={event => setLauncherYaml(event.target.value)}*/}
                                                     {/*                  style={{width: "100%", minHeight: "200px"}}*/}
                                                     {/*/>*/}
+                                                    <Box display="flex" alignItems="center"  justifyContent="space-between" width="100%" marginBottom="8px">
+                                                        <div></div>
+                                                        <FormControl style={{width: "200px"}}>
+                                                            <InputLabel id="demo-simple-select-label">수집소스 템플릿</InputLabel>
+                                                            <Select
+                                                                labelId="demo-simple-select-label"
+                                                                id="demo-simple-select"
+                                                                value={templateValue}
+                                                                onChange={handleTemplateValue}
+                                                            >
+                                                                {
+                                                                    TEMPLATE_LIST.map((item, i) => (<MenuItem key={i} value={item}>{item}</MenuItem>))
+                                                                }
+                                                            </Select>
+                                                        </FormControl>
+                                                    </Box>
                                                     <AceEditor
                                                         ref={aceEditor}
                                                         mode="yaml"

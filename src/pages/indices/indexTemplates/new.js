@@ -47,6 +47,28 @@ const Typography = styled(MuiTypography)(spacing, positions);
 const Button = styled(MuiButton)(spacing, positions, palette);
 
 const tabs = [{label: "매핑"}, {label: "셋팅"}]
+const TEMPLATE = [
+`{
+    "properties": {
+        "hit": {
+            "type": "double"
+        },
+        "search": {
+            "type": "text"
+        },
+        "range": {
+            "type": "double"
+        },
+        "keyword": {
+            "type": "text"
+        }
+    }
+}`, 
+`{
+    "refresh_interval": "1s",
+    "number_of_shards": "1",
+    "number_of_replicas": "0"
+}`]
 
 let message = ""
 function New({ dispatch }) {
@@ -60,8 +82,8 @@ function New({ dispatch }) {
     const [mappingMode, setMappingMode] = useState("json")
     const [settingMode, setSettingMode] = useState("json")
 
-    const [mappingsJson, setMappingsJson] = useState("")
-    const [settingsJson, setSettingsJson] = useState("")
+    const [mappingsJson, setMappingsJson] = useState(TEMPLATE[0])
+    const [settingsJson, setSettingsJson] = useState(TEMPLATE[1])
 
     const [openMessage, setOpenMessage] = useState(false)
 
