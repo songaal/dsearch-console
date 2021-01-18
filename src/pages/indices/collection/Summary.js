@@ -246,7 +246,7 @@ function Summary({dispatch, authUser, collection}) {
                                                 컬렉션 이름 변경
                                             </MenuItem>
                                             <MenuItem onClick={() => setOpenDsearchModal(true)}>
-                                                디서치 설정 변경
+                                                컬렉션 설정 변경
                                             </MenuItem>
                                             <MenuItem style={{backgroundColor: red["300"]}} onClick={() => setOpenRemoveModal(true)}>
                                                 컬렉션 삭제
