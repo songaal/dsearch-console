@@ -85,7 +85,7 @@ threadSize: 1`,
 `scheme: http
 host: localhost
 port: 9200
-type: ndjson
+type: file
 path: /data/source/prodExt_dump
 encoding: utf-8
 bulkSize: 10000
