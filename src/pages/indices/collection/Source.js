@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const TEMPLATE_LIST = ["ndjson", "csv", "procedure", "database"]
+const TEMPLATE_LIST = ["ndjson", "csv", "file", "procedure", "database"]
 const TEMPLATE = {
     "ndjson" : 
 `scheme: http
@@ -80,6 +80,19 @@ encoding: utf-8
 bulkSize: 10000
 reset: true
 threadSize: 1`,
+
+"file" : 
+`scheme: http
+host: localhost
+port: 9200
+type: ndjson
+path: /data/source/prodExt_dump
+encoding: utf-8
+bulkSize: 10000
+reset: true
+threadSize: 1
+headerText:"name,color,price"
+delimiter: "^"`,
 
     "procedure": 
 `scheme: http
