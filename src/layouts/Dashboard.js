@@ -74,7 +74,7 @@ function Dashboard({dispatch, authUser, children, routes, width}) {
     const [mobileOpen, setMobileOpen] = useState(false)
     const history = useHistory();
     if (!authUser['token']) {
-        dispatch(setDsearchAuthUser()).catch(() => history.location.replace("/"))
+        dispatch(setDsearchAuthUser()).catch(() => location.replace("/"))
         return null
     }
 

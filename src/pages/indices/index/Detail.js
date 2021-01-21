@@ -2,7 +2,7 @@ import React, {useEffect} from "react";
 import {connect, useDispatch, useSelector} from "react-redux";
 import Async from '~/components/Async';
 import styled from "styled-components";
-import {withStyles} from '@material-ui/core/styles';
+import {withStyles, makeStyles } from '@material-ui/core/styles';
 import Helmet from 'react-helmet';
 import AntTabs from "~/components/AntTabs"
 import IndicesSelect from "~/components/IndicesSelect";
@@ -12,7 +12,7 @@ import {
     Button,
     Divider as MuiDivider,
     Typography,
-    CircularProgress, Snackbar
+    CircularProgress, Snackbar, Backdrop
 } from "@material-ui/core";
 import {useHistory, useLocation} from "react-router-dom";
 import {spacing} from "@material-ui/system";
@@ -33,6 +33,13 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
 import Dialog from "@material-ui/core/Dialog";
+
+const useStyles = makeStyles((theme) => ({
+    backdrop: {
+        zIndex: theme.zIndex.drawer + 1,
+        color: '#fff',
+    },
+}));
 
 const Divider = styled(MuiDivider)(spacing);
 const StyledMenu = withStyles({
@@ -72,18 +79,22 @@ const tabs = [
     {label: "매핑", component: Async(() => import("./Mapping"))},
     {label: "셋팅", component: Async(() => import("./Setting"))},
     {label: "통계", component: Async(() => import("./Statistics"))},
-    {label: "데이터", component: Async(() => import("./Data"))},
+    {label: "데이터", component: Async(() => import("./Data"), { time: 1000 })},
 ];
 
 function Index({indexInfoList, settings}) {
+    const classes = useStyles();
     const dispatch = useDispatch();
     const location = useLocation();
     const history = useHistory();
+    const qs = new URLSearchParams(location.search)
     const { indices, index } = useSelector(store => ({...store.indicesReducers}))
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [process, setProcess] = React.useState(false);
     const [openRemoveModal, setOpenRemoveModal] = React.useState(false)
     const [deleteIndex, setDeleteIndex] = React.useState('')
+    const [tabIndex, setTabIndex] = React.useState(qs.get("tab")||0)
+    const [openBackDrop, setOpenBackDrop] = React.useState(false);
     const [state, setState] = React.useState({
         open: false,
         vertical: 'top',
@@ -111,7 +122,7 @@ function Index({indexInfoList, settings}) {
             dispatch(setIndexInfoListAction(index))
             dispatch(setIndexSettingsAction(index))
             dispatch(setIndexMappingsAction(index))
-            dispatch(setIndexDocumentSourceListAction({index, from: 0, size: 500, columns: [], searchKeyword: ''}))
+            dispatch(setIndexDocumentSourceListAction({index, from: 0, size: 100, columns: [], searchKeyword: ''}))
         }
     }, [index]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -185,11 +196,19 @@ function Index({indexInfoList, settings}) {
             setOpenRemoveModal(false);
     }
 
+    function handleChangeIndex(index) {
+        setOpenBackDrop(true)
+        setTimeout(()=> setOpenBackDrop(false), 2000)
+    }
+
     return (
         <React.Fragment>
             <Helmet title="인덱스"/>
 
-            <IndicesSelect/>
+            <IndicesSelect onSelected={handleChangeIndex}/>
+            <Backdrop className={classes.backdrop} open={openBackDrop}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
 
             <Grid container>
                 <Grid item xs={6}>
@@ -271,7 +290,7 @@ function Index({indexInfoList, settings}) {
 
             <Divider my={6} />
 
-            <AntTabs tabs={tabs} tabIndex={0} />
+            <AntTabs tabs={tabs} tabIndex={tabIndex} />
 
 
             <Dialog open={openRemoveModal} fullWidth={true}>

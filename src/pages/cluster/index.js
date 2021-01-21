@@ -17,10 +17,10 @@ import {
     Box,
     Button,
     Card as MuiCard,
-    CardContent,
+    CardContent, Checkbox,
     Divider as MuiDivider,
-    Fab,
-    Grid as MuiGrid,
+    Fab, FormControl, FormControlLabel,
+    Grid as MuiGrid, Input, InputAdornment, InputLabel,
     Link,
     MenuList,
     Select,
@@ -46,14 +46,21 @@ const Card = styled(MuiCard)(spacing);
 const Divider = styled(MuiDivider)(spacing);
 const Grid = styled(MuiGrid)(spacing);
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
     title: {
         fontWeight: "bold"
     },
     addCardButton: {
         border: "1px solid"
+    },
+    margin: {
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(1),
+    },
+    withoutLabel: {
+        marginTop: theme.spacing(3),
     }
-});
+}))
 
 const ITEM_HEIGHT = 48;
 
@@ -354,6 +361,8 @@ function Cluster({ dispatch, clusterList, authUser }) {
 
     const [selectedClusterId, setSelectedClusterId] = useState("")
     const [openRemoveModal, setOpenRemoveModal] = useState(false)
+    const [isRemoveData, setRemoveData] = useState(false)
+
 
     const [mode, setMode] = useState("ADD")
 
@@ -408,7 +417,10 @@ function Cluster({ dispatch, clusterList, authUser }) {
         }
         
         axios.get(`${url}`, {
-            timeout: 3000
+            timeout: 3000,
+            headers: {
+                Authorization: `Basic ${btoa(username + ":" + password)}`
+            }
         }).then((response) => {
             let status = response.data;
             console.log("status: ", status);
@@ -454,10 +466,10 @@ function Cluster({ dispatch, clusterList, authUser }) {
         if (name === "") { setNameError(true); return false }
         if (host === "") { setHostError(true); return false }
         if (port === "" || port === "0") { setPortError(true); return false }
-        if (scheme === "https") {
-            if (username === "") { setUsernameError(true); return false }
-            if (password === "") { setPasswordError(true); return false }
-        }
+        // if (scheme === "https") {
+        //     if (username === "") { setUsernameError(true); return false }
+        //     if (password === "") { setPasswordError(true); return false }
+        // }
         if (!connTest) { return false }
         return true
     }
@@ -465,6 +477,7 @@ function Cluster({ dispatch, clusterList, authUser }) {
         setProcess(true)
         resetError()
         if(!requireValidation()) {
+            setProcess(false)
             return false
         }
 
@@ -530,11 +543,12 @@ function Cluster({ dispatch, clusterList, authUser }) {
 
     function toggleOpenRemoveModal(id) {
         setSelectedClusterId(id)
+        setRemoveData(false)
         setOpenRemoveModal(true)
     }
 
     function removeClusterProcess() {
-        dispatch(removeClusterAction(selectedClusterId)).then(cluster => {
+        dispatch(removeClusterAction(selectedClusterId, isRemoveData)).then(cluster => {
             dispatch(setClusterList())
             setSelectedClusterId("")
             setOpenRemoveModal(false)
@@ -563,7 +577,6 @@ function Cluster({ dispatch, clusterList, authUser }) {
     }
 
     const isManager = authUser['role']['manage']
-
     return (
         <React.Fragment>
             
@@ -618,7 +631,10 @@ function Cluster({ dispatch, clusterList, authUser }) {
                             <TextField placeholder={"운영 클러스터"}
                                        value={name}
                                        error={nameError}
-                                       onChange={event => setName(event.target.value)}
+                                       onChange={event => {
+                                           setNameError(false);
+                                           setName(event.target.value);
+                                       }}
                             />
                         </Grid>
                     </Grid>
@@ -644,7 +660,10 @@ function Cluster({ dispatch, clusterList, authUser }) {
                                            fullWidth
                                            value={host}
                                            error={hostError}
-                                           onChange={event => setHost(event.target.value)}
+                                           onChange={event => {
+                                               setHostError(false);
+                                               setHost(event.target.value);
+                                           }}
                                 />
                             </Box>
                             <Box mt={2}>
@@ -653,16 +672,23 @@ function Cluster({ dispatch, clusterList, authUser }) {
                                            type="number"
                                            value={port}
                                            error={portError}
-                                           onChange={event => setPort(event.target.value)}
+                                           onChange={event => {
+                                               setPortError(false)
+                                               setPort(event.target.value)
+                                           }}
                                 />
                             </Box>
-                            <Box display={scheme === "http" ? "none" : "block"}>
+                            {/*<Box display={scheme === "http" ? "none" : "block"}>*/}
+                            <Box>
                                 <Box mt={2}>
                                     <TextField placeholder="elastic"
                                                fullWidth
                                                error={usernameError}
                                                value={username}
-                                               onChange={event => setUsername(event.target.value)}
+                                               onChange={event => {
+                                                   setUsernameError(false)
+                                                   setUsername(event.target.value)
+                                               }}
                                     />
                                 </Box>
                                 <Box mt={2}>
@@ -671,7 +697,10 @@ function Cluster({ dispatch, clusterList, authUser }) {
                                                fullWidth
                                                error={passwordError}
                                                value={password}
-                                               onChange={event => setPassword(event.target.value)}
+                                               onChange={event => {
+                                                   setPasswordError(false)
+                                                   setPassword(event.target.value)
+                                               }}
 
                                     />
                                 </Box>
@@ -687,11 +716,31 @@ function Cluster({ dispatch, clusterList, authUser }) {
                         </Grid>
                         <Grid item xs={8}>
                             <Box>
-                                <TextField placeholder="http://kibana:5601"
-                                           fullWidth
+                                {/*<TextField placeholder="http://kibana:5601"*/}
+                                {/*           fullWidth*/}
+                                {/*           value={kibana}*/}
+                                {/*           onChange={event => setKibana(event.target.value)}*/}
+                                {/*/>*/}
+
+                                <FormControl fullWidth className={classes.margin}>
+                                    <Input placeholder="http://kibana:5601"
                                            value={kibana}
                                            onChange={event => setKibana(event.target.value)}
-                                />
+                                           endAdornment={
+                                               <InputAdornment position="end">
+                                                   <Button color="primary"
+                                                           size={"small"}
+                                                           style={{marginBottom: "10px"}}
+                                                           onClick={handleKibanaTestProcess}
+                                                           disabled={kibana.length === 0 || isProcess}
+                                                   > 확인 </Button>
+                                               </InputAdornment>
+                                           }
+                                    />
+                                </FormControl>
+
+
+
                             </Box>
                         </Grid>
                     </Grid>
@@ -734,8 +783,17 @@ function Cluster({ dispatch, clusterList, authUser }) {
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant={"outlined"} color={"primary"} onClick={handleClusterTestProcess}> 연결테스트 </Button>
-                    <Button variant={"outlined"} color={"primary"} style={{color: "#EE0000"}} onClick={handleKibanaTestProcess}> 키바나테스트 </Button>
+                    <Button variant={"outlined"}
+                            color={"primary"}
+                            onClick={handleClusterTestProcess}
+                            disabled={host.length === 0 || port.length === 0 || isProcess}
+                    > 연결테스트 </Button>
+                    {/*<Button variant={"outlined"}*/}
+                    {/*        color={"primary"}*/}
+                    {/*        // style={{color: "#EE0000"}}*/}
+                    {/*        onClick={handleKibanaTestProcess}*/}
+                    {/*        disabled={kibana.length === 0 || isProcess}*/}
+                    {/*> 키바나테스트 </Button>*/}
                     <Box display={mode === "ADD" ? "block" : "none"}>
                         <Button color="primary"
                                 variant="contained"
@@ -756,6 +814,7 @@ function Cluster({ dispatch, clusterList, authUser }) {
                     </Box>
                     <Button onClick={toggleOpenAddModal}
                             variant="contained"
+                            disabled={isProcess}
                     >
                         취소
                     </Button>
@@ -765,23 +824,46 @@ function Cluster({ dispatch, clusterList, authUser }) {
 
             {/*    삭제     */}
 
-            <Dialog open={openRemoveModal} fullWidth={true}>
+            <Dialog open={openRemoveModal} fullWidth={true} onClose={() => setOpenRemoveModal(!openRemoveModal)}>
                 <DialogTitle>클러스터 삭제</DialogTitle>
              <DialogContent>
-                 <Box style={{color: red['500']}}> 선택하신 클러스터 삭제 하시겠습니까? </Box>
+                 <Box style={{fontSize: "1.2em"}}>
+                     <Box component={"span"} style={{fontWeight: "bold"}}>
+                         {
+                             (((clusterList||[]).find(c => c["cluster"]['id'] === selectedClusterId||'')||{})['cluster']||{})['name']||''
+                         }
+                     </Box>
+                     &nbsp; 클러스터 삭제 하시겠습니까?
+                 </Box>
              </DialogContent>
                 <DialogActions>
-                    <Button style={{backgroundColor: red['200']}}
-                            variant="contained"
-                            onClick={removeClusterProcess}
-                    >
-                        삭제
-                    </Button>
-                    <Button onClick={() => setOpenRemoveModal(false)}
-                            variant="contained"
-                    >
-                        취소
-                    </Button>
+                    <Grid container>
+                        <Grid item xs={6}>
+                            <Box style={{marginLeft: "3px"}} pl={3}>
+                                <FormControlLabel
+                                    control={<Checkbox checked={isRemoveData} onChange={() => setRemoveData(!isRemoveData)} />}
+                                    label="메타데이터 삭제"
+                                />
+                            </Box>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Box style={{display: "flex", justifyContent: "flex-end"}} pr={3}>
+                                <Button style={{marginRight: "2px"}}
+                                        variant="contained"
+                                        color={"secondary"}
+                                        onClick={removeClusterProcess}
+                                >
+                                    삭제
+                                </Button>
+                                <Button style={{marginLeft: "2px"}}
+                                        onClick={() => setOpenRemoveModal(false)}
+                                        variant="contained"
+                                >
+                                    취소
+                                </Button>
+                            </Box>
+                        </Grid>
+                    </Grid>
                 </DialogActions>
             </Dialog>
 

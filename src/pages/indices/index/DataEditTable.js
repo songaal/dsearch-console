@@ -1,6 +1,7 @@
-import React, {forwardRef, useEffect, useState} from "react";
+import React, {forwardRef, useEffect, useRef, useState} from "react";
 import {connect, useSelector} from "react-redux";
-import {Box, Card, CardContent, Typography} from "@material-ui/core";
+import {Box, Card, CardContent, Typography, Backdrop } from "@material-ui/core";
+import CircularProgress from '@material-ui/core/CircularProgress';
 import MaterialTable from 'material-table';
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
@@ -25,6 +26,14 @@ import {
     setIndexMappingsAction
 } from "../../../redux/actions/indicesActions";
 import flat, {unflatten} from 'flat'
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles((theme) => ({
+    backdrop: {
+        zIndex: theme.zIndex.drawer + 1,
+        color: '#fff',
+    },
+}));
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref}/>),
@@ -47,6 +56,7 @@ const tableIcons = {
 };
 let searchInterval = null
 function DataEditTable({dispatch, index, authUser, mappings}) {
+    const classes = useStyles();
     const documentSourceResponse = useSelector(store => ({ ...store.indicesReducers}))['documentSourceResponse']
     const [keyword, setKeyword] = useState("");
     const [pageNum, setPageNum] = useState(0);
@@ -54,9 +64,12 @@ function DataEditTable({dispatch, index, authUser, mappings}) {
     const [columns, setColumns] = useState([])
     const [dataList, setDataList] = useState([])
     const [selectData, setSelectData] = useState("")
+    const [process, setProcess] = useState(false)
+    const boxRef = useRef(null);
 
     // 인덱스 변경시 호출
     useEffect(() => {
+        setDataList([])
         setSelectData("")
         setKeyword("")
         setPageNum(0)
@@ -98,7 +111,7 @@ function DataEditTable({dispatch, index, authUser, mappings}) {
         }))
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-    function fetchIndexDocumentSourceList({searchSize=500, columns=[], keyword=null}) {
+    function fetchIndexDocumentSourceList({searchSize=100, columns=[], keyword=null}) {
             return dispatch(setIndexMappingsAction(index)).then((response)=> {
                 let indexMapping = response.payload;
                 dispatch(setIndexDocumentSourceListAction({index, from: pageNum, size: searchSize||rowSize, columns, keyword})).then(response => {
@@ -139,7 +152,8 @@ function DataEditTable({dispatch, index, authUser, mappings}) {
                 } else {
                     setDataList([])
                 }
-            })}) 
+                setProcess(false)
+            })})
     }
 
     function handleChangeRowsPerPage(row) {
@@ -155,6 +169,7 @@ function DataEditTable({dispatch, index, authUser, mappings}) {
         }
 
         searchInterval = setTimeout(() => {
+            setProcess(true)
             setKeyword(keyword)
             // setColumns(columns)
             let searchColumns = []
@@ -168,6 +183,7 @@ function DataEditTable({dispatch, index, authUser, mappings}) {
             // 포멧 형식이 있으면 무시.
             searchColumns = searchColumns.filter(c => !flatMappings[`${c}.format`])
             fetchIndexDocumentSourceList({columns: searchColumns, keyword})
+
         }, 500)
     }
 
@@ -178,7 +194,11 @@ function DataEditTable({dispatch, index, authUser, mappings}) {
             Object.keys(tmpBody).forEach(key => body[key.replace(/___/gi, ".")] = tmpBody[key])
             delete body['ID']
             dispatch(addIndexDocumentSourceAction({ index, body }))
-                .then(() => setTimeout(() => fetchIndexDocumentSourceList({keyword}).then(resolve), 1000))
+                .then(() => setTimeout(() => {
+                    setProcess(true)
+                    fetchIndexDocumentSourceList({keyword})
+                        .then(resolve)
+                }, 1000))
                 .catch(reject)
         })
     }
@@ -192,7 +212,11 @@ function DataEditTable({dispatch, index, authUser, mappings}) {
             delete body['ID']
             delete body['_id']
             dispatch(editIndexDocumentSourceAction({ index, id, body }))
-                .then(() => setTimeout(() => fetchIndexDocumentSourceList({keyword}).then(resolve), 1000))
+                .then(() => setTimeout(() => {
+                    setProcess(true);
+                    fetchIndexDocumentSourceList({keyword})
+                        .then(resolve)
+                }, 1000))
                 .catch(reject)
         })
     }
@@ -200,7 +224,11 @@ function DataEditTable({dispatch, index, authUser, mappings}) {
         return new Promise((resolve, reject) => {
             const id = unflatten(oldData)['_hitsId']
             dispatch(deleteIndexDocumentSourceAction({ index, id }))
-                .then(() => setTimeout(() => fetchIndexDocumentSourceList({keyword}).then(resolve), 1000))
+                .then(() => setTimeout(() => {
+                    setProcess(true)
+                    fetchIndexDocumentSourceList({keyword})
+                        .then(resolve)
+                }, 1000))
                 .catch(reject)
         })
     }
@@ -213,64 +241,93 @@ function DataEditTable({dispatch, index, authUser, mappings}) {
         if (b.length > a.length) return -1;
         return 0;
     }
-    
+
     return (
         <React.Fragment>
-            {
-                authUser.role.index ?
-                    <MaterialTable
-                        icons={tableIcons}
-                        title=""
-                        columns={columns.sort((a, b) => customSort(a,b) ).map(column => ({
-                            title: column,
-                            field: column.replace(/\./gi, "___"),
-                            editable: column === "ID" ? 'never' : "always",
-                            cellStyle:{whiteSpace: "nowrap", maxWidth: "180px", overflow: "hidden"},
-                        }))}
-                        data={dataList.map(data => {
-                            let tmpData = {}
-                            Object.keys(data).forEach(key => {
-                                if (typeof data[key] !== 'object') {
-                                    tmpData[key] = data[key]
+            {/**/}
+            <Box style={{width: "100%", height: "0px", display: process ? "block" : "none"}}>
+                <Box style={{
+                    zIndex: "1201",
+                    width: "100%",
+                    top: "120px",
+                    height: ((((boxRef||{})["current"]||{})["offsetHeight"]||478) - 175) + "px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: "#4646465c",
+                    opacity: 0.5,
+                    position: "relative"
+                }}>
+                    <CircularProgress color="primary" style={{zIndex: "1202"}} />
+                </Box>
+            </Box>
+            <Box ref={boxRef}>
+                {
+                    authUser.role.index ?
+                        <MaterialTable
+                            icons={tableIcons}
+                            title=""
+                            localization={{
+                                body: {
+                                    emptyDataSourceMessage: '',
                                 }
-                            })
-                            return tmpData
-                        })}
-                        onChangeRowsPerPage={handleChangeRowsPerPage}
-                        editable={{ onRowAdd: handleRowAdd, onRowUpdate: handleRowUpdate, onRowDelete: handleRowDelete }}
-                        onSearchChange={handleSearch}
-                        options={{
-                            headerStyle: {
-                                maxWidth: "180px"
-                            }
-                        }}
-                        onRowClick={(event, rowData) => {
-                            setSelectData(event.target.innerText || "")
-                        }}
-                    />
-                    :
-                    <MaterialTable
-                        icons={tableIcons}
-                        title=""
-                        columns={columns.sort((a, b) => customSort(a,b) ).map(column => ({
-                            title: column,
-                            field: column.replace(/\./gi, "___"),
-                            editable: column === "ID" ? 'never' : "always",
-                            cellStyle:{whiteSpace: "nowrap", maxWidth: "180px"},
-                        }))}
-                        data={dataList}
-                        onChangeRowsPerPage={handleChangeRowsPerPage}
-                        onSearchChange={handleSearch}
-                        options={{
-                            headerStyle: {
-                                maxWidth: "180px"
-                            }
-                        }}
-                        onRowClick={(event, rowData) => {
-                            setSelectData(event.target.innerText || "")
-                        }}
-                    />
-            }
+                            }}
+                            columns={columns.sort((a, b) => customSort(a,b) ).map(column => ({
+                                title: column,
+                                field: column.replace(/\./gi, "___"),
+                                editable: column === "ID" ? 'never' : "always",
+                                cellStyle:{whiteSpace: "nowrap", maxWidth: "180px", overflow: "hidden"},
+                            }))}
+                            data={dataList.map(data => {
+                                let tmpData = {}
+                                Object.keys(data).forEach(key => {
+                                    if (typeof data[key] !== 'object') {
+                                        tmpData[key] = data[key]
+                                    }
+                                })
+                                return tmpData
+                            })}
+                            onChangeRowsPerPage={handleChangeRowsPerPage}
+                            editable={{ onRowAdd: handleRowAdd, onRowUpdate: handleRowUpdate, onRowDelete: handleRowDelete }}
+                            onSearchChange={handleSearch}
+                            options={{
+                                headerStyle: {
+                                    maxWidth: "180px"
+                                }
+                            }}
+                            onRowClick={(event, rowData) => {
+                                setSelectData(event.target.innerText || "")
+                            }}
+                        />
+                        :
+                        <MaterialTable
+                            icons={tableIcons}
+                            title=""
+                            localization={{
+                                body: {
+                                    emptyDataSourceMessage: '',
+                                }
+                            }}
+                            columns={columns.sort((a, b) => customSort(a,b) ).map(column => ({
+                                title: column,
+                                field: column.replace(/\./gi, "___"),
+                                editable: column === "ID" ? 'never' : "always",
+                                cellStyle:{whiteSpace: "nowrap", maxWidth: "180px"},
+                            }))}
+                            data={dataList}
+                            onChangeRowsPerPage={handleChangeRowsPerPage}
+                            onSearchChange={handleSearch}
+                            options={{
+                                headerStyle: {
+                                    maxWidth: "180px"
+                                }
+                            }}
+                            onRowClick={(event, rowData) => {
+                                setSelectData(event.target.innerText || "")
+                            }}
+                        />
+                }
+            </Box>
 
             <Card style={{display: selectData === "" ? "none" : "block"}}>
                 <CardContent>
@@ -281,7 +338,6 @@ function DataEditTable({dispatch, index, authUser, mappings}) {
                     </Box>
                 </CardContent>
             </Card>
-
 
         </React.Fragment>
     )

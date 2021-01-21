@@ -11,7 +11,7 @@ const User = async(() => import("../pages/userManagement"));
 const Role = async(() => import("../pages/role"));
 
 // Dashboard components
-const Dashboard = async(() => import("../pages/dashboard"));
+const Dashboard = async(() => import("../pages/dashboard"), { time: 500 });
 
 // Auth components
 const SignIn = async(() => import("../pages/auth/SignIn"));
@@ -22,9 +22,9 @@ const SignIn = async(() => import("../pages/auth/SignIn"));
 const EditUser = async(() => import("../pages/userManagement/EditUser"));
 
 // Analysis components
-const Dictionary = async(() => import("../pages/analysis/dictionary"));
-const Tools = async(() => import("../pages/analysis/tools"));
-const RankingTuning = async(() => import("../pages/analysis/rankingTuning"));
+const Dictionary = async(() => import("../pages/analysis/dictionary"), { time: 0 });
+const Tools = async(() => import("../pages/analysis/tools"), { time: 0 });
+const RankingTuning = async(() => import("../pages/analysis/rankingTuning"), { time: 0 });
 
 // Indices components
 const Templates = async(() => import("../pages/indices/indexTemplates"));
@@ -34,21 +34,21 @@ const TemplateView = async(() => import("../pages/indices/indexTemplates/view"))
 
 const ClusterData = async(() => import("../pages/indices/cluster"));
 const Index = async(() => import("../pages/indices/index"));
-const IndexDetail = async(() => import("../pages/indices/index/Detail"));
-const Collection = async(() => import("../pages/indices/collection"));
-const CollectionDetail = async(() => import("../pages/indices/collection/Detail"));
-const Jdbc = async(() => import("../pages/indices/jdbc"));
-const Pipeline = async(() => import("../pages/indices/pipeline"));
+const IndexDetail = async(() => import("../pages/indices/index/Detail"), { time: 0 });
+const Collection = async(() => import("../pages/indices/collection"), { time: 2000 });
+const CollectionDetail = async(() => import("../pages/indices/collection/Detail"), { time: 0 });
+const Jdbc = async(() => import("../pages/indices/jdbc"), { time: 500 });
+const Pipeline = async(() => import("../pages/indices/pipeline"), { time: 0 });
 
 // Search components
-const QueryTest = async(() => import("../pages/search/queryTest"));
+const QueryTest = async(() => import("../pages/search/queryTest"), { time: 0 });
 const ReferenceUI = async(() => import("../pages/search/referenceUI"));
 const ReferenceUIResult = async(() => import("../pages/search/referenceUI/result"));
 
 // Management components
-const ServerManagement = async(() => import("../pages/management/serverManagement"));
-const ApiManagement = async(() => import("../pages/management/apiManagement"));
-const ClusterSettings = async(() => import("../pages/management/clusterSettings"));
+const ServerManagement = async(() => import("../pages/management/serverManagement"), { time: 0 });
+const ApiManagement = async(() => import("../pages/management/apiManagement"), { time: 500 });
+const ClusterSettings = async(() => import("../pages/management/clusterSettings"), { time: 0 });
 
 // 인트로 라우트
 

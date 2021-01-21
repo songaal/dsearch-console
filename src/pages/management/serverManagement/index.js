@@ -81,9 +81,9 @@ function Server({dispatch, server}) {
     }, [server.nodes]) // eslint-disable-line react-hooks/exhaustive-deps
 
     const selectNode =()=>{
-        if(history.location.search !== "" || history.location.search !== undefined){
+        if(location.search !== "" || location.search !== undefined){
             const nodes = (Object.entries(server.nodes));
-            const nodeName = history.location.search.split("=")[1];
+            const nodeName = location.search.split("=")[1];
             for(let i=0; i<nodes.length; i++){
                 if(nodeName === nodes[i][1].name){
                     setIndices(nodes[i][0]);

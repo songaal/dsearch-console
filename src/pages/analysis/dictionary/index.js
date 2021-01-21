@@ -18,7 +18,7 @@ import {setActiveSettingIndex, setSettings} from "../../../redux/actions/diction
 const Divider = styled(MuiDivider)(spacing);
 
 const firstTabs = [
-    {icon: (<SearchIcon/>), component: Async(() => import("./Search"))},
+    {icon: (<SearchIcon/>), component: Async(() => import("./Search"), { time: 0 })},
     {label: "개요", component: Async(() => import("./Summary"))},
 ]
 

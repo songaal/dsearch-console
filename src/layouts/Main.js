@@ -76,7 +76,7 @@ function Main({dispatch,authUser, children, routes, width}) {
     const [mobileOpen, setMobileOpen] = useState(false)
 
     if (!authUser['token']) {
-        dispatch(setDsearchAuthUser()).catch(() => history.location.replace("/"))
+        dispatch(setDsearchAuthUser()).catch(() => location.replace("/"))
         return null
     }
 

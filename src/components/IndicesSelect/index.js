@@ -10,9 +10,12 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function IndicesSelect({dispatch, indices, index, enableSystem=true}) {
+function IndicesSelect({dispatch, indices, index, enableSystem=true, onSelected}) {
     const classes = useStyles()
     const handleChange = (event) => {
+        if (onSelected) {
+            onSelected(event.target.value)
+        }
         dispatch(setIndexAction(event.target.value))
     };
 

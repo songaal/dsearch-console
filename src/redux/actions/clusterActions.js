@@ -29,8 +29,8 @@ export const addCluster = (cluster) => dispatch => client.call({
     return response.data
 })
 
-export const removeClusterAction = id => dispatch => client.call({
-    uri: `/clusters/${id}`,
+export const removeClusterAction = (id,isRemoveData) => dispatch => client.call({
+    uri: `/clusters/${id}?isRemoveData=${isRemoveData}`,
     method: "DELETE"
 }).then(response => {
     dispatch({type: SET_CLUSTER, payload: response.data})

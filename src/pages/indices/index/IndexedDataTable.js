@@ -271,19 +271,24 @@ function IndexedDataTable({dispatch, index, mappings}) {
                             <TableBody style={{display: loading ? "none" : "table-row-group"}}>
                                 {
                                     dataList.map((data, dataIndex) => {
-                                        return (
-                                            <TableRow key={`${data['key']}-${dataIndex}`}>
-                                                <TableCell>
-                                                    {data['key']}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {data['value']}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {data['term']}
-                                                </TableCell>
-                                            </TableRow>
-                                        )
+                                        try {
+                                            return (
+                                                <TableRow key={`${data['key']}-${dataIndex}`}>
+                                                    <TableCell>
+                                                        {data['key']}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {data['value']}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {data['term']}
+                                                    </TableCell>
+                                                </TableRow>
+                                            )
+                                        } catch (err) {
+                                            console.error(err)
+                                            return false
+                                        }
                                     })
                                 }
                             </TableBody>
