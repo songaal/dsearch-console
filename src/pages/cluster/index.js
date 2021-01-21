@@ -838,16 +838,16 @@ function Cluster({ dispatch, clusterList, authUser }) {
              </DialogContent>
                 <DialogActions>
                     <Grid container>
-                        <Grid item xs={6}>
+                        <Grid item xs={8} md={9}>
                             <Box style={{marginLeft: "3px"}} pl={3}>
                                 <FormControlLabel
                                     control={<Checkbox checked={isRemoveData} onChange={() => setRemoveData(!isRemoveData)} />}
-                                    label="메타데이터 삭제"
+                                    label={"컬렉션 설정과 색인히스토리, 메타데이터까지 포함하여 삭제"}
                                 />
                             </Box>
                         </Grid>
-                        <Grid item xs={6}>
-                            <Box style={{display: "flex", justifyContent: "flex-end"}} pr={3}>
+                        <Grid item xs={4} md={3}>
+                            <Box style={{display: "flex", justifyContent: "flex-end"}}>
                                 <Button style={{marginRight: "2px"}}
                                         variant="contained"
                                         color={"secondary"}
