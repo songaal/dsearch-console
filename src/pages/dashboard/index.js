@@ -488,9 +488,8 @@ function BottomArea({result, alias, indices}) {
                                         </TableCell>
                                         <TableCell align="center">
                                             {
-                                                Number(((row||{})["docSize"]||0).replace(/[^0-9]/gi, "")||0).toLocaleString()
+                                                Number(((row||{})["docSize"]||"").replace(/[^0-9]/gi, "")||0).toLocaleString()
                                             }
-
                                         </TableCell>
                                         <TableCell align="center">
                                             {row.storage}
