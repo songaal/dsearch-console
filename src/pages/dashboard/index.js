@@ -141,12 +141,6 @@ const getElapsed = time => {
     }
 }
 
-
-function numberWithCommas(num) {
-    if(num === undefined || num === null || num === "null") return "";
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-
 function WarningIndex({status, indices}) {
     const history = useHistory();
     function moveDetail(uuid) {
@@ -493,7 +487,10 @@ function BottomArea({result, alias, indices}) {
                                             {getElapsed(row.endTime - row.startTime)}
                                         </TableCell>
                                         <TableCell align="center">
-                                            {numberWithCommas(row.docSize)}
+                                            {
+                                                Number(((row||{})["docSize"]||0).replace(/[^0-9]/gi, "")||0).toLocaleString()
+                                            }
+
                                         </TableCell>
                                         <TableCell align="center">
                                             {row.storage}
