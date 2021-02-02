@@ -52,9 +52,9 @@ const Box =  styled(MuiBox)(spacing, positions);
 function Summary({dispatch, authUser, collection}) {
     const history = useHistory();
 
-    console.log(collection)
     const replicas = useRef(null);
     const refresh_interval = useRef(null);
+    const ignoreRoleYn = useRef(null);
 
     const [moreMenu, setMoreMenu] = useState(null)
     const [openRemoveModal, setOpenRemoveModal] = useState(false)
@@ -94,6 +94,7 @@ function Summary({dispatch, authUser, collection}) {
         
         collection['replicas'] = replicas.current.value;
         collection['refresh_interval'] = refresh_interval.current.value;
+        collection['ignoreRoleYn'] = ignoreRoleYn.current.value;
         console.log(collection)
         dispatch(editCollectionSourceAction(collection['id'], collection)).then(response => {
             dispatch(setCollectionList())
@@ -517,6 +518,14 @@ function Summary({dispatch, authUser, collection}) {
                             placeholder={"세그먼트 생성 주기를 입력해주세요"} 
                             defaultValue={collection['refresh_interval'] ? collection['refresh_interval'] : 1} 
                             inputRef={refresh_interval} />
+                        <br />
+                        <br />
+                        <b>역할 무시 (Y/N)</b>
+                        <TextField 
+                            fullWidth
+                            placeholder={"역할을 무시할 것인지 입력해주세요"} 
+                            defaultValue={collection['ignoreRoleYn'] ? collection['ignoreRoleYn'] : 'N'} 
+                            inputRef={ignoreRoleYn} />
                     </Box>
                 </DialogContent>
                 <DialogActions>
