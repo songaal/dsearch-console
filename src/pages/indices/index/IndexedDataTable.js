@@ -100,11 +100,11 @@ function IndexedDataTable({dispatch, index, mappings}) {
                 setColumns(Object.keys(tmpColumns))
             }
 
-
             let documentAnalyzerMap = {}
             hits.forEach(hit => {
                 const id = hit['_id']
                 const flatSource = flat(hit['_source'])
+
                 documentAnalyzerMap[id] = []
                 Object.keys(flatSource).forEach(flatField => {
                     let analyzer = ""
@@ -120,6 +120,26 @@ function IndexedDataTable({dispatch, index, mappings}) {
                             field: flatField, text: flatSource[flatField], analyzer: analyzer
                         })
                     }
+
+                    let tmpMap = {}
+                    Object.keys(((payload||{})['flatMappings']||{}))
+                        .filter(k => k.includes(`${flatField}.fields`))
+                        .forEach(k => {
+                            if (k.endsWith(".analyzer")) {
+                                tmpMap[k] = {
+                                    field: k.substring(0, k.length - 9), text: flatSource[flatField], analyzer: ((payload||{})['flatMappings']||{})[k]||"standard"
+                                }
+                                delete tmpMap[`${k.substring(0, k.length - 5)}.type`]
+                            } else if (k.endsWith(".type") && !tmpMap[`${k.substring(0, k.length - 9)}.analyzer`]) {
+                                tmpMap[k] = {
+                                    field: k.substring(0, k.length - 5), text: flatSource[flatField], analyzer: "standard"
+                                }
+                            }
+                        })
+                    Object.values(tmpMap).forEach(o => {
+                        hit['_source'][o['field']] = flatSource[flatField]
+                        documentAnalyzerMap[id].push(o)
+                    })
                 })
             })
             return {
@@ -172,7 +192,7 @@ function IndexedDataTable({dispatch, index, mappings}) {
     }
     // 인덱스가 없으면 무시.
     if (!index) return null;
-
+    console.log(dataList);
     return (
         <>
             <br/>
