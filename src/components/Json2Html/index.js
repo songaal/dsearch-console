@@ -87,7 +87,22 @@ function SettingsJson2html(settings) {
 function MappingsJson2html(json) {
     const topFields = [
         {title: "타입", key: "type", component: (val) => {return val}},
-        {title: "색인", key: "enabled", component: (val) => {return <Checkbox style={{cursor: "default"}} checked={val||true}/>}},
+        // {title: "색인", key: "enabled", component: (val) => {return <Checkbox style={{cursor: "default"}} checked={val||true}/>}},
+        {title: "색인", key: "enabled", component: (val) => {
+            if (val !== undefined && val !== null && val === false) {
+                return (
+                    <React.Fragment>
+                        <Checkbox style={{cursor: "default"}} checked={false} />
+                    </React.Fragment>
+                )
+            } else {
+                return (
+                    <React.Fragment>
+                        <Checkbox style={{cursor: "default"}} checked={true}/>
+                    </React.Fragment>
+                )
+            }
+        }},
         {title: "분석기", key: "analyzer", component: (val) => {return val}},
         {title: "copy_to", key: "copy_to", component: (val) => {return val}},
         {title: "ignore_above", key: "ignore_above", component: (val) => {return val}},
@@ -95,7 +110,22 @@ function MappingsJson2html(json) {
         {title: "doc_values", key: "doc_values", component: (val) => {return val}},
         {title: "similarity", key: "similarity", component: (val) => {return val||""}},
         {title: "term_vector", key: "term_vector", component: (val) => {return val}},
-        {title: "store", key: "store", component: (val) => {return <Checkbox style={{cursor: "default"}} checked={val||true}/>}}
+        {title: "store", key: "store", component: (val) => {
+                if (val !== undefined && val !== null && val === false) {
+                    return (
+                        <React.Fragment>
+                            <Checkbox style={{cursor: "default"}} checked={false} />
+                        </React.Fragment>
+                    )
+                } else {
+                    return (
+                        <React.Fragment>
+                            <Checkbox style={{cursor: "default"}} checked={true}/>
+                        </React.Fragment>
+                    )
+                }
+            // return <Checkbox style={{cursor: "default"}} checked={val||true}/>
+        }}
     ]
 
     const flatJsonMap = flat(json['properties'] ? json['properties'] : json)
@@ -126,7 +156,8 @@ function MappingsJson2html(json) {
             </thead>
             <tbody>
             {
-                Object.keys(formatKeyFlatJsonMap).map((key, index) => {
+                Object.keys(formatKeyFlatJsonMap)
+                    .filter(key => !key.endsWith(".copy_to")).map((key, index) => {
                     const obj = formatKeyFlatJsonMap[key]
 
                     const etc = Object.keys(obj).map(k => {
@@ -136,7 +167,7 @@ function MappingsJson2html(json) {
                     return (
                         <tr key={index}>
                             <td align={"center"}>{index + 1}</td>
-                            <td>{key}</td>
+                            <td>{key.replaceAll(".fields", "")}</td>
                             {
                                 topFields.map(field => <td key={field['title']} align={"center"}>{field['component'](obj[field['key']])}</td>)
                             }

@@ -121,18 +121,25 @@ function IndexedDataTable({dispatch, index, mappings}) {
                         })
                     }
 
+                    // fields 하위 필드에 대해 분석을 시도함.
                     let tmpMap = {}
                     Object.keys(((payload||{})['flatMappings']||{}))
                         .filter(k => k.includes(`${flatField}.fields`))
                         .forEach(k => {
                             if (k.endsWith(".analyzer")) {
+                                // 분석기가 있는 경우.
+                                delete tmpMap[`${k.substring(0, k.length - 9)}.type`]
                                 tmpMap[k] = {
-                                    field: k.substring(0, k.length - 9), text: flatSource[flatField], analyzer: ((payload||{})['flatMappings']||{})[k]||"standard"
+                                    field: k.replaceAll(".fields", "").substring(0, k.length - 9),
+                                    text: flatSource[flatField],
+                                    analyzer: ((payload||{})['flatMappings']||{})[k]||"standard"
                                 }
-                                delete tmpMap[`${k.substring(0, k.length - 5)}.type`]
-                            } else if (k.endsWith(".type") && !tmpMap[`${k.substring(0, k.length - 9)}.analyzer`]) {
+                            } else if (k.endsWith(".type") && !tmpMap[`${k.substring(0, k.length - 5)}.analyzer`]) {
+                                // 분석기 없으면 standard 선택
                                 tmpMap[k] = {
-                                    field: k.substring(0, k.length - 5), text: flatSource[flatField], analyzer: "standard"
+                                    field: k.replaceAll(".fields", "").substring(0, k.length - 5),
+                                    text: flatSource[flatField],
+                                    analyzer: "standard"
                                 }
                             }
                         })
@@ -192,7 +199,7 @@ function IndexedDataTable({dispatch, index, mappings}) {
     }
     // 인덱스가 없으면 무시.
     if (!index) return null;
-    
+
     return (
         <>
             <br/>

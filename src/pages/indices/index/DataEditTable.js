@@ -272,7 +272,8 @@ function DataEditTable({dispatch, index, authUser, mappings}) {
                                     emptyDataSourceMessage: '',
                                 }
                             }}
-                            columns={columns.sort((a, b) => customSort(a,b) ).map(column => ({
+                            columns={columns.sort((a, b) => customSort(a,b) )
+                                .map(column => ({
                                 title: column,
                                 field: column.replace(/\./gi, "___"),
                                 editable: column === "ID" ? 'never' : "always",
