@@ -192,7 +192,7 @@ function IndexedDataTable({dispatch, index, mappings}) {
     }
     // 인덱스가 없으면 무시.
     if (!index) return null;
-    console.log(dataList);
+    
     return (
         <>
             <br/>
