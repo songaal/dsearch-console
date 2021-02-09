@@ -80,3 +80,36 @@ export const applyDictionary = (data) => dispatch => client.call({
     method: "POST",
     data: data
 }).then(response => dispatch({type: types.SET_DICTIONARY, payload: response.data}))
+
+export const setAddDictionarySetting = ({id, name, type, tokenType, ignoreCase, columns_id, columns_keyword, columns_value}) => dispatch => client.call({
+    uri: "/dictionaries/settings",
+    method: "POST",
+    data: {
+        id, name, type, tokenType, ignoreCase,
+        columns: [
+            columns_id.length > 0 ? {
+                    type: "id",
+                    label: columns_id
+                }
+                :
+                null,
+            columns_keyword.length > 0 ? {
+                    type: "keyword",
+                    label: columns_keyword
+                }
+                :
+                null,
+            columns_value.length > 0 ? {
+                    type: "value",
+                    label: columns_value
+                }
+                :
+                null,
+        ]
+    }
+}).then(response => response.data)
+
+export const removeDictionarySetting = id => dispatch => client.call({
+    uri: "/dictionaries/settings/" + id,
+    method: "DELETE"
+}).then(response => response.data)

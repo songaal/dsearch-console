@@ -8,11 +8,11 @@ import {
     Button as MuiButton,
     Card as MuiCard,
     CardContent,
-    Chip,
+    Chip, FormControl,
     Grid as MuiGrid,
     Link,
     Menu,
-    MenuItem,
+    MenuItem, Select,
     Table,
     TableBody,
     TableCell,
@@ -95,7 +95,6 @@ function Summary({dispatch, authUser, collection}) {
         collection['replicas'] = replicas.current.value;
         collection['refresh_interval'] = refresh_interval.current.value;
         collection['ignoreRoleYn'] = ignoreRoleYn.current.value;
-        console.log(collection)
         dispatch(editCollectionSourceAction(collection['id'], collection)).then(response => {
             dispatch(setCollectionList())
             setOpenDsearchModal(false)
@@ -502,10 +501,11 @@ function Summary({dispatch, authUser, collection}) {
             <Dialog open={openDsearchModal} fullWidth={true}>
                 <DialogTitle>디서치 설정</DialogTitle>
                 <DialogContent>
-                    <Box flex={true}>
+                    <Box>
                         <b>레플리카 갯수 설정</b>
                         <TextField 
-                            fullWidth  
+                            fullWidth
+                            type={"number"}
                             defaultValue={collection['replicas'] ? collection['replicas'] : 1}  
                             inputRef={replicas}
                             placeholder={"레플리카 갯수를 설정해 주세요"} 
@@ -515,17 +515,26 @@ function Summary({dispatch, authUser, collection}) {
                         <b>세그먼트 생성 주기</b>
                         <TextField 
                             fullWidth
-                            placeholder={"세그먼트 생성 주기를 입력해주세요"} 
+                            placeholder={"세그먼트 생성 주기를 입력해주세요"}
                             defaultValue={collection['refresh_interval'] ? collection['refresh_interval'] : 1} 
                             inputRef={refresh_interval} />
                         <br />
                         <br />
-                        <b>역할 무시 (Y/N)</b>
-                        <TextField 
-                            fullWidth
-                            placeholder={"역할을 무시할 것인지 입력해주세요"} 
-                            defaultValue={collection['ignoreRoleYn'] ? collection['ignoreRoleYn'] : 'N'} 
-                            inputRef={ignoreRoleYn} />
+                        <b>역할 무시 (기본 값: allocation 사용)</b>
+                        {/*<TextField */}
+                        {/*    fullWidth*/}
+                        {/*    placeholder={"역할을 무시할 것인지 입력해주세요"} */}
+                        {/*    defaultValue={collection['ignoreRoleYn'] ? collection['ignoreRoleYn'] : 'N'} */}
+                        {/*    inputRef={ignoreRoleYn} />*/}
+                        <br />
+                        <Box>
+                            <FormControl fullWidth={true}>
+                                <Select fullWidth={true} defaultValue={collection['ignoreRoleYn'] ? collection['ignoreRoleYn'] : 'N'} inputRef={ignoreRoleYn}>
+                                    <MenuItem value={"Y"}>사용</MenuItem>
+                                    <MenuItem value={"N"}>사용안함</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Box>
                     </Box>
                 </DialogContent>
                 <DialogActions>

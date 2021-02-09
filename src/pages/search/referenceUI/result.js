@@ -54,6 +54,7 @@ function SearchPanel(documents, aggregations, template, pagination) {
         const patternList = String(pattern).match(regExp)
         let replaceStr = pattern.toString()
         if (patternList !== null) {
+            // eslint-disable-next-line no-template-curly-in-string
             replaceStr = replaceStr.replace('${keyword}', template['keyword'])
             patternList.forEach(pattern => {
                 replaceStr = replaceStr.replace('${' + pattern + '}', source[pattern])

@@ -22,13 +22,13 @@ import {ArrowDropDown, Menu as MenuIcon} from "@material-ui/icons";
 import {Home, Search as SearchIcon} from "react-feather";
 import {setReferenceResultAll, setReferenceSearchKeyword} from "../redux/actions/referenceSearchActions";
 import { setDsearchSignOut } from "../redux/actions/dsearchActions";
-import { setAutoCompleteAction, setAutoCompleteStoreAction, getAutoCompleteURLAction } from "../redux/actions/dsearchPluginActions";
+import { setAutoCompleteAction, setAutoCompleteStoreAction } from "../redux/actions/dsearchPluginActions";
 
 import {SET_DSEARCH_AUTH_USER} from "../redux/constants";
 import {setClusterList, setClusterServerCheck} from "../redux/actions/clusterActions";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
-import {initGA} from "../ga";
+import "../ga";
 
 const AppBar = styled(MuiAppBar)`
   background: ${props => props.theme.header.background};
@@ -262,8 +262,7 @@ const MainHeader = ({theme, onDrawerToggle}) => (
 const DashBoardHeader = ({theme, onDrawerToggle}) => {
     const references = useSelector(store => ({...store.referenceSearchReducers}))
     const authUserStore = useSelector(store => ({...store.dsearchReducers}))['authUser']
-    const autoCompleteUrl = useSelector(store => ({...store.dsearchPluginReducers}))['autoCompleteUrl']
-    
+
     const [keyword, setKeyword] = useState(references.keyword)
     const [itemList, setItemList] = useState([])
     const [inputCache, setInputCache] = useState({});

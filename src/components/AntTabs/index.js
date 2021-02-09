@@ -90,7 +90,7 @@ function AntTabs({tabs, tabIndex = 0, onChange}) {
                   variant="scrollable"
                   scrollButtons="auto"
             >
-                {tabs.map((tab, index) => <Tab key={index} id={index} icon={tab.icon} label={tab.label || ""}/>)}
+                {tabs.map((tab, index) => <Tab key={index} id={index} icon={tab.icon} label={tab.label || ""} />)}
             </Tabs>
             <Divider />
             {tabs.map((Tab, index) => {

@@ -24,7 +24,9 @@ import {
     Typography as MuiTypography,
     FormControl,
     InputLabel,
+    Switch,
 } from "@material-ui/core";
+
 import {makeStyles} from '@material-ui/core/styles';
 import {positions, spacing} from "@material-ui/system";
 import {connect} from "react-redux";
@@ -60,10 +62,7 @@ const useStyles = makeStyles((theme) => ({
 const TEMPLATE_LIST = ["ndjson", "csv", "file", "procedure", "database"]
 const TEMPLATE = {
     "ndjson" : 
-`scheme: http
-host: localhost
-port: 9200
-type: ndjson
+`type: ndjson
 path: /data/source/search-prod.ndjson
 encoding: utf-8
 bulkSize: 10000
@@ -71,10 +70,7 @@ reset: true
 threadSize: 1`,
 
     "csv" : 
-`scheme: http
-host: localhost
-port: 9200
-type: csv
+`type: csv
 path: /data/source/search-prod.csv
 encoding: utf-8
 bulkSize: 10000
@@ -82,10 +78,7 @@ reset: true
 threadSize: 1`,
 
 "file" : 
-`scheme: http
-host: localhost
-port: 9200
-type: file
+`type: file
 path: /data/source/prodExt_dump
 encoding: utf-8
 bulkSize: 10000
@@ -95,10 +88,7 @@ headerText:"name,color,price"
 delimiter: "^"`,
 
     "procedure": 
-`scheme: http
-host: localhost
-port: 9200
-type: procedure
+`type: procedure
 bulkSize: 1000
 driverClassName: "Altibase.jdbc.driver.AltibaseDriver"
 filterClass: "com.danawa.fastcatx.indexer.filter.DanawaProductFilter"
@@ -119,10 +109,7 @@ threadSize: 1
 `,
 
     "database": 
-`scheme: http
-host: localhost
-port: 9200
-bulkSize: 10000
+`bulkSize: 10000
 fetchSize: 10000
 type: jdbc
 pipeLine: "pipeline"
@@ -131,52 +118,6 @@ dataSQL : "SELECT * FROM myTable"`
 };
 const NO_SELECTED = 'NO_SELECTED';
 const DEFAULT_CRON = '0 0 * * *'
-const DEFAULT_YAML = `
-============================= ndjson / csv template
-scheme: http
-host: localhost
-port: 9200
-type: ndjson /csv
-path: /data/source/search-prod.ndjson   or   /data/source/search-prod.csv
-encoding: utf-8
-bulkSize: 10000
-reset: false
-threadSize: 1
-
-============================= rsync template
-scheme: http
-host: localhost
-port: 9200
-type: procedure
-bulkSize: 1000
-driverClassName: "Altibase.jdbc.driver.AltibaseDriver"
-filterClass: "com.danawa.fastcatx.indexer.filter.DanawaProductFilter"
-url: "jdbc:Altibase://localhost:20200/DANAWA_ALTI"
-user: "root"
-password: "qwerty123456"
-procedureName: "procedureName1"
-dumpFormat: "konan"
-groupSeq: 1
-bwlimit: "10240"
-path: "/data/product/VM"
-rsyncIp: "remote server IP"
-rsyncPath: "search_data_alti"
-encoding: CP949
-procedureSkip: true
-rsyncSkip: true
-threadSize: 1
-
-============================= DB template
-scheme: http
-host: localhost
-port: 9200
-bulkSize: 10000
-fetchSize: 10000
-type: jdbc
-pipeLine: "pipeline"
-threadSize: 1
-dataSQL : "SELECT * FROM myTable"
-`;
 
 function Source({dispatch, authUser, collection, JdbcList}) {
     const classes = useStyles();
@@ -188,12 +129,19 @@ function Source({dispatch, authUser, collection, JdbcList}) {
 
     const [sourceName, setSourceName] = useState("")
     const [launcherYaml, setLauncherYaml] = useState("")
+    const [scheme, setScheme] = useState("http")
     const [host, setHost] = useState("")
     const [port, setPort] = useState("")
     const [jdbcId, setJdbcId] = useState(NO_SELECTED)
     const [cron, setCron] = useState("")
     const [templateValue, setTemplateValue] = useState(TEMPLATE_LIST[0]);
 
+    const [isExtIndexer, setExtIndexer] = useState(false);
+    const [esScheme, setEsScheme] = useState("http");
+    const [esHost, setEsHost] = useState("");
+    const [esPort, setEsPort] = useState("");
+    const [esUser, setEsUser] = useState("");
+    const [esPassword, setEsPassword] = useState("");
     const [invalid, setInvalid] = useState({})
 
     const aceEditor = useRef(null)
@@ -207,8 +155,17 @@ function Source({dispatch, authUser, collection, JdbcList}) {
             aceEditor.current.editor.setValue(TEMPLATE[TEMPLATE_LIST[0]]);
         } else {
             setSourceName(collection['sourceName']);
+            setScheme((collection['launcher']||{})['scheme']||"");
             setHost((collection['launcher']||{})['host']||"");
             setPort((collection['launcher']||{})['port']||"");
+
+            setExtIndexer(collection['extIndexer'])
+            setEsScheme(collection['esScheme'])
+            setEsHost(collection['esHost'])
+            setEsPort(collection['esPort'])
+            setEsUser(collection['esUser'])
+            setEsPassword(collection['esPassword'])
+
             // setJdbcId(collection['jdbcId']);
             setJdbcId(collection['jdbcId'] === '' ? NO_SELECTED : collection['jdbcId'])
             setCron(collection['cron']);
@@ -222,8 +179,17 @@ function Source({dispatch, authUser, collection, JdbcList}) {
         try {
             if (mode === "EDIT") {
                 setSourceName(collection['sourceName']);
+                setScheme((collection['launcher']||{})['scheme']||"");
                 setHost((collection['launcher']||{})['host']||"");
                 setPort((collection['launcher']||{})['port']||"");
+
+                setExtIndexer(collection['extIndexer'])
+                setEsScheme(collection['esScheme'])
+                setEsHost(collection['esHost'])
+                setEsPort(collection['esPort'])
+                setEsUser(collection['esUser'])
+                setEsPassword(collection['esPassword'])
+
                 // setJdbcId(collection['jdbcId']);
                 setJdbcId(collection['jdbcId'] === '' ? NO_SELECTED : collection['jdbcId'])
                 setCron(collection['cron']);
@@ -253,16 +219,27 @@ function Source({dispatch, authUser, collection, JdbcList}) {
         if (sourceName.trim() === "") {
             invalidCheck['sourceName'] = true
         }
-        if (host.trim() === "" || !/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/gi.test(host)) {
-            invalidCheck['host'] = true
-        }
-        if (port === "") {
-            invalidCheck['port'] = true
-        }
         if(cron.length === 0){
             setCron(DEFAULT_CRON)
         }else if (!isValidCron(cron)) {
             invalidCheck['cron'] = true
+        }
+
+        if (isExtIndexer) {
+            // || !/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/gi.test(host)
+            if (host.trim() === "") {
+                invalidCheck['host'] = true
+            }
+            if (port === "") {
+                invalidCheck['port'] = true
+            }
+            // || !/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/gi.test(host)
+            if (esHost.trim() === "") {
+                invalidCheck['esHost'] = true
+            }
+            if (esPort === "") {
+                invalidCheck['esPort'] = true
+            }
         }
 
         if (Object.keys(invalidCheck).length > 0) {
@@ -274,10 +251,11 @@ function Source({dispatch, authUser, collection, JdbcList}) {
             sourceName,
             cron: (cron.length === 0 ? DEFAULT_CRON : cron),
             jdbcId: (jdbcId === NO_SELECTED ? '' : jdbcId),
+            extIndexer: isExtIndexer,
+            esScheme, esHost: esHost.trim(), esPort, esUser: esUser.trim(), esPassword: esPassword.trim(),
             launcher: {
                 yaml: aceEditor.current.editor.getValue() || '',
-                host,
-                port,
+                scheme: isExtIndexer ? scheme : "http", host: isExtIndexer ? host.trim() : "", port: isExtIndexer ? port : "",
             }
         })).then(response => {
             dispatch(setCollection(collection['id']))
@@ -297,6 +275,9 @@ function Source({dispatch, authUser, collection, JdbcList}) {
         { id: NO_SELECTED, sourceAsMap: {name: '선택안함'} },
         ...((JdbcList['hits']||{})['hits']||[])
     ]
+
+    let useJdbcList = jdbcHitList.filter(jdbcObj => (collection['jdbcId'] === '' ? NO_SELECTED : collection['jdbcId']) === jdbcObj['id']).map(jdbcObj => jdbcObj['sourceAsMap']['name'])
+
     return (
         <React.Fragment>
 
@@ -331,27 +312,51 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                     >YAML</Link>
                                                 </TableCell>
                                             </TableRow>
+                                            {
+                                                collection['extIndexer'] ?
+                                                    <React.Fragment>
+                                                        <TableRow>
+                                                            <TableCell variant={"head"} component={"th"}>전용 인덱서</TableCell>
+                                                            <TableCell>
+                                                                {(collection['launcher']||{})['scheme']||''}://
+                                                                {(collection['launcher']||{})['host']||''}:
+                                                                {(collection['launcher']||{})['port'] === 0 ? "" : (collection['launcher']||{})['port']||''}
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    </React.Fragment>
+                                                    :
+                                                    <React.Fragment>
+                                                        <TableRow>
+                                                            <TableCell variant={"head"} component={"th"}>전용인덱서 정보</TableCell>
+                                                            <TableCell> 사용안함 </TableCell>
+                                                        </TableRow>
+                                                    </React.Fragment>
+                                            }
+
                                             <TableRow>
-                                                <TableCell variant={"head"} component={"th"}>실행호스트</TableCell>
-                                                <TableCell>{(collection['launcher'] || {})['host']}</TableCell>
+                                                <TableCell variant={"head"} component={"th"}>엘라스틱서치 정보</TableCell>
+                                                <TableCell>
+                                                    {collection['esScheme']||''}://
+                                                    {collection['esHost']||''}:
+                                                    {collection['esPort']||''}
+                                                    {
+                                                        collection['esUser'] !== "" ?
+                                                            <Box component={"span"}> (사용자: {collection['esUser']})</Box>
+                                                            :
+                                                            null
+                                                    }
+                                                </TableCell>
                                             </TableRow>
-                                            <TableRow>
-                                                <TableCell variant={"head"} component={"th"}>실행포트</TableCell>
-                                                <TableCell>{(collection['launcher'] || {})['port'] === 0 ? "" : (collection['launcher'] || {})['port']}</TableCell>
-                                            </TableRow>
+
+
                                             <TableRow>
                                                 <TableCell variant={"head"} component={"th"}>JDBC</TableCell>
                                                 <TableCell>
                                                     {
-                                                        jdbcHitList.filter(jdbcObj => (collection['jdbcId'] === '' ? NO_SELECTED : collection['jdbcId']) === jdbcObj['id'])
-                                                            .map(jdbcObj => {
-                                                                const source = jdbcObj['sourceAsMap']
-                                                                return (
-                                                                    <React.Fragment key={source['name']}>
-                                                                        {source['name']}
-                                                                    </React.Fragment>
-                                                                )
-                                                            })
+                                                        useJdbcList.length === 0 ?
+                                                            "사용안함"
+                                                            :
+                                                            useJdbcList[0]
                                                     }
                                                 </TableCell>
                                             </TableRow>
@@ -395,6 +400,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                 <Box p={5}>
                                     <Table>
                                         <TableBody>
+
                                             <TableRow>
                                                 <TableCell variant={"head"} component={"th"}>이름</TableCell>
                                                 <TableCell>
@@ -405,6 +411,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                     />
                                                 </TableCell>
                                             </TableRow>
+
                                             <TableRow>
                                                 <TableCell variant={"head"} component={"th"}>파라미터 YAML</TableCell>
                                                 <TableCell>
@@ -469,29 +476,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                     </Select>
                                                 </TableCell>
                                             </TableRow>
-                                            <TableRow>
-                                                <TableCell variant={"head"} component={"th"}>실행호스트</TableCell>
-                                                <TableCell>
-                                                    <TextField value={host}
-                                                               onChange={event => setHost(event.target.value)}
-                                                               fullWidth
-                                                               placeholder={"127.0.0.1"}
-                                                               error={invalid['host']||false}
-                                                    />
-                                                </TableCell>
-                                            </TableRow>
-                                            <TableRow>
-                                                <TableCell variant={"head"} component={"th"}>실행포트</TableCell>
-                                                <TableCell>
-                                                    <TextField value={port}
-                                                               onChange={event => setPort(event.target.value)}
-                                                               fullWidth
-                                                               placeholder={"5005"}
-                                                               type={"number"}
-                                                               error={invalid['port']||false}
-                                                    />
-                                                </TableCell>
-                                            </TableRow>
+
                                             <TableRow>
                                                 <TableCell variant={"head"} component={"th"}>크론주기</TableCell>
                                                 <TableCell>
@@ -528,6 +513,112 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                     </Grid>
                                                 </TableCell>
                                             </TableRow>
+
+                                            <TableRow>
+                                                <TableCell variant={"head"} component={"th"}>엘라스틱서치 정보</TableCell>
+                                                <TableCell>
+                                                    <Box my={3}>
+                                                        <Select style={{minWidth: "100%"}}
+                                                                value={esScheme}
+                                                                onChange={e => setEsScheme(e.target.value)}
+                                                        >
+                                                            <MenuItem key={1}
+                                                                      value={"http"}
+                                                            >
+                                                                HTTP
+                                                            </MenuItem>
+                                                            <MenuItem key={1}
+                                                                      value={"https"}
+                                                            >
+                                                                HTTPS
+                                                            </MenuItem>
+                                                        </Select>
+                                                    </Box>
+                                                    <Box my={3}>
+                                                        <TextField value={esHost}
+                                                                   onChange={e => setEsHost(e.target.value)}
+                                                                   fullWidth
+                                                                   placeholder={"elastic.com"}
+                                                                   error={invalid['esHost']||false}
+                                                        />
+                                                    </Box>
+                                                    <Box my={3}>
+                                                        <TextField value={esPort}
+                                                                   onChange={e => setEsPort(e.target.value)}
+                                                                   fullWidth
+                                                                   type={"number"}
+                                                                   placeholder={"9200"}
+                                                                   error={invalid['esPort']||false}
+                                                        />
+                                                    </Box>
+                                                    <Box my={3}>
+                                                        <TextField value={esUser}
+                                                                   onChange={e => setEsUser(e.target.value)}
+                                                                   fullWidth
+                                                                   placeholder={"elastic"}
+                                                        />
+                                                    </Box>
+                                                    <Box my={3}>
+                                                        <TextField value={esPassword}
+                                                                   onChange={e => setEsPassword(e.target.value)}
+                                                                   fullWidth
+                                                                   type={"password"}
+                                                                   placeholder={"password"}
+                                                        />
+                                                    </Box>
+                                                </TableCell>
+                                            </TableRow>
+
+                                            <TableRow>
+                                                <TableCell variant={"head"} component={"th"}>전용인덱서</TableCell>
+                                                <TableCell>
+                                                    <Typography component="div">
+                                                        <Grid component="label" container alignItems="center" spacing={1}>
+                                                            <Grid item>사용안함</Grid>
+                                                            <Grid item>
+                                                                <Switch checked={isExtIndexer} onChange={() => setExtIndexer((!isExtIndexer))}  />
+                                                            </Grid>
+                                                            <Grid item>사용</Grid>
+                                                        </Grid>
+                                                    </Typography>
+                                                </TableCell>
+                                            </TableRow>
+
+                                            <TableRow style={{display: isExtIndexer ? "table-row" : "none" }}>
+                                                <TableCell variant={"head"} component={"th"}>전용인덱서 정보</TableCell>
+                                                <TableCell>
+                                                    <Box my={3}>
+                                                        <Select style={{minWidth: "100%"}}
+                                                                value={scheme}
+                                                                onChange={e => setScheme(e.target.value)}
+                                                        >
+                                                            <MenuItem value={"http"}>
+                                                                HTTP
+                                                            </MenuItem>
+                                                            <MenuItem value={"https"}>
+                                                                HTTPS
+                                                            </MenuItem>
+                                                        </Select>
+                                                    </Box>
+                                                    <Box my={3}>
+                                                        <TextField value={host}
+                                                                   onChange={event => setHost(event.target.value)}
+                                                                   fullWidth
+                                                                   placeholder={"127.0.0.1"}
+                                                                   error={invalid['host']||false}
+                                                        />
+                                                    </Box>
+                                                    <Box my={3}>
+                                                        <TextField value={port}
+                                                                   onChange={event => setPort(event.target.value)}
+                                                                   fullWidth
+                                                                   placeholder={"5005"}
+                                                                   type={"number"}
+                                                                   error={invalid['port']||false}
+                                                        />
+                                                    </Box>
+                                                </TableCell>
+                                            </TableRow>
                                         </TableBody>
                                     </Table>
                                 </Box>
@@ -561,5 +652,6 @@ function Source({dispatch, authUser, collection, JdbcList}) {
 export default connect(store => ({
     authUser: store.dsearchReducers.authUser,
     ...store.collectionReducers,
-    ...store.jdbcReducers
+    ...store.jdbcReducers,
+    ...store.clusterReducers,
 }))(Source);

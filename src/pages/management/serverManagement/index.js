@@ -1,5 +1,4 @@
 import React, {useEffect} from "react";
-import { useHistory } from 'react-router-dom';
 import styled from "styled-components";
 import {setServerSummaryActions} from '@actions/serverSummaryActions'
 import Async from '~/components/Async';
@@ -64,7 +63,6 @@ const SUMMARY = 'NO_SELECTED';
 
 function Server({dispatch, server}) {
     const classes = useStyles();
-    const history = useHistory();
 
     const [indices, setIndices] = React.useState(SUMMARY);
 
@@ -81,9 +79,9 @@ function Server({dispatch, server}) {
     }, [server.nodes]) // eslint-disable-line react-hooks/exhaustive-deps
 
     const selectNode =()=>{
-        if(location.search !== "" || location.search !== undefined){
+        if(window.location.search !== "" || window.location.search !== undefined){
             const nodes = (Object.entries(server.nodes));
-            const nodeName = location.search.split("=")[1];
+            const nodeName = window.location.search.split("=")[1];
             for(let i=0; i<nodes.length; i++){
                 if(nodeName === nodes[i][1].name){
                     setIndices(nodes[i][0]);

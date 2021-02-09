@@ -3,9 +3,12 @@ import Client from '~/Client'
 
 const client = new Client()
 
-export const setClusterList = () => dispatch => client.call({
-    uri: "/clusters",
-}).then(response => dispatch({type: SET_CLUSTER_LIST, payload: response.data}))
+export const setClusterList = ({isStatus} = { isStatus: true }) => dispatch => client.call({
+    uri: "/clusters?isStatus=" + isStatus,
+}).then(response => {
+    dispatch({type: SET_CLUSTER_LIST, payload: response.data})
+    return response.data
+})
 
 export const setClusterStatus = (cluster) => dispatch => client.call({
     uri: "/elasticsearch/status",

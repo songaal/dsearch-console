@@ -93,7 +93,7 @@ function Index({indexInfoList, settings}) {
     const [process, setProcess] = React.useState(false);
     const [openRemoveModal, setOpenRemoveModal] = React.useState(false)
     const [deleteIndex, setDeleteIndex] = React.useState('')
-    const [tabIndex, setTabIndex] = React.useState(qs.get("tab")||0)
+    const [tabIndex] = React.useState(qs.get("tab")||0)
     const [openBackDrop, setOpenBackDrop] = React.useState(false);
     const [state, setState] = React.useState({
         open: false,

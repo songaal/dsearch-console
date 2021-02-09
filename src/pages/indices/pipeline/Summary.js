@@ -3,17 +3,15 @@ import {connect} from "react-redux";
 import {
     Box,
     Button,
-    Card,
-    CardContent,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
-    Link,
+    Link, Paper,
     Snackbar,
     Table,
     TableBody,
-    TableCell,
+    TableCell, TableContainer,
     TableHead,
     TableRow, TableSortLabel,
     TextField,
@@ -209,106 +207,112 @@ function Summary({ dispatch, authUser, list }) {
 
     return (
         <React.Fragment>
-            <Card>
-                <CardContent>
-                    <Box>
-                        <Box align={'right'} paddingRight={"30px"}>
-                            {authUser.role.index ? 
-                                <Link
-                                    onClick={openModalAdd}
-                                    style={{ cursor: "pointer" }}
-                                    color={"primary"}>
-                                    파이프라인 추가
-                                </Link> 
-                                : <></>
+            <br/>
+
+            <Box align={'right'}>
+                {authUser.role.index ?
+                    <Link
+                        onClick={openModalAdd}
+                        style={{ cursor: "pointer" }}
+                        color={"primary"}>
+                        파이프라인 추가
+                    </Link>
+                    : <></>
+                }
+            </Box>
+
+            <br/>
+
+            <TableContainer component={Paper}>
+                <Table>
+                    <colgroup>
+                        <col width="5%" />
+                        <col />
+                        <col width="10%" />
+                        <col width="10%" />
+                    </colgroup>
+                    <TableHead>
+                        <TableRow>
+                            {
+                                fields.map(field =>
+                                    <TableCell align="center" key={field['id']}>
+                                        {
+                                            field["sorting"] ?
+                                                <TableSortLabel
+                                                    active={orderBy === field['id']}
+                                                    direction={orderBy === field['id'] ? order : 'asc'}
+                                                    onClick={event => {
+                                                        setOrderBy(field['id'])
+                                                        const isAsc = orderBy === field['id'] && order === 'asc';
+                                                        setOrder(isAsc ? 'desc' : 'asc');
+                                                    }}
+                                                >
+                                                    {field['label']}
+                                                </TableSortLabel>
+                                                :
+                                                field['label']
+                                        }
+                                    </TableCell>)
                             }
-                        </Box>
-                        
-                        <Table>
-                            <colgroup>
-                                <col width="5%" />
-                                <col />
-                                <col width="10%" />
-                                <col width="10%" />
-                            </colgroup>
-                            <TableHead>
-                                <TableRow>
-                                    {
-                                        fields.map(field =>
-                                            <TableCell align="center" key={field['id']}>
-                                                {
-                                                    field["sorting"] ?
-                                                        <TableSortLabel
-                                                            active={orderBy === field['id']}
-                                                            direction={orderBy === field['id'] ? order : 'asc'}
-                                                            onClick={event => {
-                                                                setOrderBy(field['id'])
-                                                                const isAsc = orderBy === field['id'] && order === 'asc';
-                                                                setOrder(isAsc ? 'desc' : 'asc');
-                                                            }}
-                                                        >
-                                                            {field['label']}
-                                                        </TableSortLabel>
-                                                        :
-                                                        field['label']
-                                                }
-                                            </TableCell>)
-                                    }
-                                    {/*<TableCell align={"center"} >#</TableCell>*/}
-                                    {/*<TableCell align={"center"} >파이프라인 이름</TableCell>*/}
-                                    {/*<TableCell align={"center"} >수정</TableCell>*/}
-                                    {/*<TableCell align={"center"} >삭제</TableCell>*/}
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {
-                                    viewList
-                                            .sort((a, b) => {
-                                                if (orderBy && order) {
-                                                    let x = a['title']
-                                                    let y = b['title']
-                                                    if (order === 'asc') {
-                                                        return x > y ? 1 : -1
-                                                    } else {
-                                                        return x > y ? -1 : 1
-                                                    }
-                                                } else {
-                                                    return 0
-                                                }})
-                                            .map((item, index) => {
-                                            return  <TableRow key={index}>
-                                                        <TableCell align={"center"}> 
-                                                            {item['no'] + 1}
-                                                        </TableCell>
-                                                        <TableCell align={"center"}>
-                                                            <Link onClick={() => openModal(item['title'])} variant={"inherit"} style={{ cursor: "pointer" }} color={"primary"} id={item['title']} >{item['title']}</Link>
-                                                        </TableCell>
-                                                        {/* <TableCell align={"center"}>
+                            {/*<TableCell align={"center"} >#</TableCell>*/}
+                            {/*<TableCell align={"center"} >파이프라인 이름</TableCell>*/}
+                            {/*<TableCell align={"center"} >수정</TableCell>*/}
+                            {/*<TableCell align={"center"} >삭제</TableCell>*/}
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {
+                            viewList
+                                .sort((a, b) => {
+                                    if (orderBy && order) {
+                                        let x = a['title']
+                                        let y = b['title']
+                                        if (order === 'asc') {
+                                            return x > y ? 1 : -1
+                                        } else {
+                                            return x > y ? -1 : 1
+                                        }
+                                    } else {
+                                        return 0
+                                    }})
+                                .map((item, index) => {
+                                    return  <TableRow key={index}>
+                                        <TableCell align={"center"}>
+                                            {item['no'] + 1}
+                                        </TableCell>
+                                        <TableCell align={"center"}>
+                                            <Link onClick={() => openModal(item['title'])} variant={"inherit"} style={{ cursor: "pointer" }} color={"primary"} id={item['title']} >{item['title']}</Link>
+                                        </TableCell>
+                                        {/* <TableCell align={"center"}>
                                                                 <Button variant={"outlined"} color={"primary"} style={{ whiteSpace: "nowrap" }} onClick={()=> openModalEdit(item)} >수정</Button>
                                                             </TableCell>
                                                             <TableCell align={"center"}>
                                                                 <Button variant="outlined" style={{ whiteSpace: "nowrap", borderColor:"red", color: "red"}} onClick={() => openModalDelete(item)}>삭제</Button>
                                                             </TableCell> */}
-                                                        {authUser.role.index ? 
-                                                            <TableCell align={"center"}>
-                                                                <Button variant={"outlined"} color={"primary"} style={{ whiteSpace: "nowrap" }} onClick={()=> openModalEdit(item['title'])} >수정</Button>
-                                                            </TableCell> : <TableCell></TableCell> }
-                                                        {authUser.role.index ? 
-                                                            <TableCell align={"center"}>
-                                                                <Button variant="outlined" style={{ whiteSpace: "nowrap", borderColor:"red", color: "red"}} onClick={() => openModalDelete(item['title'])}>삭제</Button>
-                                                            </TableCell> : <TableCell></TableCell> }
-                                                    </TableRow>
-                                        })
-                                }
-                            </TableBody>
-                        </Table>
-                    </Box>
-                    <Snackbar open={snackbarFlag} autoHideDuration={3000} onClose={() => { setSnackbarFlag(false); }}>
-                        {successFlag ? <MuiAlert elevation={6} variant="filled" severity="info"> {message} {" 성공"} </MuiAlert> 
-                                     : <MuiAlert elevation={6} variant="filled" severity="error"> {message}  {" 실패"} </MuiAlert> }
-                    </Snackbar>
-                </CardContent>
-            </Card>
+                                        {authUser.role.index ?
+                                            <TableCell align={"center"}>
+                                                <Button variant={"outlined"} color={"primary"} style={{ whiteSpace: "nowrap" }} onClick={()=> openModalEdit(item['title'])} >수정</Button>
+                                            </TableCell> : <TableCell></TableCell> }
+                                        {authUser.role.index ?
+                                            <TableCell align={"center"}>
+                                                <Button variant="outlined" style={{ whiteSpace: "nowrap", borderColor:"red", color: "red"}} onClick={() => openModalDelete(item['title'])}>삭제</Button>
+                                            </TableCell> : <TableCell></TableCell> }
+                                    </TableRow>
+                                })
+                        }
+                    </TableBody>
+                </Table>
+            </TableContainer>
+            <Snackbar open={snackbarFlag} autoHideDuration={3000} onClose={() => { setSnackbarFlag(false); }}>
+                {successFlag ? <MuiAlert elevation={6} variant="filled" severity="info"> {message} {" 성공"} </MuiAlert>
+                    : <MuiAlert elevation={6} variant="filled" severity="error"> {message}  {" 실패"} </MuiAlert> }
+            </Snackbar>
+
+            {/*<Card>*/}
+            {/*    <CardContent>*/}
+            {/*        */}
+            {/*    </CardContent>*/}
+            {/*</Card>*/}
 
             <Dialog open={modalFlag}
                     fullWidth

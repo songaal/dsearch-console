@@ -33,7 +33,7 @@ const Grid = styled(MuiGrid)(spacing, positions);
 //     }
 // }));
 
-const tabs = [
+let tabs = [
     {label: "개요", component: Async(() => import("./Summary"))},
     {label: "수집소스", component: Async(() => import("./Source"))},
     {label: "히스토리", component: Async(() => import("./History"))},
@@ -103,7 +103,10 @@ function Detail({dispatch, collection, collectionList}) {
 
             <Grid container spacing={6}>
                 <Grid item xs={12}>
-                    <AntTabs tabs={tabs} tabIndex={0} onChange={handleChange}/>
+                    <AntTabs tabs={tabs}
+                             tabIndex={ (collection||{})['sourceName'] === "" ? 1 : 0}
+                             onChange={handleChange}
+                    />
                 </Grid>
             </Grid>
 

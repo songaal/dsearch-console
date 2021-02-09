@@ -20,7 +20,7 @@ import {
     CardContent, Checkbox,
     Divider as MuiDivider,
     Fab, FormControl, FormControlLabel,
-    Grid as MuiGrid, Input, InputAdornment, InputLabel,
+    Grid as MuiGrid, Input, InputAdornment,
     Link,
     MenuList,
     Select,
@@ -39,7 +39,6 @@ import {
     setClusterList,
     setClusterStatus
 } from "../../redux/actions/clusterActions";
-import {red} from "@material-ui/core/colors";
 import axios from "axios";
 
 const Card = styled(MuiCard)(spacing);
@@ -369,7 +368,8 @@ function Cluster({ dispatch, clusterList, authUser }) {
     const [isProcess, setProcess] = useState(false)
 
     useEffect(() => {
-        dispatch(setClusterList())
+        dispatch(setClusterList({isStatus: false}))
+            .then(data => dispatch(setClusterList()))
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     function toggleOpenAddModal() {
