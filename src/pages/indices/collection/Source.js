@@ -57,7 +57,8 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const TEMPLATE_LIST = ["ndjson", "konan", "csv", "file", "procedure", "database"]
+// const TEMPLATE_LIST = ["ndjson", "konan", "csv", "file", "procedure", "database"]
+const TEMPLATE_LIST = ["ndjson", "csv", "file", "procedure", "database"]
 const TEMPLATE = {
     "ndjson" : 
 `scheme: http
@@ -70,16 +71,16 @@ bulkSize: 10000
 reset: true
 threadSize: 1`,
 
-"konan" : 
-`scheme: http
-host: localhost
-port: 9200
-type: konan
-path: /data/directory or /data/directory/sourceFile
-encoding: utf-8
-bulkSize: 10000
-reset: true
-threadSize: 1`,
+// "konan" : 
+// `scheme: http
+// host: localhost
+// port: 9200
+// type: konan
+// path: /data/directory or /data/directory/sourceFile
+// encoding: utf-8
+// bulkSize: 10000
+// reset: true
+// threadSize: 1`,
 
     "csv" : 
 `scheme: http
