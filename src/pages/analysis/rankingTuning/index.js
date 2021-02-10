@@ -48,11 +48,9 @@ const DEFAULT_TEMPLATE = `
 {
     "query": {
       "match": {
-        "keyword": "keyword"
+        "productName": "노트북"
       }
-    },
-    "from": 0,
-    "size": 100
+    }
 }
 `;
 
@@ -138,12 +136,12 @@ function ResultDocument({result, item, expand, nodeToggle}) {
             <TableBody>
                 {
                     dataList.map((data, index) => {
-                        let tokenValue = data['tokens'].join(", ");
+                        let tokenValue = (data['tokens']||[]).map(t => `"${t}"`).join(", ");
                         let text = JSON.stringify(data['text']);
                         let field = data['field'];
                         return (
                             <TableRow key={"data-" + index}>
-                                <TableCell>{field}</TableCell>
+                                <TableCell style={{fontWeight: "bold"}}>{field}</TableCell>
                                 <TableCell>{text}</TableCell>
                                 <TableCell>{tokenValue.length > 0 ? tokenValue : text}</TableCell>
                             </TableRow>
@@ -202,7 +200,7 @@ function RankingTuningResults({pageNum, result, expand, nodeToggle, errorMessage
                             let number = index + ((pageNum-1)*10) + 1;
                             // return <></>;
                             return (<TableRow key={"a" + number}>
-                                <TableCell align="right">{number}</TableCell>
+                                <TableCell style={{fontWeight: "bold"}} align="right">{number}</TableCell>
                                 <TableCell >
                                     <ResultDocument result={result} item={item} expand={expand} nodeToggle={nodeToggle}/>
                                 </TableCell>
@@ -349,11 +347,11 @@ function RankingTuningCard({dispatch, result, index}) {
         document.querySelector("#move").scrollTo(0, 0);
         setProgress(true);
         // let jsonData = JSON.parse(aceEditor.current.editor.getValue());
-        let jsonData = Object.assign({
+        let jsonData = Object.assign(JSON.parse(query),{
             explain: true,
             from: ((pageNum - 1) * 10),
             size: 10
-        }, JSON.parse(query))
+        })
         // jsonData.explain = true;
         // jsonData.from = (pageNum - 1) * 10;
         // jsonData.size = 10;
