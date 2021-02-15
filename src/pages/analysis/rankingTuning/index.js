@@ -65,7 +65,8 @@ const getTreeItemsFromData = treeItems => {
       return (
         <TreeItem
           key={ids}
-          nodeId={ids++}
+          // nodeId={ids++}
+          nodeId={`node${ids++}`}
           label={detail.value + " : " + detail.description}
           children={children}
         />
@@ -86,7 +87,7 @@ function ScoreTreeView({details, expand, nodeToggle, description}) {
             defaultCollapseIcon={<ExpandMoreIcon />}
             defaultExpandIcon={<ChevronRightIcon />}
         >
-            <TreeItem key={ids} nodeId={"node" + (ids++)} label={description}>
+            <TreeItem key={ids} nodeId={`node${ids++}`} label={description}>
                 {getTreeItemsFromData(details)}
             </TreeItem>
         </TreeView>
@@ -264,9 +265,9 @@ function RankingTuningCard({dispatch, result, index}) {
     }
 
     const handleExpandAll = (event) =>{
-        let changeExpand = [];    
+        let changeExpand = [];
         for (let i = 1; i <= ids; i++)
-            changeExpand.push(i);
+            changeExpand.push(`node${i}`);
         setExpand(changeExpand)
     }
 
