@@ -130,14 +130,14 @@ function IndexedDataTable({dispatch, index, mappings}) {
                                 // 분석기가 있는 경우.
                                 delete tmpMap[`${k.substring(0, k.length - 9)}.type`]
                                 tmpMap[k] = {
-                                    field: (k.substring(0, k.length - 9).replaceAll(".fields", "")),
+                                    field: (k.substring(0, k.length - 9).replace(/\.fields/gi, "")),
                                     text: flatSource[flatField],
                                     analyzer: ((payload||{})['flatMappings']||{})[k]||"standard"
                                 }
                             } else if (k.endsWith(".type") && !tmpMap[`${k.substring(0, k.length - 5)}.analyzer`]) {
                                 // 분석기 없으면 standard 선택
                                 tmpMap[k] = {
-                                    field: (k.substring(0, k.length - 5).replaceAll(".fields", "")),
+                                    field: (k.substring(0, k.length - 5).replace(/\.fields/gi, "")),
                                     text: flatSource[flatField],
                                     analyzer: "standard"
                                 }

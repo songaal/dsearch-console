@@ -167,7 +167,7 @@ function MappingsJson2html(json) {
                     return (
                         <tr key={index}>
                             <td align={"center"}>{index + 1}</td>
-                            <td>{key.replaceAll(".fields", "")}</td>
+                            <td>{key.replace(/\.fields/gi, "")}</td>
                             {
                                 topFields.map(field => <td key={field['title']} align={"center"}>{field['component'](obj[field['key']])}</td>)
                             }
