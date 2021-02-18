@@ -106,6 +106,9 @@ function DataEditTable({dispatch, index, authUser, mappings}) {
             return dispatch(setIndexMappingsAction(index)).then((response)=> {
                 let indexMapping = response.payload;
                 dispatch(setIndexDocumentSourceListAction({index, from: pageNum, size: searchSize||rowSize, columns, keyword})).then(response => {
+
+
+                console.log('확인용', response['hits']);
                 // columns 적용
                 let tmpColumns = {};
                 // let tmpColumns = {}

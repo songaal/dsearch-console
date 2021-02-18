@@ -117,7 +117,8 @@ export const setIndexDocumentSourceListAction = ({index, from, size, id, columns
                                     query: keyword,
                                     fields: columns,
                                     operator: "or",
-                                    boost: 1
+                                    boost: 1,
+                                    "type": "phrase"
                                 }
                             },
                             {
