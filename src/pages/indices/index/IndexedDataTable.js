@@ -66,12 +66,13 @@ function IndexedDataTable({dispatch, index, mappings}) {
 
             let searchColumns = []
             const flatMappings = flat(mappings)
-            if (/[^0-9]/gi.test(searchKeyword)) {
-                // 문자
-                searchColumns = columns.filter(c => ['text','keyword'].includes(flatMappings[`${c}.type`]))
-            } else {
-                searchColumns = columns
-            }
+            // if (/[^0-9]/gi.test(searchKeyword)) {
+            //     // 문자
+            //     searchColumns = columns.filter(c => ['text','keyword'].includes(flatMappings[`${c}.type`]))
+            // } else {
+            //     searchColumns = columns
+            // }
+            searchColumns = columns.filter(c => ['text','keyword'].includes(flatMappings[`${c}.type`]))
             // 포멧 형식이 있으면 무시.
             searchColumns = searchColumns.filter(c => !flatMappings[`${c}.format`])
 
