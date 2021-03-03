@@ -209,7 +209,7 @@ function Summary({dispatch, authUser, collection}) {
                                 <Grid item xs={9}>
                                     <Box component={"span"}
                                          style={{display: "inline"}}>
-                                         레플리카 갯수: {collection['replicas'] ? collection['replicas'] : "1"}
+                                         레플리카 갯수: { collection['replicas'] !== null && collection['replicas'] !== undefined ? collection['replicas'] : "1"}
                                     </Box>
                                 </Grid>
                             </Grid>
