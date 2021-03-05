@@ -8,7 +8,7 @@ import { setAnalyzerList, setPluginList, actionAnalyzer, actionPlugin } from '@a
 import {
     Box, Button,
     Card as MuiCard,
-    CardContent,
+    CardContent, Checkbox,
     Divider as MuiDivider,
     FormControl, FormControlLabel,RadioGroup, Radio,
     Table, TableRow, TableCell,
@@ -21,6 +21,7 @@ import {
 } from "@material-ui/core";
 
 import { spacing } from "@material-ui/system";
+import { Label } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -132,6 +133,7 @@ function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetai
     const [selectedItem, setSelectedItem] = useState("EMPTY");
     const [toolsTypeAction, setToolsTypeAction] = useState("brief")
     const classes = useStyles()
+    const [state, setState] =useState(false);
 
     let index2AnalyzerList = []
     if (analyzerList !== undefined && analyzerList !== null) {
@@ -187,6 +189,7 @@ function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetai
             let plugin = analyzer_select.innerHTML
             plugin = plugin.replace(/ /gi, "");
 
+            data.useForQuery = state;
             data.plugin = plugin;
             data.text = analyzer_contents.value;
             dispatch(actionPlugin(data));
@@ -202,6 +205,9 @@ function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetai
                             <RadioGroup value={toolsTypeAction} row onChange={handleChange} >
                                 <FormControlLabel value="brief" control={<Radio size="small" />} label="간략" />
                                 <FormControlLabel value="detail" control={<Radio size="small" />} label="상세" />
+                                {toolsTypeAction === 'brief' ? <></> :  
+                                    <FormControlLabel control={ <Checkbox checked={state} onClick={() => {setState(!state)}}/> } label="쿼리용도" />
+                                }
                             </RadioGroup>
                         </FormControl>
                     </Box>
