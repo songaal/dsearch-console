@@ -558,11 +558,12 @@ function Cluster({ dispatch, clusterList, authUser }) {
         })
     }
     function goDashboard(id) {
-        const link = document.createElement('a');
-        link.setAttribute("href", `${id}/dashboard`)
-        link.setAttribute("target", "_blank")
-        document.body.appendChild(link);
-        link.click()
+        // const link = document.createElement('a');
+        // link.setAttribute("href", `${id}/dashboard`)
+        // link.setAttribute("target", "_blank")
+        // document.body.appendChild(link);
+        // link.click()
+        window.open(`${id}/dashboard`,"_blank" )
     }
 
     function goNewDashboard(event, id) {
