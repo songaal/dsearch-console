@@ -42,13 +42,20 @@ export const editCollectionSourceAction = (id, collection) => dispatch => client
     data: collection
 }).then(response => response.data)
 
-export const editCollectionScheduleAction = (id, isSchedule) => dispatch => client.call({
+// export const editCollectionScheduleAction = (id, isSchedule) => dispatch => client.call({
+//     uri: `/collections/${id}`,
+//     method: "put",
+//     params: {action: "schedule"},
+//     data: {
+//         scheduled: isSchedule
+//     }
+// }).then(response => response.data)
+
+export const editCollectionScheduleAction = (id, collection) => dispatch => client.call({
     uri: `/collections/${id}`,
     method: "put",
     params: {action: "schedule"},
-    data: {
-        scheduled: isSchedule
-    }
+    data: collection
 }).then(response => response.data)
 
 export const setIndexHistoryTypeList = ({ indexA, indexB, from, size, type }) => dispatch => client.call({

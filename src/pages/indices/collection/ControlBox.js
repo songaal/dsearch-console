@@ -133,7 +133,9 @@ function ControlBox({dispatch, authUser, collection, job}) {
 
     function handleEditSchedule(event) {
         setProcessUI(true)
-        dispatch(editCollectionScheduleAction(collection['id'], event.target.checked))
+        collection['scheduled'] = event.target.checked;
+        dispatch(editCollectionScheduleAction(collection['id'], collection))
+        // dispatch(editCollectionScheduleAction(collection['id'], event.target.checked))
             .then(response => {
                 dispatch(setCollection(collection['id']))
                 setTimeout(() => {
