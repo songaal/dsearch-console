@@ -114,12 +114,12 @@ function ClusterCard({classes, cluster, onEditClick, onRemoveClick, to, newTo, s
                             <Box className={classes.title} align={"center"}>
                                 {name}
                                 <Box style={{position: "relative", height: "0px", right: "-45%", top: "15px"}}>
-                                    <IconButton
+                                    {/* <IconButton
                                         onClick={newTo}
                                         size={"small"}
                                     >
                                         <LaunchIcon />
-                                    </IconButton>
+                                    </IconButton> */}
                                 </Box>
 
                                 <Box style={{position: "relative", height: "0px", right: "-45%", top: "-25px", display: showMenu ? "block" : "none"}}>

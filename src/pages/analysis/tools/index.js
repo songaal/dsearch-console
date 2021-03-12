@@ -131,9 +131,17 @@ function DetailResult({resultDetail}){
 
 function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetail}) {
     const [selectedItem, setSelectedItem] = useState("EMPTY");
-    const [toolsTypeAction, setToolsTypeAction] = useState("brief")
+    const [toolsTypeAction, setToolsTypeAction] = useState("detail")
     const classes = useStyles()
-    const [state, setState] =useState(false);
+    const [state, setState] = useState(true);
+    const [detailPluginList, setDetailPluginList] = useState(((pluginList||{})['plugins']||[]));
+
+    useEffect(() => {
+        if(toolsTypeAction === 'detail') {
+            setDetailPluginList(((pluginList||{})['plugins']||[]))
+            if(detailPluginList.length > 0 )setSelectedItem(detailPluginList[0])
+        }
+    }) // eslint-disable-line react-hooks/exhaustive-deps
 
     let index2AnalyzerList = []
     if (analyzerList !== undefined && analyzerList !== null) {
@@ -198,7 +206,7 @@ function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetai
     return (
         <Card mb={6}>
             <CardContent>
-                <TextField id="analyzer_contents" label="분석할 내용을 입력해 주세요." multiline rows={2} variant="outlined" fullWidth> </TextField>
+                <TextField id="analyzer_contents" label="분석할 내용을 입력해 주세요." variant="outlined" fullWidth onKeyPress={ (e) => { if (e.key === 'Enter') handleToolsClick();}}> </TextField>
                 <Box display="flex" alignItems="center" justifyContent="left" >
                     <Box p={3}>
                         <FormControl>
@@ -233,16 +241,26 @@ function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetai
                                                 }
                                             })
                                         :
-                                        ((pluginList||{})['plugins']||[]).length === 0 ?
-                                            <MenuItem key={"no"} selected={true} disabled={true} value="EMPTY"> 분석기가 없습니다. </MenuItem>
-                                            :
-                                            ((pluginList||{})['plugins']||[]).map((item, index) => {
-                                                if(index === 0) {
-                                                    return <MenuItem key={item} selected={true} value={item}> {item} </MenuItem>;
-                                                }else{
-                                                    return <MenuItem key={item} value={item}> {item} </MenuItem>;
-                                                }
-                                            })
+                                        detailPluginList.length === 0 ?
+                                        <MenuItem key={"no"} selected={true} disabled={true} value="EMPTY"> 분석기가 없습니다. </MenuItem>
+                                        :
+                                        detailPluginList.map((item, index) => {
+                                            if(index === 0) {
+                                                return <MenuItem key={item} selected={true} value={item}> {item} </MenuItem>;
+                                            }else{
+                                                return <MenuItem key={item} value={item}> {item} </MenuItem>;
+                                            }
+                                        }) 
+                                        // ((pluginList||{})['plugins']||[]).length === 0 ?
+                                        //     <MenuItem key={"no"} selected={true} disabled={true} value="EMPTY"> 분석기가 없습니다. </MenuItem>
+                                        //     :
+                                        //     ((pluginList||{})['plugins']||[]).map((item, index) => {
+                                        //         if(index === 0) {
+                                        //             return <MenuItem key={item} selected={true} value={item}> {item} </MenuItem>;
+                                        //         }else{
+                                        //             return <MenuItem key={item} value={item}> {item} </MenuItem>;
+                                        //         }
+                                        //     })
                                     }
                             </Select>
                         </FormControl>

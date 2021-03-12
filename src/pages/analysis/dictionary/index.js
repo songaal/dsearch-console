@@ -23,9 +23,107 @@ const firstTabs = [
     {label: "개요", component: Async(() => import("./Summary"))},
 ]
 
+/* 사전 순서 */
+    // 사용자
+    // 유사어
+    // 불용어
+    // 분리어
+    // 복합명사
+    // 단위명
+    // 단위명동의어
+    // 제조사명
+    // 브랜드명
+    // 카테고리키워드
+    // 영단어
+function sortTabs(dictTabs){
+    let tabs = [];
+    let indexList = [];
+    
+    console.log(dictTabs.length);
+
+    // 없으면 -1, 있으면 인덱스 위치 반환
+    let idx = dictTabs.findIndex(item => item.label == "사용자 사전");
+    if(idx > -1) {
+        tabs.push(dictTabs[idx]); 
+        indexList.push(idx);
+    }
+    
+    idx = dictTabs.findIndex(item => item.label == "유사어 사전");
+    if(idx > -1) {
+        tabs.push(dictTabs[idx]); 
+        indexList.push(idx);
+    }
+
+    idx = dictTabs.findIndex(item => item.label == "분리어 사전");
+    if(idx > -1) {
+        tabs.push(dictTabs[idx]); 
+        indexList.push(idx);
+    }
+
+    idx = dictTabs.findIndex(item => item.label == "영단어 사전");
+    if(idx > -1) {
+        tabs.push(dictTabs[idx]); 
+        indexList.push(idx);
+    }
+
+    idx = dictTabs.findIndex(item => item.label == "단위명 사전");
+    if(idx > -1) {
+        tabs.push(dictTabs[idx]); 
+        indexList.push(idx);
+    }
+
+    idx = dictTabs.findIndex(item => item.label == "단위명동의어 사전");
+    if(idx > -1) {
+        tabs.push(dictTabs[idx]); 
+        indexList.push(idx);
+    }
+
+    idx = dictTabs.findIndex(item => item.label == "불용어 사전");
+    if(idx > -1) {
+        tabs.push(dictTabs[idx]); 
+        indexList.push(idx);
+    }
+
+    idx = dictTabs.findIndex(item => item.label == "제조사명 사전");
+    if(idx > -1) {
+        tabs.push(dictTabs[idx]); 
+        indexList.push(idx);
+    }
+
+    idx = dictTabs.findIndex(item => item.label == "브랜드명 사전");
+    if(idx > -1) {
+        tabs.push(dictTabs[idx]); 
+        indexList.push(idx);
+    }
+
+    idx = dictTabs.findIndex(item => item.label == "카테고리키워드사전");
+    if(idx > -1) {
+        tabs.push(dictTabs[idx]); 
+        indexList.push(idx);
+    }
+
+    idx = dictTabs.findIndex(item => item.label == "복합명사 사전");
+    if(idx > -1) {
+        tabs.push(dictTabs[idx]); 
+        indexList.push(idx);
+    }
+    
+    dictTabs.map((item, index) => {
+        let flag = indexList.findIndex(i => i == index);
+        if(flag == -1) tabs.push(item);
+    })
+
+    console.log("tabs", tabs.length)
+
+    return tabs;
+}
+
 function Dictionary({dispatch, authUser, settings, active}) {
     const [openSettings, setOpenSettings] = React.useState(false)
-    let dictTabs = firstTabs.concat(settings.map(dictionary => ({label: dictionary.name, component: Async(() =>  import("./WrapperTabPanel") )})))
+    let secondTabs = sortTabs(settings.map(dictionary => ({label: dictionary.name, component: Async(() =>  import("./WrapperTabPanel") )})));
+    let dictTabs = firstTabs.concat(secondTabs)
+    // let dictTabs = firstTabs.concat(settings.map(dictionary => ({label: dictionary.name, component: Async(() =>  import("./WrapperTabPanel") )})))
+    
 
     useEffect(() => {
         dispatch(setSettings())

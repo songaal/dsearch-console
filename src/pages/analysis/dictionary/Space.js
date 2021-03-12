@@ -123,10 +123,11 @@ function Space({ dictionary, authUser, setting, dataSet }) {
         setCreateId("")
         setCreateValue("")
         setCreateKeyword("")
-        setCreateDialogOpen(false);
+        // setCreateDialogOpen(false);
         await utils.sleep(1000);
-        setKeyword(createKeyword)
-        dispatch(setDictionary(dictionary, 0, rowSize, isMatch, createKeyword, searchColumns))
+        // setKeyword(createKeyword)
+        // dispatch(setDictionary(dictionary, 0, rowSize, isMatch, createKeyword, searchColumns))
+        dispatch(setDictionary(dictionary, 0, rowSize, isMatch, keyword, searchColumns))
     }
 
     let dataList = setting['columns'].map((column, index) => {
@@ -324,7 +325,7 @@ function Space({ dictionary, authUser, setting, dataSet }) {
                                     <Box mt={2}> {createLabels.id} </Box>
                                 </Grid>
                                 <Grid item xs={8}>
-                                    <TextField autoFocus={true} value={createId} onChange={event => setCreateId(event.target.value)}/>
+                                    <TextField autoFocus={true} value={createId} onChange={event => setCreateId(event.target.value)} onKeyPress={ (e) => { if (e.key === 'Enter') handleCreateData();}}/>
                                 </Grid>
                             </Grid>
                             :
@@ -337,7 +338,7 @@ function Space({ dictionary, authUser, setting, dataSet }) {
                                     <Box mt={2}> {createLabels.keyword} </Box>
                                 </Grid>
                                 <Grid item xs={8}>
-                                    <TextField autoFocus={true} value={createKeyword} onChange={event => setCreateKeyword(event.target.value)}/>
+                                    <TextField autoFocus={true} value={createKeyword} onChange={event => setCreateKeyword(event.target.value)} onKeyPress={ (e) => { if (e.key === 'Enter') handleCreateData();}}/>
                                 </Grid>
                             </Grid>
                             :
@@ -350,7 +351,7 @@ function Space({ dictionary, authUser, setting, dataSet }) {
                                     <Box mt={2}> {createLabels.value} </Box>
                                 </Grid>
                                 <Grid item xs={8}>
-                                    <TextField autoFocus={true} value={createValue} onChange={event => setCreateValue(event.target.value)}/>
+                                    <TextField autoFocus={true} value={createValue} onChange={event => setCreateValue(event.target.value)} onKeyPress={ (e) => { if (e.key === 'Enter') handleCreateData();}}/>
                                 </Grid>
                             </Grid>
                             :
