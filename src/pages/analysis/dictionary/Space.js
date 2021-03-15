@@ -82,9 +82,13 @@ function Space({ dictionary, authUser, setting, dataSet }) {
         checkedList = checked ? checkedList.concat(id) : checkedList.filter(select => select !== id)
     }
 
-    function handlePagination(num) {
-        setPageNum(num)
-        dispatch(setDictionary(dictionary, num, rowSize, isMatch, searchedKeyword, searchColumns))
+    function handlePagination(pageNum) {
+        if(pageNum > result['lastPageNum']){
+            return;
+        }
+
+        setPageNum(pageNum)
+        dispatch(setDictionary(dictionary, pageNum, rowSize, isMatch, searchedKeyword, searchColumns))
     }
 
     function handleSearchClick() {
@@ -134,7 +138,9 @@ function Space({ dictionary, authUser, setting, dataSet }) {
         const hits = (result['hits'] || [])
         return {
             field: column['label'],
+            // 수정된 사항
             data: hits.map(hit => ({id: hit['id'], text: (hit['sourceAsMap'][column['type']] || '')}))
+            // data: hits.map(hit => ({id: hit['id'], text: (hit['sourceAsMap']["value"] || '')}))
         }
     })
 

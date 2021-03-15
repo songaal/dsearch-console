@@ -81,6 +81,11 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
     }
 
     function handlePagination(pageNum) {
+        // 2/1 같이 표시 되는것 방지 코드
+        if(pageNum > result['lastPageNum']){
+            return;
+        }
+
         setPageNum(pageNum)
         dispatch(setDictionary(dictionary, pageNum, rowSize, isMatch, searchedKeyword, searchColumns))
     }

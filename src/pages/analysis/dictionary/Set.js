@@ -83,9 +83,13 @@ function Set({ dictionary, authUser, setting, dataSet }) {
         checkedList = checked ? checkedList.concat(id) : checkedList.filter(select => select !== id)
     }
 
-    function handlePagination(num) {
-        setPageNum(num)
-        dispatch(setDictionary(dictionary, num, rowSize, isMatch, searchedKeyword, searchColumns))
+    function handlePagination(pageNum) {
+        // 2/1 같이 표시 되는것 방지 코드
+        if(pageNum > result['lastPageNum']){
+            return;
+        }
+        setPageNum(pageNum)
+        dispatch(setDictionary(dictionary, pageNum, rowSize, isMatch, searchedKeyword, searchColumns))
     }
 
     function handleSearchClick() {

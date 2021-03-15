@@ -12,6 +12,11 @@ function WrapperTabPanel({ activeIndex, settings, dataSet }) {
     const dictionary = setting['id']
     const type = setting['type']
 
+    // console.log("settings ", settings);
+    // console.log("dictionary ", dictionary);
+    // console.log("type ", type);
+    // console.log("dataSet ", dataSet);
+
     let Viewer = null
     switch (type) {
         case "SET": Viewer = Set; break;
