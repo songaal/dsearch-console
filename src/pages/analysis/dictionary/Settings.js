@@ -200,7 +200,6 @@ function Settings({ dispatch, authUser, settings }) {
     function updateSettingList(e){
         if( e.oldIndex === e.newIndex ) return;
 
-        console.log(settings);
         let list = [];
         if(e.oldIndex < e.newIndex){
             list = list.concat(settings.slice(0, e.oldIndex))
@@ -219,7 +218,6 @@ function Settings({ dispatch, authUser, settings }) {
         }
 
         settings = list;
-        console.log(list);
         dispatch(updatedSettingList(list));
     }
 
