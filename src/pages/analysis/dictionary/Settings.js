@@ -169,6 +169,7 @@ function Settings({ dispatch, authUser, settings }) {
                 ignoreCase: newDictSetting['ignoreCase'],
                 type: newDictSetting['type'], 
                 tokenType: newDictSetting['tokenType'],
+                index: settings.length,
                 colums: {
                     id: newDictSetting['column_id'],
                     keyword: newDictSetting['column_keyword'],
@@ -197,17 +198,28 @@ function Settings({ dispatch, authUser, settings }) {
     }
 
     function updateSettingList(e){
+        if( e.oldIndex === e.newIndex ) return;
+
+        console.log(settings);
         let list = [];
-        list = list.concat(settings.slice(0, e.oldIndex))
-        list = list.concat(settings.slice(e.oldIndex+1, e.newIndex+1))
-        list = list.concat(settings[e.oldIndex])
-        list = list.concat(settings.slice(e.newIndex+1, settings.length));
+        if(e.oldIndex < e.newIndex){
+            list = list.concat(settings.slice(0, e.oldIndex))
+            list = list.concat(settings.slice(e.oldIndex+1, e.newIndex+1))
+            list = list.concat(settings[e.oldIndex])
+            list = list.concat(settings.slice(e.newIndex+1, settings.length));
+        }else if(e.oldIndex > e.newIndex){
+            list = list.concat(settings.slice(0, e.newIndex))
+            list = list.concat(settings[e.oldIndex])
+            list = list.concat(settings.slice(e.newIndex, e.oldIndex));
+            list = list.concat(settings.slice(e.oldIndex+1, settings.length));
+        }
 
         for(let i = 0; i < list.length; i++){
             list[i]['index'] = i+1;
         }
 
         settings = list;
+        console.log(list);
         dispatch(updatedSettingList(list));
     }
 
