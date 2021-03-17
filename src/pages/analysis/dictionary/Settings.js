@@ -1,5 +1,7 @@
-import React, {useEffect} from "react";
-import {connect} from "react-redux";
+import React, { useEffect } from "react";
+import ReactDragList from 'react-drag-list'
+
+import { connect } from "react-redux";
 
 import styled from "styled-components";
 import Helmet from 'react-helmet';
@@ -21,11 +23,12 @@ import {
     TableCell,
     TableBody, TextField, Select, MenuItem, FormControl, IconButton, Link,
 } from "@material-ui/core";
-import {spacing} from "@material-ui/system";
-import {setSettings, setAddDictionarySetting, removeDictionarySetting} from "../../../redux/actions/dictionaryActions";
-import {makeStyles, useTheme} from "@material-ui/core/styles";
-import {red} from "@material-ui/core/colors";
+import { spacing } from "@material-ui/system";
+import { setSettings, setAddDictionarySetting, removeDictionarySetting, updatedSettingList } from "../../../redux/actions/dictionaryActions";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { red } from "@material-ui/core/colors";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
+import utils from "../../../utils";
 
 const Divider = styled(MuiDivider)(spacing);
 
@@ -52,12 +55,27 @@ const useStyles = makeStyles((theme) => ({
         right: theme.spacing(3),
     },
 }));
+let firstSetting = 
+    {
+        "header": true,
+        "id": "아이디",
+        "name": "이름",
+        "type": "타입",
+        "ignoreCase": "대/소문자무시",
+        "tokenType":  "토큰 타입", 
+        "columns1": "필드(아이디)", 
+        "columns2": "필드(키워드)", 
+        "columns3": "필드(값)", 
+        "columns4": "삭제"
+    };
 
 
-
-function Settings({dispatch, authUser, settings}) {
+function Settings({ dispatch, authUser, settings }) {
     const classes = useStyles();
     const fullScreen = useMediaQuery(useTheme().breakpoints.down('sm'));
+
+    // settings = firstSetting.concat(settings)
+    // console.log(settings);
     const [openEditDictModal, setOpenEditDictModal] = React.useState(false)
 
     const [selectedSetting, setSelectedSetting] = React.useState({})
@@ -117,15 +135,15 @@ function Settings({dispatch, authUser, settings}) {
         }
         if (newDictSetting['type']) {
             let type = newDictSetting['type']
-            if (["CUSTOM"].includes(type) && String(newDictSetting['column_id']||'').trim() === '') {
+            if (["CUSTOM"].includes(type) && String(newDictSetting['column_id'] || '').trim() === '') {
                 // id
                 tmpError['column_id'] = "필드 아이디를 확인하세요."
             }
-            if (["SET", "SYNONYM", "SPACE", "COMPOUND", "CUSTOM"].includes(type) && String(newDictSetting['column_keyword']||'').trim() === '') {
+            if (["SET", "SYNONYM", "SPACE", "COMPOUND", "CUSTOM"].includes(type) && String(newDictSetting['column_keyword'] || '').trim() === '') {
                 // keyword
                 tmpError['column_keyword'] = "필드의 키워드를 확인하세요."
             }
-            if (["SYNONYM", "COMPOUND", "SYNONYM_2WAY", "CUSTOM"].includes(type) && String(newDictSetting['column_value']||'').trim() === '') {
+            if (["SYNONYM", "COMPOUND", "SYNONYM_2WAY", "CUSTOM"].includes(type) && String(newDictSetting['column_value'] || '').trim() === '') {
                 // value
                 tmpError['column_value'] = "필드의 값를 확인하세요."
             }
@@ -144,6 +162,19 @@ function Settings({dispatch, authUser, settings}) {
             columns_keyword: newDictSetting['column_keyword'],
             columns_value: newDictSetting['column_value']
         })).then(body => {
+            settings = settings.concat({
+                id: newDictSetting['id'], 
+                name: newDictSetting['name'], 
+                ignoreCase: newDictSetting['ignoreCase'],
+                type: newDictSetting['type'], 
+                tokenType: newDictSetting['tokenType'],
+                colums: {
+                    id: newDictSetting['column_id'],
+                    keyword: newDictSetting['column_keyword'],
+                    value: newDictSetting['column_value']
+                }
+            });
+
             setTimeout(() => {
                 dispatch(setSettings())
                 setOpenEditDictModal(false)
@@ -154,30 +185,83 @@ function Settings({dispatch, authUser, settings}) {
     function handleRemoveDictionarySetting() {
         dispatch(removeDictionarySetting(selectedSetting['documentId']))
             .then(body => {
-            setTimeout(() => {
-                dispatch(setSettings())
-                setOpenRemoveDictModal(false)
-            }, 1000)
-        })
+                let idx = settings.findIndex((item) => { return item['documentId'] === selectedSetting['documentId']})
+                settings.splice(idx, 1);
+
+                setTimeout(() => {
+                    dispatch(setSettings())
+                    setOpenRemoveDictModal(false)
+                }, 1000)
+            })
     }
+
+    function updateSettingList(e){
+        let firstId = settings[e.oldIndex]['documentId'];
+        let secondId = settings[e.newIndex]['documentId'];
+        dispatch(updatedSettingList(firstId, secondId, e.oldIndex, e.newIndex));
+    }
+
 
     return (
         <>
-            <Helmet title="사전 설정"/>
+            <Helmet title="사전 설정" />
 
             <Box align={'right'}>
                 {authUser.role.index ? <Link className={classes.link}
-                                             onClick={handleOpenEditModal}
-                                             color={"primary"}
+                    onClick={handleOpenEditModal}
+                    color={"primary"}
                 >
                     사전 생성
                 </Link> : <></>}
             </Box>
 
-            <br/>
-
+            <br />
             <TableContainer component={Paper}>
-                <Table className={classes.table}>
+                <Box style={{ width: "100%" }}>
+                                <Box style={{ width: "100%", display: "flex",  paddingTop: "8px", paddingBottom: "8px" }} >
+                                    <Box align={"center"} style={{ width: "15%" }}><b>{firstSetting['id']}</b></Box>
+                                    <Box align={"center"} style={{ width: "15%" }}><b>{firstSetting['name']}</b></Box>
+                                    <Box align={"center"} style={{ width: "10%", margin: "4px" }}><b>{firstSetting['type']}</b></Box>
+                                    <Box align={"center"} style={{ width: "10%", margin: "4px" }}><b>{firstSetting['ignoreCase']}</b></Box>
+                                    <Box align={"center"} style={{ width: "10%", margin: "4px" }}><b>{firstSetting['tokenType']}</b></Box>
+                                    <Box align={"center"} style={{ width: "10%", margin: "4px" }}><b>{firstSetting['columns1']}</b></Box>
+                                    <Box align={"center"} style={{ width: "10%", margin: "4px" }}><b>{firstSetting['columns2']}</b></Box>
+                                    <Box align={"center"} style={{ width: "10%", margin: "4px" }}><b>{firstSetting['columns3']}</b></Box>
+                                    <Box align={"center"} style={{ width: "10%", margin: "4px" }}><b>{firstSetting['columns4']}</b></Box>
+                                </Box>
+                                <Divider />
+                            </Box>
+                <ReactDragList
+                    style={{ width: "100%" }}
+                    dataSource={settings}
+                    animation={0}
+                    handles={false}
+                    onUpdate={(event) => updateSettingList(event)}
+                    row={(item, idx) => (
+                        <Box key={idx} style={{ width: "100%", display: "flex",  paddingTop: "8px", paddingBottom: "8px" }} >
+                            <Box align={"center"} style={{ width: "15%" }}>{item['id']}</Box>
+                            <Box align={"center"} style={{ width: "15%" }}>{item['name']}</Box>
+                            <Box align={"center"} style={{ width: "10%", margin: "4px" }}>{item['type']}</Box>
+                            <Box align={"center"} style={{ width: "10%", margin: "4px" }}>{item['ignoreCase'] ? "true" : "false"}</Box>
+                            <Box align={"center"} style={{ width: "10%", margin: "4px" }}>{item['tokenType']}</Box>
+                            <Box align={"center"} style={{ width: "10%", margin: "4px" }}>{item['columns'].filter(c => c['type'] === 'id').map(c => c['label']).join("")}</Box>
+                            <Box align={"center"} style={{ width: "10%", margin: "4px" }}>{item['columns'].filter(c => c['type'] === 'keyword').map(c => c['label']).join("")}</Box>
+                            <Box align={"center"} style={{ width: "10%", margin: "4px" }}>{item['columns'].filter(c => c['type'] === 'value').map(c => c['label']).join("")}</Box>
+                            <Box align={"center"} style={{ width: "10%", margin: "4px" }}>
+                                <Button size={"small"}
+                                    variant={"outlined"}
+                                    style={{ color: red[400] }}
+                                    onClick={() => handleOpenRemoveSettingModal(item)}
+                                >삭제</Button>
+                            </Box>
+                            
+                        </Box>
+                    )
+                    }
+                />
+
+
+                {/* <Table className={classes.table}>
                     <TableHead>
                         <TableRow>
                             <TableCell align={"center"}>아이디</TableCell>
@@ -229,9 +313,9 @@ function Settings({dispatch, authUser, settings}) {
                                             </TableCell>
                                             <TableCell align={"center"}>
                                                 <Button size={"small"}
-                                                        variant={"outlined"}
-                                                        style={{color: red[400]}}
-                                                        onClick={() => handleOpenRemoveSettingModal(setting)}
+                                                    variant={"outlined"}
+                                                    style={{ color: red[400] }}
+                                                    onClick={() => handleOpenRemoveSettingModal(setting)}
                                                 >삭제</Button>
                                             </TableCell>
                                         </TableRow>
@@ -239,14 +323,12 @@ function Settings({dispatch, authUser, settings}) {
                                 })
                         }
                     </TableBody>
-                </Table>
+                </Table> */}
             </TableContainer>
-
-
             <Dialog open={openEditDictModal}
-                    fullWidth
-                    fullScreen={fullScreen}
-                    onClose={() => setOpenEditDictModal(false)}
+                fullWidth
+                fullScreen={fullScreen}
+                onClose={() => setOpenEditDictModal(false)}
             >
                 <DialogTitle>
                     사전 추가
@@ -256,56 +338,56 @@ function Settings({dispatch, authUser, settings}) {
                         <Box>
                             <Box my={3}>
                                 <Grid container>
-                                    <Grid item xs={3} style={{alignItems: "center", justifyContent: "center", display: "flex"}}>
+                                    <Grid item xs={3} style={{ alignItems: "center", justifyContent: "center", display: "flex" }}>
                                         아이디
                                     </Grid>
                                     <Grid item xs={9}>
                                         <TextField fullWidth={true}
-                                                   autoFocus={true}
-                                                   placeholder={"Synonym"}
-                                                   value={newDictSetting["id"]}
-                                                   onChange={e => setNewDictSetting({...newDictSetting, id: e.target.value})}
-                                                   error={errorNewDictSetting['id']}
-                                                   helperText={errorNewDictSetting['id']||""}
+                                            autoFocus={true}
+                                            placeholder={"Synonym"}
+                                            value={newDictSetting["id"]}
+                                            onChange={e => setNewDictSetting({ ...newDictSetting, id: e.target.value })}
+                                            error={errorNewDictSetting['id']}
+                                            helperText={errorNewDictSetting['id'] || ""}
                                         />
                                     </Grid>
                                 </Grid>
                             </Box>
                             <Box my={3}>
                                 <Grid container>
-                                    <Grid item xs={3} style={{alignItems: "center", justifyContent: "center", display: "flex"}}>
+                                    <Grid item xs={3} style={{ alignItems: "center", justifyContent: "center", display: "flex" }}>
                                         이름
                                     </Grid>
                                     <Grid item xs={9}>
                                         <TextField fullWidth={true}
-                                                   placeholder={"동의어 사전"}
-                                                   value={newDictSetting["name"]}
-                                                   onChange={e => setNewDictSetting({...newDictSetting, name: e.target.value})}
-                                                   error={errorNewDictSetting['name']}
-                                                   helperText={errorNewDictSetting['name']||""}
+                                            placeholder={"동의어 사전"}
+                                            value={newDictSetting["name"]}
+                                            onChange={e => setNewDictSetting({ ...newDictSetting, name: e.target.value })}
+                                            error={errorNewDictSetting['name']}
+                                            helperText={errorNewDictSetting['name'] || ""}
                                         />
                                     </Grid>
                                 </Grid>
                             </Box>
                             <Box my={3}>
                                 <Grid container>
-                                    <Grid item xs={3} style={{alignItems: "center", justifyContent: "center", display: "flex"}}>
+                                    <Grid item xs={3} style={{ alignItems: "center", justifyContent: "center", display: "flex" }}>
                                         타입
                                     </Grid>
                                     <Grid item xs={9}>
                                         <FormControl className={classes.select} fullWidth={true}>
                                             <Select placeholder={"SYNONYM"}
-                                                    value={newDictSetting["type"]}
-                                                    onChange={e => {
-                                                        setNewDictSetting({
-                                                            ...newDictSetting,
-                                                            column_id: "",
-                                                            column_keyword: "",
-                                                            column_value: "",
-                                                            type: e.target.value,
-                                                        })
-                                                    }}
-                                                    error={errorNewDictSetting['type']}
+                                                value={newDictSetting["type"]}
+                                                onChange={e => {
+                                                    setNewDictSetting({
+                                                        ...newDictSetting,
+                                                        column_id: "",
+                                                        column_keyword: "",
+                                                        column_value: "",
+                                                        type: e.target.value,
+                                                    })
+                                                }}
+                                                error={errorNewDictSetting['type']}
                                             >
                                                 <MenuItem value={""} disabled={true} >선택하세요.</MenuItem>
                                                 <MenuItem value={"SET"}>SET</MenuItem>
@@ -321,15 +403,15 @@ function Settings({dispatch, authUser, settings}) {
                             </Box>
                             <Box my={3}>
                                 <Grid container>
-                                    <Grid item xs={3} style={{alignItems: "center", justifyContent: "center", display: "flex"}}>
+                                    <Grid item xs={3} style={{ alignItems: "center", justifyContent: "center", display: "flex" }}>
                                         토큰 타입
                                     </Grid>
                                     <Grid item xs={9}>
                                         <FormControl className={classes.select} fullWidth={true}>
                                             <Select placeholder={"MAX"}
-                                                    value={newDictSetting["tokenType"]}
-                                                    onChange={e => setNewDictSetting({...newDictSetting, tokenType: e.target.value})}
-                                                    error={errorNewDictSetting['tokenType']}
+                                                value={newDictSetting["tokenType"]}
+                                                onChange={e => setNewDictSetting({ ...newDictSetting, tokenType: e.target.value })}
+                                                error={errorNewDictSetting['tokenType']}
                                             >
                                                 <MenuItem value={""} disabled={true} >선택하세요.</MenuItem>
                                                 <MenuItem value={"MAX"}>MAX</MenuItem>
@@ -344,14 +426,14 @@ function Settings({dispatch, authUser, settings}) {
                             </Box>
                             <Box my={3}>
                                 <Grid container>
-                                    <Grid item xs={3} style={{alignItems: "center", justifyContent: "center", display: "flex"}}>
+                                    <Grid item xs={3} style={{ alignItems: "center", justifyContent: "center", display: "flex" }}>
                                         대/소문자 무시
                                     </Grid>
                                     <Grid item xs={9}>
                                         <FormControl className={classes.select} fullWidth={true}>
                                             <Select value={newDictSetting["ignoreCase"]}
-                                                    onChange={e => setNewDictSetting({...newDictSetting, ignoreCase: e.target.value})}
-                                                    error={errorNewDictSetting['ignoreCase']}
+                                                onChange={e => setNewDictSetting({ ...newDictSetting, ignoreCase: e.target.value })}
+                                                error={errorNewDictSetting['ignoreCase']}
                                             >
                                                 <MenuItem value={""} disabled={true} >선택하세요.</MenuItem>
                                                 <MenuItem value={"true"}>true</MenuItem>
@@ -364,24 +446,24 @@ function Settings({dispatch, authUser, settings}) {
 
                             <Box my={3}>
                                 <Grid container>
-                                    <Grid item xs={3} style={{alignItems: "center", justifyContent: "center", display: "flex"}}>
+                                    <Grid item xs={3} style={{ alignItems: "center", justifyContent: "center", display: "flex" }}>
                                         필드
                                     </Grid>
                                     <Grid item xs={9}>
                                         <Box my={3}>
                                             <Grid container>
-                                                <Grid item xs={3} style={{alignItems: "center", justifyContent: "center", display: "flex"}}>
+                                                <Grid item xs={3} style={{ alignItems: "center", justifyContent: "center", display: "flex" }}>
                                                     아이디
                                                 </Grid>
                                                 <Grid item xs={9}>
                                                     <TextField fullWidth={true}
-                                                               value={newDictSetting["column_id"]}
-                                                               onChange={e => setNewDictSetting({...newDictSetting, column_id: e.target.value})}
-                                                               placeholder={""}
-                                                               style={{backgroundColor: !["CUSTOM"].includes(newDictSetting['type']) ? "#bdbdbd" : null}}
-                                                               disabled={ !["CUSTOM"].includes(newDictSetting['type'])}
-                                                               error={errorNewDictSetting["columns_id"]}
-                                                               helperText={errorNewDictSetting["column_id"]||""}
+                                                        value={newDictSetting["column_id"]}
+                                                        onChange={e => setNewDictSetting({ ...newDictSetting, column_id: e.target.value })}
+                                                        placeholder={""}
+                                                        style={{ backgroundColor: !["CUSTOM"].includes(newDictSetting['type']) ? "#bdbdbd" : null }}
+                                                        disabled={!["CUSTOM"].includes(newDictSetting['type'])}
+                                                        error={errorNewDictSetting["columns_id"]}
+                                                        helperText={errorNewDictSetting["column_id"] || ""}
                                                     />
                                                 </Grid>
                                             </Grid>
@@ -389,18 +471,18 @@ function Settings({dispatch, authUser, settings}) {
 
                                         <Box my={3}>
                                             <Grid container>
-                                                <Grid item xs={3} style={{alignItems: "center", justifyContent: "center", display: "flex"}}>
+                                                <Grid item xs={3} style={{ alignItems: "center", justifyContent: "center", display: "flex" }}>
                                                     키워드
                                                 </Grid>
                                                 <Grid item xs={9}>
                                                     <TextField fullWidth={true}
-                                                               placeholder={""}
-                                                               value={newDictSetting["column_keyword"]}
-                                                               onChange={e => setNewDictSetting({...newDictSetting, column_keyword: e.target.value})}
-                                                               style={{backgroundColor: !["SET", "SYNONYM", "SPACE", "COMPOUND", "CUSTOM"].includes(newDictSetting['type']) ? "#bdbdbd" : null}}
-                                                               disabled={ !["SET", "SYNONYM", "SPACE", "COMPOUND", "CUSTOM"].includes(newDictSetting['type'])}
-                                                               error={errorNewDictSetting["column_keyword"]}
-                                                               helperText={errorNewDictSetting["column_keyword"]||""}
+                                                        placeholder={""}
+                                                        value={newDictSetting["column_keyword"]}
+                                                        onChange={e => setNewDictSetting({ ...newDictSetting, column_keyword: e.target.value })}
+                                                        style={{ backgroundColor: !["SET", "SYNONYM", "SPACE", "COMPOUND", "CUSTOM"].includes(newDictSetting['type']) ? "#bdbdbd" : null }}
+                                                        disabled={!["SET", "SYNONYM", "SPACE", "COMPOUND", "CUSTOM"].includes(newDictSetting['type'])}
+                                                        error={errorNewDictSetting["column_keyword"]}
+                                                        helperText={errorNewDictSetting["column_keyword"] || ""}
                                                     />
                                                 </Grid>
                                             </Grid>
@@ -408,18 +490,18 @@ function Settings({dispatch, authUser, settings}) {
 
                                         <Box my={3}>
                                             <Grid container>
-                                                <Grid item xs={3} style={{alignItems: "center", justifyContent: "center", display: "flex"}}>
+                                                <Grid item xs={3} style={{ alignItems: "center", justifyContent: "center", display: "flex" }}>
                                                     값
                                                 </Grid>
                                                 <Grid item xs={9}>
                                                     <TextField fullWidth={true}
-                                                               placeholder={""}
-                                                               value={newDictSetting["column_value"]}
-                                                               onChange={e => setNewDictSetting({...newDictSetting, column_value: e.target.value})}
-                                                               style={{backgroundColor: !["SYNONYM", "COMPOUND", "SYNONYM_2WAY", "CUSTOM"].includes(newDictSetting['type']) ? "#bdbdbd" : null}}
-                                                               disabled={ !["SYNONYM", "COMPOUND", "SYNONYM_2WAY", "CUSTOM"].includes(newDictSetting['type'])}
-                                                               error={errorNewDictSetting["column_value"]}
-                                                               helperText={errorNewDictSetting["column_value"]||""}
+                                                        placeholder={""}
+                                                        value={newDictSetting["column_value"]}
+                                                        onChange={e => setNewDictSetting({ ...newDictSetting, column_value: e.target.value })}
+                                                        style={{ backgroundColor: !["SYNONYM", "COMPOUND", "SYNONYM_2WAY", "CUSTOM"].includes(newDictSetting['type']) ? "#bdbdbd" : null }}
+                                                        disabled={!["SYNONYM", "COMPOUND", "SYNONYM_2WAY", "CUSTOM"].includes(newDictSetting['type'])}
+                                                        error={errorNewDictSetting["column_value"]}
+                                                        helperText={errorNewDictSetting["column_value"] || ""}
                                                     />
                                                 </Grid>
                                             </Grid>
@@ -436,13 +518,13 @@ function Settings({dispatch, authUser, settings}) {
                 <DialogActions>
                     <Box mx={3}>
                         <Button variant="contained"
-                                color={"primary"}
-                                style={{marginRight: "5px"}}
-                                onClick={handleAddSetting}
+                            color={"primary"}
+                            style={{ marginRight: "5px" }}
+                            onClick={handleAddSetting}
                         >추가</Button>
                         <Button variant={"outlined"}
-                                onClick={() => setOpenEditDictModal(false)}
-                                style={{marginLeft: "5px"}}
+                            onClick={() => setOpenEditDictModal(false)}
+                            style={{ marginLeft: "5px" }}
                         >닫기</Button>
                     </Box>
                 </DialogActions>
@@ -452,23 +534,23 @@ function Settings({dispatch, authUser, settings}) {
 
 
             <Dialog open={openRemoveDictModal}
-                    fullWidth
-                    fullScreen={fullScreen}
-                    onClose={() => setOpenRemoveDictModal(false)}
+                fullWidth
+                fullScreen={fullScreen}
+                onClose={() => setOpenRemoveDictModal(false)}
             >
                 <DialogTitle>
                     사전 삭제
                 </DialogTitle>
                 <DialogContent>
-                    {selectedSetting['name']||''} 사전을 삭제하시겠습니까?
+                    {selectedSetting['name'] || ''} 사전을 삭제하시겠습니까?
                 </DialogContent>
                 <DialogActions>
                     <Button variant="contained"
-                            color={"primary"}
-                            onClick={handleRemoveDictionarySetting}
+                        color={"primary"}
+                        onClick={handleRemoveDictionarySetting}
                     >삭제</Button>
                     <Button variant={"outlined"}
-                            onClick={() => setOpenRemoveDictModal(false)}
+                        onClick={() => setOpenRemoveDictModal(false)}
                     >취소</Button>
                 </DialogActions>
             </Dialog>
@@ -478,5 +560,6 @@ function Settings({dispatch, authUser, settings}) {
 
 export default connect(store => ({
     authUser: store.dsearchReducers.authUser,
-    settings: store.dictionaryReducers.settings, 
-    active: store.dictionaryReducers.active }))(Settings);
+    settings: store.dictionaryReducers.settings,
+    active: store.dictionaryReducers.active
+}))(Settings);

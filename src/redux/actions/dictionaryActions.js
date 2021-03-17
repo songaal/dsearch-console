@@ -4,96 +4,6 @@ import * as types from "../constants";
 const client = new Client()
 
 
-// 1) 사용자사전
-// 2) 유사어사전
-// 3) 분리어사전
-// 4) 영단어사전
-// 5) 단위명사전
-// 6) 단위명동의사전
-// 7) 불용어사전
-// 8) 제조사명사전
-// 9) 브랜드명사전
-// 10) 카테고리키워드사전
-// 11) 복합명사사전
-
-function sortTabs(dictTabs){
-    let tabs = [];
-    let indexList = [];
-    
-    // 없으면 -1, 있으면 인덱스 위치 반환
-    let idx = dictTabs.findIndex(item => item.name == "사용자 사전");
-    if(idx > -1) {
-        tabs.push(dictTabs[idx]); 
-        indexList.push(idx);
-    }
-    
-    idx = dictTabs.findIndex(item => item.name == "유사어 사전");
-    if(idx > -1) {
-        tabs.push(dictTabs[idx]); 
-        indexList.push(idx);
-    }
-
-    idx = dictTabs.findIndex(item => item.name == "분리어 사전");
-    if(idx > -1) {
-        tabs.push(dictTabs[idx]); 
-        indexList.push(idx);
-    }
-
-    idx = dictTabs.findIndex(item => item.name == "영단어 사전");
-    if(idx > -1) {
-        tabs.push(dictTabs[idx]); 
-        indexList.push(idx);
-    }
-
-    idx = dictTabs.findIndex(item => item.name == "단위명 사전");
-    if(idx > -1) {
-        tabs.push(dictTabs[idx]); 
-        indexList.push(idx);
-    }
-
-    idx = dictTabs.findIndex(item => item.name == "단위명동의어 사전");
-    if(idx > -1) {
-        tabs.push(dictTabs[idx]); 
-        indexList.push(idx);
-    }
-
-    idx = dictTabs.findIndex(item => item.name == "불용어 사전");
-    if(idx > -1) {
-        tabs.push(dictTabs[idx]); 
-        indexList.push(idx);
-    }
-
-    idx = dictTabs.findIndex(item => item.name == "제조사명 사전");
-    if(idx > -1) {
-        tabs.push(dictTabs[idx]); 
-        indexList.push(idx);
-    }
-
-    idx = dictTabs.findIndex(item => item.name == "브랜드명 사전");
-    if(idx > -1) {
-        tabs.push(dictTabs[idx]); 
-        indexList.push(idx);
-    }
-
-    idx = dictTabs.findIndex(item => item.name == "카테고리키워드사전");
-    if(idx > -1) {
-        tabs.push(dictTabs[idx]); 
-        indexList.push(idx);
-    }
-
-    idx = dictTabs.findIndex(item => item.name == "복합명사 사전");
-    if(idx > -1) {
-        tabs.push(dictTabs[idx]); 
-        indexList.push(idx);
-    }
-    
-    dictTabs.map((item, index) => {
-        let flag = indexList.findIndex(i => i == index);
-        if(flag == -1) tabs.push(item);
-    })
-
-    return tabs;
-}
 
 export const setActiveSettingIndex = (activeIndex) => dispatch => dispatch({type: types.SET_ACTIVE_SETTING_INDEX, payload: activeIndex})
 
@@ -103,7 +13,7 @@ export const setSettings = () => dispatch =>
     })
         .then(response => {
                 let settings = response.data;
-                dispatch({type: types.SET_SETTING_DICTIONARIES, payload: sortTabs(settings)})
+                dispatch({type: types.SET_SETTING_DICTIONARIES, payload: settings.sort((a, b)=> a.index - b.index)})
 
                 //원본
                 // dispatch({type: types.SET_SETTING_DICTIONARIES, payload: response.data})
@@ -111,7 +21,10 @@ export const setSettings = () => dispatch =>
         )
         .catch(error => console.error(error))
 
-// export const sortSettings = (settings) => dispatch =>  dispatch({type: types.SET_SETTING_DICTIONARIES, payload: settings})
+export const updatedSettingList = (firstId, secondId, firstIdx, secondIdx) => dispatch =>  client.call({
+    uri: `/dictionaries/settings/updateList`,
+    params: {firstId, secondId, firstIdx, secondIdx}
+}).then(()=>{ console.log("success");}).catch((err) => {console.log(err)});
 
 export const setDictionary = (dictionary, pageNum, rowSize, isMatch, value, searchColumns) => dispatch =>
     client.call({

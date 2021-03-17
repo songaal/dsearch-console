@@ -70,6 +70,7 @@ TabPanel.propTypes = {
 };
 
 
+
 function AntTabs({tabs, tabIndex = 0, onChange}) {
     const [state, setState] = React.useState({tabIndex: tabIndex});
     const handleChange = (event, tabIndex) => {

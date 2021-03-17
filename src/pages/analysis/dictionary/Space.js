@@ -83,6 +83,7 @@ function Space({ dictionary, authUser, setting, dataSet }) {
     }
 
     function handlePagination(pageNum) {
+        console.log(result['lastPageNum']);
         if(pageNum > result['lastPageNum']){
             return;
         }
