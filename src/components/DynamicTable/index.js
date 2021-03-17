@@ -163,7 +163,8 @@ function DynamicTable({dataList, from = 0, limit = 100000, showCheckBox = false,
                                     {
                                         showCheckBox && isEdit ?
                                             <TableCell>
-                                                <Box align={"center"}>
+                                                <Box align={"center"} justifyContent={"space-between"} display="flex" width="100%">
+                                                    <Box></Box>
                                                     <IconButton size={"small"}
                                                                 className={classes.iconButton}
                                                                 onClick={() => handleEdit(cols[0]['id'], rowIdx)}

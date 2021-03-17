@@ -8,6 +8,7 @@ import Helmet from 'react-helmet';
 import {
     Divider as MuiDivider,
     Grid,
+    List, ListItem,
     Typography,
     Button,
     Box,
@@ -196,11 +197,19 @@ function Settings({ dispatch, authUser, settings }) {
     }
 
     function updateSettingList(e){
-        let firstId = settings[e.oldIndex]['documentId'];
-        let secondId = settings[e.newIndex]['documentId'];
-        dispatch(updatedSettingList(firstId, secondId, e.oldIndex, e.newIndex));
-    }
+        let list = [];
+        list = list.concat(settings.slice(0, e.oldIndex))
+        list = list.concat(settings.slice(e.oldIndex+1, e.newIndex+1))
+        list = list.concat(settings[e.oldIndex])
+        list = list.concat(settings.slice(e.newIndex+1, settings.length));
 
+        for(let i = 0; i < list.length; i++){
+            list[i]['index'] = i+1;
+        }
+
+        settings = list;
+        dispatch(updatedSettingList(list));
+    }
 
     return (
         <>
@@ -230,7 +239,8 @@ function Settings({ dispatch, authUser, settings }) {
                                     <Box align={"center"} style={{ width: "10%", margin: "4px" }}><b>{firstSetting['columns4']}</b></Box>
                                 </Box>
                                 <Divider />
-                            </Box>
+                </Box>
+
                 <ReactDragList
                     style={{ width: "100%" }}
                     dataSource={settings}
@@ -254,7 +264,6 @@ function Settings({ dispatch, authUser, settings }) {
                                     onClick={() => handleOpenRemoveSettingModal(item)}
                                 >삭제</Button>
                             </Box>
-                            
                         </Box>
                     )
                     }

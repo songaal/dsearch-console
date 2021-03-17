@@ -66,6 +66,7 @@
     "react-helmet": "5.2.1",
     "react-jvectormap": "0.0.16",
     "react-lazy-load-image-component": "^1.5.0-beta.0",
+    "react-movable": "^2.5.3",
     "react-perfect-scrollbar": "1.5.8",
     "react-redux": "7.2.0",
     "react-router-dom": "5.1.2",

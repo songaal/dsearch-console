@@ -21,9 +21,10 @@ export const setSettings = () => dispatch =>
         )
         .catch(error => console.error(error))
 
-export const updatedSettingList = (firstId, secondId, firstIdx, secondIdx) => dispatch =>  client.call({
+export const updatedSettingList = (newSettings) => dispatch =>  client.call({
     uri: `/dictionaries/settings/updateList`,
-    params: {firstId, secondId, firstIdx, secondIdx}
+    method: "POST",
+    data: newSettings
 }).then(()=>{ console.log("success");}).catch((err) => {console.log(err)});
 
 export const setDictionary = (dictionary, pageNum, rowSize, isMatch, value, searchColumns) => dispatch =>
