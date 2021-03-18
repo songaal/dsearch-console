@@ -3,7 +3,7 @@ import {Link, useHistory} from "react-router-dom";
 import {connect, useDispatch, useSelector} from "react-redux";
 import styled, {withTheme} from "styled-components";
 import {darken} from "polished";
-import {Autocomplete } from '@material-ui/lab';
+import {Autocomplete} from '@material-ui/lab';
 
 import {
     AppBar as MuiAppBar,
@@ -21,8 +21,8 @@ import {ArrowDropDown, Menu as MenuIcon} from "@material-ui/icons";
 
 import {Home, Search as SearchIcon} from "react-feather";
 import {setReferenceResultAll, setReferenceSearchKeyword} from "../redux/actions/referenceSearchActions";
-import { setDsearchSignOut } from "../redux/actions/dsearchActions";
-import { setAutoCompleteAction, setAutoCompleteStoreAction } from "../redux/actions/dsearchPluginActions";
+import {setDsearchSignOut} from "../redux/actions/dsearchActions";
+import {setAutoCompleteAction, setAutoCompleteStoreAction} from "../redux/actions/dsearchPluginActions";
 
 import {SET_DSEARCH_AUTH_USER} from "../redux/constants";
 import {setClusterList, setClusterServerCheck} from "../redux/actions/clusterActions";

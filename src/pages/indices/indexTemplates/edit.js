@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {useHistory, useLocation} from "react-router-dom";
 import styled from "styled-components";
 import Helmet from 'react-helmet';
@@ -40,7 +40,8 @@ import {makeStyles} from '@material-ui/core/styles';
 import {palette, positions, spacing} from "@material-ui/system";
 import {connect} from "react-redux";
 import {
-    addIndexTemplateAction, deleteIndexTemplateAction,
+    addIndexTemplateAction,
+    deleteIndexTemplateAction,
     setIndexTemplateAction,
     setIndexTemplatesAction
 } from "../../../redux/actions/indexTemplateActions";

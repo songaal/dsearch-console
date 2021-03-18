@@ -10,17 +10,21 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import LaunchIcon from '@material-ui/icons/Launch';
 import Helmet from 'react-helmet';
 import {title} from "../../title.json";
 import {
     Box,
     Button,
     Card as MuiCard,
-    CardContent, Checkbox,
+    CardContent,
+    Checkbox,
     Divider as MuiDivider,
-    Fab, FormControl, FormControlLabel,
-    Grid as MuiGrid, Input, InputAdornment,
+    Fab,
+    FormControl,
+    FormControlLabel,
+    Grid as MuiGrid,
+    Input,
+    InputAdornment,
     Link,
     MenuList,
     Select,
@@ -63,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ITEM_HEIGHT = 48;
 
-function ClusterCard({classes, cluster, onEditClick, onRemoveClick, to, newTo, showMenu}) {
+function ClusterCard({classes, cluster, clusterList, onEditClick, onRemoveClick, to, newTo, showMenu}) {
     const connection = cluster['status']['connection'] || false
     const name = cluster['cluster']['name']
     const seed = `${cluster['cluster']['scheme']}://${cluster['cluster']['host']}:${cluster['cluster']['port']}`
@@ -73,13 +77,19 @@ function ClusterCard({classes, cluster, onEditClick, onRemoveClick, to, newTo, s
     let shards = "N/A"
     let store = "N/A"
     let kibana = "N/A"
-    console.log(cluster);
+    let dictionaryRemoteClusterName = "사용안함"
+
     if (connection) {
         nodes = Object.keys((cluster['status']||{})['nodes']||{}).length
         indices = cluster['status']['state']['indices']
         shards = cluster['status']['state']['shards']
         store = cluster['status']['state']['store']
-        kibana = cluster['cluster']['kibana']
+        kibana = cluster['cluster']['kibana']||'사용안함'
+
+        let dictionaryRemoteClusterId = cluster['cluster']['dictionaryRemoteClusterId']
+        if (dictionaryRemoteClusterId !== undefined && dictionaryRemoteClusterId !== null && dictionaryRemoteClusterId !== "") {
+            dictionaryRemoteClusterName = ((clusterList.find(c => c['cluster']['id'] === dictionaryRemoteClusterId)||{})['cluster']||{})['name']||''
+        }
     }
 
     const [openMenu, setOpenMenu] = React.useState(null);
@@ -250,6 +260,19 @@ function ClusterCard({classes, cluster, onEditClick, onRemoveClick, to, newTo, s
                             <Grid container mt={1}>
                                 <Grid item xs={4}>
                                     <Box style={{whiteSpace: "nowrap"}}>
+                                        사전소스
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={8}>
+                                    <Box style={{whiteSpace: "nowrap"}}>
+                                        {dictionaryRemoteClusterName}
+                                    </Box>
+                                </Grid>
+                            </Grid>
+
+                            <Grid container mt={1}>
+                                <Grid item xs={4}>
+                                    <Box style={{whiteSpace: "nowrap"}}>
                                         연결상태
                                     </Box>
                                 </Grid>
@@ -278,7 +301,8 @@ function AddClusterCard(props) {
         <React.Fragment>
             <Grid item xs={12} md={6} lg={4} xl={3} style={{display: display}}>
                 {/* <Card variant="outlined" style={{minHeight: "245px"}}> */}
-                <Card variant="outlined" style={{minHeight: "269px"}}>
+                {/*<Card variant="outlined" style={{minHeight: "269px"}}>*/}
+                <Card variant="outlined" style={{minHeight: "295px"}}>
                     <CardContent>
                         <Box display="flex"
                              justifyContent="center"
@@ -311,8 +335,9 @@ function AddGuideCard(props) {
     const classes = props.className
     return (
         <Grid item xs={12} md={6} lg={4} xl={3}>
-            <Card variant="outlined" style={{minHeight: "269px"}}>
             {/* <Card variant="outlined" style={{minHeight: "245px"}}> */}
+            {/*<Card variant="outlined" style={{minHeight: "269px"}}>*/}
+            <Card variant="outlined" style={{minHeight: "295px"}}>
                 <CardContent>
                     <Box display="flex"
                          justifyContent="center"
@@ -361,6 +386,8 @@ function Cluster({ dispatch, clusterList, authUser }) {
     const [selectedClusterId, setSelectedClusterId] = useState("")
     const [openRemoveModal, setOpenRemoveModal] = useState(false)
     const [isRemoveData, setRemoveData] = useState(false)
+
+    const [dictionaryRemoteClusterId, setDictionaryRemoteClusterId] = useState(" ")
 
 
     const [mode, setMode] = useState("ADD")
@@ -484,7 +511,8 @@ function Cluster({ dispatch, clusterList, authUser }) {
         dispatch(addCluster({
             name, host, port, scheme,
             username, password,
-            kibana, theme
+            kibana, theme,
+            dictionaryRemoteClusterId
         })).then(cluster => {
             setProcess(false)
             dispatch(setClusterList())
@@ -502,11 +530,12 @@ function Cluster({ dispatch, clusterList, authUser }) {
         if(!requireValidation()) {
             return false
         }
-
+        const tmp = dictionaryRemoteClusterId === "" || dictionaryRemoteClusterId === " " ? null : dictionaryRemoteClusterId
         dispatch(editCluster(selectedClusterId, {
             name, host, port, scheme,
             username, password,
-            kibana, theme
+            kibana, theme,
+            dictionaryRemoteClusterId: tmp
         })).then(cluster => {
             dispatch(setClusterList())
             toggleOpenEditModal()
@@ -519,11 +548,16 @@ function Cluster({ dispatch, clusterList, authUser }) {
 
     function toggleOpenEditModal(cluster) {
         setMode("EDIT")
-        console.log('edit', cluster)
+
         setNameError(false); setHostError(false); setPortError(false)
-        setUsernameError(false); setPasswordError(false)
+        setUsernameError(false); setPasswordError(false); setConnTest(false)
         if (!openEditModal) {
             // opening..
+            if (cluster['cluster']['dictionaryRemoteClusterId'] !== undefined && cluster['cluster']['dictionaryRemoteClusterId'] !== null) {
+                setDictionaryRemoteClusterId(cluster['cluster']['dictionaryRemoteClusterId'])
+            } else {
+                setDictionaryRemoteClusterId(" ")
+            }
             setSelectedClusterId(cluster['cluster']['id'])
             setName(cluster['cluster']['name']);
             setScheme(cluster['cluster']['scheme']);
@@ -534,6 +568,7 @@ function Cluster({ dispatch, clusterList, authUser }) {
             setKibana(cluster['cluster']['kibana'] || "");
             setTheme(cluster['cluster']['theme']);
         } else {
+            setDictionaryRemoteClusterId("")
             setName(""); setScheme("http"); setHost(""); setPort("");
             setUsername(""); setPassword(""); setKibana("");
             setTheme(0);
@@ -578,6 +613,10 @@ function Cluster({ dispatch, clusterList, authUser }) {
     }
 
     const isManager = authUser['role']['manage']
+
+
+    const dictionaryRemoteClusterList = clusterList.map(cluster => cluster['cluster']||{}).filter(cluster => cluster['id'] !== selectedClusterId)
+
     return (
         <React.Fragment>
             
@@ -590,6 +629,7 @@ function Cluster({ dispatch, clusterList, authUser }) {
             <Grid container spacing={6}>
 
                 {clusterList.map(cluster => <ClusterCard key={cluster['cluster']['id']}
+                                                         clusterList={clusterList||[]}
                                                          cluster={cluster}
                                                          classes={classes}
                                                          onEditClick={() => toggleOpenEditModal(cluster)}
@@ -679,7 +719,6 @@ function Cluster({ dispatch, clusterList, authUser }) {
                                            }}
                                 />
                             </Box>
-                            {/*<Box display={scheme === "http" ? "none" : "block"}>*/}
                             <Box>
                                 <Box mt={2}>
                                     <TextField placeholder="elastic"
@@ -709,20 +748,12 @@ function Cluster({ dispatch, clusterList, authUser }) {
                         </Grid>
                     </Grid>
 
-                    <Divider my={3} />
-
-                    <Grid container>
+                    <Grid container mt={3}>
                         <Grid item xs={4}>
-                            <Box align={"center"} mt={2}>키바나</Box>
+                            <Box align={"center"} mt={3}>키바나</Box>
                         </Grid>
                         <Grid item xs={8}>
                             <Box>
-                                {/*<TextField placeholder="http://kibana:5601"*/}
-                                {/*           fullWidth*/}
-                                {/*           value={kibana}*/}
-                                {/*           onChange={event => setKibana(event.target.value)}*/}
-                                {/*/>*/}
-
                                 <FormControl fullWidth className={classes.margin}>
                                     <Input placeholder="http://kibana:5601"
                                            value={kibana}
@@ -739,16 +770,15 @@ function Cluster({ dispatch, clusterList, authUser }) {
                                            }
                                     />
                                 </FormControl>
-
-
-
                             </Box>
                         </Grid>
                     </Grid>
 
+                    <Divider my={3} />
+
                     <Grid container>
                         <Grid item xs={4}>
-                            <Box align={"center"} mt={4}>색상</Box>
+                            <Box align={"center"} mt={3}>색상</Box>
                         </Grid>
                         <Grid item xs={8}>
                             <Box mt={2}>
@@ -778,6 +808,27 @@ function Cluster({ dispatch, clusterList, authUser }) {
                             </Box>
                         </Grid>
                     </Grid>
+
+                    <Grid container>
+                        <Grid item xs={4}>
+                            <Box align={"center"} mt={3}>사전소스 클러스터</Box>
+                        </Grid>
+                        <Grid item xs={8}>
+                            <Box mt={2}>
+                                <Select style={{width: "100%"}} value={dictionaryRemoteClusterId} onChange={e => setDictionaryRemoteClusterId(e.target.value)}>
+                                    <MenuList key={'empty'} value={" "} style={{width: "100%"}}> 선택안함 </MenuList>
+                                    {
+                                        (dictionaryRemoteClusterList||[]).map((c, i) => (
+                                            <MenuList key={i} value={c['id']} style={{width: "100%"}}> {c['name']} </MenuList>
+                                        ))
+                                    }
+
+                                </Select>
+                            </Box>
+                        </Grid>
+                    </Grid>
+
+
                     <br/>
                     <Box display={modalMessage === "" ? "none" : "block"}>
                         {modalMessage}
@@ -789,12 +840,6 @@ function Cluster({ dispatch, clusterList, authUser }) {
                             onClick={handleClusterTestProcess}
                             disabled={host.length === 0 || port.length === 0 || isProcess}
                     > 연결테스트 </Button>
-                    {/*<Button variant={"outlined"}*/}
-                    {/*        color={"primary"}*/}
-                    {/*        // style={{color: "#EE0000"}}*/}
-                    {/*        onClick={handleKibanaTestProcess}*/}
-                    {/*        disabled={kibana.length === 0 || isProcess}*/}
-                    {/*> 키바나테스트 </Button>*/}
                     <Box display={mode === "ADD" ? "block" : "none"}>
                         <Button color="primary"
                                 variant="contained"

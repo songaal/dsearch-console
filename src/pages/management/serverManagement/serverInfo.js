@@ -3,7 +3,8 @@ import styled from "styled-components";
 
 import {
     Box,
-    Card as MuiCard, CardContent,
+    Card as MuiCard,
+    CardContent,
     Grid,
     Table,
     TableBody,

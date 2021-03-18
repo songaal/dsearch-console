@@ -1,4 +1,4 @@
-import {SET_CLUSTER_INFO,SET_NODES_INFO, SET_INDICES_INFO,SET_HEALTH_INFO,SET_SHARDS_INFO} from "../constants";
+import {SET_CLUSTER_INFO, SET_HEALTH_INFO, SET_INDICES_INFO, SET_NODES_INFO, SET_SHARDS_INFO} from "../constants";
 import Client from '~/Client'
 
 const client = new Client()

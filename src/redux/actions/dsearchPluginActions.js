@@ -1,8 +1,5 @@
 import Client from '~/Client'
-import {
-  SET_PLUGIN_KEYWORD,
-  SET_AUTOCOMPLETE_URL
-} from "../constants";
+import {SET_AUTOCOMPLETE_URL, SET_PLUGIN_KEYWORD} from "../constants";
 // import { PostAdd } from '@material-ui/icons';
 
 const client = new Client()

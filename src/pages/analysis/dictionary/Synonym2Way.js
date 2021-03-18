@@ -2,31 +2,35 @@ import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import {connect, useDispatch} from "react-redux";
 import {
-    Grid, IconButton, InputBase,
-    Button as MuiButton,
-    Card, CardContent,
     Box as MuiBox,
+    Button as MuiButton,
+    Card,
+    CardContent,
     Checkbox,
     Dialog,
     DialogActions,
     DialogContent,
     DialogContentText,
     DialogTitle,
-    TextField,
-    Select,
     FormControl,
+    Grid,
+    IconButton,
+    InputBase,
     MenuItem,
+    Select,
+    TextField,
 } from "@material-ui/core";
 
 import DynamicTable from "~/components/DynamicTable";
-import { Search } from "@material-ui/icons";
+import {Search} from "@material-ui/icons";
 import {makeStyles} from "@material-ui/core/styles";
 import {palette, sizing, spacing} from "@material-ui/system";
 import {
     createDictionary,
     deleteDictionary,
     downloadDictionary,
-    setDictionary, updateDictionary
+    setDictionary,
+    updateDictionary
 } from "../../../redux/actions/dictionaryActions";
 import utils from "../../../utils";
 

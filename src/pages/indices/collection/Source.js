@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import styled from "styled-components";
 import {
     Box as MuiBox,
@@ -10,21 +10,21 @@ import {
     DialogContent,
     DialogTitle,
     Fade,
+    FormControl,
     Grid as MuiGrid,
+    InputLabel,
     Link,
     MenuItem,
     Paper,
     Popper,
     Select,
+    Switch,
     Table,
     TableBody,
     TableCell,
     TableRow,
     TextField,
     Typography as MuiTypography,
-    FormControl,
-    InputLabel,
-    Switch,
 } from "@material-ui/core";
 
 import {makeStyles} from '@material-ui/core/styles';

@@ -4,12 +4,7 @@ import styled from "styled-components";
 import {makeStyles} from '@material-ui/core/styles';
 import Helmet from 'react-helmet';
 
-import {Box, Card as MuiCard, Divider as MuiDivider, Grid, Tab, Tabs, Typography, CardContent,
-    ExpansionPanel,
-    ExpansionPanelDetails,
-    ExpansionPanelSummary,
-    ExpandMoreIcon,
-} from "@material-ui/core";
+import {Box, Card as MuiCard, CardContent, Divider as MuiDivider, Tab, Tabs, Typography,} from "@material-ui/core";
 
 import {spacing} from "@material-ui/system";
 

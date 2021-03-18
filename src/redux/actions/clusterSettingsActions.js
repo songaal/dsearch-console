@@ -1,4 +1,4 @@
-import { SET_CLUSTER_SETTINGS, SET_DSEARCH_SETTINGS } from "../constants";
+import {SET_CLUSTER_SETTINGS, SET_DSEARCH_SETTINGS} from "../constants";
 import Client from '~/Client'
 
 const client = new Client()

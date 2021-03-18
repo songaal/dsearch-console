@@ -1,7 +1,7 @@
-import {createStore, applyMiddleware} from 'redux';
+import {applyMiddleware, createStore} from 'redux';
 import rootReducer from '../reducers/index';
 import ReduxThunk from "redux-thunk";
-import { composeWithDevTools } from 'redux-devtools-extension';
+import {composeWithDevTools} from 'redux-devtools-extension';
 
 
 let StoreEnhancer

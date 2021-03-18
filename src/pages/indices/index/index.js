@@ -4,19 +4,21 @@ import {makeStyles} from '@material-ui/core/styles';
 import Helmet from 'react-helmet';
 import {useHistory} from "react-router-dom"
 import {
+    Avatar,
     Box,
-    Divider as MuiDivider, FormControlLabel,
+    Divider as MuiDivider,
+    FormControlLabel,
     Link,
-    Paper, Switch,
+    Paper,
+    Switch,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
     TableRow,
-    Avatar,
-    Typography,
     TableSortLabel,
+    Typography,
 } from "@material-ui/core";
 
 import {spacing} from "@material-ui/system";

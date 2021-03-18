@@ -1,37 +1,31 @@
-import React, { useEffect } from "react";
-import PropTypes from "prop-types";
+import React, {useEffect} from "react";
 import styled from "styled-components";
-import Async from '~/components/Async';
 import Helmet from 'react-helmet';
 import AntTabs from "~/components/AntTabs";
-import { setIndicesMapping } from '@actions/indicesMappingActions';
+import {setIndicesMapping} from '@actions/indicesMappingActions';
 
 import {
+    Box as MuiBox,
+    Button,
     Card as MuiCard,
     CardContent,
-    CardHeader,
     Divider as MuiDivider,
-    Grid,
-    Typography,
-    Box as MuiBox,
     FormControl,
-    Select,
-    FormHelperText,
     InputLabel,
-    MenuItem, Paper, Table, TableHead, TableRow, TableBody, Checkbox, TableContainer, TableCell,
-    Link,
-    AppBar,
-    Tab,
-    Tabs,
+    MenuItem,
+    Select,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableRow,
     TextareaAutosize,
-    Button,
-    TextField
+    TextField,
+    Typography
 } from "@material-ui/core";
 import {makeStyles, withStyles} from '@material-ui/core/styles';
 import {spacing} from "@material-ui/system";
-import SearchIcon from "@material-ui/icons/Search";
 import {connect} from "react-redux";
-import indicesMappingReducers from "../../../redux/reducers/indicesMappingReducers";
 
 const useStyles = makeStyles((theme) => ({
     formControl: {

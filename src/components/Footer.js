@@ -1,6 +1,5 @@
 import React, {useEffect} from "react";
 // import styled from "styled-components";
-
 // import {Grid, Hidden, List, ListItem as MuiListItem, ListItemText} from "@material-ui/core";
 import {GApageView, initGA} from "../ga";
 import {useHistory} from "react-router-dom";

@@ -1,4 +1,4 @@
-import React, {useState, useRef} from "react";
+import React, {useRef, useState} from "react";
 import {connect} from "react-redux";
 import {useHistory} from "react-router-dom"
 import styled from "styled-components";
@@ -8,11 +8,13 @@ import {
     Button as MuiButton,
     Card as MuiCard,
     CardContent,
-    Chip, FormControl,
+    Chip,
+    FormControl,
     Grid as MuiGrid,
     Link,
     Menu,
-    MenuItem, Select,
+    MenuItem,
+    Select,
     Table,
     TableBody,
     TableCell,
@@ -22,8 +24,14 @@ import {
 } from "@material-ui/core";
 import {positions, spacing} from "@material-ui/system";
 import {ArrowDropDown, Check} from "@material-ui/icons";
-import {setCollection, deleteCollectionAction, setCollectionList, editCollectionSourceAction, editCollectionAliasAction} from "../../../redux/actions/collectionActions";
-import {red, blue, orange} from "@material-ui/core/colors";
+import {
+    deleteCollectionAction,
+    editCollectionAliasAction,
+    editCollectionSourceAction,
+    setCollection,
+    setCollectionList
+} from "../../../redux/actions/collectionActions";
+import {blue, orange, red} from "@material-ui/core/colors";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";

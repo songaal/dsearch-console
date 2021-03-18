@@ -1,9 +1,9 @@
-import React, {useState, useEffect, useRef} from "react";
-import {Box, Card, CardContent, IconButton, InputBase,  Typography} from "@material-ui/core";
+import React, {useEffect, useRef, useState} from "react";
+import {Box, Card, CardContent, IconButton, InputBase, Typography} from "@material-ui/core";
 import {Search} from "@material-ui/icons";
 import {makeStyles} from "@material-ui/core/styles";
-import { connect } from "react-redux";
-import {setSettings, searchDictionaries} from "../../../redux/actions/dictionaryActions";
+import {connect} from "react-redux";
+import {searchDictionaries, setSettings} from "../../../redux/actions/dictionaryActions";
 
 const useStyles = makeStyles((theme) => ({
     formControl: { minWidth: 150 },

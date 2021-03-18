@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, {useEffect} from "react";
 import {connect} from "react-redux";
 import {Box, FormControl, InputLabel, MenuItem, Select} from "@material-ui/core";
 import {setIndexAction, setIndicesAction} from "../../redux/actions/indicesActions";

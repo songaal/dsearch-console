@@ -1,19 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import React, {useEffect, useState} from "react";
+import {connect} from "react-redux";
 import {
-    Box, CircularProgress,
+    Box,
+    Button,
     Card,
     CardContent,
-    Button,
+    Checkbox,
+    CircularProgress,
+    Snackbar,
     Table,
-    TableHead,
-    TableRow,
-    TableCell,
     TableBody,
-    Checkbox, Snackbar
+    TableCell,
+    TableHead,
+    TableRow
 } from "@material-ui/core";
 import MuiAlert from '@material-ui/lab/Alert';
-import {setSummary, applyDictionary} from "../../../redux/actions/dictionaryActions";
+import {applyDictionary, setSummary} from "../../../redux/actions/dictionaryActions";
 import utils from "../../../utils";
 
 

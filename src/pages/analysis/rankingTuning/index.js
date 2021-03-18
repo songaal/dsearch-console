@@ -1,29 +1,37 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import styled from "styled-components";
 // import { NavLink as RouterNavLink} from "react-router-dom";
 import Helmet from 'react-helmet';
-import { spacing } from "@material-ui/system";
+import {spacing} from "@material-ui/system";
 import AceEditor from "react-ace";
-import { connect } from "react-redux";
+import {connect} from "react-redux";
 import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-kuroir";
 import {makeStyles} from '@material-ui/core/styles';
-import { setDocumentList } from '@actions/rankingTuningActions'
+import {setDocumentList} from '@actions/rankingTuningActions'
 
 import {
-    Box, Link, CircularProgress,
-    Table as MuiTable, TableRow, TableCell, TableHead, TableBody,
-    TextField, Switch,
+    Box,
+    Button,
     Card as MuiCard,
     CardContent,
+    CircularProgress,
     Divider as MuiDivider,
+    FormControlLabel,
     Grid,
-    Button,
-    Typography,
-    FormControlLabel, Hidden
+    Hidden,
+    Link,
+    Switch,
+    Table as MuiTable,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableRow,
+    TextField,
+    Typography
 } from "@material-ui/core";
 
-import { TreeView, TreeItem } from '@material-ui/lab';
+import {TreeItem, TreeView} from '@material-ui/lab';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import IndicesSelect from "../../../components/IndicesSelect";

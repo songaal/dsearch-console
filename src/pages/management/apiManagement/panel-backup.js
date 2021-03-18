@@ -1,20 +1,21 @@
 import React from "react";
-import PropTypes from 'prop-types';
 import styled from "styled-components";
 import {makeStyles} from '@material-ui/core/styles';
 import Helmet from 'react-helmet';
-import Alert from '@material-ui/lab/Alert';
-import {Box, Card as MuiCard, Divider as MuiDivider, Grid, Tab, Tabs, Typography, CardContent,
+import {
+    Box,
+    Card as MuiCard,
+    Divider as MuiDivider,
     ExpansionPanel,
     ExpansionPanelDetails,
     ExpansionPanelSummary,
-    Button,
+    Grid,
+    Typography,
 } from "@material-ui/core";
-import {
-    ExpandMore as ExpandMoreIcon
-} from '@material-ui/icons';
+import {ExpandMore as ExpandMoreIcon} from '@material-ui/icons';
 import {spacing} from "@material-ui/system";
 import blue from '@material-ui/core/colors/blue';
+
 const Card = styled(MuiCard)(spacing);
 
 const Divider = styled(MuiDivider)(spacing);

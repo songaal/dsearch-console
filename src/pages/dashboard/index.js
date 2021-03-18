@@ -4,20 +4,20 @@ import {
     setIndexAliasActions,
     setIndexResultActions,
     setIndexStatusActions,
-    setRunningIndexActions,
     setIndicesActions,
+    setRunningIndexActions,
     setRunningPropagateIndexActions,
 } from '@actions/dashBoardActions'
 import Helmet from "react-helmet";
 import {useHistory} from "react-router-dom"
 import {
-    Link,
     Box,
     Card as MuiCard,
     CardContent,
     Divider as MuiDivider,
     Grid as MuiGrid,
     LinearProgress,
+    Link,
     Table,
     TableBody,
     TableCell as MuiTableCell,
