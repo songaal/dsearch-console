@@ -1,7 +1,6 @@
 import axios from 'axios'
 // import { Link } from 'react-router-dom';
-
-import {SET_DSEARCH_SERVER, SET_DSEARCH_AUTH_USER} from "./redux/constants";
+import {SET_DSEARCH_AUTH_USER, SET_DSEARCH_SERVER} from "./redux/constants";
 
 
 class Client {

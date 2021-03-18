@@ -1,4 +1,10 @@
-import { SET_INDEX_RESULT, SET_RUNNING_INDEX, SET_INDEX_STATUS, SET_INDEX_ALIAS, SET_DASHBOARD_INDICES_INFO } from "../constants";
+import {
+    SET_DASHBOARD_INDICES_INFO,
+    SET_INDEX_ALIAS,
+    SET_INDEX_RESULT,
+    SET_INDEX_STATUS,
+    SET_RUNNING_INDEX
+} from "../constants";
 import Client from '~/Client'
 
 const client = new Client()

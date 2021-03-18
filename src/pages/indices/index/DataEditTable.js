@@ -1,6 +1,6 @@
 import React, {forwardRef, useEffect, useRef, useState} from "react";
 import {connect, useSelector} from "react-redux";
-import {Box, Card, CardContent, Typography } from "@material-ui/core";
+import {Box, Card, CardContent, Typography} from "@material-ui/core";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import MaterialTable from 'material-table';
 import AddBox from '@material-ui/icons/AddBox';

@@ -18,7 +18,11 @@ import {
 } from "@material-ui/core";
 import {positions, spacing} from "@material-ui/system";
 import {ArrowDropDown} from "@material-ui/icons";
-import {deleteIndexHistoryList, setIndexHistoryList, setIndexHistoryTypeList} from "../../../redux/actions/collectionActions";
+import {
+    deleteIndexHistoryList,
+    setIndexHistoryList,
+    setIndexHistoryTypeList
+} from "../../../redux/actions/collectionActions";
 
 const Box = styled(MuiBox)(spacing, positions);
 const Card = styled(MuiCard)(spacing, positions);

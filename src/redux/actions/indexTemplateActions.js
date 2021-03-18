@@ -1,5 +1,5 @@
 import Client from '~/Client'
-import {SET_INDEX_TEMPLATES, SET_INDEX_TEMPLATE} from "../constants";
+import {SET_INDEX_TEMPLATE, SET_INDEX_TEMPLATES} from "../constants";
 
 const client = new Client()
 

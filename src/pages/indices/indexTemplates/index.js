@@ -6,6 +6,7 @@ import Helmet from 'react-helmet';
 
 import {
     Box as MuiBox,
+    Button,
     Divider as MuiDivider,
     Link,
     Paper,
@@ -15,9 +16,8 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    Typography as MuiTypography,
-    Button,
     TableSortLabel,
+    Typography as MuiTypography,
 } from "@material-ui/core";
 import {makeStyles} from '@material-ui/core/styles';
 import {positions, spacing} from "@material-ui/system";

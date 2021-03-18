@@ -1,5 +1,3 @@
-import * as types from '../constants';
-
 let initState = {
     indicesData: {}
 };

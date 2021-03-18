@@ -7,6 +7,7 @@ import {
     Button,
     Card,
     CardContent,
+    CircularProgress,
     FormControl,
     Grid,
     IconButton,
@@ -18,8 +19,7 @@ import {
     TableCell,
     TableContainer,
     TableHead,
-    TableRow,
-    CircularProgress
+    TableRow
 } from "@material-ui/core";
 import {Search} from "@material-ui/icons";
 import {

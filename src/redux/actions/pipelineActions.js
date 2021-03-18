@@ -1,4 +1,4 @@
-import {SET_PIPELINE_LIST,SET_PIPELINE_RESULT, SET_PIPELINE, DELETE_PIPELINE, ADD_PIPELINE} from "../constants";
+import {ADD_PIPELINE, DELETE_PIPELINE, SET_PIPELINE, SET_PIPELINE_LIST, SET_PIPELINE_RESULT} from "../constants";
 import Client from '~/Client'
 
 const client = new Client()

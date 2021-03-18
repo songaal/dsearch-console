@@ -1,39 +1,39 @@
-import React, {useEffect, useState, useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {connect} from "react-redux";
 import styled from "styled-components";
 import Helmet from 'react-helmet';
 import {
     Box as MuiBox,
     Button as MuiButton,
-    Divider as MuiDivider,
-    Grid as MuiGrid,
-    IconButton as MuiIconButton,
-    TextField as MuiTextField,
-    Typography as MuiTypography,
     Card as MuiCard,
     CardContent as MuiCardContent,
+    Divider as MuiDivider,
+    Grid as MuiGrid,
     Hidden,
+    IconButton as MuiIconButton,
     List as MuiList,
-    ListItem as MuiListItem
+    ListItem as MuiListItem,
+    TextField as MuiTextField,
+    Typography as MuiTypography
 } from "@material-ui/core";
-import {} from "@material-ui/icons";
 import MuiAlert from '@material-ui/lab/Alert';
 import {
-    ArrowUp as ArrowUpIcon,
     ArrowDown as ArrowDownIcon,
-    PlusSquare as PlusSquareIcon,
+    ArrowUp as ArrowUpIcon,
     MinusSquare as MinusSquareIcon,
+    PlusSquare as PlusSquareIcon,
 } from "react-feather";
 
 import {makeStyles} from "@material-ui/styles";
 import {borders, display, palette, sizing, spacing} from "@material-ui/system";
 import * as Color from '@material-ui/core/colors';
-import {setAutoCompleteURLAction, getAutoCompleteURLAction} from "../../../redux/actions/dsearchPluginActions"
+import {getAutoCompleteURLAction, setAutoCompleteURLAction} from "../../../redux/actions/dsearchPluginActions"
 import {
+    actionReferenceTemplate,
     addReferenceTemplate,
-    updateReferenceTemplate,
+    deleteReferenceTemplate,
     setReferenceTemplateList,
-    deleteReferenceTemplate, actionReferenceTemplate
+    updateReferenceTemplate
 } from "../../../redux/actions/referenceSearchActions";
 import utils from '~/utils'
 import AceEditor from "react-ace";

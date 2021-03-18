@@ -1,4 +1,9 @@
-import {SET_TOOLS_ANALYZER_LIST, SET_TOOLS_PLUGIN_LIST, SET_TOOLS_ANALYZE_BRIEF_RESULT,  SET_TOOLS_ANALYZE_DETAIL_RESULT} from "../constants";
+import {
+    SET_TOOLS_ANALYZE_BRIEF_RESULT,
+    SET_TOOLS_ANALYZE_DETAIL_RESULT,
+    SET_TOOLS_ANALYZER_LIST,
+    SET_TOOLS_PLUGIN_LIST
+} from "../constants";
 import Client from '~/Client'
 
 const client = new Client()

@@ -21,14 +21,15 @@ import {
     TableContainer,
     TableHead,
     TableRow,
+    TableSortLabel,
     TextField,
     Typography as MuiTypography,
-    TableSortLabel,
 } from "@material-ui/core";
 import {makeStyles} from '@material-ui/core/styles';
 import {positions, spacing} from "@material-ui/system";
 import {
-    addCollectionList, setCatIndexTemplateList,
+    addCollectionList,
+    setCatIndexTemplateList,
     setCollectionIndexSuffix,
     setCollectionList,
 } from "../../../redux/actions/collectionActions";

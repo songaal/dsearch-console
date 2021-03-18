@@ -4,18 +4,13 @@ import Async from '~/components/Async';
 
 import styled from "styled-components";
 import Helmet from 'react-helmet';
-import {
-    Divider as MuiDivider,
-    Grid,
-    Typography,
-    Button,
-    Box,
-} from "@material-ui/core";
+import {Box, Button, Divider as MuiDivider, Grid, Typography,} from "@material-ui/core";
 import AntTabs from "~/components/AntTabs"
 import {spacing} from "@material-ui/system";
 import SearchIcon from '@material-ui/icons/Search';
-import {setActiveSettingIndex, setSettings, sortSettings} from "../../../redux/actions/dictionaryActions";
+import {setActiveSettingIndex, setSettings} from "../../../redux/actions/dictionaryActions";
 import Settings from "./Settings"
+
 const Divider = styled(MuiDivider)(spacing);
 
 const firstTabs = [

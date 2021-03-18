@@ -18,6 +18,7 @@ import {
     FormControlLabel,
     Grid as MuiGrid,
     Hidden,
+    Link,
     Table,
     TableBody,
     TableCell as MuiTableCell,
@@ -25,7 +26,6 @@ import {
     TableRow as MuiTableRow,
     TextField,
     Typography,
-    Link,
 } from "@material-ui/core";
 import {palette, sizing, spacing} from "@material-ui/system";
 import {makeStyles} from "@material-ui/core/styles";

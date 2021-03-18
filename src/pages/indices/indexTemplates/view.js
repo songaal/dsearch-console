@@ -7,9 +7,9 @@ import Json2html from "~/components/Json2Html"
 
 import {
     Box as MuiBox,
-    Button as MuiButton, 
+    Button as MuiButton,
     Card as MuiCard,
-    CardContent, 
+    CardContent,
     Dialog,
     DialogActions,
     DialogContent,
@@ -17,9 +17,9 @@ import {
     Divider as MuiDivider,
     FormControl,
     FormControlLabel,
-    Grid, 
+    Grid,
     InputLabel,
-    MenuItem, 
+    MenuItem,
     Radio,
     RadioGroup,
     Select,

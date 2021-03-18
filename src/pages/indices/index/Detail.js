@@ -2,25 +2,29 @@ import React, {useEffect} from "react";
 import {connect, useDispatch, useSelector} from "react-redux";
 import Async from '~/components/Async';
 import styled from "styled-components";
-import {withStyles, makeStyles } from '@material-ui/core/styles';
+import {makeStyles, withStyles} from '@material-ui/core/styles';
 import Helmet from 'react-helmet';
 import AntTabs from "~/components/AntTabs"
 import IndicesSelect from "~/components/IndicesSelect";
 import {
+    Backdrop,
     Box,
-    Grid,
     Button,
+    CircularProgress,
     Divider as MuiDivider,
-    Typography,
-    CircularProgress, Snackbar, Backdrop
+    Grid,
+    Snackbar,
+    Typography
 } from "@material-ui/core";
 import {useHistory, useLocation} from "react-router-dom";
 import {spacing} from "@material-ui/system";
 import {
     deleteIndexAction,
     setIndexAction,
-    setIndexAliasesAction, setIndexDocumentSourceListAction,
-    setIndexInfoListAction, setIndexManagedAction,
+    setIndexAliasesAction,
+    setIndexDocumentSourceListAction,
+    setIndexInfoListAction,
+    setIndexManagedAction,
     setIndexMappingsAction,
     setIndexSettingsAction,
     setIndexStateAction

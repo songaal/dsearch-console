@@ -8,30 +8,32 @@ import ReactDragListView from 'react-drag-listview/lib/index.js';
 import styled from "styled-components";
 import Helmet from 'react-helmet';
 import {
-    Divider as MuiDivider,
-    Grid,
-    List, ListItem,
-    Typography,
-    Button,
     Box,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
+    Button,
     Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Divider as MuiDivider,
+    FormControl,
+    Grid,
+    Link,
+    MenuItem,
     Paper,
-    Table,
-    TableHead,
-    TableRow,
+    Select,
     TableContainer,
-    TableCell,
-    TableBody, TextField, Select, MenuItem, FormControl, IconButton, Link,
+    TextField,
 } from "@material-ui/core";
-import { spacing } from "@material-ui/system";
-import { setSettings, setAddDictionarySetting, removeDictionarySetting, updatedSettingList } from "../../../redux/actions/dictionaryActions";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
-import { red } from "@material-ui/core/colors";
+import {spacing} from "@material-ui/system";
+import {
+    removeDictionarySetting,
+    setAddDictionarySetting,
+    setSettings,
+    updatedSettingList
+} from "../../../redux/actions/dictionaryActions";
+import {makeStyles, useTheme} from "@material-ui/core/styles";
+import {red} from "@material-ui/core/colors";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import utils from "../../../utils";
 
 const Divider = styled(MuiDivider)(spacing);
 

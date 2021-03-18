@@ -1,18 +1,18 @@
 import React, {useState} from "react";
 import {connect, useDispatch, useSelector} from "react-redux";
 import styled from "styled-components";
-import { useHistory } from "react-router-dom";
+import {useHistory} from "react-router-dom";
 import Helmet from 'react-helmet';
 import {
     Box as MuiBox,
     Button as MuiButton,
-    Divider as MuiDivider,
-    Grid as MuiGrid,
-    Typography as MuiTypography,
     Card as MuiCard,
     CardContent as MuiCardContent,
+    Divider as MuiDivider,
+    Grid as MuiGrid,
     List as MuiList,
     ListItem as MuiListItem,
+    Typography as MuiTypography,
 } from "@material-ui/core";
 
 import * as Color from '@material-ui/core/colors';

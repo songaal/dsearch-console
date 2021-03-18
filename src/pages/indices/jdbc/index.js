@@ -1,28 +1,35 @@
-import React, {useState, useEffect, useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import styled from "styled-components";
-import { connect } from "react-redux";
+import {connect} from "react-redux";
 import Helmet from 'react-helmet';
 import utils from "../../../utils";
 import MuiAlert from '@material-ui/lab/Alert';
 import {
-    Box, Button,
-    Dialog, DialogTitle,
-    Table, TableRow, TableCell, TableHead, TableBody,
+    Box,
+    Button,
     Card as MuiCard,
     CardContent,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
     Divider as MuiDivider,
     Grid,
     Link,
-    Select, MenuItem,
-    Typography,
-    TextField as MuiTextField,
-    DialogContent,
-    DialogActions,
+    MenuItem,
+    Select,
     Snackbar,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableRow,
     TableSortLabel,
+    TextField as MuiTextField,
+    Typography,
 } from "@material-ui/core";
 import {spacing} from "@material-ui/system";
-import { setJDBCList, setJDBCAccessTest, addJdbcIndex, deleteJdbcSource, updateJdbcSource } from '@actions/jdbcActions'
+import {addJdbcIndex, deleteJdbcSource, setJDBCAccessTest, setJDBCList, updateJdbcSource} from '@actions/jdbcActions'
 
 const drivers = ["Altibase", "Oracle", "Mysql"];
 const JdbcDrivers = {

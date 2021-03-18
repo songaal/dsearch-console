@@ -20,6 +20,7 @@ import rankingTuningReducers from "./rankingTuningReducers"
 import jdbcReducers from "./jdbcReducers"
 import dsearchPluginReducers from "./dsearchPluginReducers"
 import pipelineReducers from "./pipelineReducers"
+
 export default combineReducers({
     indicesReducers,
     dictionaryReducers,

@@ -8,11 +8,13 @@ import {
     Button as MuiButton,
     CircularProgress,
     Grid as MuiGrid,
-    Grow, LinearProgress,
+    Grow,
+    LinearProgress,
     MenuItem,
     MenuList,
     Paper,
-    Popper, Snackbar,
+    Popper,
+    Snackbar,
     Switch,
 } from "@material-ui/core";
 import {positions, spacing} from "@material-ui/system";
@@ -26,6 +28,7 @@ import {
 import {connect} from "react-redux";
 import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
 import ScheduleIcon from '@material-ui/icons/Schedule';
+
 const Box = styled(MuiBox)(spacing, positions);
 const Button = styled(MuiButton)(spacing, positions);
 const Grid = styled(MuiGrid)(spacing, positions);

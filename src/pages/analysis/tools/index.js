@@ -1,27 +1,33 @@
-import React, {useState, useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
-import { connect } from "react-redux";
+import {connect} from "react-redux";
 import Helmet from 'react-helmet';
 import {makeStyles} from '@material-ui/core/styles';
-import { setAnalyzerList, setPluginList, actionAnalyzer, actionPlugin } from '@actions/toolsActions'
+import {actionAnalyzer, actionPlugin, setAnalyzerList, setPluginList} from '@actions/toolsActions'
 
 import {
-    Box, Button,
+    Box,
+    Button,
     Card as MuiCard,
-    CardContent, Checkbox,
+    CardContent,
+    Checkbox,
     Divider as MuiDivider,
-    FormControl, FormControlLabel,RadioGroup, Radio,
-    Table, TableRow, TableCell,
-    Select,
+    FormControl,
+    FormControlLabel,
     Grid,
     MenuItem,
+    Radio,
+    RadioGroup,
+    Select,
+    Table,
+    TableBody,
+    TableCell,
+    TableRow,
     TextField as MuiTextField,
     Typography,
-    TableBody,
 } from "@material-ui/core";
 
-import { spacing } from "@material-ui/system";
-import { Label } from "@material-ui/icons";
+import {spacing} from "@material-ui/system";
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -141,7 +147,7 @@ function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetai
             setDetailPluginList(((pluginList||{})['plugins']||[]))
             if(detailPluginList.length > 0 )setSelectedItem(detailPluginList[0])
         }
-    }) // eslint-disable-line react-hooks/exhaustive-deps
+    }, [toolsTypeAction, pluginList, detailPluginList])
 
     let index2AnalyzerList = []
     if (analyzerList !== undefined && analyzerList !== null) {

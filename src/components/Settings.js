@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import {connect} from "react-redux";
 
 import {Button, Drawer, Fab as MuiFab, ListItem, Paper as MuiPaper, Typography} from "@material-ui/core";
 

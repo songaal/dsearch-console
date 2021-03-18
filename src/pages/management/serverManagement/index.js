@@ -5,14 +5,7 @@ import Async from '~/components/Async';
 
 import Helmet from 'react-helmet';
 
-import {
-    Box,
-    Breadcrumbs as MuiBreadcrumbs,
-    FormControl,
-    Link,
-    MenuItem,
-    Select,
-} from "@material-ui/core";
+import {Box, Breadcrumbs as MuiBreadcrumbs, FormControl, Link, MenuItem, Select,} from "@material-ui/core";
 
 import {makeStyles} from '@material-ui/core/styles';
 import {spacing} from "@material-ui/system";

@@ -4,21 +4,23 @@ import styled from "styled-components";
 import Helmet from 'react-helmet';
 
 import {
-    Divider as MuiDivider,
-    Typography,
-    Grid,
     Box,
     Button,
-    DialogTitle,
+    Dialog,
+    DialogActions,
     DialogContent,
-    DialogActions, Dialog
+    DialogTitle,
+    Divider as MuiDivider,
+    Grid,
+    Typography
 } from "@material-ui/core";
 import {spacing} from "@material-ui/system";
 import AntTabs from "../../../components/AntTabs";
 import async from "../../../components/Async";
-import {orange, green} from "@material-ui/core/colors";
+import {green, orange} from "@material-ui/core/colors";
 import {connect, useDispatch} from "react-redux";
-import {setClusterServerCheck, editClusterServerCheck, editClusterFlush} from "../../../redux/actions/clusterActions"
+import {editClusterFlush, editClusterServerCheck, setClusterServerCheck} from "../../../redux/actions/clusterActions"
+
 const Divider = styled(MuiDivider)(spacing);
 
 

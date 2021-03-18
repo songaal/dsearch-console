@@ -1,15 +1,6 @@
 import React from "react";
 import {connect} from "react-redux";
-import {
-    Box,
-    Card,
-    CardContent,
-    Table,
-    TableBody,
-    TableCell,
-    TableRow,
-    Typography
-} from "@material-ui/core";
+import {Box, Card, CardContent, Table, TableBody, TableCell, TableRow, Typography} from "@material-ui/core";
 
 // import {spacing} from "@material-ui/system";
 import {flatten} from "flat";

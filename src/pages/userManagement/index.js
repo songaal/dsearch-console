@@ -36,7 +36,8 @@ import DraftsIcon from '@material-ui/icons/Drafts';
 import SendIcon from '@material-ui/icons/Send';
 import {ArrowDropDown} from "@material-ui/icons";
 import {
-    addUserAction, removeUserAction,
+    addUserAction,
+    removeUserAction,
     resetPasswordAction,
     setUserEditAction,
     setUserListAction

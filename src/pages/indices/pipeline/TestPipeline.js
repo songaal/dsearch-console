@@ -1,19 +1,27 @@
-import React, {useEffect, useState, useRef} from "react";
-import { connect } from "react-redux";
+import React, {useEffect, useRef, useState} from "react";
+import {connect} from "react-redux";
 import {
-    Box, CircularProgress,
+    Box,
+    Button,
     Card,
     CardContent,
-    Button, Grid,
-    Checkbox, Snackbar,FormControlLabel,
-    FormControl, InputLabel, MenuItem, Select, Typography
+    Checkbox,
+    CircularProgress,
+    FormControl,
+    FormControlLabel,
+    Grid,
+    InputLabel,
+    MenuItem,
+    Select,
+    Snackbar,
+    Typography
 } from "@material-ui/core";
 import MuiAlert from '@material-ui/lab/Alert';
 import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-kuroir";
-import { setPipelineAction, setPipelineList, getPipeline, getPipelineDetail } from '@actions/pipelineActions'
-import { makeStyles } from '@material-ui/core/styles';
+import {getPipeline, getPipelineDetail, setPipelineAction, setPipelineList} from '@actions/pipelineActions'
+import {makeStyles} from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
