@@ -1,7 +1,9 @@
 import React, { useEffect } from "react";
-import ReactDragList from 'react-drag-list'
-
+// import ReactDragList from 'react-drag-list'
+import DragHandleIcon from '@material-ui/icons/DragHandle';
 import { connect } from "react-redux";
+
+import ReactDragListView from 'react-drag-listview/lib/index.js';
 
 import styled from "styled-components";
 import Helmet from 'react-helmet';
@@ -56,6 +58,9 @@ const useStyles = makeStyles((theme) => ({
         right: theme.spacing(3),
     },
 }));
+
+
+
 let firstSetting = 
     {
         "header": true,
@@ -75,8 +80,8 @@ function Settings({ dispatch, authUser, settings }) {
     const classes = useStyles();
     const fullScreen = useMediaQuery(useTheme().breakpoints.down('sm'));
 
-    // settings = firstSetting.concat(settings)
-    // console.log(settings);
+    const [settingsList, setSettingsList] = React.useState(settings)
+
     const [openEditDictModal, setOpenEditDictModal] = React.useState(false)
 
     const [selectedSetting, setSelectedSetting] = React.useState({})
@@ -163,19 +168,27 @@ function Settings({ dispatch, authUser, settings }) {
             columns_keyword: newDictSetting['column_keyword'],
             columns_value: newDictSetting['column_value']
         })).then(body => {
-            settings = settings.concat({
+
+            let columns  = [];
+
+            if(newDictSetting['column_id'] != ""){
+                columns.push({"type": "id", "label": newDictSetting['column_id']})
+            }
+            if(newDictSetting['column_keyword'] != ""){
+                columns.push({"type": "keyword", "label": newDictSetting['column_keyword']})
+            }
+            if(newDictSetting['column_value'] != ""){
+                columns.push({"type": "value", "label": newDictSetting['column_value']})
+            }
+            setSettingsList(settingsList.concat({
                 id: newDictSetting['id'], 
                 name: newDictSetting['name'], 
                 ignoreCase: newDictSetting['ignoreCase'],
                 type: newDictSetting['type'], 
                 tokenType: newDictSetting['tokenType'],
                 index: settings.length,
-                colums: {
-                    id: newDictSetting['column_id'],
-                    keyword: newDictSetting['column_keyword'],
-                    value: newDictSetting['column_value']
-                }
-            });
+                columns: columns
+            }))
 
             setTimeout(() => {
                 dispatch(setSettings())
@@ -187,8 +200,16 @@ function Settings({ dispatch, authUser, settings }) {
     function handleRemoveDictionarySetting() {
         dispatch(removeDictionarySetting(selectedSetting['documentId']))
             .then(body => {
-                let idx = settings.findIndex((item) => { return item['documentId'] === selectedSetting['documentId']})
-                settings.splice(idx, 1);
+                
+                let tmpList = settingsList
+                let idx = tmpList.findIndex((item) => { return item['documentId'] === selectedSetting['documentId']})
+                tmpList.splice(idx, 1);
+
+                setSettingsList(tmpList);
+
+                // settings = settingsList;
+                // idx = settings.findIndex((item) => { return item['documentId'] === selectedSetting['documentId']})
+                // settings.splice(idx, 1);
 
                 setTimeout(() => {
                     dispatch(setSettings())
@@ -201,12 +222,15 @@ function Settings({ dispatch, authUser, settings }) {
         if( e.oldIndex === e.newIndex ) return;
 
         let list = [];
+        
         if(e.oldIndex < e.newIndex){
+            // 위에 있는 내용을 밑으로 
             list = list.concat(settings.slice(0, e.oldIndex))
             list = list.concat(settings.slice(e.oldIndex+1, e.newIndex+1))
             list = list.concat(settings[e.oldIndex])
             list = list.concat(settings.slice(e.newIndex+1, settings.length));
         }else if(e.oldIndex > e.newIndex){
+            // 밑에 있는 내용을 위로 
             list = list.concat(settings.slice(0, e.newIndex))
             list = list.concat(settings[e.oldIndex])
             list = list.concat(settings.slice(e.newIndex, e.oldIndex));
@@ -220,6 +244,32 @@ function Settings({ dispatch, authUser, settings }) {
         settings = list;
         dispatch(updatedSettingList(list));
     }
+
+    function updateSettingList(settings, fromIndex, toIndex){
+        if( fromIndex === toIndex ) return;
+        
+        for(let i = 0; i < settings.length; i++){
+            settings[i]['index'] = i+1;
+        }
+
+        setSettingsList(settings);
+        dispatch(updatedSettingList(settings));
+    }
+
+
+    const dragProps = {
+        onDragEnd(fromIndex, toIndex) {
+            const data = [...settingsList];
+            const item = data.splice(fromIndex, 1)[0];
+            data.splice(toIndex, 0, item);
+            setSettingsList(data)
+
+            updateSettingList(data, fromIndex, toIndex)
+        },
+        nodeSelector: 'div',
+        handleSelector: 'svg'
+      };
+
 
     return (
         <>
@@ -236,9 +286,10 @@ function Settings({ dispatch, authUser, settings }) {
 
             <br />
             <TableContainer component={Paper}>
-                <Box style={{ width: "100%" }}>
+                <Box style={{ width: "100%", marginTop: "12px", marginBottom: "12px"}}>
                                 <Box style={{ width: "100%", display: "flex",  paddingTop: "8px", paddingBottom: "8px" }} >
-                                    <Box align={"center"} style={{ width: "15%" }}><b>{firstSetting['id']}</b></Box>
+                                    <Box align={"center"} style={{ width: "5%" }}><b>#</b></Box>
+                                    <Box align={"center"} style={{ width: "10%" }}><b>{firstSetting['id']}</b></Box>
                                     <Box align={"center"} style={{ width: "15%" }}><b>{firstSetting['name']}</b></Box>
                                     <Box align={"center"} style={{ width: "10%", margin: "4px" }}><b>{firstSetting['type']}</b></Box>
                                     <Box align={"center"} style={{ width: "10%", margin: "4px" }}><b>{firstSetting['ignoreCase']}</b></Box>
@@ -251,7 +302,31 @@ function Settings({ dispatch, authUser, settings }) {
                                 <Divider />
                 </Box>
 
-                <ReactDragList
+                <ReactDragListView {...dragProps}>
+                    
+                    {settingsList.map((item, idx) => (
+                        <Box key={idx} style={{ width: "100%", display: "flex",  marginTop: "8px", marginBottom: "8px", paddingTop: "12px", paddingBottom: "12px" } } >
+                            <DragHandleIcon style={{cursor: "move", width: "5%"}} />
+                            <Box align={"center"} style={{ width: "10%" }}>{item['id']}</Box>
+                            <Box align={"center"} style={{ width: "15%" }}>{item['name']}</Box>
+                            <Box align={"center"} style={{ width: "10%", margin: "4px" }}>{item['type']}</Box>
+                            <Box align={"center"} style={{ width: "10%", margin: "4px" }}>{item['ignoreCase'] ? "true" : "false"}</Box>
+                            <Box align={"center"} style={{ width: "10%", margin: "4px" }}>{item['tokenType']}</Box>
+                            <Box align={"center"} style={{ width: "10%", margin: "4px" }}>{item['columns'].filter(c => c['type'] === 'id').map(c => c['label']).join("")}</Box>
+                            <Box align={"center"} style={{ width: "10%", margin: "4px" }}>{item['columns'].filter(c => c['type'] === 'keyword').map(c => c['label']).join("")}</Box>
+                            <Box align={"center"} style={{ width: "10%", margin: "4px" }}>{item['columns'].filter(c => c['type'] === 'value').map(c => c['label']).join("")}</Box>
+                            <Box align={"center"} style={{ width: "10%", margin: "4px" }}>
+                                <Button size={"small"}
+                                    variant={"outlined"}
+                                    style={{ color: red[400] }}
+                                    onClick={() => handleOpenRemoveSettingModal(item)}
+                                >삭제</Button>
+                            </Box>
+                        </Box>
+                        ))}
+                </ReactDragListView>
+
+                {/* <ReactDragList
                     style={{ width: "100%" }}
                     dataSource={settings}
                     animation={0}
@@ -277,7 +352,7 @@ function Settings({ dispatch, authUser, settings }) {
                         </Box>
                     )
                     }
-                />
+                /> */}
 
 
                 {/* <Table className={classes.table}>

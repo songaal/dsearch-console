@@ -65,6 +65,8 @@ function Set({ dictionary, authUser, setting, dataSet }) {
 
     const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
     const [createDialogOpen, setCreateDialogOpen] = React.useState(false);
+    const [message, setMessage] = React.useState("");
+
 
     // console.log("Set", authUser)
     // authUser.role.analysis = false;
@@ -125,6 +127,29 @@ function Set({ dictionary, authUser, setting, dataSet }) {
 
     async function handleCreateData() {
         await createDictionary(dictionary, {id: createId, keyword: createKeyword, value: createValue})
+
+        let msg = "";
+        if(createId !== undefined && createId !== null && createId !== "" && createId.length > 0){
+            console.log("createId", createId, createId.length);    
+            msg += createId
+        } 
+        
+        if(createKeyword !== undefined && createKeyword !== null && createKeyword !== "" && createKeyword.length > 0)  {
+            console.log("createKeyword", createKeyword, createKeyword.length);
+            if(msg !== "" || msg.length > 0) {
+                msg += " > "
+            }
+            msg += createKeyword
+        }
+
+        if(createValue !== undefined && createValue !== null && createValue !== "" && createValue.length > 0)  {
+            console.log("createValue", createValue, createValue.length);
+            if(msg !== "" || msg.length > 0) {
+                msg += " > "
+            }
+            msg += createValue
+        }
+
         setCreateId("")
         setCreateValue("")
         setCreateKeyword("")
@@ -133,6 +158,10 @@ function Set({ dictionary, authUser, setting, dataSet }) {
         // setKeyword(createKeyword)
         // dispatch(setDictionary(dictionary, 0, rowSize, isMatch, createKeyword, searchColumns))
         dispatch(setDictionary(dictionary, 0, rowSize, isMatch, keyword, searchColumns))
+        setMessage('"' + msg + '" 이(가) 추가되었습니다');
+        setTimeout(() => {
+            setMessage("");
+        }, 5000);
     }
 
     let dataList = setting['columns'].map((column, index) => {
@@ -217,20 +246,21 @@ function Set({ dictionary, authUser, setting, dataSet }) {
                                 :
                                 (
                                     <React.Fragment>
-                                        <Button variant="outlined"
+                                            <Button variant="outlined"
                                                 color="primary"
+                                                mx={1}
                                                 onClick={() => {
                                                     setCreateId('');
                                                     setCreateKeyword('');
                                                     setCreateValue('');
                                                     setCreateDialogOpen(true);
                                                 }}
-                                        >추가</Button>
-                                        <Button variant="outlined"
+                                            >추가</Button>
+                                            <Button variant="outlined"
                                                 color="primary"
-                                                mr={1}
-                                                onClick={() => setDeleteDialogOpen(true)}
-                                        >삭제</Button>
+                                                mx={1}
+                                                onClick={() => { if(checkedList.length > 0) setDeleteDialogOpen(true)} }
+                                            >삭제</Button>
                                     </React.Fragment>
                                 )
                             }
@@ -364,11 +394,16 @@ function Set({ dictionary, authUser, setting, dataSet }) {
                     }
                 </DialogContent>
                 <DialogActions>
+                {
+                        message !== "" ? 
+                            <Box mr={20}> <b> {message} </b></Box>
+                            : <></>
+                    }
                     <Button onClick={handleCreateData} color="secondary">
                         추가
                     </Button>
                     <Button autoFocus onClick={() => setCreateDialogOpen(false)} color="primary">
-                        취소
+                        닫기
                     </Button>
 
                 </DialogActions>
