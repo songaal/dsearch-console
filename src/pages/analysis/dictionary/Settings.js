@@ -317,7 +317,7 @@ function Settings({ dispatch, authUser, settings }) {
                             <Box align={"center"} style={{ width: "10%", margin: "4px" }}>{item['columns'].filter(c => c['type'] === 'id').map(c => c['label']).join("")}</Box>
                             <Box align={"center"} style={{ width: "10%", margin: "4px" }}>{item['columns'].filter(c => c['type'] === 'keyword').map(c => c['label']).join("")}</Box>
                             <Box align={"center"} style={{ width: "10%", margin: "4px" }}>{item['columns'].filter(c => c['type'] === 'value').map(c => c['label']).join("")}</Box>
-                            <Box align={"center"} style={{ width: "10%", margin: "4px" }}>
+                            <Box align={"center"} style={{ width: "10%" }}>
                                 <Button size={"small"}
                                     variant={"outlined"}
                                     style={{ color: red[400] }}
@@ -327,35 +327,6 @@ function Settings({ dispatch, authUser, settings }) {
                         </Box>
                         ))}
                 </ReactDragListView>
-
-                {/* <ReactDragList
-                    style={{ width: "100%" }}
-                    dataSource={settings}
-                    animation={0}
-                    handles={false}
-                    onUpdate={(event) => updateSettingList(event)}
-                    row={(item, idx) => (
-                        <Box key={idx} style={{ width: "100%", display: "flex",  paddingTop: "8px", paddingBottom: "8px" }} >
-                            <Box align={"center"} style={{ width: "15%" }}>{item['id']}</Box>
-                            <Box align={"center"} style={{ width: "15%" }}>{item['name']}</Box>
-                            <Box align={"center"} style={{ width: "10%", margin: "4px" }}>{item['type']}</Box>
-                            <Box align={"center"} style={{ width: "10%", margin: "4px" }}>{item['ignoreCase'] ? "true" : "false"}</Box>
-                            <Box align={"center"} style={{ width: "10%", margin: "4px" }}>{item['tokenType']}</Box>
-                            <Box align={"center"} style={{ width: "10%", margin: "4px" }}>{item['columns'].filter(c => c['type'] === 'id').map(c => c['label']).join("")}</Box>
-                            <Box align={"center"} style={{ width: "10%", margin: "4px" }}>{item['columns'].filter(c => c['type'] === 'keyword').map(c => c['label']).join("")}</Box>
-                            <Box align={"center"} style={{ width: "10%", margin: "4px" }}>{item['columns'].filter(c => c['type'] === 'value').map(c => c['label']).join("")}</Box>
-                            <Box align={"center"} style={{ width: "10%", margin: "4px" }}>
-                                <Button size={"small"}
-                                    variant={"outlined"}
-                                    style={{ color: red[400] }}
-                                    onClick={() => handleOpenRemoveSettingModal(item)}
-                                >삭제</Button>
-                            </Box>
-                        </Box>
-                    )
-                    }
-                /> */}
-
 
                 {/* <Table className={classes.table}>
                     <TableHead>

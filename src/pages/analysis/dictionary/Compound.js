@@ -54,26 +54,29 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet}) {
     const dispatch = useDispatch()
     const classes = useStyles()
     const [searchColumns, setSearchColumns] = useState("id,keyword,value");
-    const [keyword, setKeyword] = useState("");
+    // const [keyword, setKeyword] = useState("");
     const [isMatch, setMatch] = useState(false);
     const [mode, setMode] = useState("view")  //view, edit
     const [pageNum, setPageNum] = useState(0);
     const [rowSize, setRowSize] = useState(20);
 
-    const [createId, setCreateId] = useState("");
-    const [createKeyword, setCreateKeyword] = useState("");
-    const [createValue, setCreateValue] = useState("");
+    // 입력 성능 개선
+    const newCreateId = React.useRef(null);
+    const newCreateKeyword = React.useRef(null);
+    const newCreateValue = React.useRef(null);
+    const newKeyword = React.useRef({value: ""});
 
     const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
     const [createDialogOpen, setCreateDialogOpen] = React.useState(false);
     const [message, setMessage] = React.useState("");
-    // console.log("Compound", authUser)
     // authUser.role.analysis = false;
     useEffect(() => {
+        let keyword = newKeyword.current.value
         dispatch(setDictionary(dictionary, pageNum, rowSize, isMatch, keyword, searchColumns))
     }, [])
 
     function handleColumnChange(event) {
+        let keyword = newKeyword.current.value
         checkedList = []
         setSearchColumns(event.target.value)
         dispatch(setDictionary(dictionary, 0, rowSize, isMatch, keyword, event.target.value, searchColumns))
@@ -93,6 +96,7 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet}) {
     }
 
     function handleSearchClick() {
+        let keyword = newKeyword.current.value
         checkedList = []
         searchedKeyword = keyword
         setPageNum(0)
@@ -100,6 +104,7 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet}) {
     }
 
     function handleCheckboxChange(event) {
+        let keyword = newKeyword.current.value
         checkedList = []
         searchedKeyword = keyword
         setPageNum(0)
@@ -114,6 +119,7 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet}) {
     }
 
     async function handleDeleteData() {
+        let keyword = newKeyword.current.value
         for (let i = 0; i < checkedList.length; i++) {
             await deleteDictionary(dictionary, checkedList[i])
         }
@@ -124,6 +130,20 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet}) {
     }
 
     async function handleCreateData() {
+        let createId = ""
+        let createKeyword = ""
+        let createValue = ""
+
+        if(newCreateId.current != null){
+            createId = newCreateId.current.value
+        }
+        if(newCreateKeyword.current != null){
+            createKeyword = newCreateKeyword.current.value
+        }
+        if(newCreateValue.current != null){
+            createValue = newCreateValue.current.value
+        }
+
         await createDictionary(dictionary, {id: createId, keyword: createKeyword, value: createValue})
 
         let msg = "";
@@ -148,14 +168,19 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet}) {
             msg += createValue
         }
 
-        setCreateId("")
-        setCreateValue("")
-        setCreateKeyword("")
-        // setCreateDialogOpen(false);
+        if(newCreateId.current != null){
+            newCreateId.current.value = "";
+        }
+        if(newCreateKeyword.current != null){
+            newCreateKeyword.current.value = "";
+        }
+        if(newCreateValue.current != null){
+            newCreateValue.current.value = "";
+        }
+
         await utils.sleep(1000);
-        // setKeyword(createKeyword)
+        let keyword = newKeyword.current.value
         dispatch(setDictionary(dictionary, 0, rowSize, isMatch, keyword, searchColumns))
-        // dispatch(setDictionary(dictionary, 0, rowSize, isMatch, createKeyword, searchColumns))
 
         setMessage('"' + msg + '" 이(가) 추가되었습니다');
         setTimeout(() => {
@@ -236,8 +261,9 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet}) {
                                 <InputBase
                                     className={classes.input}
                                     placeholder="검색"
-                                    value={keyword}
-                                    onChange={event => setKeyword(event.target.value)}
+                                    // value={keyword}
+                                    inputRef={newKeyword}
+                                    // onChange={event => setKeyword(event.target.value)}
                                     onKeyUp={handleSearchShortcut}
                                 />
 
@@ -272,7 +298,7 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet}) {
                                         <Button variant="outlined"
                                                 mx={1}
                                                 color="primary"
-                                                onClick={() => {setCreateKeyword('');setCreateDialogOpen(true);}}
+                                                onClick={() => {setCreateDialogOpen(true);}}
                                         >추가</Button>
                                         <Button variant="outlined"
                                                 color="primary"
@@ -357,7 +383,10 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet}) {
                                     <Box mt={2}> {createLabels.id} </Box>
                                 </Grid>
                                 <Grid item xs={8}>
-                                    <TextField autoFocus={true} value={createId} onChange={event => setCreateId(event.target.value)} onKeyPress={ (e) => { if (e.key === 'Enter') handleCreateData();}}/>
+                                    <TextField 
+                                        autoFocus={true} 
+                                        inputRef={newCreateId}
+                                        onKeyPress={ (e) => { if (e.key === 'Enter') handleCreateData();}}/>
                                 </Grid>
                             </Grid>
                             :
@@ -370,7 +399,10 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet}) {
                                     <Box mt={2}> {createLabels.keyword} </Box>
                                 </Grid>
                                 <Grid item xs={8}>
-                                    <TextField autoFocus={true} value={createKeyword} onChange={event => setCreateKeyword(event.target.value) } onKeyPress={ (e) => { if (e.key === 'Enter') handleCreateData();}}/>
+                                    <TextField 
+                                        autoFocus={true} 
+                                        inputRef={newCreateKeyword} 
+                                        onKeyPress={ (e) => { if (e.key === 'Enter') handleCreateData();}}/>
                                 </Grid>
                             </Grid>
                             :
@@ -383,7 +415,10 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet}) {
                                     <Box mt={2}> {createLabels.value} </Box>
                                 </Grid>
                                 <Grid item xs={8}>
-                                    <TextField autoFocus={true} value={createValue} onChange={event => setCreateValue(event.target.value)} onKeyPress={ (e) => { if (e.key === 'Enter') handleCreateData();}}/>
+                                    <TextField 
+                                        autoFocus={true} 
+                                        inputRef={newCreateValue} 
+                                        onKeyPress={ (e) => { if (e.key === 'Enter') handleCreateData();}}/>
                                 </Grid>
                             </Grid>
                             :
@@ -392,7 +427,7 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet}) {
 
                 </DialogContent>
                 <DialogActions>
-                {
+                    {
                         message !== "" ? 
                             <Box mr={20}> <b> {message} </b></Box>
                             : <></>

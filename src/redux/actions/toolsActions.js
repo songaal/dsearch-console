@@ -27,4 +27,4 @@ export const actionPlugin = (data) => dispatch => client.call({
     uri: "/tools/detail/analysis",
     method: 'POST',
     data: data
-}).then(response => { console.log(response.data); dispatch({type: SET_TOOLS_ANALYZE_DETAIL_RESULT, payload: response.data}) } )
+}).then(response => { dispatch({type: SET_TOOLS_ANALYZE_DETAIL_RESULT, payload: response.data}) } )
