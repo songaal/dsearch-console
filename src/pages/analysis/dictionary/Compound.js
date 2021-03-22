@@ -427,6 +427,7 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet}) {
 
                 </DialogContent>
                 <DialogActions>
+                    
                     {
                         message !== "" ? 
                             <Box mr={20}> <b> {message} </b></Box>

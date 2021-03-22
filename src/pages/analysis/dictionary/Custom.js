@@ -454,11 +454,11 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
                     }
                 </DialogContent>
                 <DialogActions>
-                    {
-                        message !== "" ? 
-                            <Box mr={20}> <b> {message} </b></Box>
-                            : <></>
-                    }
+                        {
+                            message !== "" ? 
+                                <Box mr={20}> <b> {message} </b></Box>
+                                : <></>
+                        }
                     <Button 
                         onClick={
                             handleCreateData

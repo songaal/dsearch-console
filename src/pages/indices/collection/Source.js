@@ -59,7 +59,6 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-// const TEMPLATE_LIST = ["ndjson", "konan", "csv", "file", "procedure", "database"]
 const TEMPLATE_LIST = ["ndjson", "csv", "file", "procedure", "database"]
 const TEMPLATE = {
     "ndjson" : 
@@ -69,17 +68,6 @@ encoding: utf-8
 bulkSize: 10000
 reset: true
 threadSize: 1`,
-
-// "konan" : 
-// `scheme: http
-// host: localhost
-// port: 9200
-// type: konan
-// path: /data/directory or /data/directory/sourceFile
-// encoding: utf-8
-// bulkSize: 10000
-// reset: true
-// threadSize: 1`,
 
     "csv" : 
 `type: csv
@@ -139,24 +127,36 @@ function Source({dispatch, authUser, collection, JdbcList}) {
     const [open, setOpen] = React.useState(null);
     const [placement, setPlacement] = React.useState();
 
-    const [sourceName, setSourceName] = useState("")
+    const [templateValue, setTemplateValue] = useState(TEMPLATE_LIST[0]);
+
+    // const [sourceName, setSourceName] = useState("")
     const [launcherYaml, setLauncherYaml] = useState("")
     const [scheme, setScheme] = useState("http")
-    const [host, setHost] = useState("")
-    const [port, setPort] = useState("")
+    // const [host, setHost] = useState("")
+    // const [port, setPort] = useState("")
     const [jdbcId, setJdbcId] = useState(NO_SELECTED)
-    const [cron, setCron] = useState("")
-    const [templateValue, setTemplateValue] = useState(TEMPLATE_LIST[0]);
+    // const [cron, setCron] = useState("")
 
     const [isExtIndexer, setExtIndexer] = useState(false);
     const [esScheme, setEsScheme] = useState("http");
-    const [esHost, setEsHost] = useState("");
-    const [esPort, setEsPort] = useState("");
-    const [esUser, setEsUser] = useState("");
-    const [esPassword, setEsPassword] = useState("");
+    // const [esHost, setEsHost] = useState("");
+    // const [esPort, setEsPort] = useState("");
+    // const [esUser, setEsUser] = useState("");
+    // const [esPassword, setEsPassword] = useState("");
     const [invalid, setInvalid] = useState({})
 
     const aceEditor = useRef(null)
+    
+    // 수정 
+    const newSourceName =  useRef({value : ""})
+    const newHost = useRef({value : ""})
+    const newPort = useRef({value : ""})
+    const newCron = useRef({value : ""})
+
+    const newEsHost = useRef({value : ""})
+    const newEsPort = useRef({value : ""})
+    const newEsUser = useRef({value : ""})
+    const newEsPassword = useRef({value : ""})
 
     useEffect(() => {
         setInvalid({})
@@ -166,21 +166,29 @@ function Source({dispatch, authUser, collection, JdbcList}) {
             // aceEditor.current.editor.setValue(DEFAULT_YAML)
             aceEditor.current.editor.setValue(TEMPLATE[TEMPLATE_LIST[0]]);
         } else {
-            setSourceName(collection['sourceName']);
+            newSourceName.current.value = collection['sourceName']
+            // setSourceName(collection['sourceName']);
             setScheme((collection['launcher']||{})['scheme']||"");
-            setHost((collection['launcher']||{})['host']||"");
-            setPort((collection['launcher']||{})['port']||"");
+            newHost.current.value = (collection['launcher']||{})['host']||""
+            newPort.current.value = (collection['launcher']||{})['port']||""
+            // setHost((collection['launcher']||{})['host']||"");
+            // setPort((collection['launcher']||{})['port']||"");
 
             setExtIndexer(collection['extIndexer'])
             setEsScheme(collection['esScheme'])
-            setEsHost(collection['esHost'])
-            setEsPort(collection['esPort'])
-            setEsUser(collection['esUser'])
-            setEsPassword(collection['esPassword'])
+            newEsHost.current.value = collection['esHost']
+            newEsPort.current.value = collection['esPort']
+            newEsUser.current.value = collection['esUser']
+            newEsPassword.current.value = collection['esPassword']
+            // setEsHost(collection['esHost'])
+            // setEsPort(collection['esPort'])
+            // setEsUser(collection['esUser'])
+            // setEsPassword(collection['esPassword'])
 
             // setJdbcId(collection['jdbcId']);
             setJdbcId(collection['jdbcId'] === '' ? NO_SELECTED : collection['jdbcId'])
-            setCron(collection['cron']);
+            newCron.current.value = collection['cron']
+            // setCron(collection['cron']);
             setLauncherYaml((collection['launcher']||{})['yaml']||"");
             aceEditor.current.editor.setValue((collection['launcher']||{})['yaml']||"")
             aceEditor.current.editor.clearSelection()
@@ -190,21 +198,30 @@ function Source({dispatch, authUser, collection, JdbcList}) {
     useEffect(() => {
         try {
             if (mode === "EDIT") {
-                setSourceName(collection['sourceName']);
+                newSourceName.current.value = collection['sourceName']
+                newHost.current.value = (collection['launcher']||{})['host']||""
+                newPort.current.value = (collection['launcher']||{})['port']||""
+                newEsHost.current.value = collection['esHost']
+                newEsPort.current.value = collection['esPort']
+                newEsUser.current.value = collection['esUser']
+                newEsPassword.current.value = collection['esPassword']
+                newCron.current.value = collection['cron']
+
+                // setSourceName(collection['sourceName']);
                 setScheme((collection['launcher']||{})['scheme']||"");
-                setHost((collection['launcher']||{})['host']||"");
-                setPort((collection['launcher']||{})['port']||"");
+                // setHost((collection['launcher']||{})['host']||"");
+                // setPort((collection['launcher']||{})['port']||"");
 
                 setExtIndexer(collection['extIndexer'])
                 setEsScheme(collection['esScheme'])
-                setEsHost(collection['esHost'])
-                setEsPort(collection['esPort'])
-                setEsUser(collection['esUser'])
-                setEsPassword(collection['esPassword'])
+                // setEsHost(collection['esHost'])
+                // setEsPort(collection['esPort'])
+                // setEsUser(collection['esUser'])
+                // setEsPassword(collection['esPassword'])
 
                 // setJdbcId(collection['jdbcId']);
                 setJdbcId(collection['jdbcId'] === '' ? NO_SELECTED : collection['jdbcId'])
-                setCron(collection['cron']);
+                // setCron(collection['cron']);
                 setLauncherYaml((collection['launcher']||{})['yaml']||"");
                 aceEditor.current.editor.setValue((collection['launcher']||{})['yaml']||"")
                 aceEditor.current.editor.clearSelection()
@@ -226,13 +243,23 @@ function Source({dispatch, authUser, collection, JdbcList}) {
     }
 
     function handleSaveProcess() {
+        let sourceName = newSourceName.current.value
+        let host = newHost.current.value
+        let port = newPort.current.value
+        let esHost = newHost.current.value
+        let esPort = newPort.current.value
+        let cron = newCron.current.value 
+        let esUser = newEsUser.current.value
+        let esPassword = newEsPassword.current.value
+
         setInvalid({})
         let invalidCheck = {}
         if (sourceName.trim() === "") {
             invalidCheck['sourceName'] = true
         }
         if(cron.length === 0){
-            setCron(DEFAULT_CRON)
+            newCron.current.value = DEFAULT_CRON
+            // setCron(DEFAULT_CRON)
         }else if (!isValidCron(cron)) {
             invalidCheck['cron'] = true
         }
@@ -416,10 +443,13 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                             <TableRow>
                                                 <TableCell variant={"head"} component={"th"}>이름</TableCell>
                                                 <TableCell>
-                                                    <TextField value={sourceName}
-                                                               onChange={event => setSourceName(event.target.value)}
-                                                               fullWidth
-                                                               error={invalid['sourceName']||false}
+                                                    <TextField 
+                                                        inputRef={newSourceName}
+                                                        // 이전
+                                                        // value={sourceName}
+                                                        // onChange={event => setSourceName(event.target.value)}
+                                                        fullWidth
+                                                        error={invalid['sourceName']||false}
                                                     />
                                                 </TableCell>
                                             </TableRow>
@@ -494,8 +524,10 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                 <TableCell>
                                                     <Grid container>
                                                         <Grid item xs={11}>
-                                                            <TextField value={cron}
-                                                                       onChange={event => setCron(event.target.value)}
+                                                            <TextField 
+                                                                inputRef={newCron}
+                                                                // value={cron}
+                                                                //        onChange={event => setCron(event.target.value)}
                                                                        fullWidth
                                                                        placeholder={"분 시 일 월 요일 (default: 0 0 * * *)"}
                                                                        error={invalid['cron']||false}
@@ -547,32 +579,40 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                         </Select>
                                                     </Box>
                                                     <Box my={3}>
-                                                        <TextField value={esHost}
-                                                                   onChange={e => setEsHost(e.target.value)}
+                                                        <TextField 
+                                                            inputRef={newEsHost}
+                                                            // value={esHost}
+                                                            // onChange={e => setEsHost(e.target.value)}
                                                                    fullWidth
                                                                    placeholder={"elastic.com"}
                                                                    error={invalid['esHost']||false}
                                                         />
                                                     </Box>
                                                     <Box my={3}>
-                                                        <TextField value={esPort}
-                                                                   onChange={e => setEsPort(e.target.value)}
-                                                                   fullWidth
-                                                                   type={"number"}
-                                                                   placeholder={"9200"}
-                                                                   error={invalid['esPort']||false}
+                                                        <TextField 
+                                                            inputRef={newEsPort}
+                                                                // value={esPort}
+                                                                // onChange={e => setEsPort(e.target.value)}
+                                                                fullWidth
+                                                                type={"number"}
+                                                                placeholder={"9200"}
+                                                                error={invalid['esPort']||false}
                                                         />
                                                     </Box>
                                                     <Box my={3}>
-                                                        <TextField value={esUser}
-                                                                   onChange={e => setEsUser(e.target.value)}
+                                                        <TextField 
+                                                            inputRef={newEsUser}
+                                                        //  value={esUser}
+                                                        //            onChange={e => setEsUser(e.target.value)}
                                                                    fullWidth
                                                                    placeholder={"elastic"}
                                                         />
                                                     </Box>
                                                     <Box my={3}>
-                                                        <TextField value={esPassword}
-                                                                   onChange={e => setEsPassword(e.target.value)}
+                                                        <TextField 
+                                                            inputRef={newEsPassword}
+                                                            // value={esPassword}
+                                                            //        onChange={e => setEsPassword(e.target.value)}
                                                                    fullWidth
                                                                    type={"password"}
                                                                    placeholder={"password"}
@@ -613,16 +653,20 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                         </Select>
                                                     </Box>
                                                     <Box my={3}>
-                                                        <TextField value={host}
-                                                                   onChange={event => setHost(event.target.value)}
+                                                        <TextField 
+                                                            inputRef={newHost}
+                                                            // value={host}
+                                                            //        onChange={event => setHost(event.target.value)}
                                                                    fullWidth
                                                                    placeholder={"127.0.0.1"}
                                                                    error={invalid['host']||false}
                                                         />
                                                     </Box>
                                                     <Box my={3}>
-                                                        <TextField value={port}
-                                                                   onChange={event => setPort(event.target.value)}
+                                                        <TextField 
+                                                            inputRef={newPort}
+                                                            // value={port}
+                                                            //        onChange={event => setPort(event.target.value)}
                                                                    fullWidth
                                                                    placeholder={"5005"}
                                                                    type={"number"}

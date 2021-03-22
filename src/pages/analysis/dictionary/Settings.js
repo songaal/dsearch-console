@@ -88,6 +88,7 @@ function Settings({ dispatch, authUser, settings }) {
 
     const [selectedSetting, setSelectedSetting] = React.useState({})
     const [openRemoveDictModal, setOpenRemoveDictModal] = React.useState(false)
+
     const [newDictSetting, setNewDictSetting] = React.useState({
         id: "",
         name: "",
@@ -98,10 +99,18 @@ function Settings({ dispatch, authUser, settings }) {
         column_keyword: "",
         column_value: "",
     })
+
+    const dictId = React.useRef({value: ""});
+    const dictName = React.useRef({value: ""});
+    const dictColumn_id = React.useRef({value: ""});
+    const dictColumn_keyword = React.useRef({value: ""});
+    const dictColumn_value = React.useRef({value: ""});
+
     const [errorNewDictSetting, setErrorNewDictSetting] = React.useState({})
 
     useEffect(() => {
         dispatch(setSettings())
+        console.log(settings);
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     function handleOpenEditModal() {
@@ -124,6 +133,18 @@ function Settings({ dispatch, authUser, settings }) {
     }
 
     function handleAddSetting() {
+        console.log(newDictSetting);
+        let dictSetting = newDictSetting;
+        dictSetting['id'] = dictId.current.value
+        dictSetting['name']= dictName.current.value
+        dictSetting['column_id']= dictColumn_id.current.value
+        dictSetting['column_keyword']= dictColumn_keyword.current.value
+        dictSetting['column_value']= dictColumn_value.current.value
+
+        setNewDictSetting(dictSetting)
+
+        console.log(newDictSetting);
+
         let tmpError = {}
 
         if (newDictSetting['id'].trim() === '' || /[^a-z0-9_]+/gi.test(newDictSetting['id'].trim())) {
@@ -312,7 +333,7 @@ function Settings({ dispatch, authUser, settings }) {
                             <Box align={"center"} style={{ width: "10%" }}>{item['id']}</Box>
                             <Box align={"center"} style={{ width: "15%" }}>{item['name']}</Box>
                             <Box align={"center"} style={{ width: "10%", margin: "4px" }}>{item['type']}</Box>
-                            <Box align={"center"} style={{ width: "10%", margin: "4px" }}>{item['ignoreCase'] ? "true" : "false"}</Box>
+                            <Box align={"center"} style={{ width: "10%", margin: "4px" }}>{item['ignoreCase']}</Box>
                             <Box align={"center"} style={{ width: "10%", margin: "4px" }}>{item['tokenType']}</Box>
                             <Box align={"center"} style={{ width: "10%", margin: "4px" }}>{item['columns'].filter(c => c['type'] === 'id').map(c => c['label']).join("")}</Box>
                             <Box align={"center"} style={{ width: "10%", margin: "4px" }}>{item['columns'].filter(c => c['type'] === 'keyword').map(c => c['label']).join("")}</Box>
@@ -412,8 +433,9 @@ function Settings({ dispatch, authUser, settings }) {
                                         <TextField fullWidth={true}
                                             autoFocus={true}
                                             placeholder={"Synonym"}
-                                            value={newDictSetting["id"]}
-                                            onChange={e => setNewDictSetting({ ...newDictSetting, id: e.target.value })}
+                                            inputRef={dictId}
+                                            // value={newDictSetting["id"]}
+                                            // onChange={e => setNewDictSetting({ ...newDictSetting, id: e.target.value })}
                                             error={errorNewDictSetting['id']}
                                             helperText={errorNewDictSetting['id'] || ""}
                                         />
@@ -428,8 +450,9 @@ function Settings({ dispatch, authUser, settings }) {
                                     <Grid item xs={9}>
                                         <TextField fullWidth={true}
                                             placeholder={"동의어 사전"}
-                                            value={newDictSetting["name"]}
-                                            onChange={e => setNewDictSetting({ ...newDictSetting, name: e.target.value })}
+                                            inputRef={dictName}
+                                            // value={newDictSetting["name"]}
+                                            // onChange={e => setNewDictSetting({ ...newDictSetting, name: e.target.value })}
                                             error={errorNewDictSetting['name']}
                                             helperText={errorNewDictSetting['name'] || ""}
                                         />
@@ -477,7 +500,10 @@ function Settings({ dispatch, authUser, settings }) {
                                         <FormControl className={classes.select} fullWidth={true}>
                                             <Select placeholder={"MAX"}
                                                 value={newDictSetting["tokenType"]}
-                                                onChange={e => setNewDictSetting({ ...newDictSetting, tokenType: e.target.value })}
+                                                onChange={e => {
+                                                    console.log(e.target.value);
+                                                    setNewDictSetting({ ...newDictSetting, tokenType: e.target.value })}
+                                                }
                                                 error={errorNewDictSetting['tokenType']}
                                             >
                                                 <MenuItem value={""} disabled={true} >선택하세요.</MenuItem>
@@ -499,7 +525,11 @@ function Settings({ dispatch, authUser, settings }) {
                                     <Grid item xs={9}>
                                         <FormControl className={classes.select} fullWidth={true}>
                                             <Select value={newDictSetting["ignoreCase"]}
-                                                onChange={e => setNewDictSetting({ ...newDictSetting, ignoreCase: e.target.value })}
+                                                onChange={e => {
+                                                        console.log(e.target.value);
+                                                        setNewDictSetting({ ...newDictSetting, ignoreCase: e.target.value })
+                                                    }
+                                                }
                                                 error={errorNewDictSetting['ignoreCase']}
                                             >
                                                 <MenuItem value={""} disabled={true} >선택하세요.</MenuItem>
@@ -524,8 +554,9 @@ function Settings({ dispatch, authUser, settings }) {
                                                 </Grid>
                                                 <Grid item xs={9}>
                                                     <TextField fullWidth={true}
-                                                        value={newDictSetting["column_id"]}
-                                                        onChange={e => setNewDictSetting({ ...newDictSetting, column_id: e.target.value })}
+                                                        inputRef={dictColumn_id}
+                                                        // value={newDictSetting["column_id"]}
+                                                        // onChange={e => setNewDictSetting({ ...newDictSetting, column_id: e.target.value })}
                                                         placeholder={""}
                                                         style={{ backgroundColor: !["CUSTOM"].includes(newDictSetting['type']) ? "#bdbdbd" : null }}
                                                         disabled={!["CUSTOM"].includes(newDictSetting['type'])}
@@ -544,8 +575,9 @@ function Settings({ dispatch, authUser, settings }) {
                                                 <Grid item xs={9}>
                                                     <TextField fullWidth={true}
                                                         placeholder={""}
-                                                        value={newDictSetting["column_keyword"]}
-                                                        onChange={e => setNewDictSetting({ ...newDictSetting, column_keyword: e.target.value })}
+                                                        inputRef={dictColumn_keyword}
+                                                        // value={newDictSetting["column_keyword"]}
+                                                        // onChange={e => setNewDictSetting({ ...newDictSetting, column_keyword: e.target.value })}
                                                         style={{ backgroundColor: !["SET", "SYNONYM", "SPACE", "COMPOUND", "CUSTOM"].includes(newDictSetting['type']) ? "#bdbdbd" : null }}
                                                         disabled={!["SET", "SYNONYM", "SPACE", "COMPOUND", "CUSTOM"].includes(newDictSetting['type'])}
                                                         error={errorNewDictSetting["column_keyword"]}
@@ -563,8 +595,9 @@ function Settings({ dispatch, authUser, settings }) {
                                                 <Grid item xs={9}>
                                                     <TextField fullWidth={true}
                                                         placeholder={""}
-                                                        value={newDictSetting["column_value"]}
-                                                        onChange={e => setNewDictSetting({ ...newDictSetting, column_value: e.target.value })}
+                                                        inputRef={dictColumn_value}
+                                                        // value={newDictSetting["column_value"]}
+                                                        // onChange={e => setNewDictSetting({ ...newDictSetting, column_value: e.target.value })}
                                                         style={{ backgroundColor: !["SYNONYM", "COMPOUND", "SYNONYM_2WAY", "CUSTOM"].includes(newDictSetting['type']) ? "#bdbdbd" : null }}
                                                         disabled={!["SYNONYM", "COMPOUND", "SYNONYM_2WAY", "CUSTOM"].includes(newDictSetting['type'])}
                                                         error={errorNewDictSetting["column_value"]}

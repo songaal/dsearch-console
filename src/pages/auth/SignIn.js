@@ -35,12 +35,21 @@ let authenticatedRoute = "/cluster"
 
 function SignIn({dispatch}) {
     const history = useHistory()
-    const [server, setServer] = useState("")
+
+    const newServer = React.useRef({value: ""});
+    const newEmail = React.useRef({value: ""});
+    const newPassword = React.useRef({value: ""});
+
+    // const [server, setServer] = useState("")
+    // const [email, setEmail] = useState("")
+    // const [password, setPassword] = useState("")
+
     const [serverError, setServerError] = useState(false)
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
     const [inValid, setInValid] = useState(false)
     const [loginSave, setLoginSave] = useState(false)
+
+
+
 
     useEffect(() => {
         const dsearchServer = localStorage.getItem(SET_DSEARCH_SERVER)
@@ -64,7 +73,8 @@ function SignIn({dispatch}) {
 
             // 마지막 서버 접속 정보
             if (dsearchServer) {
-                setServer(dsearchServer)
+                // setServer(dsearchServer)
+                newServer.current.value = dsearchServer
             }
         } catch(error) {
             console.error(error)
@@ -75,6 +85,8 @@ function SignIn({dispatch}) {
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     function checkServer() {
+        let server = newServer.current.value;
+
         if (server.length === 0) {
             setServerError(true)
             return
@@ -91,6 +103,9 @@ function SignIn({dispatch}) {
     }
 
     function handleSignIn() {
+        let email = newEmail.current.value;
+        let password = newPassword.current.value;
+        let server = newServer.current.value;
         // 자동로그인 (로컬 스토리지 정보 삭제)
         localStorage.removeItem(SET_DSEARCH_AUTH_USER)
         if (email.length === 0 || password.length === 0) {
@@ -149,8 +164,10 @@ function SignIn({dispatch}) {
                                name="server"
                                autoComplete="server"
                                autoFocus
-                               value={server}
-                               onChange={event => setServer(event.target.value)}
+                               inputRef={newServer}
+                            //    수정
+                            //    onChange={event => setServer(event.target.value)}
+                            //    value={server}
                                onBlur={checkServer}
                                error={serverError}
                         />
@@ -160,8 +177,10 @@ function SignIn({dispatch}) {
                         <Input id="email"
                                name="email"
                                autoComplete="email"
-                               value={email}
-                               onChange={event => setEmail(event.target.value)}
+                               inputRef={newEmail}
+                            // 수정
+                            //    onChange={event => setEmail(event.target.value)}
+                            //    value={email}
                                error={inValid}
                                onKeyUp={event => event.keyCode === 13 ? handleSignIn() : null}
                         />
@@ -173,8 +192,9 @@ function SignIn({dispatch}) {
                             type="password"
                             id="password"
                             autoComplete="current-password"
-                            value={password}
-                            onChange={event => setPassword(event.target.value)}
+                            inputRef={newPassword}
+                            // value={password}
+                            // onChange={event => setPassword(event.target.value)}
                             error={inValid}
                             onKeyUp={event => event.keyCode === 13 ? handleSignIn() : null}
                         />
