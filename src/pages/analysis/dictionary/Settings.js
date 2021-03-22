@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import DragHandleIcon from '@material-ui/icons/DragHandle';
 import { connect } from "react-redux";
 
+import ReactDragListView from 'react-drag-listview/lib/index.js';
 
 import styled from "styled-components";
 import Helmet from 'react-helmet';
