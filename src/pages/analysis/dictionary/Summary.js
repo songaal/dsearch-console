@@ -59,8 +59,8 @@ function SummaryTable({summary, makeCheckedIdList, makeCheckedList}){
         makeCheckedList(event.target.value, event.target.checked);
     }
     
-    return tableInfo.map((info) => { 
-        return  <TableRow key={info.id}>
+    return tableInfo.map((info, index) => {
+        return  <TableRow key={index}>
             <TableCell> {info.type === systemInfo.type ? <></> : <Checkbox id={info.documentId} name={"checkbox"} value={info.id} onChange={handleCheckBox}/>} </TableCell>
             <TableCell>{info.name}</TableCell>
             <TableCell>{info.type}</TableCell>

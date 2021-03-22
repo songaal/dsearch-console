@@ -8,7 +8,7 @@ import {Box, Button, Divider as MuiDivider, Grid, Typography,} from "@material-u
 import AntTabs from "~/components/AntTabs"
 import {spacing} from "@material-ui/system";
 import SearchIcon from '@material-ui/icons/Search';
-import {setActiveSettingIndex, setSettings} from "../../../redux/actions/dictionaryActions";
+import {setActiveSettingIndex, setSettings, setRemoteCluster} from "../../../redux/actions/dictionaryActions";
 import Settings from "./Settings"
 
 const Divider = styled(MuiDivider)(spacing);
@@ -20,12 +20,14 @@ const firstTabs = [
     
 function Dictionary({dispatch, authUser, settings, active}) {
     const [openSettings, setOpenSettings] = React.useState(false)
+    const [remote, setRemote] = React.useState({})
     let dictTabs = firstTabs.concat(
         settings.map(dictionary => ({label: dictionary.name, component: Async(() =>  import("./WrapperTabPanel") )}))
     )
 
     useEffect(() => {
         dispatch(setSettings())
+        dispatch(setRemoteCluster()).then(body => {setRemote(body)})
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     function handleTabChange(index) {
@@ -34,13 +36,18 @@ function Dictionary({dispatch, authUser, settings, active}) {
 
     return (
         <>
-            <Helmet title="사전"/>
+            <Helmet title={`사전`}/>
 
             <Grid container>
                 <Grid item xs={10}>
                     <Typography variant="h3" gutterBottom display="inline">
                         사전 {openSettings ? "설정" : ""}
                     </Typography>
+                    <Box style={{fontSize: "0.9em"}} mt={3}>
+                        {
+                            remote['remote'] && remote['remote'] === true ? `사전소스정보: ${remote['host']||""}:${remote['port']||""}` : ""
+                        }
+                    </Box>
                 </Grid>
                 <Grid item xs={2}>
                     <Box align={"right"}>
