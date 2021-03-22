@@ -54,27 +54,33 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
     const dispatch = useDispatch()
     const classes = useStyles()
     const [searchColumns, setSearchColumns] = useState("id,keyword,value");
-    const [keyword, setKeyword] = useState("");
+    // const [keyword, setKeyword] = useState("");
     const [isMatch, setMatch] = useState(false);
     const [mode, setMode] = useState("view")  //view, edit
     const [pageNum, setPageNum] = useState(0);
     const [rowSize] = useState(20);
 
-    const [createId, setCreateId] = useState("");
-    const [createKeyword, setCreateKeyword] = useState("");
-    const [createValue, setCreateValue] = useState("");
+    // 입력 성능 개선
+    const newCreateId = React.useRef(null);
+    const newCreateKeyword = React.useRef(null);
+    const newCreateValue = React.useRef(null);
+    const newKeyword = React.useRef({value: ""});
 
     const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
     const [createDialogOpen, setCreateDialogOpen] = React.useState(false);
+
+    const [message, setMessage] = React.useState("");
 
     // console.log("Synonym2Way", authUser);
     // authUser.role.analysis = false;
 
     useEffect(() => {
+        let keyword = newKeyword.current.value
         dispatch(setDictionary(dictionary, pageNum, rowSize, isMatch, keyword, searchColumns))
     }, [])  // eslint-disable-line react-hooks/exhaustive-deps
 
     function handleColumnChange(event) {
+        let keyword = newKeyword.current.value
         checkedList = []
         setSearchColumns(event.target.value)
         dispatch(setDictionary(dictionary, 0, rowSize, isMatch, keyword, event.target.value, searchColumns))
@@ -95,6 +101,7 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
     }
 
     function handleSearchClick() {
+        let keyword = newKeyword.current.value
         checkedList = []
         searchedKeyword = keyword
         setPageNum(0)
@@ -102,6 +109,7 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
     }
 
     function handleCheckboxChange(event) {
+        let keyword = newKeyword.current.value
         checkedList = []
         searchedKeyword = keyword
         setPageNum(0)
@@ -116,6 +124,7 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
     }
 
     async function handleDeleteData() {
+        let keyword = newKeyword.current.value
         for (let i = 0; i < checkedList.length; i++) {
             await deleteDictionary(dictionary, checkedList[i])
         }
@@ -126,15 +135,61 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
     }
 
     async function handleCreateData() {
+        let createId = ""
+        let createKeyword = ""
+        let createValue = ""
+
+        if(newCreateId.current != null){
+            createId = newCreateId.current.value
+        }
+        if(newCreateKeyword.current != null){
+            createKeyword = newCreateKeyword.current.value
+        }
+        if(newCreateValue.current != null){
+            createValue = newCreateValue.current.value
+        }
+
         await createDictionary(dictionary, {id: createId, keyword: createKeyword, value: createValue})
-        setCreateId("")
-        setCreateValue("")
-        setCreateKeyword("")
-        // setCreateDialogOpen(false);
+
+        let msg = "";
+        if(createId !== undefined && createId !== null && createId !== "" && createId.length > 0){
+            msg += createId
+        } 
+        
+        if(createKeyword !== undefined && createKeyword !== null && createKeyword !== "" && createKeyword.length > 0)  {
+            console.log("createKeyword", createKeyword, createKeyword.length);
+            if(msg !== "" || msg.length > 0) {
+                msg += " > "
+            }
+            msg += createKeyword
+        }
+
+        if(createValue !== undefined && createValue !== null && createValue !== "" && createValue.length > 0)  {
+            console.log("createValue", createValue, createValue.length);
+            if(msg !== "" || msg.length > 0) {
+                msg += " > "
+            }
+            msg += createValue
+        }
+
+        if(newCreateId.current != null){
+            newCreateId.current.value = "";
+        }
+        if(newCreateKeyword.current != null){
+            newCreateKeyword.current.value = "";
+        }
+        if(newCreateValue.current != null){
+            newCreateValue.current.value = "";
+        }
+
         await utils.sleep(1000);
-        // setKeyword(createKeyword)
-        // dispatch(setDictionary(dictionary, 0, rowSize, isMatch, createKeyword, searchColumns))
+        let keyword = newKeyword.current.value
         dispatch(setDictionary(dictionary, 0, rowSize, isMatch, keyword, searchColumns))
+
+        setMessage('"' + msg + '" 이(가) 추가되었습니다');
+        setTimeout(() => {
+            setMessage("");
+        }, 5000);
     }
 
     async function handleDeleteButton(id) {
@@ -210,8 +265,9 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
                                 <InputBase
                                     className={classes.input}
                                     placeholder="검색"
-                                    value={keyword}
-                                    onChange={event => setKeyword(event.target.value)}
+                                    inputRef={newKeyword}
+                                    // value={keyword}
+                                    // onChange={event => setKeyword(event.target.value)}
                                     onKeyUp={handleSearchShortcut}
                                 />
 
@@ -242,16 +298,18 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
                                 )
                                 :
                                 (
-                                    <React.Fragment>
-                                        <Button variant="outlined"
+                                    <React.Fragment style={{justifyContent: "space-between"}}>
+                                            <Button variant="outlined"
                                                 color="primary"
-                                                onClick={() => {setCreateKeyword('');setCreateDialogOpen(true);}}
-                                        >추가</Button>
-                                        <Button variant="outlined"
+                                                mx={1}
+                                                onClick={() => {setCreateDialogOpen(true);}}
+                                            >추가</Button>
+                                            
+                                            <Button variant="outlined"
                                                 color="primary"
-                                                mr={1}
-                                                onClick={() => setDeleteDialogOpen(true)}
-                                        >삭제</Button>
+                                                mx={1}
+                                                onClick={() => { if(checkedList.length > 0) setDeleteDialogOpen(true)} }
+                                            >삭제</Button>
                                     </React.Fragment>
                                 )
                             }
@@ -332,7 +390,10 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
                                     <Box mt={2}> {createLabels.id} </Box>
                                 </Grid>
                                 <Grid item xs={8}>
-                                    <TextField autoFocus={true} value={createId} onChange={event => setCreateId(event.target.value) } onKeyPress={ (e) => { if (e.key === 'Enter') handleCreateData();}}/>
+                                    <TextField 
+                                        autoFocus={true} 
+                                        inputRef={newCreateId} 
+                                        onKeyPress={ (e) => { if (e.key === 'Enter') handleCreateData();}}/>
                                 </Grid>
                             </Grid>
                             :
@@ -345,7 +406,10 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
                                     <Box mt={2}> {createLabels.keyword} </Box>
                                 </Grid>
                                 <Grid item xs={8}>
-                                    <TextField autoFocus={true} value={createKeyword} onChange={event => setCreateKeyword(event.target.value)} onKeyPress={ (e) => { if (e.key === 'Enter') handleCreateData();}}/>
+                                    <TextField 
+                                        autoFocus={true} 
+                                        inputRef={newCreateKeyword} 
+                                        onKeyPress={ (e) => { if (e.key === 'Enter') handleCreateData();}}/>
                                 </Grid>
                             </Grid>
                             :
@@ -358,7 +422,10 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
                                     <Box mt={2}> {createLabels.value} </Box>
                                 </Grid>
                                 <Grid item xs={8}>
-                                    <TextField autoFocus={true} value={createValue} onChange={event => setCreateValue(event.target.value)} onKeyPress={ (e) => { if (e.key === 'Enter') handleCreateData();}}/>
+                                    <TextField 
+                                        autoFocus={true} 
+                                        inputRef={newCreateValue} 
+                                        onKeyPress={ (e) => { if (e.key === 'Enter') handleCreateData();}}/>
                                 </Grid>
                             </Grid>
                             :
@@ -367,11 +434,17 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
 
                 </DialogContent>
                 <DialogActions>
+                    {
+                        message !== "" ? 
+                            <Box mr={20}> <b> {message} </b></Box>
+                            : <></>
+                    }
+
                     <Button onClick={handleCreateData} color="secondary">
                         추가
                     </Button>
                     <Button autoFocus onClick={() => setCreateDialogOpen(false)} color="primary">
-                        취소
+                        닫기
                     </Button>
 
                 </DialogActions>

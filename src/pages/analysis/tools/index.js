@@ -136,6 +136,7 @@ function DetailResult({resultDetail}){
 }
 
 function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetail}) {
+    const keyword = React.useRef({value: ""})
     const [selectedItem, setSelectedItem] = useState("EMPTY");
     const [toolsTypeAction, setToolsTypeAction] = useState("detail")
     const classes = useStyles()
@@ -185,7 +186,8 @@ function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetai
     }
 
     const handleToolsClick = () =>{
-        let analyzer_contents = document.getElementById("analyzer_contents");
+        let analyzer_contents = keyword.current.value;
+
         let analyzer_select = document.getElementById("analyzer_select");
         let data = {};
         if(toolsTypeAction === 'brief') {
@@ -193,7 +195,7 @@ function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetai
             if (split && split.length === 2) {
                 let index = split[0].replace(' ', '');
                 let analyzer = split[1].replace(' ', '');
-                data.text = analyzer_contents.value;
+                data.text = analyzer_contents;
                 data.analyzer = analyzer
                 dispatch(actionAnalyzer(index, data)).catch((error) =>{console.log(error)});
             } else {
@@ -205,14 +207,21 @@ function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetai
 
             data.useForQuery = state;
             data.plugin = plugin;
-            data.text = analyzer_contents.value;
+            data.text = analyzer_contents;
             dispatch(actionPlugin(data));
         }
     }
     return (
         <Card mb={6}>
             <CardContent>
-                <TextField id="analyzer_contents" label="분석할 내용을 입력해 주세요." variant="outlined" fullWidth onKeyPress={ (e) => { if (e.key === 'Enter') handleToolsClick();}}> </TextField>
+                <TextField 
+                    label="분석할 내용을 입력해 주세요." 
+                    inputRef={keyword}
+                    variant="outlined" 
+                    fullWidth 
+                    onKeyPress={ 
+                        (e) => { if (e.key === 'Enter') handleToolsClick();}
+                    } />
                 <Box display="flex" alignItems="center" justifyContent="left" >
                     <Box p={3}>
                         <FormControl>
@@ -304,7 +313,13 @@ function Tools({ dispatch, analyzerList, pluginList, resultBrief, resultDetail }
 
             <Grid container spacing={6}>
                 <Grid item xs={12}>
-                    <ToolsCard dispatch={dispatch} analyzerList={analyzerList} pluginList={pluginList}  resultBrief={resultBrief} resultDetail={resultDetail} onClick={() => console.log("click")} />
+                    <ToolsCard 
+                        dispatch={dispatch} 
+                        analyzerList={analyzerList} 
+                        pluginList={pluginList}  
+                        resultBrief={resultBrief} 
+                        resultDetail={resultDetail} 
+                    />
                 </Grid>
             </Grid>
         </React.Fragment>
