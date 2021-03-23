@@ -246,8 +246,8 @@ function Source({dispatch, authUser, collection, JdbcList}) {
         let sourceName = newSourceName.current.value
         let host = newHost.current.value
         let port = newPort.current.value
-        let esHost = newHost.current.value
-        let esPort = newPort.current.value
+        let esHost = newEsHost.current.value
+        let esPort = newEsPort.current.value
         let cron = newCron.current.value 
         let esUser = newEsUser.current.value
         let esPassword = newEsPassword.current.value

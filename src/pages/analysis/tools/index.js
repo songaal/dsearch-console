@@ -71,11 +71,11 @@ function BriefResult({resultBrief}){
                     })
                     : <TableRow hover key={"nothing"}><TableCell>{"검색된 결과가 없습니다"}</TableCell></TableRow>}
                     </TableBody>
-        </Table>;
+        </Table>
 }
 
 function DetailResult({resultDetail}){
-
+    
     if(!resultDetail.result){
         return <Table key="empltyDetail">
             <TableBody>
@@ -84,6 +84,18 @@ function DetailResult({resultDetail}){
             </TableRow>
             </TableBody>
         </Table>
+    }
+
+    // 형태소 분리 결과에 모델명 형태소 분석 포함
+    // resultDetail.result[2] : 모델명 규칙
+    // resultDetail.result[4] : 형태소 분리 결과
+    let modelStr = resultDetail.result[2].value;
+    modelStr = modelStr.split(/\(|\)/);
+
+    if(resultDetail.result[4].value.length > 0){
+        resultDetail.result[4].value += ", " + modelStr[1]
+    }else{
+        resultDetail.result[4].value += modelStr[1]    
     }
     
     return (<Table key="detailResult">
@@ -301,6 +313,7 @@ function Tools({ dispatch, analyzerList, pluginList, resultBrief, resultDetail }
         dispatch(setAnalyzerList())
         dispatch(setPluginList())
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
 
     return (
         <React.Fragment>

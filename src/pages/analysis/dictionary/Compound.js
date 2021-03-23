@@ -380,13 +380,16 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet}) {
                         createLabels.id ?
                             <Grid container>
                                 <Grid item xs={4}>
-                                    <Box mt={2}> {createLabels.id} </Box>
+                                    <Box m={5}> {createLabels.id} </Box>
                                 </Grid>
                                 <Grid item xs={8}>
-                                    <TextField 
-                                        autoFocus={true} 
+                                    <TextField
+                                        style={{ margin: "4px" }}
+                                        label={createLabels.id}
+                                        variant={"outlined"}
+                                        autoFocus={true}
                                         inputRef={newCreateId}
-                                        onKeyPress={ (e) => { if (e.key === 'Enter') handleCreateData();}}/>
+                                        onKeyPress={(e) => { if (e.key === 'Enter') handleCreateData(); }} />
                                 </Grid>
                             </Grid>
                             :
@@ -396,11 +399,14 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet}) {
                         createLabels.keyword ?
                             <Grid container>
                                 <Grid item xs={4}>
-                                    <Box mt={2}> {createLabels.keyword} </Box>
+                                    <Box m={5}> {createLabels.keyword} </Box>
                                 </Grid>
                                 <Grid item xs={8}>
-                                    <TextField 
-                                        autoFocus={true} 
+                                    <TextField
+                                        style={{ margin: "4px" }}
+                                        label={createLabels.keyword}
+                                        variant={"outlined"}
+                                        autoFocus={true}
                                         inputRef={newCreateKeyword} 
                                         onKeyPress={ (e) => { if (e.key === 'Enter') handleCreateData();}}/>
                                 </Grid>
@@ -412,13 +418,16 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet}) {
                         createLabels.value ?
                             <Grid container>
                                 <Grid item xs={4}>
-                                    <Box mt={2}> {createLabels.value} </Box>
+                                    <Box m={5}> {createLabels.value} </Box>
                                 </Grid>
                                 <Grid item xs={8}>
-                                    <TextField 
-                                        autoFocus={true} 
-                                        inputRef={newCreateValue} 
-                                        onKeyPress={ (e) => { if (e.key === 'Enter') handleCreateData();}}/>
+                                    <TextField
+                                        style={{ margin: "4px" }}
+                                        label={createLabels.value}
+                                        variant={"outlined"}
+                                        autoFocus={true}
+                                        inputRef={newCreateValue}
+                                        onKeyPress={(e) => { if (e.key === 'Enter') handleCreateData(); }} />
                                 </Grid>
                             </Grid>
                             :
@@ -430,7 +439,7 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet}) {
                     
                     {
                         message !== "" ? 
-                            <Box mr={20}> <b> {message} </b></Box>
+                            <Box mr={18} style={{color: "red"}}> <b> {message} </b></Box>
                             : <></>
                     }
                     <Button onClick={handleCreateData} color="secondary">
