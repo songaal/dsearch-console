@@ -43,7 +43,7 @@ function SearchResultList({settings, searchResult}){
                         }
                     }
                 }
-                return flag ? <></> : <li id={idx} key={idx}> {setting.name} {" : "} {str}</li>;
+                return flag ? <React.Fragment key={idx}></React.Fragment> : <li id={idx} key={idx}> {setting.name} {" : "} {str}</li>;
             })}
         </>
     );
@@ -111,7 +111,7 @@ function DictionarySearch ({dispatch, settings, searchResult}) {
                                 return <></>;
                             })}
 
-                            {searchResult.result.length === 0? <></> : <SearchResultList settings={settings} searchResult={searchResult} />}
+                            {searchResult.result.length === 0? <React.Fragment key={99999}></React.Fragment> : <SearchResultList settings={settings} searchResult={searchResult} />}
                         </ul>
                     </Box>
                 </CardContent>

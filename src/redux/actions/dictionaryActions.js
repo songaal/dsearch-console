@@ -128,3 +128,10 @@ export const removeDictionarySetting = id => dispatch => client.call({
     uri: "/dictionaries/settings/" + id,
     method: "DELETE"
 }).then(response => response.data)
+
+export const setRemoteCluster = () => dispatch =>
+    client.call({
+        uri: `/dictionaries/remote`
+    })
+        .then(response => response.data)
+        .catch(error => console.error(error))
