@@ -382,10 +382,9 @@ function Set({ dictionary, authUser, setting, dataSet }) {
                                 </Grid>
                                 <Grid item xs={8}>
                                     <TextField 
+                                        autoFocus={true}
                                         style={{ margin: "4px" }}
                                         label={createLabels.id}
-                                        variant={"outlined"}
-                                        autoFocus={true} 
                                         inputRef={newCreateId}
                                         onKeyPress={ (e) => { if (e.key === 'Enter') handleCreateData();}}/>
                                 </Grid>
@@ -401,10 +400,9 @@ function Set({ dictionary, authUser, setting, dataSet }) {
                                 </Grid>
                                 <Grid item xs={8}>
                                     <TextField 
+                                        autoFocus={createLabels.id ? false : true}
                                         style={{ margin: "4px" }}
                                         label={createLabels.keyword}
-                                        variant={"outlined"}
-                                        autoFocus={true} 
                                         inputRef={newCreateKeyword} 
                                         onKeyPress={ (e) => { if (e.key === 'Enter') handleCreateData();}}/>
                                 </Grid>
@@ -420,10 +418,9 @@ function Set({ dictionary, authUser, setting, dataSet }) {
                                 </Grid>
                                 <Grid item xs={8}>
                                     <TextField 
+                                        autoFocus={createLabels.id || createLabels.keyword ? false : true}
                                         style={{ margin: "4px" }}
                                         label={createLabels.value}
-                                        variant={"outlined"}
-                                        autoFocus={true} 
                                         inputRef={newCreateValue} 
                                         onKeyPress={ (e) => { if (e.key === 'Enter') handleCreateData();}}/>
                                 </Grid>
@@ -441,7 +438,7 @@ function Set({ dictionary, authUser, setting, dataSet }) {
                     <Button onClick={handleCreateData} color="secondary">
                         추가
                     </Button>
-                    <Button autoFocus onClick={() => setCreateDialogOpen(false)} color="primary">
+                    <Button onClick={() => setCreateDialogOpen(false)} color="primary">
                         닫기
                     </Button>
 
@@ -465,7 +462,7 @@ function Set({ dictionary, authUser, setting, dataSet }) {
                     <Button onClick={handleDeleteData} color="secondary">
                         삭제
                     </Button>
-                    <Button autoFocus onClick={() => setDeleteDialogOpen(false)} color="primary">
+                    <Button onClick={() => setDeleteDialogOpen(false)} color="primary">
                         취소
                     </Button>
 

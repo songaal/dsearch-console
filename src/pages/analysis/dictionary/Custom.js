@@ -71,13 +71,22 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
     const newCreateValue = React.useRef(null);
     const newKeyword = React.useRef({value: ""});
 
-
     // authUser.role.analysis = false;
     useEffect(() => {
         let keyword = newKeyword.current.value
-
         dispatch(setDictionary(dictionary, pageNum, rowSize, isMatch, keyword, searchColumns))
-    }, []) // eslint-disable-line react-hooks/exhaustive-deps
+        if (newCreateId.current) {
+            newCreateId.current.focus();
+        }
+        if (newCreateKeyword.current) {
+            newCreateKeyword.current.focus();
+        }
+        if (newCreateValue.current) {
+            newCreateValue.current.focus();
+        }
+    }, [newCreateId, newCreateKeyword, newCreateValue]) // eslint-disable-line react-hooks/exhaustive-deps
+
+    
 
     function handleColumnChange(event) {
         let keyword = newKeyword.current.value
@@ -390,10 +399,9 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
                                 </Grid>
                                 <Grid item xs={8}>
                                     <TextField 
+                                        autoFocus
                                         style={{margin: "4px"}}
                                         label={createLabels.id}
-                                        variant="outlined"
-                                        autoFocus={true} 
                                         inputRef={newCreateId}
                                         onKeyPress={ 
                                             (e) => { 
@@ -416,10 +424,9 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
                                 </Grid>
                                 <Grid item xs={8}>
                                     <TextField 
+                                        autoFocus={createLabels.id ? false : true}
                                         style={{margin: "4px"}}
                                         label={createLabels.keyword}
-                                        variant={"outlined"}
-                                        autoFocus={true} 
                                         inputRef={newCreateKeyword}
                                         onKeyPress={ 
                                             (e) => { 
@@ -442,10 +449,9 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
                                 </Grid>
                                 <Grid item xs={8}>
                                     <TextField 
+                                        autoFocus={createLabels.id || createLabels.keyword ? false : true}
                                         style={{margin: "4px"}}
                                         label={createLabels.value}
-                                        variant={"outlined"}
-                                        autoFocus={true} 
                                         inputRef={newCreateValue}
                                         onKeyPress={ 
                                             (e) => { 
@@ -474,7 +480,7 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
                         color="secondary">
                         추가
                     </Button>
-                    <Button autoFocus onClick={() => setCreateDialogOpen(false)} color="primary">
+                    <Button onClick={() => setCreateDialogOpen(false)} color="primary">
                         닫기
                     </Button>
 
@@ -498,7 +504,7 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
                     <Button onClick={handleDeleteData} color="secondary">
                         삭제
                     </Button>
-                    <Button autoFocus onClick={() => setDeleteDialogOpen(false)} color="primary">
+                    <Button onClick={() => setDeleteDialogOpen(false)} color="primary">
                         취소
                     </Button>
 
