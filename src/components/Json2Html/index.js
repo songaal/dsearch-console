@@ -1,6 +1,7 @@
 import React from "react";
 import {
     Box,
+    Button,
     Card as MuiCard,
     CardContent,
     Checkbox,
@@ -9,11 +10,14 @@ import {
     TableCell,
     TableHead,
     TableRow,
+    TextField, 
     Typography as MuiTypography
 } from "@material-ui/core";
 import flat from "flat";
 import styled from "styled-components";
 import {positions, spacing} from "@material-ui/system";
+
+import {addCommentsAction} from "../../redux/actions/indexTemplateActions";
 
 const Card = styled(MuiCard)(spacing);
 const Typography = styled(MuiTypography)(spacing, positions);
@@ -82,9 +86,23 @@ function SettingsJson2html(settings) {
     )
 }
 
+function MappingsJson2html(json, name, comments, dispatch) {
+    
+    let comment = {};
+    if(comments.length > 0){
+        comments.forEach((item) => {
+            let map = item.sourceAsMap;
+            if(map["name"] == name){
+                comment.id = item.id;
+                comment.comments = item.sourceAsMap.comments;
+                comment.name = item.sourceAsMap.name;
+            }
+        })
 
+    }else{
+        comment.name = name;
+    }
 
-function MappingsJson2html(json) {
     const topFields = [
         {title: "타입", key: "type", component: (val) => {return val}},
         // {title: "색인", key: "enabled", component: (val) => {return <Checkbox style={{cursor: "default"}} checked={val||true}/>}},
@@ -128,6 +146,7 @@ function MappingsJson2html(json) {
         }}
     ]
 
+
     const flatJsonMap = flat(json['properties'] ? json['properties'] : json)
 
     let formatKeyFlatJsonMap = {}
@@ -152,6 +171,7 @@ function MappingsJson2html(json) {
                     topFields.map(field => <th key={field['title']}>{field['title']}</th>)
                 }
                 <th>기타설정</th>
+                <th>코멘트</th>
             </tr>
             </thead>
             <tbody>
@@ -164,6 +184,12 @@ function MappingsJson2html(json) {
                         const o = topFields.find(m => m['key'] === k)
                         return o ? null : k + ": " + obj[k]
                     }).filter(o => o)
+
+                    let mappingName = key.replace(/\.fields/gi, "");
+                    if(mappingName.includes("s-prod-v")){
+                        mappingName = "s-prod-v";
+                    }
+
                     return (
                         <tr key={index}>
                             <td align={"center"}>{index + 1}</td>
@@ -174,6 +200,36 @@ function MappingsJson2html(json) {
                             <td>
                                 {etc.join(", ")}
                             </td>
+                            <td>
+
+                                {mappingName.includes(".") ? <></> :
+                                     comment.comments === undefined || comment.comments === null  ? 
+                                    <TextField 
+                                        onKeyPress={(e) => {
+                                            if(e.key =='Enter'){
+                                                if(comment.comments == undefined){
+                                                    comment.comments = {};
+                                                }
+                                                let n = mappingName + "";
+                                                comment.comments[n] = e.target.value;
+                                                dispatch(addCommentsAction({"id": null, "name": name, "updatedComment": comment}));
+                                            }
+                                        }}
+                                        key={mappingName}
+                                        defaultValue={""} />: 
+                                    <TextField 
+                                        onKeyPress={
+                                            (e) => {
+                                                if(e.key =='Enter'){
+                                                    let n = mappingName + "";
+                                                    comment.comments[n] = e.target.value;
+                                                    dispatch(addCommentsAction({"id": comment.id, "name": name, "updatedComment": comment}));
+                                                }
+                                            }
+                                        }
+                                        key={mappingName}
+                                        defaultValue={comment.comments[mappingName]} />}
+                            </td>
                         </tr>
                     )
                 })
@@ -183,7 +239,7 @@ function MappingsJson2html(json) {
     )
 }
 
-function Render({json, type}) {
+function Render({json, type, name, comments, dispatch}) {
     let validJson = json
     try {
         if (typeof json === 'string') {
@@ -194,7 +250,7 @@ function Render({json, type}) {
     }
 
     if (validJson && type === "mappings") {
-        return MappingsJson2html(validJson)
+        return MappingsJson2html(validJson, name, comments, dispatch)
     } else if (validJson && type === "settings") {
         return SettingsJson2html(validJson)
     } else {

@@ -31,7 +31,7 @@ import {
 import {makeStyles} from '@material-ui/core/styles';
 import {palette, positions, spacing} from "@material-ui/system";
 import {connect} from "react-redux";
-import {setIndexTemplateAction, setIndexTemplatesAction} from "../../../redux/actions/indexTemplateActions";
+import {setIndexTemplateAction, setIndexTemplatesAction, setIndexTemplateCommentsAction} from "../../../redux/actions/indexTemplateActions";
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -52,7 +52,7 @@ const Button = styled(MuiButton)(spacing, positions, palette);
 const tabs = [{label: "매핑"}, {label: "셋팅"}]
 
 let message = ""
-function View({ dispatch, template, templates}) {
+function View({ dispatch, template, templates, comments}) {
     const history = useHistory()
     const classes = useStyles();
     const [selectedTemplate, setSelectedTemplate] = useState("")
@@ -92,6 +92,12 @@ function View({ dispatch, template, templates}) {
         setSettingsJson(JSON.stringify(((template['settings'] || {})['index']), null, 4))
     }, [template['settings']]) // eslint-disable-line react-hooks/exhaustive-deps
 
+    useEffect(() => {
+        console.log("setIndexTempl");
+        dispatch(setIndexTemplateCommentsAction())
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+    
     function handleTemplateChange(template) {
         history.push(`../indices-templates/${template}`)
         setSelectedTemplate(template)
@@ -185,7 +191,7 @@ function View({ dispatch, template, templates}) {
                         <Card>
                             <CardContent m={0}>
                                 <Box style={{overflow: "auto", minWidth: "700px"}}>
-                                    {Json2html({json: mappingsJson, type: "mappings"})}
+                                    {Json2html({json: mappingsJson, type: "mappings", name:selectedTemplate, comments, dispatch})}
                                 </Box>
                             </CardContent>
                         </Card>
@@ -225,7 +231,7 @@ function View({ dispatch, template, templates}) {
                     settingMode === "form" ?
                         <Card>
                             <CardContent m={0}>
-                                {Json2html({json: template, type: "settings"})}
+                                {Json2html({json: template, type: "settings", name: selectedTemplate, comments:comments, dispatch})}
                             </CardContent>
                         </Card>
                         :

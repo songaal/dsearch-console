@@ -3,6 +3,7 @@ import * as types from '../constants';
 let initState = {
     templates: [],
     template: {},
+    comments: [],
 };
 
 export default function reducer(state = initState, actions) {
@@ -16,6 +17,11 @@ export default function reducer(state = initState, actions) {
             return {
                 ...state,
                 template: actions.payload
+            };
+        case types.SET_COMMENTS:
+            return {
+                ...state,
+                comments: actions.payload
             };
         default:
             return state
