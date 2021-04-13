@@ -41,11 +41,8 @@ export const setIndexTemplateCommentsAction = () => dispatch => client.call({
         let list = response.data.hits.hits.map((item) => {
             return item;
         })
-        
-        console.log(list)
         dispatch({type: SET_COMMENTS, payload: list})
     }
-    
 })
 
 export const addCommentsAction = ({id, name, updatedComment}) => dispatch => client.call({

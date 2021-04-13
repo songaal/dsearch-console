@@ -17,7 +17,7 @@ import flat from "flat";
 import styled from "styled-components";
 import {positions, spacing} from "@material-ui/system";
 
-import {addCommentsAction} from "../../redux/actions/indexTemplateActions";
+import {addCommentsAction, setIndexTemplateCommentsAction} from "../../redux/actions/indexTemplateActions";
 
 const Card = styled(MuiCard)(spacing);
 const Typography = styled(MuiTypography)(spacing, positions);
@@ -212,7 +212,12 @@ function MappingsJson2html(json, name, comments, dispatch) {
                                                 }
                                                 let n = mappingName + "";
                                                 comment.comments[n] = e.target.value;
-                                                dispatch(addCommentsAction({"id": null, "name": name, "updatedComment": comment}));
+                                                dispatch(addCommentsAction({"id": null, "name": name, "updatedComment": comment}))
+                                                    .then((res) => {
+                                                        dispatch(setIndexTemplateCommentsAction())
+                                                    }).catch((err) => { 
+                                                        console.log(err) 
+                                                    });
                                             }
                                         }}
                                         key={mappingName}
@@ -223,7 +228,12 @@ function MappingsJson2html(json, name, comments, dispatch) {
                                                 if(e.key =='Enter'){
                                                     let n = mappingName + "";
                                                     comment.comments[n] = e.target.value;
-                                                    dispatch(addCommentsAction({"id": comment.id, "name": name, "updatedComment": comment}));
+                                                    dispatch(addCommentsAction({"id": comment.id, "name": name, "updatedComment": comment}))
+                                                        .then((res) => {
+                                                            dispatch(setIndexTemplateCommentsAction())
+                                                        }).catch((err) => { 
+                                                            console.log(err) 
+                                                        });
                                                 }
                                             }
                                         }

@@ -93,9 +93,8 @@ function View({ dispatch, template, templates, comments}) {
     }, [template['settings']]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
-        console.log("setIndexTempl");
         dispatch(setIndexTemplateCommentsAction())
-    }, []) // eslint-disable-line react-hooks/exhaustive-deps
+    }) 
 
     
     function handleTemplateChange(template) {
