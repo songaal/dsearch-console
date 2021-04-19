@@ -77,6 +77,8 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
     const [message, setMessage] = React.useState("");
 
     // 파일 업로드
+    const [resetFlag, setResetFlag] = React.useState(false);
+    const [resetMessage, setResetMessage] = React.useState("");
     const [alertFlag, setAlertFlag] = React.useState(false);
     const [alertMessage, setAlertMessage] = React.useState("");
     const [alertColor, setAlertColor] = React.useState("info");
@@ -534,21 +536,37 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
                     경고!
                 </DialogTitle>
                 <DialogContent>
-                    <Snackbar open={alertFlag} autoHideDuration={3000} onClose={() => { setAlertFlag(false); setAlertMessage("") }}>
-                        <MuiAlert elevation={6} variant="filled" severity={alertColor}> {alertMessage} </MuiAlert>
+                <Snackbar open={resetFlag} autoHideDuration={3000} onClose={() => { setResetFlag(false);}}>
+                    <MuiAlert elevation={6} variant="filled" severity="info"> {resetMessage} </MuiAlert>
                     </Snackbar>
                     <DialogContentText>
                         정말 이 사전을 초기화 하시겠습니까?
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => { 
-                        let fd = new FormData();
-                        fd.append('dictionaryName', dictionary)
-                        dispatch(resetDict(fd))
-                        setResetDialogOpen(false)
-                        window.location.reload();
-                    }} color="secondary">
+                    <Button 
+                        onClick={ () => { 
+                            let fd = new FormData();
+                            fd.append('dictionaryName', dictionary)
+                            dispatch(resetDict(fd))
+                            .then(async (res) =>{
+                                setResetMessage("초기화 되었습니다.")
+                                setResetFlag(true);
+                                await utils.sleep(1000);
+                                setResetFlag(false);
+                                setResetDialogOpen(false)
+                                handlePagination(0);
+                            })
+                            .catch((err) => {
+                                console.log(err);
+                                setResetMessage("초기화 중 에러가 발생 했습니다.")
+                                // setResetFlag(true);
+                                // setResetDialogOpen(false)
+                                // setResetFlag(false);
+                            })
+                        }} 
+                        color="secondary" 
+                        style={{color: "red"}}>
                         초기화 하기
                     </Button>
                     <Button onClick={() => setResetDialogOpen(false)} color="primary">
