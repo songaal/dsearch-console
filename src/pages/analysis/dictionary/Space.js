@@ -553,6 +553,7 @@ function Space({ dictionary, authUser, setting, dataSet }) {
                                 setResetMessage("초기화 되었습니다.")
                                 setResetFlag(true);
                                 setResetDialogOpen(false)
+                                await utils.sleep(1000);
                                 handlePagination(0);
                             })
                             .catch((err) => {
@@ -618,7 +619,7 @@ function Space({ dictionary, authUser, setting, dataSet }) {
                         fd.append('filename', file);
                         setUploadProgress(true);
                         dispatch(sendFile(fd))
-                            .then((res) => {
+                            .then(async (res) => {
                                 console.log("onchange res", res);
                                 setAlertFlag(true);
                                 if(res.data.result){
@@ -631,14 +632,17 @@ function Space({ dictionary, authUser, setting, dataSet }) {
                                 }
                                 setFile(null);
                                 setUploadProgress(false);
+                                await utils.sleep(1000);
                                 handlePagination(0);
-                            }).catch((err) => {
+                            }).catch(async (err) => {
                                 console.log("onchange err", err);
                                 setAlertFlag(true);
                                 setAlertColor("error");
                                 setAlertMessage("실패");
                                 setUploadProgress(false);
                                 setFile(null);
+                                await utils.sleep(1000);
+                                handlePagination(0);
                             });
                     }} color="secondary">
                         등록

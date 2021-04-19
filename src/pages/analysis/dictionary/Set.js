@@ -547,8 +547,8 @@ function Set({ dictionary, authUser, setting, dataSet }) {
                             .then(async (res) =>{
                                 setResetMessage("초기화 되었습니다.")
                                 setResetFlag(true);
-                                await utils.sleep(1000);
                                 setResetDialogOpen(false)
+                                await utils.sleep(1000);
                                 handlePagination(0);
                             })
                             .catch((err) => {
@@ -629,13 +629,14 @@ function Set({ dictionary, authUser, setting, dataSet }) {
                                 setUploadProgress(false);
                                 await utils.sleep(1000);
                                 handlePagination(0);
-                            }).catch((err) => {
+                            }).catch(async (err) => {
                                 console.log("onchange err", err);
                                 setAlertFlag(true);
                                 setAlertColor("error");
                                 setAlertMessage("실패");
                                 setUploadProgress(false);
                                 setFile(null);
+                                await utils.sleep(1000);
                                 handlePagination(0);
                             });
                     }} color="secondary">

@@ -587,11 +587,11 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
                             let fd = new FormData();
                             fd.append('dictionaryName', dictionary)
                             dispatch(resetDict(fd))
-                            .then((res) =>{
+                            .then(async (res) =>{
                                 setResetMessage("초기화 되었습니다.")
                                 setResetFlag(true);
                                 setResetDialogOpen(false)
-                                // await utils.sleep(1000);
+                                await utils.sleep(1000);
                                 handlePagination(0);
                             })
                             .catch((err) => {
@@ -670,14 +670,16 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
                                 }
                                 setFile(null);
                                 setUploadProgress(false);
+                                await utils.sleep(1000);
                                 handlePagination(0);
-                            }).catch((err) => {
+                            }).catch(async (err) => {
                                 console.log("onchange err", err);
                                 setAlertFlag(true);
                                 setAlertColor("error");
                                 setAlertMessage("실패");
                                 setUploadProgress(false);
                                 setFile(null);
+                                await utils.sleep(1000);
                                 handlePagination(0);
                             });
                     }} color="secondary">
