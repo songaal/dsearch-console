@@ -653,7 +653,6 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
                                 setUploadProgress(false);
                                 window.location.reload();
                             }).catch((err) => {
-                                
                                 console.log("onchange err", err);
                                 setAlertFlag(true);
                                 setAlertColor("error");
