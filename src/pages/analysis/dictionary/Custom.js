@@ -638,15 +638,22 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
                         setUploadProgress(true);
                         dispatch(sendFile(fd))
                             .then((res) => {
-                                console.log("onchange res", res);
+                                console.log("onchange res", res.data);
                                 setAlertFlag(true);
-                                setAlertColor("info");
-                                setAlertMessage("성공")
+
+                                if(res.data.result){
+                                    setAlertColor("info");
+                                    setAlertMessage(res.data.message)
+                                    setFileDialogOpen(false)
+                                }else{
+                                    setAlertColor("error");
+                                    setAlertMessage(res.data.message)
+                                }
                                 setFile(null);
-                                setFileDialogOpen(false)
                                 setUploadProgress(false);
                                 window.location.reload();
                             }).catch((err) => {
+                                
                                 console.log("onchange err", err);
                                 setAlertFlag(true);
                                 setAlertColor("error");
