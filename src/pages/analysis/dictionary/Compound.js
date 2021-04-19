@@ -612,10 +612,15 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet}) {
                             .then((res) => {
                                 console.log("onchange res", res);
                                 setAlertFlag(true);
-                                setAlertColor("info");
-                                setAlertMessage("성공")
+                                if(res.data.result){
+                                    setAlertColor("info");
+                                    setAlertMessage(res.data.message)
+                                    setFileDialogOpen(false)
+                                }else{
+                                    setAlertColor("error");
+                                    setAlertMessage(res.data.message)
+                                }
                                 setFile(null);
-                                setFileDialogOpen(false)
                                 setUploadProgress(false);
                                 window.location.reload();
                             }).catch((err) => {

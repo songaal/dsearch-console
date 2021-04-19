@@ -640,7 +640,6 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
                             .then((res) => {
                                 console.log("onchange res", res.data);
                                 setAlertFlag(true);
-
                                 if(res.data.result){
                                     setAlertColor("info");
                                     setAlertMessage(res.data.message)
