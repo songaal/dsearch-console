@@ -597,7 +597,7 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
                         let fd = new FormData();
                         fd.append('overwrite', overwrite);
                         fd.append('dictionaryFields', result['fields'])
-                        fd.append('dictionaryType', "Custom");
+                        fd.append('dictionaryType', "synonym_2way");
                         fd.append('dictionaryName', dictionary)
                         fd.append('filename', file);
                         dispatch(sendFile(fd))

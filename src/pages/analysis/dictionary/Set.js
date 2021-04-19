@@ -589,7 +589,7 @@ function Set({ dictionary, authUser, setting, dataSet }) {
                         let fd = new FormData();
                         fd.append('overwrite', overwrite);
                         fd.append('dictionaryFields', result['fields'])
-                        fd.append('dictionaryType', "Custom");
+                        fd.append('dictionaryType', "Set");
                         fd.append('dictionaryName', dictionary)
                         fd.append('filename', file);
                         setUploadProgress(true);
