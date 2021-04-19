@@ -614,7 +614,7 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
                                 }
                                 setFile(null);
                                 setUploadProgress(false);
-                                window.location.reload();
+                                handlePagination(0);
                             }).catch((err) => {
                                 console.log("onchange err", err);
                                 setAlertFlag(true);
