@@ -413,6 +413,16 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet}) {
                                 >
                                     다음
                                 </Button>
+
+                                {/* Reset Modal */}
+                                <Snackbar open={resetFlag} autoHideDuration={3000} onClose={() => { setResetFlag(false); setResetMessage(""); }}>
+                                    <MuiAlert elevation={6} variant="filled" severity="info"> {resetMessage} </MuiAlert>
+                                </Snackbar>
+
+                                {/* File Upload Modal */}
+                                <Snackbar open={alertFlag} autoHideDuration={3000} onClose={() => { setAlertFlag(false); setAlertMessage("") }}>
+                                    <MuiAlert elevation={6} variant="filled" severity={alertColor}> {alertMessage} </MuiAlert>
+                                </Snackbar>
                             </Box>
                         </Grid>
                     </Grid>
@@ -538,9 +548,6 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet}) {
                     경고!
                 </DialogTitle>
                 <DialogContent>
-                    <Snackbar open={resetFlag} autoHideDuration={3000} onClose={() => { setResetFlag(false);}}>
-                    <MuiAlert elevation={6} variant="filled" severity="info"> {resetMessage} </MuiAlert>
-                    </Snackbar>
                     <DialogContentText>
                         정말 이 사전을 초기화 하시겠습니까?
                     </DialogContentText>
@@ -551,12 +558,11 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet}) {
                             let fd = new FormData();
                             fd.append('dictionaryName', dictionary)
                             dispatch(resetDict(fd))
-                            .then(async (res) =>{
+                            .then((res) =>{
                                 setResetMessage("초기화 되었습니다.")
                                 setResetFlag(true);
-                                await utils.sleep(1000);
-                                setResetFlag(false);
                                 setResetDialogOpen(false)
+                                // await utils.sleep(1000);
                                 handlePagination(0);
                             })
                             .catch((err) => {
@@ -588,10 +594,6 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet}) {
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        <Snackbar open={alertFlag} autoHideDuration={3000} onClose={() => { setAlertFlag(false); setAlertMessage("") }}>
-                            <MuiAlert elevation={6} variant="filled" severity={alertColor}> {alertMessage} </MuiAlert>
-                        </Snackbar>
-
                         <input
                             id="fileUpload"
                             // style={{ display: "none" }}
@@ -626,7 +628,7 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet}) {
                         fd.append('filename', file);
                         setUploadProgress(true);
                         dispatch(sendFile(fd))
-                            .then((res) => {
+                            .then(async (res) => {
                                 console.log("onchange res", res);
                                 setAlertFlag(true);
                                 if(res.data.result){
