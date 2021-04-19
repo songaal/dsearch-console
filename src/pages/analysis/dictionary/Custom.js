@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import styled from "styled-components";
 import {connect, useDispatch} from "react-redux";
 import {
@@ -16,13 +16,17 @@ import {
     Grid,
     IconButton,
     InputBase,
+    Menu,
     MenuItem,
     Select,
     TextField,
+    Snackbar,
+    FormControlLabel,
+    LinearProgress,
 } from "@material-ui/core";
 
 import DynamicTable from "~/components/DynamicTable";
-import {Search} from "@material-ui/icons";
+import {ArrowDropDown, Search} from "@material-ui/icons";
 import {makeStyles} from "@material-ui/core/styles";
 import {palette, sizing, spacing} from "@material-ui/system";
 import {
@@ -30,10 +34,12 @@ import {
     deleteDictionary,
     downloadDictionary,
     setDictionary,
-    updateDictionary
+    updateDictionary,
+    sendFile,
+    resetDict,
 } from "../../../redux/actions/dictionaryActions";
 import utils from "../../../utils";
-
+import MuiAlert from '@material-ui/lab/Alert';
 const Button = styled(MuiButton)(spacing, sizing, palette)
 const Box = styled(MuiBox)(spacing, sizing)
 
@@ -70,6 +76,18 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
     const newCreateKeyword = React.useRef(null);
     const newCreateValue = React.useRef(null);
     const newKeyword = React.useRef({value: ""});
+
+    // 파일 업로드
+    const [alertFlag, setAlertFlag] = React.useState(false);
+    const [alertMessage, setAlertMessage] = React.useState("");
+    const [alertColor, setAlertColor] = React.useState("info");
+
+    const [moreMenu, setMoreMenu] = useState(null)
+    const [overwrite, setOverwrite] = useState(false)
+    const [resetDialogOpen, setResetDialogOpen] = React.useState(false);
+    const [fileDialogOpen, setFileDialogOpen] = React.useState(false);
+    const [file, setFile] = React.useState(null);
+    const [uploadProgress, setUploadProgress] = React.useState(false);
 
     // authUser.role.analysis = false;
     useEffect(() => {
@@ -318,6 +336,33 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
                                                 mx={1}
                                                 onClick={() => { if(checkedList.length > 0) setDeleteDialogOpen(true)} }
                                         >삭제</Button>
+
+                                        <FormControl>
+                                            <Button variant="outlined"
+                                                color="primary"
+                                                type="file"
+                                                mx={1}
+                                                onClick={(e) => {
+                                                    setMoreMenu(e.currentTarget);
+                                                }}
+                                            >더보기<ArrowDropDown /></Button>
+
+                                            <Menu
+                                                anchorEl={moreMenu}
+                                                open={Boolean(moreMenu)}
+                                                onClose={() => { setMoreMenu(null) }}
+                                                getContentAnchorEl={null}
+                                                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                                                transformOrigin={{ vertical: "top", horizontal: "center" }}
+                                            >
+                                                <MenuItem onClick={() => { setFileDialogOpen(true) }}>
+                                                    사전 파일 업로드
+                                                </MenuItem>
+                                                <MenuItem onClick={() => setResetDialogOpen(true)}>
+                                                    사전 초기화
+                                                </MenuItem>
+                                            </Menu>
+                                        </FormControl>
                                     </React.Fragment>
                                 )
                             }
@@ -327,7 +372,7 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
                                     mx={1}
                                     onClick={() => handlePagination(pageNum)}
                             >새로고침</Button>
-                            
+
                             {authUser.role.analysis ? <Button variant="outlined"
                                     color="primary"
                                     onClick={() => setMode(mode === "view" ? "edit" : "view")}
@@ -379,7 +424,7 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
                 </CardContent>
             </Card>
 
-
+            
 
             <Dialog
                 fullWidth={true}
@@ -511,6 +556,113 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
                 </DialogActions>
             </Dialog>
 
+            <Dialog
+                fullWidth={true}
+                open={resetDialogOpen}
+                onClose={() => setResetDialogOpen(false)}
+            >
+                <DialogTitle style={{ cursor: 'move' }}>
+                    경고!
+                </DialogTitle>
+                <DialogContent>
+                    <Snackbar open={alertFlag} autoHideDuration={3000} onClose={() => { setAlertFlag(false); setAlertMessage("") }}>
+                        <MuiAlert elevation={6} variant="filled" severity={alertColor}> {alertMessage} </MuiAlert>
+                    </Snackbar>
+                    <DialogContentText>
+                        정말 이 사전을 초기화 하시겠습니까?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => { 
+                        let fd = new FormData();
+                        fd.append('dictionaryName', dictionary)
+                        dispatch(resetDict(fd))
+                        setResetDialogOpen(false)
+                        window.location.reload();
+                    }} color="secondary">
+                        초기화 하기
+                    </Button>
+                    <Button onClick={() => setResetDialogOpen(false)} color="primary">
+                        취소
+                    </Button>
+
+                </DialogActions>
+            </Dialog>
+
+            <Dialog
+                fullWidth={true}
+                open={fileDialogOpen}
+                onClose={() => setFileDialogOpen(false)}
+            >
+                <DialogTitle style={{ cursor: 'move' }}>
+                    사전 파일 업로드
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        <Snackbar open={alertFlag} autoHideDuration={3000} onClose={() => { setAlertFlag(false); setAlertMessage("") }}>
+                            <MuiAlert elevation={6} variant="filled" severity={alertColor}> {alertMessage} </MuiAlert>
+                        </Snackbar>
+
+                        <input
+                            id="fileUpload"
+                            // style={{ display: "none" }}
+                            type='file'
+                            onChange={(e) => {
+                                setFile(e.target.files[0])
+                            }}
+                        />
+                         <FormControlLabel
+                            control={
+                                <Checkbox color="primary" 
+                                    checked={overwrite} 
+                                    onChange={(e) => { 
+                                        setOverwrite(e.target.checked) 
+                                    }} />}
+                            label="업로드 한 파일로 덮어 쓰시겠습니까?"
+                            labelPlacement="end"
+                        />
+
+                        { 
+                            uploadProgress ? <LinearProgress /> : <></>
+                        }
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => { 
+                        let fd = new FormData();
+                        fd.append('overwrite', overwrite);
+                        fd.append('dictionaryFields', result['fields'])
+                        fd.append('dictionaryType', "Custom");
+                        fd.append('dictionaryName', dictionary)
+                        fd.append('filename', file);
+                        setUploadProgress(true);
+                        dispatch(sendFile(fd))
+                            .then((res) => {
+                                console.log("onchange res", res);
+                                setAlertFlag(true);
+                                setAlertColor("info");
+                                setAlertMessage("성공")
+                                setFile(null);
+                                setFileDialogOpen(false)
+                                setUploadProgress(false);
+                                window.location.reload();
+                            }).catch((err) => {
+                                console.log("onchange err", err);
+                                setAlertFlag(true);
+                                setAlertColor("error");
+                                setAlertMessage("실패");
+                                setUploadProgress(false);
+                                setFile(null);
+                            });
+                    }} color="secondary">
+                        등록
+                    </Button>
+                    <Button onClick={() => setFileDialogOpen(false)} color="primary">
+                        취소
+                    </Button>
+
+                </DialogActions>
+            </Dialog>
         </>
 
     )

@@ -135,3 +135,20 @@ export const setRemoteCluster = () => dispatch =>
     })
         .then(response => response.data)
         .catch(error => console.error(error))
+
+
+export const sendFile = (fd) => dispatch => client.call({
+     uri: `/dictionaries/fileUpload`, 
+     method: "POST", 
+     data: fd,
+     headers: {
+        "Content-type": "multipart/form-data",
+     }
+    })
+
+
+export const resetDict = (fd) => dispatch => client.call({
+        uri: `/dictionaries/resetDict`, 
+        method: "POST", 
+        data: fd,
+    })
