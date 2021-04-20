@@ -1,6 +1,6 @@
 {
   "name": "dsearch-console",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "ElasticSearch Managed Service",
   "author": "danawa <support@danawa.com>",
   "private": true,
