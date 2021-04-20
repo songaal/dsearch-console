@@ -36,7 +36,7 @@ const getCookie = function(name) {
     return value? value[2] : null;
 }
 
-const authenticatedRoute = "/cluster"
+let authenticatedRoute = "/cluster"
 
 function SignIn({dispatch}) {
     const history = useHistory()
@@ -47,7 +47,7 @@ function SignIn({dispatch}) {
     // const [server, setServer] = useState("")
     // const [email, setEmail] = useState("")
     // const [password, setPassword] = useState("")
-
+    console.log(">>", getCookie(SET_DSEARCH_AUTH_USER))
     const [serverError, setServerError] = useState(false)
     const [inValid, setInValid] = useState(false)
     const [loginSave, setLoginSave] = useState(false)
@@ -59,10 +59,12 @@ function SignIn({dispatch}) {
         try {
             dispatch(setDsearchAuthUser())
                 .then(response => {
-                    console.log("authenticated")
-                    sessionStorage.setItem(SET_DSEARCH_SERVER, localStorage.getItem(SET_DSEARCH_SERVER));
-                    // location.replace(authenticatedRoute)
-                    history.replace(authenticatedRoute)
+                    if (response["token"]) {
+                        console.log("authenticated")
+                        sessionStorage.setItem(SET_DSEARCH_SERVER, localStorage.getItem(SET_DSEARCH_SERVER));
+                        // location.replace(authenticatedRoute)
+                        history.replace(authenticatedRoute)
+                    }
                 })
 
             // 자동로그인 (로컬 스토리지 정보 로그인 시도)
