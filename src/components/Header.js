@@ -94,6 +94,11 @@ const Button = styled(ButtonBase)`
 `
 
 
+const deleteCookie = function(name) {
+    const date = new Date();
+    document.cookie = name + "= " + "; expires=" + date.toUTCString() + "; path=/";
+}
+
 function ClusterMenu() {
     const dispatch = useDispatch()
     const authUser = useSelector(store => store.dsearchReducers)['authUser']
@@ -167,6 +172,7 @@ function UserMenu({ signOutClose = false }) {
     }
 
     function signOut() {
+        deleteCookie(SET_DSEARCH_AUTH_USER)
         localStorage.removeItem(SET_DSEARCH_AUTH_USER)
         dispatch(setDsearchSignOut()).then(response => {
             if (signOutClose) {

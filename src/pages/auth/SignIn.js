@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {useHistory} from "react-router-dom"
+import {useHistory, useLocation, useParams} from "react-router-dom"
 import {connect} from "react-redux";
 import styled from "styled-components";
 
@@ -31,11 +31,15 @@ const Wrapper = styled(Paper)`
   }
 `;
 
-let authenticatedRoute = "/cluster"
+const getCookie = function(name) {
+    const value = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+    return value? value[2] : null;
+}
+
+const authenticatedRoute = "/cluster"
 
 function SignIn({dispatch}) {
     const history = useHistory()
-
     const newServer = React.useRef({value: ""});
     const newEmail = React.useRef({value: ""});
     const newPassword = React.useRef({value: ""});
@@ -47,9 +51,6 @@ function SignIn({dispatch}) {
     const [serverError, setServerError] = useState(false)
     const [inValid, setInValid] = useState(false)
     const [loginSave, setLoginSave] = useState(false)
-
-
-
 
     useEffect(() => {
         const dsearchServer = localStorage.getItem(SET_DSEARCH_SERVER)
