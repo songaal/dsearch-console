@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {useHistory} from "react-router-dom"
+import {useHistory, useLocation, useParams} from "react-router-dom"
 import {connect} from "react-redux";
 import styled from "styled-components";
 
@@ -31,11 +31,15 @@ const Wrapper = styled(Paper)`
   }
 `;
 
+const getCookie = function(name) {
+    const value = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+    return value? value[2] : null;
+}
+
 let authenticatedRoute = "/cluster"
 
 function SignIn({dispatch}) {
     const history = useHistory()
-
     const newServer = React.useRef({value: ""});
     const newEmail = React.useRef({value: ""});
     const newPassword = React.useRef({value: ""});
@@ -43,13 +47,10 @@ function SignIn({dispatch}) {
     // const [server, setServer] = useState("")
     // const [email, setEmail] = useState("")
     // const [password, setPassword] = useState("")
-
+    console.log(">>", getCookie(SET_DSEARCH_AUTH_USER))
     const [serverError, setServerError] = useState(false)
     const [inValid, setInValid] = useState(false)
     const [loginSave, setLoginSave] = useState(false)
-
-
-
 
     useEffect(() => {
         const dsearchServer = localStorage.getItem(SET_DSEARCH_SERVER)
@@ -58,10 +59,12 @@ function SignIn({dispatch}) {
         try {
             dispatch(setDsearchAuthUser())
                 .then(response => {
-                    console.log("authenticated")
-                    sessionStorage.setItem(SET_DSEARCH_SERVER, localStorage.getItem(SET_DSEARCH_SERVER));
-                    // location.replace(authenticatedRoute)
-                    history.replace(authenticatedRoute)
+                    if (response["token"]) {
+                        console.log("authenticated")
+                        sessionStorage.setItem(SET_DSEARCH_SERVER, localStorage.getItem(SET_DSEARCH_SERVER));
+                        // location.replace(authenticatedRoute)
+                        history.replace(authenticatedRoute)
+                    }
                 })
 
             // 자동로그인 (로컬 스토리지 정보 로그인 시도)

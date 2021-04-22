@@ -89,7 +89,7 @@ function SettingsJson2html(settings) {
 function MappingsJson2html(json, name, comments, dispatch) {
     
     let comment = {};
-    if(comments.length > 0){
+    if(comments && comments.length > 0){
         comments.forEach((item) => {
             let map = item.sourceAsMap;
             if(map["name"] == name){

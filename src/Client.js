@@ -2,6 +2,21 @@ import axios from 'axios'
 // import { Link } from 'react-router-dom';
 import {SET_DSEARCH_AUTH_USER, SET_DSEARCH_SERVER} from "./redux/constants";
 
+const setCookie = function(name, value, ms) {
+    const date = new Date();
+    date.setTime(date.getTime() + ms);
+    document.cookie = name + '=' + value + ';expires=' + date.toUTCString() + ';path=/';
+}
+
+const getCookie = function(name) {
+    const value = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+    return value? value[2] : null;
+}
+
+const deleteCookie = function(name) {
+    const date = new Date();
+    document.cookie = name + "= " + "; expires=" + date.toUTCString() + "; path=/";
+}
 
 class Client {
     constructor() {
@@ -13,6 +28,7 @@ class Client {
             if (server === null) {
                 server = localStorage.getItem(SET_DSEARCH_SERVER)
             }
+
             // eslint-disable-next-line no-restricted-globals
             if (server === null && location.pathname !== "/") {
                 window.location.href = "/"
@@ -33,10 +49,19 @@ class Client {
             })
         }
         const authUser = JSON.parse(sessionStorage.getItem(SET_DSEARCH_AUTH_USER)||"{}")
+        const cookieToken = getCookie(SET_DSEARCH_AUTH_USER)
         if (authUser && authUser['token']) {
             config.headers = Object.assign(config.headers||{}, {
                 "x-bearer-token": authUser['token']
             })
+        } else if (cookieToken && window.location.pathname !== "/") {
+            config.headers = Object.assign(config.headers||{}, {
+                "x-bearer-token": cookieToken
+            })
+        }
+
+        if (String(window.location.pathname).endsWith("/auth/sign-out")) {
+            deleteCookie(SET_DSEARCH_AUTH_USER)
         }
 
         return new Promise(async (resolve, reject) => {
@@ -47,6 +72,10 @@ class Client {
                 if (token) {
                     authUser["token"] = token
                     sessionStorage.setItem(SET_DSEARCH_AUTH_USER, JSON.stringify(authUser))
+
+                    if (!String(window.location.pathname).endsWith("/auth/sign-out")) {
+                        setCookie(SET_DSEARCH_AUTH_USER, token, 60 * 60 * 24 * 1000) //1d
+                    }
                 }
                 resolve(response)
             } catch (error) {

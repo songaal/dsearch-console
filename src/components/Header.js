@@ -94,6 +94,11 @@ const Button = styled(ButtonBase)`
 `
 
 
+const deleteCookie = function(name) {
+    const date = new Date();
+    document.cookie = name + "= " + "; expires=" + date.toUTCString() + "; path=/";
+}
+
 function ClusterMenu() {
     const dispatch = useDispatch()
     const authUser = useSelector(store => store.dsearchReducers)['authUser']
@@ -167,9 +172,24 @@ function UserMenu({ signOutClose = false }) {
     }
 
     function signOut() {
+        deleteCookie(SET_DSEARCH_AUTH_USER)
         localStorage.removeItem(SET_DSEARCH_AUTH_USER)
         dispatch(setDsearchSignOut()).then(response => {
             if (signOutClose) {
+
+                try {
+                    // eslint-disable-next-line no-restricted-globals
+                    opener.sessionStorage.removeItem(SET_DSEARCH_AUTH_USER)
+                    // eslint-disable-next-line no-restricted-globals
+                    opener.localStorage.removeItem(SET_DSEARCH_AUTH_USER)
+                } catch(error) {}
+
+                try {
+                    const date = new Date();
+                    // eslint-disable-next-line no-restricted-globals
+                    opener.document.cookie = SET_DSEARCH_AUTH_USER + "= " + "; expires=" + date.toUTCString() + "; path=/";
+                } catch(error) {}
+
                 try {
                     // eslint-disable-next-line no-restricted-globals
                     opener.location.href="/"
@@ -181,6 +201,21 @@ function UserMenu({ signOutClose = false }) {
         }).catch(error => {
             console.error('error', error)
             if (signOutClose) {
+
+                try {
+                    // eslint-disable-next-line no-restricted-globals
+                    opener.sessionStorage.removeItem(SET_DSEARCH_AUTH_USER)
+                    // eslint-disable-next-line no-restricted-globals
+                    opener.localStorage.removeItem(SET_DSEARCH_AUTH_USER)
+                } catch(error) {}
+
+                try {
+                    const date = new Date();
+                    // eslint-disable-next-line no-restricted-globals
+                    opener.document.cookie = SET_DSEARCH_AUTH_USER + "= " + "; expires=" + date.toUTCString() + "; path=/";
+                } catch(error) {}
+
+
                 try {
                     // eslint-disable-next-line no-restricted-globals
                     opener.location.href="/"
