@@ -436,8 +436,6 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
                 </CardContent>
             </Card>
 
-            
-
             <Dialog
                 fullWidth={true}
                 open={createDialogOpen}
