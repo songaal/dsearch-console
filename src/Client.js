@@ -63,7 +63,6 @@ class Client {
         if (String(window.location.pathname).endsWith("/auth/sign-out")) {
             deleteCookie(SET_DSEARCH_AUTH_USER)
         }
-
         return new Promise(async (resolve, reject) => {
             try {
                 config.withCredentials = true

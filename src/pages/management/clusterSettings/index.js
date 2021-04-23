@@ -19,7 +19,7 @@ import AntTabs from "../../../components/AntTabs";
 import async from "../../../components/Async";
 import {green, orange} from "@material-ui/core/colors";
 import {connect, useDispatch} from "react-redux";
-import {editClusterFlush, editClusterServerCheck, setClusterServerCheck} from "../../../redux/actions/clusterActions"
+import {editClusterFlush, editClusterServerCheck, setClusterServerCheck, editClusterServerCheckAfterScheduleFlush} from "../../../redux/actions/clusterActions"
 
 const Divider = styled(MuiDivider)(spacing);
 
@@ -31,12 +31,12 @@ function ClusterSettings({serverCheck}) {
 
     function handleServerCheck(flag) {
         const enable = flag ? "none" : "all"
-
         dispatch(editClusterServerCheck(enable))
             .then(() => {
                 if (flag) {
                     editClusterFlush()
                 }
+                dispatch(editClusterServerCheckAfterScheduleFlush(flag))
                 dispatch(setClusterServerCheck())
                 setOpenServerCheck(false)
             })
