@@ -206,7 +206,7 @@ function RankingTuningResults({pageNum, result, expand, nodeToggle, errorMessage
                             let number = index + ((pageNum-1)*10) + 1;
                             // return <></>;
                             return (<TableRow key={"a" + number}>
-                                <TableCell style={{fontWeight: "bold"}} padding="none" align="center">{number}</TableCell>
+                                <TableCell style={{fontWeight: "bold", width: "60px"}} padding="none" align="center">{number}</TableCell>
                                 <TableCell style={{borderStyle: "none", border: "none"}}>
                                     <ResultDocument result={result} item={item} expand={expand} nodeToggle={nodeToggle}/>
                                 </TableCell>
