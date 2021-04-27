@@ -1,4 +1,3 @@
-import {SET_SERVER_CHECK} from "../constants";
 import Client from '~/Client'
 
 const client = new Client()

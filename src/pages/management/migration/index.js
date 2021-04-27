@@ -42,6 +42,7 @@ function Migration() {
     const [jdbc, setJdbc] = React.useState(true);
     const [comments, setComments] = React.useState(true);
 
+    const [uploadError, setUploadError] = React.useState("");
     const [uploadResults, setUploadResults] = React.useState(null)
     const [downloadModal, setDownloadModal] = React.useState(false);
     const [uploadModal, setUploadModal] = React.useState(false);
@@ -52,7 +53,6 @@ function Migration() {
     const [alertColor, setAlertColor] = React.useState("info");
 
     function handleDownload() {
-        
         let json = new FormData();
         json.append("pipeline", pipeline)
         json.append("templates", templates)
@@ -67,6 +67,8 @@ function Migration() {
     function handleUpload() {
         let fd = new FormData();
         fd.append('filename', file);
+
+        setUploadError("");
         setUploadProgress(true);
         dispatch(sendFile(fd))
             .then(async (res) => {
@@ -79,13 +81,15 @@ function Migration() {
                     setUploadModal(false);
                 } else {
                     setAlertColor("error");
-                    setAlertMessage(res.data.message)
+                    setUploadResults(null);
+                    setAlertMessage("실패")
+                    setUploadError(res.data.message);
+                    setUploadModal(false);
                 }
                 setFile(null);
                 setUploadProgress(false);
-                // await utils.sleep(1000);
             }).catch(async (err) => {
-                console.log("onchange err", err);
+                setUploadError(err);
                 setAlertFlag(true);
                 setAlertColor("error");
                 setAlertMessage("실패");
@@ -109,67 +113,26 @@ function Migration() {
 
             <Card mb={6}>
                 <CardContent>
-                    <Box margin="12px" width="100%">
-                        <FormControlLabel
-                            control={
-                                <Checkbox color="primary"
-                                    checked={pipeline}
-                                    onChange={(e) => {
-                                        setPipeline(e.target.checked)
-                                    }} />}
-                            label="파이프라인"
-                            labelPlacement="end"
-                        />
-                        <FormControlLabel
-                            control={
-                                <Checkbox color="primary"
-                                    checked={templates}
-                                    onChange={(e) => {
-                                        setTemplates(e.target.checked)
-                                    }} />}
-                            label="템플릿"
-                            labelPlacement="end"
-                        />
-                        <FormControlLabel
-                            control={
-                                <Checkbox color="primary"
-                                    checked={collection}
-                                    onChange={(e) => {
-                                        setCollection(e.target.checked)
-                                    }} />}
-                            label="컬렉션"
-                            labelPlacement="end"
-                        />
-                        <FormControlLabel
-                            control={
-                                <Checkbox color="primary"
-                                    checked={jdbc}
-                                    onChange={(e) => {
-                                        setJdbc(e.target.checked)
-                                    }} />}
-                            label="JDBC"
-                            labelPlacement="end"
-                        />
-                        <FormControlLabel
-                            control={
-                                <Checkbox color="primary"
-                                    checked={comments}
-                                    onChange={(e) => {
-                                        setComments(e.target.checked)
-                                    }} />}
-                            label="템플릿 설명"
-                            labelPlacement="end"
-                        />
+                    <Box margin="12px" width="100%" >
+                        <Box display="flex" alignItems="center" justifyContent="space-between" width="500px" m={2}>
+                            이 클러스터의 백업 데이터를 다운로드 하시겠습니까? 
+                            <Button variant="outlined" color="primary" onClick={() => { setDownloadModal(true) }}>
+                                다운로드
+                            </Button>
+                        </Box>
 
-                        <Button variant="outlined" color="primary" style={{margin: "8px"}} onClick={() => { setDownloadModal(true) }}>
-                            다운로드
-                        </Button>
-
-                        <Button variant="outlined" color="primary" onClick={() => { setUploadModal(true) }}>
-                            업로드
-                        </Button>
+                        <Box display="flex" alignItems="center" justifyContent="space-between" width="500px" m={2}>
+                            백업데이터로 클러스터를 셋팅하시겠습니까?
+                            <Button variant="outlined" color="primary" onClick={() => { setUploadModal(true) }}>
+                                업로드
+                            </Button>
+                        </Box>
                     </Box>
                     <Box width="100%">
+                        {
+                            uploadError.length === 0 ? <></> : <Box border="1px solid grey">{uploadError}</Box>
+                        }
+
                         {
                             uploadResults == null ? <></> : 
                             <Table key="detailResult">
@@ -256,6 +219,58 @@ function Migration() {
                     데이터 백업
                 </DialogTitle>
                 <DialogContent>
+                    <Box>
+                        <FormControlLabel
+                            control={
+                                <Checkbox color="primary"
+                                    checked={pipeline}
+                                    onChange={(e) => {
+                                        setPipeline(e.target.checked)
+                                    }} />}
+                            label="파이프라인"
+                            labelPlacement="end"
+                        />
+                        <FormControlLabel
+                            control={
+                                <Checkbox color="primary"
+                                    checked={templates}
+                                    onChange={(e) => {
+                                        setTemplates(e.target.checked)
+                                    }} />}
+                            label="템플릿"
+                            labelPlacement="end"
+                        />
+                        <FormControlLabel
+                            control={
+                                <Checkbox color="primary"
+                                    checked={collection}
+                                    onChange={(e) => {
+                                        setCollection(e.target.checked)
+                                    }} />}
+                            label="컬렉션"
+                            labelPlacement="end"
+                        />
+                        <FormControlLabel
+                            control={
+                                <Checkbox color="primary"
+                                    checked={jdbc}
+                                    onChange={(e) => {
+                                        setJdbc(e.target.checked)
+                                    }} />}
+                            label="JDBC"
+                            labelPlacement="end"
+                        />
+                        <FormControlLabel
+                            control={
+                                <Checkbox color="primary"
+                                    checked={comments}
+                                    onChange={(e) => {
+                                        setComments(e.target.checked)
+                                    }} />}
+                            label="템플릿 설명"
+                            labelPlacement="end"
+                        />
+                    </Box>
                     이 클러스터의 데이터를 백업 하시겠습니까? (json 파일로 저장됩니다.)
                 </DialogContent>
                 <DialogActions>
@@ -278,9 +293,11 @@ function Migration() {
                             setFile(e.target.files[0])
                         }}
                     />
+                    <Box m={2}>
                     {
                         uploadProgress ? <LinearProgress /> : <></>
                     }
+                    </Box>
                 </DialogContent>
                 <DialogActions>
                     <Button variant="outlined" style={{ whiteSpace: "nowrap" }} onClick={() => handleUpload()}>업로드</Button>
