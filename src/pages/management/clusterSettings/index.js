@@ -23,11 +23,9 @@ import {editClusterFlush, editClusterServerCheck, setClusterServerCheck, editClu
 
 const Divider = styled(MuiDivider)(spacing);
 
-
 function ClusterSettings({serverCheck}) {
     const dispatch = useDispatch()
     const [openServerCheck, setOpenServerCheck] = React.useState(false)
-
 
     function handleServerCheck(flag) {
         const enable = flag ? "none" : "all"
@@ -53,19 +51,19 @@ function ClusterSettings({serverCheck}) {
                 </Grid>
                 <Grid item xs={6}>
                     <Box align={"right"}>
-                        <Button variant={"outlined"}
-                                style={{backgroundColor: green['500'], color: 'white', display: serverCheck ?  "block" : "none"}}
+                            <Button variant={"outlined"}
+                                style={{ backgroundColor: green['500'], color: 'white', display: serverCheck ? "block" : "none" }}
                                 size={"small"}
                                 onClick={() => handleServerCheck(false)}
-                        >
-                            클러스터 점검완료
+                            >
+                                클러스터 점검완료
                         </Button>
-                        <Button variant={"outlined"}
-                                style={{backgroundColor: orange['500'], color: 'white', display: serverCheck ? "none" : "block"}}
+                            <Button variant={"outlined"}
+                                style={{ backgroundColor: orange['500'], color: 'white', display: serverCheck ? "none" : "block" }}
                                 size={"small"}
                                 onClick={() => setOpenServerCheck(true)}
-                        >
-                            클러스터 점검시작
+                            >
+                                클러스터 점검시작
                         </Button>
                     </Box>
                 </Grid>

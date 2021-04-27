@@ -42,4 +42,3 @@ export const editPipeline = (item, jsonData) => dispatch => client.call({
     headers: {'Content-type': 'application/json'},
     data: jsonData
 }).then(response => dispatch({type: ADD_PIPELINE, payload: response.data}))
-

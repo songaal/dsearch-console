@@ -619,7 +619,6 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet}) {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => { 
-                        
                         let fd = new FormData();
                         fd.append('overwrite', overwrite);
                         fd.append('dictionaryFields', result['fields'])

@@ -93,6 +93,7 @@ function Summary({ dispatch, authUser, list }) {
 
     const name = useRef(null);
     
+    
     const [nameError, setNameError] = useState(false)
     const [modalFlag, setModalFlag] = useState(false)
     const [successFlag, setSuccessFlag] = useState(false)
@@ -310,12 +311,6 @@ function Summary({ dispatch, authUser, list }) {
                 {successFlag ? <MuiAlert elevation={6} variant="filled" severity="info"> {message} {" 성공"} </MuiAlert>
                     : <MuiAlert elevation={6} variant="filled" severity="error"> {message}  {" 실패"} </MuiAlert> }
             </Snackbar>
-
-            {/*<Card>*/}
-            {/*    <CardContent>*/}
-            {/*        */}
-            {/*    </CardContent>*/}
-            {/*</Card>*/}
 
             <Dialog open={modalFlag}
                     fullWidth
