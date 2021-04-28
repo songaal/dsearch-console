@@ -10,18 +10,8 @@ export const download = (fd) =>
             "Content-type": "application/json",
         },
         data: fd,
-        responseType: 'blob'
+        // responseType: 'blob'
     })
-        .then(response => {
-            let json = JSON.parse(sessionStorage.getItem('SET_DSEARCH_AUTH_USER'));
-            const link = document.createElement('a');
-            link.href = window.URL.createObjectURL(new Blob([response.data], {
-                type: response.headers['content-type']
-            }));
-            link.setAttribute('download', `dsearch-${json.cluster.name}-backup.json`);
-            document.body.appendChild(link);
-            link.click();
-        })
 
 
 export const sendFile = (fd) => dispatch => client.call({

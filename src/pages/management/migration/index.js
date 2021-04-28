@@ -42,6 +42,7 @@ function Migration() {
     const [jdbc, setJdbc] = React.useState(true);
     const [comments, setComments] = React.useState(true);
 
+    const [downloadResults, setDownloadResults] = React.useState("")
     const [uploadError, setUploadError] = React.useState("");
     const [uploadResults, setUploadResults] = React.useState(null)
     const [downloadModal, setDownloadModal] = React.useState(false);
@@ -60,7 +61,20 @@ function Migration() {
         json.append("jdbc", jdbc)
         json.append("comments", comments)
 
-        download(json)
+        download(json).then(response => {
+            let data = response.data
+            setDownloadResults(data.result)
+            setUploadResults(null)
+            let json = JSON.parse(sessionStorage.getItem('SET_DSEARCH_AUTH_USER'));
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(new Blob([JSON.stringify(response.data)], {
+                type: response.headers['content-type']
+                // type: 'text/plain'
+            }));
+            link.setAttribute('download', `dsearch-${json.cluster.name}-backup.json`);
+            document.body.appendChild(link);
+            link.click();
+        })
         setDownloadModal(false);
     }
 
@@ -74,6 +88,7 @@ function Migration() {
             .then(async (res) => {
                 console.log(res)
                 setAlertFlag(true);
+                setDownloadResults("")
                 if (res.data.result) {
                     setUploadResults(res.data);
                     setAlertColor("info");
@@ -110,102 +125,149 @@ function Migration() {
                 </Grid>
                 <Divider my={6} />
             </Grid>
-
-            <Card mb={6}>
-                <CardContent>
-                    <Box margin="12px" width="100%" >
-                        <Box display="flex" alignItems="center" justifyContent="space-between" width="500px" m={2}>
-                            이 클러스터의 백업 데이터를 다운로드 하시겠습니까? 
-                            <Button variant="outlined" color="primary" onClick={() => { setDownloadModal(true) }}>
-                                다운로드
-                            </Button>
-                        </Box>
-
-                        <Box display="flex" alignItems="center" justifyContent="space-between" width="500px" m={2}>
-                            백업데이터로 클러스터를 셋팅하시겠습니까?
-                            <Button variant="outlined" color="primary" onClick={() => { setUploadModal(true) }}>
-                                업로드
-                            </Button>
-                        </Box>
-                    </Box>
+            <Box style={{ backgroundColor: "white", padding: "15px", marginBottom: "20px" }}>
+                <Typography variant="h5" style={{ margin: "8px" }}>다운로드</Typography>
+                <Box ml={2} mt={4} mb={2}>
+                    이 클러스터의 백업 데이터를 다운로드 합니다
+                </Box>
+                <Button style={{margin: "8px"}} variant="outlined" color="primary" onClick={() => { setDownloadModal(true) }}>
+                    다운로드
+                </Button>
+            </Box>
+            <Box style={{ backgroundColor: "white", padding: "15px", marginBottom: "20px" }}>
+                <Typography variant="h5" style={{ margin: "8px" }}>업로드</Typography>
+                <Box ml={2} mt={4} mb={2}>
+                    백업 데이터로 클러스터를 셋팅 합니다.
+                </Box>
+                <Button style={{margin: "8px"}} variant="outlined" color="primary" onClick={() => { setUploadModal(true) }}>
+                    업로드
+                </Button>
+            </Box>
+            {/* <Card mb={6} >
+                <CardContent> */}
                     <Box width="100%">
                         {
-                            uploadError.length === 0 ? <></> : <Box border="1px solid grey">{uploadError}</Box>
+                            downloadResults.length === 0 ? <></> : 
+                            <Table key="detailResult">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>
+                                                <Typography variant="h4">다운로드 결과</Typography>
+                                            </TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        <TableRow hover>
+                                            <TableCell>
+                                                <Typography variant="h5">파이프라인 다운로드 갯수: { downloadResults.pipeline.result === true ? downloadResults.pipeline.count : 0}</Typography>
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow hover>
+                                            <TableCell>
+                                                <Typography variant="h5">컬렉션 다운로드 갯수: { downloadResults.collection.result === true ? downloadResults.collection.count : 0}</Typography>
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow hover>
+                                            <TableCell>
+                                                <Typography variant="h5">JDBC 다운로드 갯수: { downloadResults.jdbc.result === true ? downloadResults.jdbc.count : 0}</Typography>
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow hover>
+                                            <TableCell>
+                                                <Typography variant="h5">템플릿 다운로드 갯수: { downloadResults.templates.result === true ? downloadResults.templates.count : 0}</Typography>
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow hover>
+                                            <TableCell>
+                                                <Typography variant="h5">템플릿설명 다운로드 갯수: { downloadResults.comments.result === true ? downloadResults.comments.count : 0}</Typography>
+                                            </TableCell>
+                                        </TableRow>
+                                    </TableBody>
+                                </Table>
+                        }
+                        {
+                            uploadError.length === 0 ? <></> : 
+                            <Box>
+                                <Typography variant="h4" color="red" style={{margin:"20px 0 8px 4px"}}>업로드 에러</Typography>
+                                <Box m={2} border="1px solid red" p={3}>
+                                    {uploadError}
+                                </Box>
+                            </Box>
                         }
 
                         {
-                            uploadResults == null ? <></> : 
-                            <Table key="detailResult">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>
-                                            <Typography variant="h2">업로드 결과</Typography>
-                                        </TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                <TableRow hover>
-                                    <TableCell>
-                                        <Typography variant="h4">[파이프라인] 총 갯수: {uploadResults.pipeline.length}</Typography>
-                                        <br />
-                                        {uploadResults.pipeline.length > 0 ? 
-                                            uploadResults.pipeline.map((item) => {
-                                                return <div key={item}  dangerouslySetInnerHTML={ {__html:" - " + item} } />
-                                            })
-                                        : <></>}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow hover>
-                                    <TableCell>
-                                        <Typography variant="h4" >[컬렉션] 총 갯수: {uploadResults.collection.length}</Typography>
-                                        <br />
-                                        {uploadResults.collection.length > 0 ? 
-                                            uploadResults.collection.map((item) => {
-                                                return <div key={item} dangerouslySetInnerHTML={ {__html:" - " + item} } />
-                                            })
-                                        : <></>}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow hover>
-                                    <TableCell>
-                                        <Typography variant="h4">[JDBC] 총 갯수: {uploadResults.jdbc.length}</Typography>
-                                        <br />
-                                        {uploadResults.jdbc.length > 0 ? 
-                                            uploadResults.jdbc.map((item) => {
-                                                return <div key={item} dangerouslySetInnerHTML={ {__html: " - " + item} } />
-                                            })
-                                        : <></>}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow hover>
-                                    <TableCell>
-                                    <Typography variant="h4">[템플릿] 총 갯수: {uploadResults.templates.length}</Typography>
-                                    <br />
-                                    {uploadResults.templates.length > 0 ? 
-                                            uploadResults.templates.map((item) => {
-                                                return <div key={item} dangerouslySetInnerHTML={ {__html: " - " + item} } />
-                                            })
-                                        : <></>}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow hover>
-                                    <TableCell>
-                                        <Typography variant="h4">[템플릿 설명] 총 갯수: {uploadResults.comments.length}</Typography>
-                                        <br />
-                                        {uploadResults.comments.length > 0 ? 
-                                            uploadResults.comments.map((item) => {
-                                                return <div key={item + "_comments"} dangerouslySetInnerHTML={ {__html: " - " + item} } />
-                                            })
-                                        : <></>}
-                                    </TableCell>
-                                </TableRow>
-                                </TableBody>
-                            </Table>
+                            uploadResults == null ? <></> :
+                                <Table key="detailResult">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>
+                                                <Typography variant="h4">업로드 결과</Typography>
+                                            </TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        <TableRow hover>
+                                            <TableCell>
+                                                <Typography variant="h5">[파이프라인] 총 갯수: {uploadResults.pipeline.length}</Typography>
+                                                <br />
+                                                {uploadResults.pipeline.length > 0 ?
+                                                    uploadResults.pipeline.map((item) => {
+                                                        return <div key={item + "_pipeline"} dangerouslySetInnerHTML={{ __html: " - " + item }} />
+                                                    })
+                                                    : <></>}
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow hover>
+                                            <TableCell>
+                                                <Typography variant="h5" >[컬렉션] 총 갯수: {uploadResults.collection.length}</Typography>
+                                                <br />
+                                                {uploadResults.collection.length > 0 ?
+                                                    uploadResults.collection.map((item) => {
+                                                        return <div key={item + "_collection"} dangerouslySetInnerHTML={{ __html: " - " + item }} />
+                                                    })
+                                                    : <></>}
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow hover>
+                                            <TableCell>
+                                                <Typography variant="h5">[JDBC] 총 갯수: {uploadResults.jdbc.length}</Typography>
+                                                <br />
+                                                {uploadResults.jdbc.length > 0 ?
+                                                    uploadResults.jdbc.map((item) => {
+                                                        return <div key={item + "_jdbc"} dangerouslySetInnerHTML={{ __html: " - " + item }} />
+                                                    })
+                                                    : <></>}
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow hover>
+                                            <TableCell>
+                                                <Typography variant="h5">[템플릿] 총 갯수: {uploadResults.templates.length}</Typography>
+                                                <br />
+                                                {uploadResults.templates.length > 0 ?
+                                                    uploadResults.templates.map((item) => {
+                                                        return <div key={item + "_templates"} dangerouslySetInnerHTML={{ __html: " - " + item }} />
+                                                    })
+                                                    : <></>}
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow hover>
+                                            <TableCell>
+                                                <Typography variant="h5">[템플릿 설명] 총 갯수: {uploadResults.comments.length}</Typography>
+                                                <br />
+                                                {uploadResults.comments.length > 0 ?
+                                                    uploadResults.comments.map((item) => {
+                                                        return <div key={item + "_comments"} dangerouslySetInnerHTML={{ __html: " - " + item }} />
+                                                    })
+                                                    : <></>}
+                                            </TableCell>
+                                        </TableRow>
+                                    </TableBody>
+                                </Table>
                         }
-                        
+
                     </Box>
-                </CardContent>
-            </Card>
+                {/* </CardContent>
+            </Card> */}
             {/* File Upload Modal */}
             <Snackbar open={alertFlag} autoHideDuration={3000} onClose={() => { setAlertFlag(false); setAlertMessage("") }}>
                 <MuiAlert elevation={6} variant="filled" severity={alertColor}> {alertMessage} </MuiAlert>
