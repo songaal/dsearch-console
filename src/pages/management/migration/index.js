@@ -33,14 +33,13 @@ import { download, sendFile  } from "../../../redux/actions/migrationActions"
 
 const Divider = styled(MuiDivider)(spacing);
 
-function Migration() {
+function Migration({authUser}) {
     const dispatch = useDispatch()
 
     const [pipeline, setPipeline] = React.useState(true);
     const [templates, setTemplates] = React.useState(true);
     const [collection, setCollection] = React.useState(true);
     const [jdbc, setJdbc] = React.useState(true);
-    const [comments, setComments] = React.useState(true);
 
     const [downloadResults, setDownloadResults] = React.useState("")
     const [uploadError, setUploadError] = React.useState("");
@@ -59,21 +58,24 @@ function Migration() {
         json.append("templates", templates)
         json.append("collection", collection)
         json.append("jdbc", jdbc)
-        json.append("comments", comments)
-
+        
         download(json).then(response => {
+            console.log(response)
+
             let data = response.data
             setDownloadResults(data.result)
             setUploadResults(null)
             let json = JSON.parse(sessionStorage.getItem('SET_DSEARCH_AUTH_USER'));
             const link = document.createElement('a');
             link.href = window.URL.createObjectURL(new Blob([JSON.stringify(response.data)], {
-                type: response.headers['content-type']
-                // type: 'text/plain'
+                // type: response.headers['content-type']
+                type: 'text/plain'
             }));
             link.setAttribute('download', `dsearch-${json.cluster.name}-backup.json`);
             document.body.appendChild(link);
             link.click();
+        }).catch(err => {
+            console.log(err)
         })
         setDownloadModal(false);
     }
@@ -86,7 +88,7 @@ function Migration() {
         setUploadProgress(true);
         dispatch(sendFile(fd))
             .then(async (res) => {
-                console.log(res)
+                
                 setAlertFlag(true);
                 setDownloadResults("")
                 if (res.data.result) {
@@ -104,7 +106,8 @@ function Migration() {
                 setFile(null);
                 setUploadProgress(false);
             }).catch(async (err) => {
-                setUploadError(err);
+                console.log(err)
+                setUploadError("에러 발생");
                 setAlertFlag(true);
                 setAlertColor("error");
                 setAlertMessage("실패");
@@ -139,9 +142,15 @@ function Migration() {
                 <Box ml={2} mt={4} mb={2}>
                     백업 데이터로 클러스터를 셋팅 합니다.
                 </Box>
-                <Button style={{margin: "8px"}} variant="outlined" color="primary" onClick={() => { setUploadModal(true) }}>
-                    업로드
-                </Button>
+                {authUser.role.manage ? 
+                    <Button style={{margin: "8px"}} variant="outlined" color="primary" onClick={() => { setUploadModal(true) }}>
+                        업로드
+                    </Button> : 
+                    <Button style={{margin: "8px"}} variant="outlined" color="primary" disabled>
+                        업로드
+                    </Button>
+                }
+                
             </Box>
             {/* <Card mb={6} >
                 <CardContent> */}
@@ -160,26 +169,45 @@ function Migration() {
                                         <TableRow hover>
                                             <TableCell>
                                                 <Typography variant="h5">파이프라인 다운로드 갯수: { downloadResults.pipeline.result === true ? downloadResults.pipeline.count : 0}</Typography>
+                                                <br />
+                                                {downloadResults.pipeline.list.length > 0 ?
+                                                    downloadResults.pipeline.list.map((item) => {
+                                                        return <div key={item + "_pipeline_download"} dangerouslySetInnerHTML={{ __html: " - " + item }} />
+                                                    })
+                                                    : <></>}
                                             </TableCell>
                                         </TableRow>
                                         <TableRow hover>
                                             <TableCell>
                                                 <Typography variant="h5">컬렉션 다운로드 갯수: { downloadResults.collection.result === true ? downloadResults.collection.count : 0}</Typography>
+                                                <br />
+                                                {downloadResults.collection.list.length > 0 ?
+                                                    downloadResults.collection.list.map((item) => {
+                                                        return <div key={item + "_collection_download"} dangerouslySetInnerHTML={{ __html: " - " + item }} />
+                                                    })
+                                                    : <></>}
                                             </TableCell>
                                         </TableRow>
                                         <TableRow hover>
                                             <TableCell>
                                                 <Typography variant="h5">JDBC 다운로드 갯수: { downloadResults.jdbc.result === true ? downloadResults.jdbc.count : 0}</Typography>
+                                                <br />
+                                                {downloadResults.jdbc.list.length > 0 ?
+                                                    downloadResults.jdbc.list.map((item) => {
+                                                        return <div key={item + "_jdbc_download"} dangerouslySetInnerHTML={{ __html: " - " + item }} />
+                                                    })
+                                                    : <></>}
                                             </TableCell>
                                         </TableRow>
                                         <TableRow hover>
                                             <TableCell>
                                                 <Typography variant="h5">템플릿 다운로드 갯수: { downloadResults.templates.result === true ? downloadResults.templates.count : 0}</Typography>
-                                            </TableCell>
-                                        </TableRow>
-                                        <TableRow hover>
-                                            <TableCell>
-                                                <Typography variant="h5">템플릿설명 다운로드 갯수: { downloadResults.comments.result === true ? downloadResults.comments.count : 0}</Typography>
+                                                <br />
+                                                {downloadResults.templates.list.length > 0 ?
+                                                    downloadResults.templates.list.map((item) => {
+                                                        return <div key={item + "_templates_download"} dangerouslySetInnerHTML={{ __html: " - " + item }} />
+                                                    })
+                                                    : <></>}
                                             </TableCell>
                                         </TableRow>
                                     </TableBody>
@@ -250,17 +278,6 @@ function Migration() {
                                                     : <></>}
                                             </TableCell>
                                         </TableRow>
-                                        <TableRow hover>
-                                            <TableCell>
-                                                <Typography variant="h5">[템플릿 설명] 총 갯수: {uploadResults.comments.length}</Typography>
-                                                <br />
-                                                {uploadResults.comments.length > 0 ?
-                                                    uploadResults.comments.map((item) => {
-                                                        return <div key={item + "_comments"} dangerouslySetInnerHTML={{ __html: " - " + item }} />
-                                                    })
-                                                    : <></>}
-                                            </TableCell>
-                                        </TableRow>
                                     </TableBody>
                                 </Table>
                         }
@@ -322,16 +339,6 @@ function Migration() {
                             label="JDBC"
                             labelPlacement="end"
                         />
-                        <FormControlLabel
-                            control={
-                                <Checkbox color="primary"
-                                    checked={comments}
-                                    onChange={(e) => {
-                                        setComments(e.target.checked)
-                                    }} />}
-                            label="템플릿 설명"
-                            labelPlacement="end"
-                        />
                     </Box>
                     이 클러스터의 데이터를 백업 하시겠습니까? (json 파일로 저장됩니다.)
                 </DialogContent>
@@ -371,5 +378,5 @@ function Migration() {
 }
 
 export default connect(store => ({
-    serverCheck: store.clusterReducers.serverCheck
+    authUser: store.dsearchReducers.authUser,
 }))(Migration);

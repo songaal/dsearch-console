@@ -375,12 +375,17 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
                                     onClick={() => handlePagination(pageNum)}
                             >새로고침</Button>
 
-                            {authUser.role.analysis ? <Button variant="outlined"
+                            {authUser.role.analysis ? 
+                                <Button variant="outlined"
                                     color="primary"
                                     onClick={() => setMode(mode === "view" ? "edit" : "view")}
                                     mx={1}
-                            >{mode === "view" ? "수정" : "보기"}</Button> 
-                            : <></> }
+                                >{mode === "view" ? "수정" : "보기"}</Button> 
+                            : <Button variant="outlined"
+                                color="primary"
+                                disabled
+                                mx={1}
+                            >{mode === "view" ? "수정" : "보기"}</Button>  }
                             
                         </Grid>
                     </Grid>

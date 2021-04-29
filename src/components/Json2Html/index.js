@@ -86,7 +86,7 @@ function SettingsJson2html(settings) {
     )
 }
 
-function MappingsJson2html(json, name, comments, dispatch) {
+function MappingsJson2html(json, name, comments, dispatch, mode) {
     
     let comment = {};
     if(comments && comments.length > 0){
@@ -98,7 +98,6 @@ function MappingsJson2html(json, name, comments, dispatch) {
                 comment.name = item.sourceAsMap.name;
             }
         })
-
     }else{
         comment.name = name;
     }
@@ -171,7 +170,7 @@ function MappingsJson2html(json, name, comments, dispatch) {
                     topFields.map(field => <th key={field['title']}>{field['title']}</th>)
                 }
                 <th>기타설정</th>
-                <th>코멘트</th>
+                <th>설명</th>
             </tr>
             </thead>
             <tbody>
@@ -201,44 +200,87 @@ function MappingsJson2html(json, name, comments, dispatch) {
                                 {etc.join(", ")}
                             </td>
                             <td>
-
-                                {mappingName.includes(".") ? <></> :
-                                     comment.comments === undefined || comment.comments === null  ? 
-                                    <TextField 
-                                        onKeyPress={(e) => {
-                                            if(e.key =='Enter'){
-                                                if(comment.comments == undefined){
-                                                    comment.comments = {};
-                                                }
-                                                let n = mappingName + "";
-                                                comment.comments[n] = e.target.value;
-                                                dispatch(addCommentsAction({"id": null, "name": name, "updatedComment": comment}))
-                                                    .then((res) => {
-                                                        dispatch(setIndexTemplateCommentsAction())
-                                                    }).catch((err) => { 
-                                                        console.log(err) 
-                                                    });
-                                            }
-                                        }}
-                                        key={mappingName}
-                                        defaultValue={""} />: 
-                                    <TextField 
-                                        onKeyPress={
-                                            (e) => {
-                                                if(e.key =='Enter'){
-                                                    let n = mappingName + "";
-                                                    comment.comments[n] = e.target.value;
-                                                    dispatch(addCommentsAction({"id": comment.id, "name": name, "updatedComment": comment}))
-                                                        .then((res) => {
-                                                            dispatch(setIndexTemplateCommentsAction())
-                                                        }).catch((err) => { 
-                                                            console.log(err) 
-                                                        });
-                                                }
-                                            }
-                                        }
-                                        key={mappingName}
-                                        defaultValue={comment.comments[mappingName]} />}
+                                {
+                                mode === 'view' ? 
+                                    mappingName.includes(".") ? <></> 
+                                        :
+                                            comment.comments === undefined || comment.comments === null ? 
+                                            <></> :
+                                            <Box width="100%">
+                                                {comment.comments[mappingName]}
+                                            </Box> 
+                                : <></> 
+                                }
+                                
+                                {
+                                    mode === 'edit' ?  
+                                        mappingName.includes(".") ? <></> :
+                                            comment.comments === undefined || comment.comments === null  ? 
+                                                <TextField 
+                                                    width="100%"
+                                                    onKeyPress={(e) => {
+                                                        // if(e.key =='Enter'){
+                                                            if(comment.comments == undefined){
+                                                                comment.comments = {};
+                                                            }
+                                                            let n = mappingName + "";
+                                                            comment.comments[n] = e.target.value;
+                                                            dispatch(addCommentsAction({"id": null, "name": name, "updatedComment": comment}))
+                                                                .then((res) => {
+                                                                    dispatch(setIndexTemplateCommentsAction())
+                                                                }).catch((err) => { 
+                                                                    console.log(err) 
+                                                                });
+                                                        // }
+                                                    }}
+                                                    onBlur={(e) => {
+                                                        if(comment.comments == undefined){
+                                                            comment.comments = {};
+                                                        }
+                                                        let n = mappingName + "";
+                                                        comment.comments[n] = e.target.value;
+                                                        dispatch(addCommentsAction({"id": null, "name": name, "updatedComment": comment}))
+                                                            .then((res) => {
+                                                                dispatch(setIndexTemplateCommentsAction())
+                                                            }).catch((err) => { 
+                                                                console.log(err) 
+                                                            });
+                                                    }}
+                                                    key={mappingName}
+                                                    defaultValue={""} /> : 
+                                                <TextField 
+                                                    width="100%"
+                                                    onKeyPress={
+                                                        (e) => {
+                                                            // if(e.key =='Enter'){
+                                                                let n = mappingName + "";
+                                                                comment.comments[n] = e.target.value;
+                                                                dispatch(addCommentsAction({"id": comment.id, "name": name, "updatedComment": comment}))
+                                                                    .then((res) => {
+                                                                        dispatch(setIndexTemplateCommentsAction())
+                                                                    }).catch((err) => { 
+                                                                        console.log(err) 
+                                                                    });
+                                                            // }
+                                                        }
+                                                    }
+                                                    onBlur={(e) => {
+                                                        if(comment.comments == undefined){
+                                                            comment.comments = {};
+                                                        }
+                                                        let n = mappingName + "";
+                                                        comment.comments[n] = e.target.value;
+                                                        dispatch(addCommentsAction({"id": null, "name": name, "updatedComment": comment}))
+                                                            .then((res) => {
+                                                                dispatch(setIndexTemplateCommentsAction())
+                                                            }).catch((err) => { 
+                                                                console.log(err) 
+                                                            });
+                                                    }}
+                                                    key={mappingName}
+                                                    defaultValue={comment.comments[mappingName]} /> 
+                                    : <></>
+                                }
                             </td>
                         </tr>
                     )
@@ -249,7 +291,7 @@ function MappingsJson2html(json, name, comments, dispatch) {
     )
 }
 
-function Render({json, type, name, comments, dispatch}) {
+function Render({json, type, name, comments, dispatch, mode}) {
     let validJson = json
     try {
         if (typeof json === 'string') {
@@ -260,7 +302,7 @@ function Render({json, type, name, comments, dispatch}) {
     }
 
     if (validJson && type === "mappings") {
-        return MappingsJson2html(validJson, name, comments, dispatch)
+        return MappingsJson2html(validJson, name, comments, dispatch, mode)
     } else if (validJson && type === "settings") {
         return SettingsJson2html(validJson)
     } else {

@@ -23,7 +23,7 @@ import {editClusterFlush, editClusterServerCheck, setClusterServerCheck, editClu
 
 const Divider = styled(MuiDivider)(spacing);
 
-function ClusterSettings({serverCheck}) {
+function ClusterSettings({authUser, serverCheck}) {
     const dispatch = useDispatch()
     const [openServerCheck, setOpenServerCheck] = React.useState(false)
 
@@ -40,6 +40,7 @@ function ClusterSettings({serverCheck}) {
             })
     }
 
+    console.log(authUser.role.manage)
     return (
         <React.Fragment>
             <Helmet title="클러스터설정"/>
@@ -51,20 +52,35 @@ function ClusterSettings({serverCheck}) {
                 </Grid>
                 <Grid item xs={6}>
                     <Box align={"right"}>
+                        {authUser.role.manage ? <Button variant={"outlined"}
+                            style={{ backgroundColor: green['500'], color: 'white', display: serverCheck ? "block" : "none" }}
+                            size={"small"}
+                            onClick={() => handleServerCheck(false)}
+                        >
+                            클러스터 점검완료
+                        </Button> :
                             <Button variant={"outlined"}
                                 style={{ backgroundColor: green['500'], color: 'white', display: serverCheck ? "block" : "none" }}
                                 size={"small"}
-                                onClick={() => handleServerCheck(false)}
+                                disabled
                             >
                                 클러스터 점검완료
-                        </Button>
+                        </Button>}
+
+                        {authUser.role.manage ? <Button variant={"outlined"}
+                            style={{ backgroundColor: orange['500'], color: 'white', display: serverCheck ? "none" : "block", disabled: authUser.role.manage }}
+                            size={"small"}
+                            onClick={() => setOpenServerCheck(true)}
+                        >
+                            클러스터 점검시작
+                        </Button> :
                             <Button variant={"outlined"}
-                                style={{ backgroundColor: orange['500'], color: 'white', display: serverCheck ? "none" : "block" }}
+                                disabled
+                                style={{ backgroundColor: orange['500'], color: 'white', display: serverCheck ? "none" : "block", disabled: authUser.role.manage }}
                                 size={"small"}
-                                onClick={() => setOpenServerCheck(true)}
                             >
                                 클러스터 점검시작
-                        </Button>
+                        </Button>}
                     </Box>
                 </Grid>
             </Grid>
@@ -102,5 +118,6 @@ function ClusterSettings({serverCheck}) {
 }
 
 export default connect(store => ({
+    authUser: store.dsearchReducers.authUser,
     serverCheck: store.clusterReducers.serverCheck
 }))(ClusterSettings);

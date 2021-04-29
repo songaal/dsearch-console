@@ -52,7 +52,7 @@ const Button = styled(MuiButton)(spacing, positions, palette);
 const tabs = [{label: "매핑"}, {label: "셋팅"}]
 
 let message = ""
-function View({ dispatch, template, templates, comments}) {
+function View({ dispatch, authUser, template, templates, comments}) {
     const history = useHistory()
     const classes = useStyles();
     const [selectedTemplate, setSelectedTemplate] = useState("")
@@ -94,8 +94,7 @@ function View({ dispatch, template, templates, comments}) {
 
     useEffect(() => {
         dispatch(setIndexTemplateCommentsAction())
-    }) 
-
+    }, []) 
     
     function handleTemplateChange(template) {
         history.push(`../indices-templates/${template}`)
@@ -136,15 +135,21 @@ function View({ dispatch, template, templates, comments}) {
                     </Box>
                 </Grid>
                 <Grid item xs={6}>
-
-
-                    <Box align={'right'}>
-
-                        <Button variant="outlined"
+                    {
+                        authUser.role.index ? 
+                        <Box align={'right'}>
+                            <Button variant="outlined"
                                 color={"primary"}
                                 onClick={() => history.push(`${selectedTemplate}/edit`)}
-                        >수정</Button>
-                    </Box>
+                            >수정</Button>
+                        </Box> :
+                        <Box align={'right'}>
+                            <Button variant="outlined"
+                                    color={"primary"}
+                                    disabled
+                            >수정</Button>
+                        </Box>
+                    }
 
                 </Grid>
             </Grid>
@@ -190,7 +195,7 @@ function View({ dispatch, template, templates, comments}) {
                         <Card>
                             <CardContent m={0}>
                                 <Box style={{overflow: "auto", minWidth: "700px"}}>
-                                    {Json2html({json: mappingsJson, type: "mappings", name:selectedTemplate, comments, dispatch})}
+                                    {Json2html({json: mappingsJson, type: "mappings", name:selectedTemplate, comments, dispatch, mode:"view"})}
                                 </Box>
                             </CardContent>
                         </Card>
@@ -264,4 +269,7 @@ function View({ dispatch, template, templates, comments}) {
     );
 }
 
-export default connect(store => ({...store.indexTemplateReducers}))(View);
+export default connect(store => ({
+    authUser: store.dsearchReducers.authUser,
+    ...store.indexTemplateReducers
+}))(View);

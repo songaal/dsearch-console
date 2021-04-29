@@ -296,18 +296,26 @@ function Summary({dispatch, authUser, collection}) {
                                                         :
                                                         indexA['uuid'] ?
                                                             <Box component={"span"} style={{marginLeft: "20px"}}>
-                                                                <Chip icon={<Check />}
-                                                                      label={"사용하기"}
-                                                                      style={{cursor: "pointer"}}
-                                                                      onClick={() => {
-                                                                          setSelectedAlias({
-                                                                              alias: collection['baseId'],
-                                                                              add: indexA['index'],
-                                                                              remove: indexB['uuid'] ? indexB['index'] : null
-                                                                          })
-                                                                          setOpenUpdateAliasModal(true);
-                                                                      }}
-                                                                />
+                                                                {authUser.role.index ?
+                                                                    <Chip icon={<Check />}
+                                                                        label={"사용하기"}
+                                                                        style={{cursor: "pointer"}}
+                                                                        onClick={() => {
+                                                                            setSelectedAlias({
+                                                                                alias: collection['baseId'],
+                                                                                add: indexA['index'],
+                                                                                remove: indexB['uuid'] ? indexB['index'] : null
+                                                                            })
+                                                                            setOpenUpdateAliasModal(true);
+                                                                        }}
+                                                                    />
+                                                                    : 
+                                                                    <Chip icon={<Check />}
+                                                                        label={"사용하기"}
+                                                                        style={{cursor: "pointer"}}
+                                                                        disabled
+                                                                    />
+                                                                }
                                                                 {/*<Box component={"span"} style={{marginLeft: "20px"}}>*/}
                                                                 {/*    <Chip color="secondary" icon={<Check />} label={"사용하기"}/>*/}
                                                                 {/*</Box>*/}
