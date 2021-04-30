@@ -224,7 +224,12 @@ function RunningIndex({result, running, status, indices, indexPercent}) {
 
     if(result.hits.hits.length >= 0){
         for(let item of result.hits.hits){
-            successIndexList[item._source.index] = item._source;
+            let index = item._source.index;
+            let baseId = index.substring(0, index.length-2);
+
+            if(successIndexList[baseId] === null || successIndexList[baseId] === undefined){
+                successIndexList[baseId] = item._source;
+            }
         }
     }
 
@@ -244,8 +249,8 @@ function RunningIndex({result, running, status, indices, indexPercent}) {
     if (keyList.length !== 0) {
         for (let key of keyList) {
             let server = running[key].server;
-
             if(server !== undefined){
+                let baseId = server.collection.baseId;
                 let uuid = "";
                 Object.values(indices).forEach(item => {
                     if (item.index === server.index) {
@@ -265,13 +270,13 @@ function RunningIndex({result, running, status, indices, indexPercent}) {
                     currentStep = "";
                 }
 
-                if( successIndexList[server.index] !== undefined
-                    && successIndexList[server.index].endTime !== undefined 
-                    && successIndexList[server.index].startTime !== undefined
-                    && successIndexList[server.index].docSize !== undefined){
+                if( successIndexList[baseId] !== undefined
+                    && successIndexList[baseId].endTime !== undefined 
+                    && successIndexList[baseId].startTime !== undefined
+                    && successIndexList[baseId].docSize !== undefined){
                     
-                    let estimatedTime = successIndexList[server.index].endTime - successIndexList[server.index].startTime;
-                    let docSize = successIndexList[server.index].docSize;
+                    let estimatedTime = successIndexList[baseId].endTime - successIndexList[baseId].startTime;
+                    let docSize = successIndexList[baseId].docSize;
 
                     getFinishTime(server.startTime, estimatedTime);
                     indexList.push({startTime: server.startTime, index: server.index, estimatedTime: estimatedTime, docSize: docSize, uuid : uuid, currentStep: currentStep, nextStep: nextStep});
@@ -281,6 +286,7 @@ function RunningIndex({result, running, status, indices, indexPercent}) {
             }
         }
     }
+    
     
     function moveDetail(uuid) {
         history.push(`./indices/${uuid}`)
@@ -406,18 +412,20 @@ function BottomArea({result, alias, indices}) {
             }
         })
    
-        resultList.push(
-            {
-                index:row._source.index,
-                alias: aliasName,
-                status: row._source.status,
-                startTime: row._source.startTime,
-                endTime: row._source.endTime,
-                docSize: row._source.docSize,
-                storage: row._source.store,
-                uuid: uuid
-            }
-        )
+        if(resultList.length <= 50){
+            resultList.push(
+                {
+                    index:row._source.index,
+                    alias: aliasName,
+                    status: row._source.status,
+                    startTime: row._source.startTime,
+                    endTime: row._source.endTime,
+                    docSize: row._source.docSize,
+                    storage: row._source.store,
+                    uuid: uuid
+                }
+            )
+        }
     })
 
     function moveDetail(uuid) {

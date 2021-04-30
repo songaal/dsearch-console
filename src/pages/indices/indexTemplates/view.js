@@ -10,6 +10,7 @@ import {
     Button as MuiButton,
     Card as MuiCard,
     CardContent,
+    Checkbox,
     Dialog,
     DialogActions,
     DialogContent,
@@ -63,6 +64,7 @@ function View({ dispatch, authUser, template, templates, comments}) {
     const [mappingMode, setMappingMode] = useState("form")
     const [settingMode, setSettingMode] = useState("form")
 
+    const [isFolding, setIsFolding] = useState(true);
     const [mappingsJson, setMappingsJson] = useState("")
     const [settingsJson, setSettingsJson] = useState("")
 
@@ -189,13 +191,22 @@ function View({ dispatch, authUser, template, templates, comments}) {
                                           label="json"
                         />
                     </RadioGroup>
+                    {
+                        mappingMode === 'form' ? 
+                            <FormControlLabel value="접기"
+                                onChange={(e) => {setIsFolding(e.target.checked)}}
+                                checked={isFolding}
+                                control={<Checkbox color="primary"/>}
+                                label="접기"/> 
+                            : <></>
+                    }
                 </FormControl>
                 {
                     mappingMode === "form" ?
                         <Card>
                             <CardContent m={0}>
                                 <Box style={{overflow: "auto", minWidth: "700px"}}>
-                                    {Json2html({json: mappingsJson, type: "mappings", name:selectedTemplate, comments, dispatch, mode:"view"})}
+                                    {Json2html({json: mappingsJson, type: "mappings", name:selectedTemplate, comments, dispatch, mode:"view", folding: isFolding})}
                                 </Box>
                             </CardContent>
                         </Card>

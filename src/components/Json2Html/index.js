@@ -86,7 +86,7 @@ function SettingsJson2html(settings) {
     )
 }
 
-function MappingsJson2html(json, name, comments, dispatch, mode) {
+function MappingsJson2html(json, name, comments, dispatch, mode, folding) {
     
     let comment = {};
     if(comments && comments.length > 0){
@@ -102,32 +102,15 @@ function MappingsJson2html(json, name, comments, dispatch, mode) {
         comment.name = name;
     }
 
-    const topFields = [
-        {title: "타입", key: "type", component: (val) => {return val}},
-        // {title: "색인", key: "enabled", component: (val) => {return <Checkbox style={{cursor: "default"}} checked={val||true}/>}},
-        {title: "색인", key: "enabled", component: (val) => {
-            if (val !== undefined && val !== null && val === false) {
-                return (
-                    <React.Fragment>
-                        <Checkbox style={{cursor: "default"}} checked={false} />
-                    </React.Fragment>
-                )
-            } else {
-                return (
-                    <React.Fragment>
-                        <Checkbox style={{cursor: "default"}} checked={true}/>
-                    </React.Fragment>
-                )
-            }
-        }},
-        {title: "분석기", key: "analyzer", component: (val) => {return val}},
-        {title: "copy_to", key: "copy_to", component: (val) => {return val}},
-        {title: "ignore_above", key: "ignore_above", component: (val) => {return val}},
-        {title: "null_value", key: "null_value", component: (val) => {return val}},
-        {title: "doc_values", key: "doc_values", component: (val) => {return val}},
-        {title: "similarity", key: "similarity", component: (val) => {return val||""}},
-        {title: "term_vector", key: "term_vector", component: (val) => {return val}},
-        {title: "store", key: "store", component: (val) => {
+    let topFields = []
+    console.log(mode, folding)
+    if(mode === 'view' && folding){
+        console.log("view, folding");
+        
+        topFields = [
+            {title: "타입", key: "type", component: (val) => {return val}},
+            // {title: "색인", key: "enabled", component: (val) => {return <Checkbox style={{cursor: "default"}} checked={val||true}/>}},
+            {title: "색인", key: "enabled", component: (val) => {
                 if (val !== undefined && val !== null && val === false) {
                     return (
                         <React.Fragment>
@@ -141,10 +124,54 @@ function MappingsJson2html(json, name, comments, dispatch, mode) {
                         </React.Fragment>
                     )
                 }
-            // return <Checkbox style={{cursor: "default"}} checked={val||true}/>
-        }}
-    ]
-
+            }},
+            {title: "분석기", key: "analyzer", component: (val) => {return val}},
+        ]
+    }else{
+        console.log("else");
+        topFields = [
+            {title: "타입", key: "type", component: (val) => {return val}},
+            // {title: "색인", key: "enabled", component: (val) => {return <Checkbox style={{cursor: "default"}} checked={val||true}/>}},
+            {title: "색인", key: "enabled", component: (val) => {
+                if (val !== undefined && val !== null && val === false) {
+                    return (
+                        <React.Fragment>
+                            <Checkbox style={{cursor: "default"}} checked={false} />
+                        </React.Fragment>
+                    )
+                } else {
+                    return (
+                        <React.Fragment>
+                            <Checkbox style={{cursor: "default"}} checked={true}/>
+                        </React.Fragment>
+                    )
+                }
+            }},
+            {title: "분석기", key: "analyzer", component: (val) => {return val}},
+            {title: "copy_to", key: "copy_to", component: (val) => {return val}},
+            {title: "ignore_above", key: "ignore_above", component: (val) => {return val}},
+            {title: "null_value", key: "null_value", component: (val) => {return val}},
+            {title: "doc_values", key: "doc_values", component: (val) => {return val}},
+            {title: "similarity", key: "similarity", component: (val) => {return val||""}},
+            {title: "term_vector", key: "term_vector", component: (val) => {return val}},
+            {title: "store", key: "store", component: (val) => {
+                    if (val !== undefined && val !== null && val === false) {
+                        return (
+                            <React.Fragment>
+                                <Checkbox style={{cursor: "default"}} checked={false} />
+                            </React.Fragment>
+                        )
+                    } else {
+                        return (
+                            <React.Fragment>
+                                <Checkbox style={{cursor: "default"}} checked={true}/>
+                            </React.Fragment>
+                        )
+                    }
+                // return <Checkbox style={{cursor: "default"}} checked={val||true}/>
+            }}
+        ]
+    }
 
     const flatJsonMap = flat(json['properties'] ? json['properties'] : json)
 
@@ -291,7 +318,7 @@ function MappingsJson2html(json, name, comments, dispatch, mode) {
     )
 }
 
-function Render({json, type, name, comments, dispatch, mode}) {
+function Render({json, type, name, comments, dispatch, mode, folding}) {
     let validJson = json
     try {
         if (typeof json === 'string') {
@@ -302,7 +329,7 @@ function Render({json, type, name, comments, dispatch, mode}) {
     }
 
     if (validJson && type === "mappings") {
-        return MappingsJson2html(validJson, name, comments, dispatch, mode)
+        return MappingsJson2html(validJson, name, comments, dispatch, mode, folding)
     } else if (validJson && type === "settings") {
         return SettingsJson2html(validJson)
     } else {
