@@ -144,24 +144,24 @@ function View({ dispatch, authUser, template, templates, comments}) {
                                 color={"primary"}
                                 onClick={() => history.push(`${selectedTemplate}/edit`)}
                             >수정</Button>
-                            <Button variant="outlined"
+                            {/* <Button variant="outlined"
                                 onClick={() => {
                                     history.goBack();
                                 }}
                                 ml={1}
-                            >뒤로</Button>
+                            >뒤로</Button> */}
                         </Box> :
                         <Box align={'right'}>
                             <Button variant="outlined"
                                     color={"primary"}
                                     disabled
                             >수정</Button>
-                            <Button variant="outlined"
+                            {/* <Button variant="outlined"
                                 onClick={() => {
                                     history.goBack();
                                 }}
                                 ml={1}
-                            >뒤로</Button>
+                            >뒤로</Button> */}
                         </Box>
                     }
                     

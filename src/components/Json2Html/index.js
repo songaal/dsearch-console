@@ -103,10 +103,7 @@ function MappingsJson2html(json, name, comments, dispatch, mode, folding) {
     }
 
     let topFields = []
-    console.log(mode, folding)
     if(mode === 'view' && folding){
-        console.log("view, folding");
-        
         topFields = [
             {title: "타입", key: "type", component: (val) => {return val}},
             // {title: "색인", key: "enabled", component: (val) => {return <Checkbox style={{cursor: "default"}} checked={val||true}/>}},
@@ -128,7 +125,6 @@ function MappingsJson2html(json, name, comments, dispatch, mode, folding) {
             {title: "분석기", key: "analyzer", component: (val) => {return val}},
         ]
     }else{
-        console.log("else");
         topFields = [
             {title: "타입", key: "type", component: (val) => {return val}},
             // {title: "색인", key: "enabled", component: (val) => {return <Checkbox style={{cursor: "default"}} checked={val||true}/>}},
@@ -197,7 +193,7 @@ function MappingsJson2html(json, name, comments, dispatch, mode, folding) {
                     topFields.map(field => <th key={field['title']}>{field['title']}</th>)
                 }
                 <th>기타설정</th>
-                <th>설명</th>
+                <th >설명</th>
             </tr>
             </thead>
             <tbody>
@@ -244,14 +240,16 @@ function MappingsJson2html(json, name, comments, dispatch, mode, folding) {
                                         mappingName.includes(".") ? <></> :
                                             comment.comments === undefined || comment.comments === null  ? 
                                                 <TextField 
-                                                    width="100%"
+                                                    fullWidth
                                                     onKeyPress={(e) => {
                                                         // if(e.key =='Enter'){
                                                             if(comment.comments == undefined){
                                                                 comment.comments = {};
                                                             }
+
                                                             let n = mappingName + "";
                                                             comment.comments[n] = e.target.value;
+                                                            console.log(comment);
                                                             dispatch(addCommentsAction({"id": null, "name": name, "updatedComment": comment}))
                                                                 .then((res) => {
                                                                     dispatch(setIndexTemplateCommentsAction())
@@ -266,6 +264,7 @@ function MappingsJson2html(json, name, comments, dispatch, mode, folding) {
                                                         }
                                                         let n = mappingName + "";
                                                         comment.comments[n] = e.target.value;
+                                                        console.log(comment);
                                                         dispatch(addCommentsAction({"id": null, "name": name, "updatedComment": comment}))
                                                             .then((res) => {
                                                                 dispatch(setIndexTemplateCommentsAction())
@@ -276,12 +275,17 @@ function MappingsJson2html(json, name, comments, dispatch, mode, folding) {
                                                     key={mappingName}
                                                     defaultValue={""} /> : 
                                                 <TextField 
-                                                    width="100%"
+                                                    fullWidth
                                                     onKeyPress={
                                                         (e) => {
                                                             // if(e.key =='Enter'){
+                                                                if(comment.comments == undefined){
+                                                                    comment.comments = {};
+                                                                }
+
                                                                 let n = mappingName + "";
                                                                 comment.comments[n] = e.target.value;
+                                                                console.log(comment);
                                                                 dispatch(addCommentsAction({"id": comment.id, "name": name, "updatedComment": comment}))
                                                                     .then((res) => {
                                                                         dispatch(setIndexTemplateCommentsAction())
@@ -297,6 +301,7 @@ function MappingsJson2html(json, name, comments, dispatch, mode, folding) {
                                                         }
                                                         let n = mappingName + "";
                                                         comment.comments[n] = e.target.value;
+                                                        console.log(comment);
                                                         dispatch(addCommentsAction({"id": null, "name": name, "updatedComment": comment}))
                                                             .then((res) => {
                                                                 dispatch(setIndexTemplateCommentsAction())
