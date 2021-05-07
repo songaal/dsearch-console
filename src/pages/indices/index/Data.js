@@ -13,7 +13,7 @@ function Data() {
     return (
         <React.Fragment>
 
-            <FormControl component="fieldset">
+            <FormControl component="fieldset" style={{marginTop: "20px"}}>
                 <RadioGroup row aria-label="position" name="position" defaultValue="top">
                     <FormControlLabel value="source" checked={chk === "source"} onChange={handleRadioChange}
                                       control={<Radio color="primary"/>} label="기본"/>
@@ -22,7 +22,7 @@ function Data() {
                 </RadioGroup>
             </FormControl>
 
-            <Box mt={2}>
+            <Box mt={0}>
                 {
                     chk === "source" ? <DataEditTable/> : <IndexedDataTable />
                 }

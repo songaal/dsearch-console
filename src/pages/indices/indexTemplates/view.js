@@ -64,7 +64,7 @@ function View({ dispatch, authUser, template, templates, comments}) {
     const [mappingMode, setMappingMode] = useState("form")
     const [settingMode, setSettingMode] = useState("form")
 
-    const [isFolding, setIsFolding] = useState(true);
+    const [detail, setDetail] = useState(false);
     const [mappingsJson, setMappingsJson] = useState("")
     const [settingsJson, setSettingsJson] = useState("")
 
@@ -205,11 +205,11 @@ function View({ dispatch, authUser, template, templates, comments}) {
                     </RadioGroup>
                     {
                         mappingMode === 'form' ? 
-                            <FormControlLabel value="접기"
-                                onChange={(e) => {setIsFolding(e.target.checked)}}
-                                checked={isFolding}
+                            <FormControlLabel value="상세보기"
+                                onChange={(e) => {setDetail(e.target.checked)}}
+                                checked={detail}
                                 control={<Checkbox color="primary"/>}
-                                label="접기"/> 
+                                label="상세보기"/> 
                             : <></>
                     }
                 </FormControl>
@@ -218,7 +218,7 @@ function View({ dispatch, authUser, template, templates, comments}) {
                         <Card>
                             <CardContent m={0}>
                                 <Box style={{overflow: "auto", minWidth: "700px"}}>
-                                    {Json2html({json: mappingsJson, type: "mappings", name:selectedTemplate, comments, dispatch, mode:"view", folding: isFolding})}
+                                    {Json2html({json: mappingsJson, type: "mappings", name:selectedTemplate, comments, dispatch, mode:"view", detail: detail})}
                                 </Box>
                             </CardContent>
                         </Card>

@@ -86,7 +86,7 @@ function SettingsJson2html(settings) {
     )
 }
 
-function MappingsJson2html(json, name, comments, dispatch, mode, folding) {
+function MappingsJson2html(json, name, comments, dispatch, mode, detail) {
     
     let comment = {};
     if(comments && comments.length > 0){
@@ -103,7 +103,7 @@ function MappingsJson2html(json, name, comments, dispatch, mode, folding) {
     }
 
     let topFields = []
-    if(mode === 'view' && folding){
+    if(mode === 'view' && !detail){
         topFields = [
             {title: "타입", key: "type", component: (val) => {return val}},
             // {title: "색인", key: "enabled", component: (val) => {return <Checkbox style={{cursor: "default"}} checked={val||true}/>}},
@@ -323,7 +323,7 @@ function MappingsJson2html(json, name, comments, dispatch, mode, folding) {
     )
 }
 
-function Render({json, type, name, comments, dispatch, mode, folding}) {
+function Render({json, type, name, comments, dispatch, mode, detail}) {
     let validJson = json
     try {
         if (typeof json === 'string') {
@@ -334,7 +334,7 @@ function Render({json, type, name, comments, dispatch, mode, folding}) {
     }
 
     if (validJson && type === "mappings") {
-        return MappingsJson2html(validJson, name, comments, dispatch, mode, folding)
+        return MappingsJson2html(validJson, name, comments, dispatch, mode, detail)
     } else if (validJson && type === "settings") {
         return SettingsJson2html(validJson)
     } else {

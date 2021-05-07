@@ -206,7 +206,7 @@ function Setting({ dispatch, index, authUser, settings }) {
 
             <Grid container>
                 <Grid item xs={10}>
-                    <FormControl component="fieldset">
+                    <FormControl component="fieldset" style={{marginTop: "20px"}}>
                         <RadioGroup row aria-label="position" name="position" defaultValue="top">
                             <FormControlLabel value="form" checked={chk === "form"} onChange={handleRadioChange} control={<Radio color="primary" />} label="폼" />
                             <FormControlLabel value="json" checked={chk === "json"} onChange={handleRadioChange} control={<Radio color="primary" />} label="json" />
