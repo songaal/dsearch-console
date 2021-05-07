@@ -185,10 +185,7 @@ function View({ dispatch, authUser, template, templates, comments}) {
                      onChange={handleTabChane}
             />
 
-            <br/>
-
-
-            <Box display={tabIndex === 0 ? "block" : "none"}>
+            <Box display={tabIndex === 0 ? "block" : "none"} style={{marginTop: "20px"}}>
                 {/* 맵핑 */}
                 <FormControl component="fieldset">
                     <RadioGroup row onChange={event => setMappingMode(event.target.value)}>
@@ -238,7 +235,7 @@ function View({ dispatch, authUser, template, templates, comments}) {
                 }
             </Box>
 
-            <Box display={tabIndex === 1 ? "block" : "none"}>
+            <Box display={tabIndex === 1 ? "block" : "none"} style={{marginTop: "20px"}}>
                 {/* 설정 */}
                 <FormControl component="fieldset">
                     <RadioGroup row onChange={event => setSettingMode(event.target.value)}>
