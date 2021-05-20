@@ -43,7 +43,8 @@ import {
     addIndexTemplateAction,
     deleteIndexTemplateAction,
     setIndexTemplateAction,
-    setIndexTemplatesAction
+    setIndexTemplatesAction,
+    setIndexTemplateCommentsAction,
 } from "../../../redux/actions/indexTemplateActions";
 
 const useStyles = makeStyles((theme) => ({
@@ -66,7 +67,7 @@ const tabs = [{label: "매핑"}, {label: "셋팅"}]
 
 let message = ""
 
-function Edit({dispatch, template, templates}) {
+function Edit({dispatch, template, templates, comments}) {
     const location = useLocation();
     const history = useHistory();
     const classes = useStyles();
@@ -153,6 +154,9 @@ function Edit({dispatch, template, templates}) {
         }
     }, [mappingMode, settingMode]) // eslint-disable-line react-hooks/exhaustive-deps
 
+    useEffect(() => {
+        dispatch(setIndexTemplateCommentsAction())
+    }, []) 
 
     function handleTemplateChange(template) {
         history.push(`../${template}/edit`)
@@ -312,7 +316,10 @@ function Edit({dispatch, template, templates}) {
                         {/*        onClick={handleSubmitClick}*/}
                         {/*>저장</Button>*/}
                         <Button variant="outlined"
-                                onClick={() => history.push("../../indices-templates")}
+                                onClick={() => {
+                                    history.push(`../../indices-templates/${selectedTemplate}`)
+                                    // history.push("../../indices-templates")
+                                }}
                                 ml={1}
                         >취소</Button>
                     </Box>
@@ -362,7 +369,7 @@ function Edit({dispatch, template, templates}) {
                         <Card>
                             <CardContent m={0}>
                                 <Box style={{overflow: "auto", minWidth: "700px"}}>
-                                    {Json2html({json: mappingsJson, type: "mappings"})}
+                                    {Json2html({json: mappingsJson, type: "mappings", name:selectedTemplate, comments, dispatch, mode:"edit"})}
                                 </Box>
                             </CardContent>
                         </Card>
@@ -494,4 +501,7 @@ function Edit({dispatch, template, templates}) {
     );
 }
 
-export default connect(store => ({...store.indexTemplateReducers}))(Edit);
+export default connect(store => ({
+    authUser: store.dsearchReducers.authUser,
+    ...store.indexTemplateReducers
+}))(Edit);

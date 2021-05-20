@@ -286,8 +286,7 @@ function Settings({ dispatch, authUser, settings }) {
             const item = data.splice(fromIndex, 1)[0];
             data.splice(toIndex, 0, item);
             setSettingsList(data)
-
-            updateSettingList(data, fromIndex, toIndex)
+            if(authUser.role.index) updateSettingList(data, fromIndex, toIndex)
         },
         nodeSelector: 'div',
         handleSelector: 'svg'
@@ -339,11 +338,17 @@ function Settings({ dispatch, authUser, settings }) {
                             <Box align={"center"} style={{ width: "10%", margin: "4px" }}>{item['columns'].filter(c => c['type'] === 'keyword').map(c => c['label']).join("")}</Box>
                             <Box align={"center"} style={{ width: "10%", margin: "4px" }}>{item['columns'].filter(c => c['type'] === 'value').map(c => c['label']).join("")}</Box>
                             <Box align={"center"} style={{ width: "10%" }}>
-                                <Button size={"small"}
+                                {authUser.role.index ? <Button size={"small"}
                                     variant={"outlined"}
                                     style={{ color: red[400] }}
                                     onClick={() => handleOpenRemoveSettingModal(item)}
-                                >삭제</Button>
+                                >삭제</Button> : 
+                                <Button size={"small"}
+                                    variant={"outlined"}
+                                    style={{ color: red[400] }}
+                                    disabled
+                                >삭제</Button>}
+                                
                             </Box>
                         </Box>
                         ))}

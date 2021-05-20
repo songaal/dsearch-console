@@ -37,7 +37,7 @@ export const setIndexResultActions = key => dispatch => client.call({
         }
       }
     ],
-    "size" : 50
+    "size" : 200
     // ,
     // collapse: {
     //   field: "index",

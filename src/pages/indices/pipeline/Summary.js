@@ -93,6 +93,7 @@ function Summary({ dispatch, authUser, list }) {
 
     const name = useRef(null);
     
+    
     const [nameError, setNameError] = useState(false)
     const [modalFlag, setModalFlag] = useState(false)
     const [successFlag, setSuccessFlag] = useState(false)
@@ -295,11 +296,17 @@ function Summary({ dispatch, authUser, list }) {
                                         {authUser.role.index ?
                                             <TableCell align={"center"}>
                                                 <Button variant={"outlined"} color={"primary"} style={{ whiteSpace: "nowrap" }} onClick={()=> openModalEdit(item['title'])} >수정</Button>
-                                            </TableCell> : <TableCell></TableCell> }
+                                            </TableCell> : 
+                                            <TableCell>
+                                                <Button variant={"outlined"} color={"primary"} style={{ whiteSpace: "nowrap" }} disabled >수정</Button>
+                                            </TableCell> }
                                         {authUser.role.index ?
                                             <TableCell align={"center"}>
                                                 <Button variant="outlined" style={{ whiteSpace: "nowrap", borderColor:"red", color: "red"}} onClick={() => openModalDelete(item['title'])}>삭제</Button>
-                                            </TableCell> : <TableCell></TableCell> }
+                                            </TableCell> : 
+                                            <TableCell>
+                                                <Button variant="outlined" style={{ whiteSpace: "nowrap", borderColor:"red", color: "red"}} disabled>삭제</Button>
+                                            </TableCell> }
                                     </TableRow>
                                 })
                         }
@@ -310,12 +317,6 @@ function Summary({ dispatch, authUser, list }) {
                 {successFlag ? <MuiAlert elevation={6} variant="filled" severity="info"> {message} {" 성공"} </MuiAlert>
                     : <MuiAlert elevation={6} variant="filled" severity="error"> {message}  {" 실패"} </MuiAlert> }
             </Snackbar>
-
-            {/*<Card>*/}
-            {/*    <CardContent>*/}
-            {/*        */}
-            {/*    </CardContent>*/}
-            {/*</Card>*/}
 
             <Dialog open={modalFlag}
                     fullWidth

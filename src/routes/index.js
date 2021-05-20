@@ -1,7 +1,7 @@
 import React from "react"
 import async from "../components/Async"
 import * as Icon from "@material-ui/icons";
-
+import BackupIcon from '@material-ui/icons/Backup';
 // eslint-disable-next-line no-restricted-globals
 const clusterContext = location.pathname.substring(0, location.pathname.indexOf("/", 1))
 
@@ -49,6 +49,7 @@ const ReferenceUIResult = async(() => import("../pages/search/referenceUI/result
 const ServerManagement = async(() => import("../pages/management/serverManagement"), { time: 0 });
 const ApiManagement = async(() => import("../pages/management/apiManagement"), { time: 500 });
 const ClusterSettings = async(() => import("../pages/management/clusterSettings"), { time: 0 });
+const Migration = async(() => import("../pages/management/migration"), { time: 0 });
 
 // 인트로 라우트
 
@@ -99,6 +100,7 @@ const managementRoutes = [
     {header: "관리", id: "서버", path: `${clusterContext}/management/server`, icon: <Icon.Memory/>, component: ServerManagement, children: null},
     {id: "API", path: `${clusterContext}/management/api`, icon: <Icon.CallSplit/>, component: ApiManagement, children: null},
     {id: "클러스터설정", path: `${clusterContext}/management/settings`, icon: <Icon.Settings/>, component: ClusterSettings, children: null},
+    {id: "마이그레이션", path: `${clusterContext}/management/migration`, icon: <Icon.Backup/>, component: Migration, children: null},
 ];
 
 // dashboard layout routing

@@ -86,7 +86,7 @@ const tabs = [
     {label: "데이터", component: Async(() => import("./Data"), { time: 1000 })},
 ];
 
-function Index({indexInfoList, settings}) {
+function Index({indexInfoList, settings, authUser}) {
     const classes = useStyles();
     const dispatch = useDispatch();
     const location = useLocation();
@@ -224,7 +224,7 @@ function Index({indexInfoList, settings}) {
                             process ?
                                 <CircularProgress color="secondary"/>
                                 :
-                                <Button
+                                authUser.role.index ? <Button
                                     aria-controls="customized-menu"
                                     aria-haspopup="true"
                                     variant="contained"
@@ -233,7 +233,16 @@ function Index({indexInfoList, settings}) {
                                     onClick={handleClick}
                                 >
                                     관리
-                                </Button>
+                                </Button>:<Button
+                                aria-controls="customized-menu"
+                                aria-haspopup="true"
+                                variant="contained"
+                                color="primary"
+                                style={{minWidth: "150px"}}
+                                disabled
+                            >
+                                관리
+                            </Button>
                         }
                         <StyledMenu
                             id="customized-menu"
@@ -330,4 +339,7 @@ function Index({indexInfoList, settings}) {
     );
 }
 
-export default connect(store => ({ ...store.indicesReducers }))(Index);
+export default connect(store => ({
+    authUser: store.dsearchReducers.authUser,
+     ...store.indicesReducers 
+    }))(Index);

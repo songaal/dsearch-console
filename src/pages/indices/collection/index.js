@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from "react";
-import {connect} from "react-redux";
-import {useHistory} from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
+import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import Helmet from 'react-helmet';
 
@@ -23,17 +23,22 @@ import {
     TableRow,
     TableSortLabel,
     TextField,
+    Menu,
+    MenuItem,
+    FormControl,
+    LinearProgress,
     Typography as MuiTypography,
 } from "@material-ui/core";
-import {makeStyles} from '@material-ui/core/styles';
-import {positions, spacing} from "@material-ui/system";
+import { ArrowDropDown } from "@material-ui/icons";
+import { makeStyles } from '@material-ui/core/styles';
+import { positions, spacing } from "@material-ui/system";
 import {
     addCollectionList,
     setCatIndexTemplateList,
     setCollectionIndexSuffix,
     setCollectionList,
 } from "../../../redux/actions/collectionActions";
-import {setIndexTemplatesAction} from "../../../redux/actions/indexTemplateActions";
+import { setIndexTemplatesAction } from "../../../redux/actions/indexTemplateActions";
 
 const Divider = styled(MuiDivider)(spacing, positions);
 const Typography = styled(MuiTypography)(spacing, positions);
@@ -66,17 +71,17 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const fields = [
-    { id: "no", label: "#", sorting: true},
-    { id: "name", label: "이름", sorting: true},
-    { id: "id", label: "아이디", sorting: true},
-    { id: "index", label: "선택 인덱스", sorting: true},
-    { id: "shard", label: "샤드", sorting: true},
+    { id: "no", label: "#", sorting: true },
+    { id: "name", label: "이름", sorting: true },
+    { id: "id", label: "아이디", sorting: true },
+    { id: "index", label: "선택 인덱스", sorting: true },
+    { id: "shard", label: "샤드", sorting: true },
     { id: "docCount", label: "문서 수", sorting: true },
     { id: "size", label: "용량", sorting: true },
     { id: "autoRun", label: "자동시작", sorting: true },
 ]
 
-function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionList, catIndexTemplateList}) {
+function Collection({ dispatch, authUser, indexSuffixA, indexSuffixB, collectionList, catIndexTemplateList }) {
     const history = useHistory();
     const classes = useStyles();
     const [openAddModal, setOpenAddModal] = useState(false)
@@ -88,7 +93,7 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
     // const [applyIndexTemplates, setApplyIndexTemplates] = useState([])
     const [createNameError, setCreateNameError] = useState(false)
     const [createBaseIdError, setCreateBaseIdError] = useState(false)
-    const [modalMessage,setModalMessage] = useState(null)
+    const [modalMessage, setModalMessage] = useState(null)
     const [process, setProcess] = useState(false)
     const [addBtnDisabled, setAddBtnDisabled] = useState(true)
 
@@ -163,11 +168,11 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
                     }
                 })
             })
-            if(!tmpMatched.find(matched => matched['name'] === (event.target.value + indexSuffixA))) {
-                tmpMatched.push({name: event.target.value + indexSuffixA, index_patterns: [event.target.value + indexSuffixA]})
+            if (!tmpMatched.find(matched => matched['name'] === (event.target.value + indexSuffixA))) {
+                tmpMatched.push({ name: event.target.value + indexSuffixA, index_patterns: [event.target.value + indexSuffixA] })
             }
             if (!tmpMatched.find(matched => matched['name'] === event.target.value + indexSuffixB)) {
-                tmpMatched.push({name: event.target.value + indexSuffixA, index_patterns: [event.target.value + indexSuffixB]})
+                tmpMatched.push({ name: event.target.value + indexSuffixA, index_patterns: [event.target.value + indexSuffixB] })
             }
 
             // console.log(tmpMatched)
@@ -249,54 +254,55 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
         }
     }
 
-    function convertHumanReadableCount(docSize){
-        let size = docSize+"";
-        if(size.length <= 3) {
+    function convertHumanReadableCount(docSize) {
+        let size = docSize + "";
+        if (size.length <= 3) {
             return size;
         }
         var count = Math.ceil(size.length / 3);
 
         var newSize = [];
-        for(var i=0; i<count; i++) {
-            newSize.unshift(size.slice(-3*(i+1), size.length-(3*i)));
+        for (var i = 0; i < count; i++) {
+            newSize.unshift(size.slice(-3 * (i + 1), size.length - (3 * i)));
         }
         return newSize.join(',');
     }
 
     const viewCollectionList = collectionList.sort((a, b) => {
-        if(a['name'] > b['name']){
+        if (a['name'] > b['name']) {
             return 1;
-        }else if(a['name'] < b['name']){
+        } else if (a['name'] < b['name']) {
             return -1;
-        }else{
+        } else {
             return 0;
         }
-    }).map((c, i) => ({...c, no: i }))
+    }).map((c, i) => ({ ...c, no: i }))
     return (
         <React.Fragment>
-            <Helmet title="컬렉션"/>
+            <Helmet title="컬렉션" />
 
-            <br/>
+            <br />
 
             <Typography variant="h3"
-                        gutterBottom
-                        display="inline"
+                gutterBottom
+                display="inline"
             >
                 컬렉션
             </Typography>
 
-            <Divider my={6}/>
+            <Divider my={6} />
 
             <Box align={'right'}>
-                {authUser.role.index ? <Link className={classes.link}
-                      onClick={toggleOpenAddModal}
-                      color={"primary"}
-                >
-                    컬렉션 생성
-                </Link> : <></>}
+            {authUser.role.index ?
+                        <Link className={classes.link}
+                            onClick={toggleOpenAddModal}
+                            color={"primary"}
+                        >
+                            컬렉션 생성
+                        </Link> : <></>}
             </Box>
 
-            <br/>
+            <br />
 
             <TableContainer component={Paper}>
                 <Table className={classes.table} aria-label="simple table">
@@ -351,8 +357,8 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
                                 const id = collection['id']
                                 const name = collection['name']
                                 const baseId = collection['baseId']
-                                const indexA = collection['indexA']||{}
-                                const indexB = collection['indexB']||{}
+                                const indexA = collection['indexA'] || {}
+                                const indexB = collection['indexB'] || {}
 
                                 const indexAAlias = indexA['aliases'] && Object.keys(indexA['aliases']).find(alias => alias === baseId)
                                 const isActiveA = indexAAlias !== undefined && indexAAlias !== null
@@ -370,48 +376,48 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
                                             <Link className={classes.link} onClick={() => moveDetail(id)}>{baseId}</Link>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Link style={{display: isActiveA ? "block" : "none"}}
-                                                  onClick={() => moveIndex(indexA['uuid'])}
-                                                  className={classes.link} >{indexA['index']}</Link>
-                                            <Link style={{display: isActiveB ? "block": "none"}}
-                                                  onClick={() => moveIndex(indexB['uuid'])}
-                                                  className={classes.link} >{indexB['index']}</Link>
+                                            <Link style={{ display: isActiveA ? "block" : "none" }}
+                                                onClick={() => moveIndex(indexA['uuid'])}
+                                                className={classes.link} >{indexA['index']}</Link>
+                                            <Link style={{ display: isActiveB ? "block" : "none" }}
+                                                onClick={() => moveIndex(indexB['uuid'])}
+                                                className={classes.link} >{indexB['index']}</Link>
 
-                                            <Box style={{display: isActiveA === false && isActiveB === false ? "block" : "none"}}> - </Box>
+                                            <Box style={{ display: isActiveA === false && isActiveB === false ? "block" : "none" }}> - </Box>
 
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Box style={{display: isActiveA ? "block" : "none"}}>
-                                                P[{indexA['pri']||'-'}] R[{indexA['rep']||'-'}]
+                                            <Box style={{ display: isActiveA ? "block" : "none" }}>
+                                                P[{indexA['pri'] || '-'}] R[{indexA['rep'] || '-'}]
                                             </Box>
-                                            <Box style={{display: isActiveB ? "block" : "none"}}>
-                                                P[{indexB['pri']||'-'}] R[{indexB['rep']||'-'}]
+                                            <Box style={{ display: isActiveB ? "block" : "none" }}>
+                                                P[{indexB['pri'] || '-'}] R[{indexB['rep'] || '-'}]
                                             </Box>
-                                            <Box style={{display: isActiveA === false && isActiveB === false ? "block" : "none"}}> - </Box>
+                                            <Box style={{ display: isActiveA === false && isActiveB === false ? "block" : "none" }}> - </Box>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Box style={{display: isActiveA ? "block" : "none"}}>
-                                                {convertHumanReadableCount(indexA['docsCount']||'-')}
+                                            <Box style={{ display: isActiveA ? "block" : "none" }}>
+                                                {convertHumanReadableCount(indexA['docsCount'] || '-')}
                                             </Box>
-                                            <Box style={{display: isActiveB ? "block" : "none"}}>
-                                                {convertHumanReadableCount(indexB['docsCount']||'-')}
+                                            <Box style={{ display: isActiveB ? "block" : "none" }}>
+                                                {convertHumanReadableCount(indexB['docsCount'] || '-')}
                                             </Box>
-                                            <Box style={{display: isActiveA === false && isActiveB === false ? "block" : "none"}}> - </Box>
+                                            <Box style={{ display: isActiveA === false && isActiveB === false ? "block" : "none" }}> - </Box>
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Box style={{display: isActiveA ? "block" : "none"}}>
-                                                {indexA['storeSize']||'-'}
+                                            <Box style={{ display: isActiveA ? "block" : "none" }}>
+                                                {indexA['storeSize'] || '-'}
                                             </Box>
-                                            <Box style={{display: isActiveB ? "block" : "none"}}>
-                                                {indexB['storeSize']||'-'}
+                                            <Box style={{ display: isActiveB ? "block" : "none" }}>
+                                                {indexB['storeSize'] || '-'}
                                             </Box>
-                                            <Box style={{display: isActiveA === false && isActiveB === false ? "block" : "none"}}> - </Box>
+                                            <Box style={{ display: isActiveA === false && isActiveB === false ? "block" : "none" }}> - </Box>
                                         </TableCell>
                                         <TableCell align="center">
                                             <Box>
 
                                                 {
-                                                    (collection['scheduled']||false) ? `활성화 (${collection['cron']})` : "비활성화"
+                                                    (collection['scheduled'] || false) ? `활성화 (${collection['cron']})` : "비활성화"
                                                 }
 
                                                 {/*<Tooltip title="Delete" className={classes.fab}>*/}
@@ -429,10 +435,9 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
                 </Table>
             </TableContainer>
 
-
             <Dialog open={openAddModal}
-                    fullWidth
-                    onClose={toggleOpenAddModal}
+                fullWidth
+                onClose={toggleOpenAddModal}
             >
                 <DialogTitle>
                     컬렉션 추가
@@ -444,11 +449,11 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
                         </Grid>
                         <Grid item xs={8}>
                             <TextField fullWidth
-                                       autoFocus
-                                       value={createName}
-                                       onChange={checkCollectionName}
-                                       placeholder={"상품컬렉션"}
-                                       error={createNameError}
+                                autoFocus
+                                value={createName}
+                                onChange={checkCollectionName}
+                                placeholder={"상품컬렉션"}
+                                error={createNameError}
                             />
                         </Grid>
                     </Grid>
@@ -458,10 +463,10 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
                         </Grid>
                         <Grid item xs={8}>
                             <TextField fullWidth
-                                       value={createBaseId}
-                                       onChange={handleChangeBaseId}
-                                       placeholder={"product-collection"}
-                                       error={createBaseIdError}
+                                value={createBaseId}
+                                onChange={handleChangeBaseId}
+                                placeholder={"product-collection"}
+                                error={createBaseIdError}
                             />
                         </Grid>
                     </Grid>
@@ -470,7 +475,7 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
                             인덱스 템플릿
                         </Grid>
                         <Grid item xs={8}>
-                            {applyIndexTemplate||""}
+                            {applyIndexTemplate || ""}
                             {/*<ul>*/}
                             {/*    {*/}
                             {/*        applyIndexTemplates.map((applyIndexTemplate, index) => {*/}
@@ -493,7 +498,7 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
                             {createBaseId !== "" ? createBaseId + indexSuffixB : ""}
                         </Grid>
                     </Grid>
-                    <Grid container my={3} style={{display: modalMessage ? "none" : "block", color: "red", textAlign: "center"}}>
+                    <Grid container my={3} style={{ display: modalMessage ? "none" : "block", color: "red", textAlign: "center" }}>
                         <Grid item xs={12}>
                             {modalMessage}
                         </Grid>
@@ -502,13 +507,13 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleAddCollection}
-                            disabled={process || addBtnDisabled}
-                            variant={"outlined"}
-                            color={"primary"}
+                        disabled={process || addBtnDisabled}
+                        variant={"outlined"}
+                        color={"primary"}
                     >추가</Button>
                     <Button onClick={toggleOpenAddModal}
-                            variant={"outlined"}
-                            color={"default"}
+                        variant={"outlined"}
+                        color={"default"}
                     >취소</Button>
                 </DialogActions>
             </Dialog>
@@ -519,6 +524,6 @@ function Collection({dispatch, authUser, indexSuffixA, indexSuffixB, collectionL
 
 export default connect(store => ({
     authUser: store.dsearchReducers.authUser,
-    ...store.collectionReducers, 
+    ...store.collectionReducers,
     ...store.indexTemplateReducers
 }))(Collection);

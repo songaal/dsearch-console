@@ -187,6 +187,7 @@ function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetai
 
     const handleToolsClick = () =>{
         let analyzer_contents = keyword.current.value;
+        console.log(analyzer_contents)
 
         let analyzer_select = document.getElementById("analyzer_select");
         let data = {};

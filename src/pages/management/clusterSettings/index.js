@@ -19,29 +19,28 @@ import AntTabs from "../../../components/AntTabs";
 import async from "../../../components/Async";
 import {green, orange} from "@material-ui/core/colors";
 import {connect, useDispatch} from "react-redux";
-import {editClusterFlush, editClusterServerCheck, setClusterServerCheck} from "../../../redux/actions/clusterActions"
+import {editClusterFlush, editClusterServerCheck, setClusterServerCheck, editClusterServerCheckAfterScheduleFlush} from "../../../redux/actions/clusterActions"
 
 const Divider = styled(MuiDivider)(spacing);
 
-
-function ClusterSettings({serverCheck}) {
+function ClusterSettings({authUser, serverCheck}) {
     const dispatch = useDispatch()
     const [openServerCheck, setOpenServerCheck] = React.useState(false)
 
-
     function handleServerCheck(flag) {
         const enable = flag ? "none" : "all"
-
         dispatch(editClusterServerCheck(enable))
             .then(() => {
                 if (flag) {
                     editClusterFlush()
                 }
+                dispatch(editClusterServerCheckAfterScheduleFlush(flag))
                 dispatch(setClusterServerCheck())
                 setOpenServerCheck(false)
             })
     }
 
+    console.log(authUser.role.manage)
     return (
         <React.Fragment>
             <Helmet title="클러스터설정"/>
@@ -53,20 +52,35 @@ function ClusterSettings({serverCheck}) {
                 </Grid>
                 <Grid item xs={6}>
                     <Box align={"right"}>
-                        <Button variant={"outlined"}
-                                style={{backgroundColor: green['500'], color: 'white', display: serverCheck ?  "block" : "none"}}
-                                size={"small"}
-                                onClick={() => handleServerCheck(false)}
+                        {authUser.role.manage ? <Button variant={"outlined"}
+                            style={{ backgroundColor: green['500'], color: 'white', display: serverCheck ? "block" : "none" }}
+                            size={"small"}
+                            onClick={() => handleServerCheck(false)}
                         >
                             클러스터 점검완료
-                        </Button>
-                        <Button variant={"outlined"}
-                                style={{backgroundColor: orange['500'], color: 'white', display: serverCheck ? "none" : "block"}}
+                        </Button> :
+                            <Button variant={"outlined"}
+                                style={{ backgroundColor: green['500'], color: 'white', display: serverCheck ? "block" : "none" }}
                                 size={"small"}
-                                onClick={() => setOpenServerCheck(true)}
+                                disabled
+                            >
+                                클러스터 점검완료
+                        </Button>}
+
+                        {authUser.role.manage ? <Button variant={"outlined"}
+                            style={{ backgroundColor: orange['500'], color: 'white', display: serverCheck ? "none" : "block", disabled: authUser.role.manage }}
+                            size={"small"}
+                            onClick={() => setOpenServerCheck(true)}
                         >
                             클러스터 점검시작
-                        </Button>
+                        </Button> :
+                            <Button variant={"outlined"}
+                                disabled
+                                style={{ backgroundColor: orange['500'], color: 'white', display: serverCheck ? "none" : "block", disabled: authUser.role.manage }}
+                                size={"small"}
+                            >
+                                클러스터 점검시작
+                        </Button>}
                     </Box>
                 </Grid>
             </Grid>
@@ -104,5 +118,6 @@ function ClusterSettings({serverCheck}) {
 }
 
 export default connect(store => ({
+    authUser: store.dsearchReducers.authUser,
     serverCheck: store.clusterReducers.serverCheck
 }))(ClusterSettings);

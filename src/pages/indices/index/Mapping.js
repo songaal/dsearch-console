@@ -8,7 +8,7 @@ import {
     Card as MuiCard,
     CardContent,
     FormControl,
-    FormControlLabel,
+    FormControlLabel,Checkbox,
     Radio,
     RadioGroup,
     TextareaAutosize
@@ -117,19 +117,20 @@ const Card = styled(MuiCard)(spacing);
 // }
 
 
-function FormCard({json}) {
+function FormCard({json, detail}) {
     // let dataMap = {}
     // const flatMap = flatten(testJson['properties'] ? testJson['properties'] : testJson)
     // if (json) {
     //     dataMap = parsing(flatten(json['properties'] ? json['properties'] : json))
     // }
     // console.log(json, typeof json)
+
     return (
         <div>
             <Card>
-                <CardContent m={0}>
-                    <Box style={{overflow: "auto", minWidth: "700px"}}>
-                        {Json2html({json: JSON.stringify(json), type: "mappings"})}
+                <CardContent m={2}>
+                    <Box style={{ overflow: "auto", minWidth: "700px" }}>
+                        {Json2html({ json: JSON.stringify(json), type: "mappings", mode: "view", detail: detail })}
                     </Box>
 
 
@@ -219,6 +220,7 @@ function JsonCard({json}) {
 
 function Mapping({mappings}) {
     const [chk, setChk] = React.useState('form');
+    const [detail, setDetail] = React.useState(false);
 
     function handleRadioChange(e) {
         setChk(e.target.value)
@@ -227,19 +229,25 @@ function Mapping({mappings}) {
     return (
         <React.Fragment>
 
-            <FormControl component="fieldset">
+            <FormControl component="fieldset" style={{marginTop: "20px"}}>
                 <RadioGroup row aria-label="position" name="position" defaultValue="top">
                     <FormControlLabel value="form" checked={chk === "form"} onChange={handleRadioChange}
                                       control={<Radio color="primary"/>} label="폼"/>
                     <FormControlLabel value="json" checked={chk === "json"} onChange={handleRadioChange}
                                       control={<Radio color="primary"/>} label="json"/>
                 </RadioGroup>
+
+                <FormControlLabel value="상세보기"
+                        onChange={(e) => { setDetail(e.target.checked) }}
+                        checked={detail}
+                        control={<Checkbox color="primary" />}
+                        label="상세보기" />
             </FormControl>
 
-            <Box mt={2}>
+            <Box mt={0}>
                 {
                     chk === "form" ?
-                        <FormCard json={mappings}/>
+                        <FormCard json={mappings} detail={detail}/>
                         :
                         <JsonCard json={mappings}/>
                 }

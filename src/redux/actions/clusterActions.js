@@ -90,3 +90,12 @@ export const editClusterFlush = () => dispatch => client.call({
     uri: "/elasticsearch/_flush/synced",
     method: "POST"
 }).then(response => response.data)
+
+
+export const editClusterServerCheckAfterScheduleFlush = (flag) => dispatch => client.call({
+    uri: "/clusters/check",
+    method: "GET",
+    params: {
+        flag: flag
+    }
+})

@@ -156,7 +156,8 @@ function Templates({dispatch, authUser, templates}) {
                                             <Button variant={"outlined"} color={"primary"} onClick={() => history.push(`./indices-templates/${row.name}/edit`)}
                                                   style={{cursor: "pointer"}}>수정</Button>
                                             :
-                                            <></>
+                                            <Button variant={"outlined"} color={"primary"} disabled
+                                                  style={{cursor: "pointer"}}>수정</Button>
                                         }
                                     </TableCell>
                                 </TableRow>

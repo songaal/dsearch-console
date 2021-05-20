@@ -609,7 +609,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                                 // value={esPort}
                                                                 // onChange={e => setEsPort(e.target.value)}
                                                                 fullWidth
-                                                                type={"number"}
+                                                                // type={"number"}
                                                                 placeholder={"9200"}
                                                                 error={invalid['esPort']||false}
                                                         />

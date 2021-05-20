@@ -81,9 +81,6 @@ const getTreeItemsFromData = treeItems => {
       );
     });
   };
-  
-
-  
 
 function ScoreTreeView({details, expand, nodeToggle, description}) {
     return (
@@ -141,8 +138,8 @@ function ResultDocument({result, item, expand, nodeToggle}) {
     })
 
     return (
-        <Table>
-            <TableBody>
+        <Table size="small" style={{margin: "-16px" }}>
+            <TableBody >
                 {
                     dataList.map((data, index) => {
                         let tokenValue = (data['tokens']||[]).map(t => `"${t}"`).join(", ");
@@ -150,16 +147,16 @@ function ResultDocument({result, item, expand, nodeToggle}) {
                         let field = data['field'];
                         return (
                             <TableRow key={"data-" + index}>
-                                <TableCell style={{fontWeight: "bold"}}>{field}</TableCell>
-                                <TableCell>{text}</TableCell>
-                                <TableCell>{tokenValue.length > 0 ? tokenValue : text}</TableCell>
+                                <TableCell align="center" padding="none" style={{fontWeight: "bold", borderLeft: '1px solid #D3D3D3', width: "150px", height: "22px"}}>{field}</TableCell>
+                                <TableCell align="center" padding="none" style={{borderLeft: '1px solid #D3D3D3', borderRight: '1px solid #D3D3D3'}}>{text}</TableCell>
+                                <TableCell align="center" padding="none" style={{borderLeft: '1px solid #D3D3D3', borderRight: '1px solid #D3D3D3'}}>{tokenValue.length > 0 ? tokenValue : text}</TableCell>
                             </TableRow>
                         )
                     })
                 }
                 <TableRow>
-                    <TableCell>점수</TableCell>
-                    <TableCell colSpan={2}>
+                    <TableCell align="center" padding="none" style={{borderLeft: '1px solid #D3D3D3', width: "150px", height: "22px"}}>점수</TableCell>
+                    <TableCell align="center" colSpan={2} padding="none" style={{borderLeft: '1px solid #D3D3D3', borderRight: '1px solid #D3D3D3'}}>
                          <ScoreTreeView description={item._explanation.description}
                                         details={item._explanation.details}
                                         expand={expand}
@@ -177,7 +174,7 @@ function RankingTuningResults({pageNum, result, expand, nodeToggle, errorMessage
 
     if (errorMessage.length > 0) {
         return (
-            <Table style={{ margin: "9px", overflow: "scroll" }}>
+            <Table style={{ margin: "2px", overflow: "scroll" }}>
                 <TableHead>
                     <TableRow>
                         <TableCell align="center"> 오류. </TableCell>
@@ -196,10 +193,10 @@ function RankingTuningResults({pageNum, result, expand, nodeToggle, errorMessage
         )
     } else {
         return (
-            <Table style={{ margin: "9px", overflow: "scroll" }}>
+            <Table style={{ overflow: "scroll" }}>
                 <TableHead>
                     <TableRow>
-                        <TableCell align="right"> # </TableCell>
+                        <TableCell align="center"> # </TableCell>
                         <TableCell align="center"> 결과 문서 </TableCell>
                     </TableRow>
                 </TableHead>
@@ -209,14 +206,14 @@ function RankingTuningResults({pageNum, result, expand, nodeToggle, errorMessage
                             let number = index + ((pageNum-1)*10) + 1;
                             // return <></>;
                             return (<TableRow key={"a" + number}>
-                                <TableCell style={{fontWeight: "bold"}} align="right">{number}</TableCell>
-                                <TableCell >
+                                <TableCell style={{fontWeight: "bold", width: "60px"}} padding="none" align="center">{number}</TableCell>
+                                <TableCell style={{borderStyle: "none", border: "none"}}>
                                     <ResultDocument result={result} item={item} expand={expand} nodeToggle={nodeToggle}/>
                                 </TableCell>
                             </TableRow>);
                         })
                         : <TableRow>
-                            <TableCell align="right"></TableCell>
+                            <TableCell align="center"></TableCell>
                             <TableCell align="center">
                                 <Typography>현재 검색된 결과가 없습니다.</Typography>
                             </TableCell>
