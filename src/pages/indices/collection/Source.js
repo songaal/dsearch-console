@@ -59,8 +59,23 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const TEMPLATE_LIST = ["ndjson", "csv", "file", "procedure", "database"]
+const TEMPLATE_LIST = ["multipleDumpFile", "ndjson", "csv", "file", "procedure", "database"]
 const TEMPLATE = {
+    "multipleDumpFile":
+`type: "multipleDumpFile"
+pipeLine: "s-prod-pipeline-v3"
+bulkSize: 1000
+dumpFormat: "konan"
+groupSeq: "0,2-3"
+bwlimit: "10240"
+path: "/data/indexFile/M/"
+rsyncIp: "192.168.4.198"
+rsyncPath: "search_data_alti"
+encoding: "CP949"
+procedureSkip: true
+rsyncSkip: false
+threadSize: 4`,
+
     "ndjson" : 
 `type: ndjson
 path: /data/source/search-prod.ndjson
