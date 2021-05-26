@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
 
 let checkedList = []
 let searchedKeyword = ""
-function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
+function SynonymDictionary({dictionary, authUser, setting, dataSet, totalCount}) {
     const result = dataSet[dictionary] || {}
     const dispatch = useDispatch()
     const classes = useStyles()
@@ -306,6 +306,7 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
                         </Grid>
 
                         <Grid item xs={12} md={6} className={classes.right}>
+                            <label style={{marginRight: "20px"}}>전체 데이터 갯수: {totalCount}</label>
                             {mode === "view" ?
                                 (
                                     <Button variant="outlined"
@@ -672,5 +673,6 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet}) {
 }
 
 export default connect(store => ({ 
-    authUser: store.dsearchReducers.authUser
+    authUser: store.dsearchReducers.authUser,
+    totalCount: store.dictionaryReducers.totalCount
 }))(SynonymDictionary)

@@ -18,7 +18,7 @@ const firstTabs = [
     {label: "개요", component: Async(() => import("./Summary"))},
 ]
     
-function Dictionary({dispatch, authUser, settings, active}) {
+function Dictionary({dispatch, authUser, settings, active, totalCount}) {
     const [openSettings, setOpenSettings] = React.useState(false)
     const [remote, setRemote] = React.useState({})
     let dictTabs = firstTabs.concat(
