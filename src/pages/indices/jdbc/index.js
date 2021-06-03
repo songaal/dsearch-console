@@ -126,6 +126,23 @@ function JdbcTable({dispatch, authUser, JdbcList, handleAccessFlag}){
         }, 500)
     }
 
+    const handleEditConnectionTest = (event) => {
+        if(editPassword.current.value.length <= 0) return;
+        
+        setProcessConnTest(true)
+
+        let jdbcSourceObj = {};
+        jdbcSourceObj.driver = editDriver.current.value;
+        jdbcSourceObj.user = editUser.current.value;
+        jdbcSourceObj.password = editPassword.current.value;
+        jdbcSourceObj.url = editURL.current.value;
+        dispatch(setJDBCAccessTest(jdbcSourceObj))
+        setTimeout(() => {
+            setProcessConnTest(false)
+            handleAccessFlag(true);
+        }, 500)
+    };
+
     // let sortedIndices = indices
     //     .filter(index => checked ? true : index['index'].startsWith(".") === false )
     //     .map((index, no) => { return index; })
@@ -277,6 +294,7 @@ function JdbcTable({dispatch, authUser, JdbcList, handleAccessFlag}){
                 <DialogActions >
                     <Button variant="contained" style={{backgroundColor:"red", color:"white"}} onClick={handleDeleteJdbcSource}>삭제</Button>
                     <div style={{flex: '1 0 0'}} />
+                    <Button variant="outlined" color="primary" onClick={handleEditConnectionTest}>연결테스트</Button>
                     <Button variant="contained" color="default" onClick={handleEditDialogClose}>닫기</Button>
                     <Button variant="contained" color="primary" onClick={handleEditJdbcSource}>저장</Button>
                 </DialogActions>
