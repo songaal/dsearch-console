@@ -216,7 +216,7 @@ function MappingsJson2html(json, name, comments, dispatch, mode, detail) {
             <tbody>
             {
                 Object.keys(formatKeyFlatJsonMap)
-                    // .filter(key => !key.endsWith(".copy_to"))
+                    .filter(key => !key.endsWith(".copy_to"))
                     .map((key, index) => {
                     const obj = formatKeyFlatJsonMap[key]
 
