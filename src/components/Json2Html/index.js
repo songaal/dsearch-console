@@ -170,6 +170,7 @@ function MappingsJson2html(json, name, comments, dispatch, mode, detail) {
     }
 
     const flatJsonMap = flat(json['properties'] ? json['properties'] : json)
+    // console.log(flatJsonMap);
 
     let formatKeyFlatJsonMap = {}
     Object.keys(flatJsonMap).forEach(key => {
@@ -180,9 +181,25 @@ function MappingsJson2html(json, name, comments, dispatch, mode, detail) {
         if (!formatKeyFlatJsonMap[sortKey]) {
             formatKeyFlatJsonMap[sortKey] = {}
         }
-        formatKeyFlatJsonMap[sortKey][suffix] = flatJsonMap[key]
+        
+        // console.log(`key: ${key}\nreplaceKey: ${replaceKey}\nsortKey: ${sortKey}\nsuffix: ${suffix}\nflatJsonMap: ${flatJsonMap[key]}` )
+
+        // copy_to 표시가 되지 않아 추가.
+        if(sortKey.substring(sortKey.lastIndexOf(".") + 1) == "copy_to"){
+            const sortKey2 = replaceKey.substring(0, sortKey.lastIndexOf("."))
+            let content = formatKeyFlatJsonMap[sortKey2]["copy_to"];
+            if(content != null && content != undefined){
+                
+                formatKeyFlatJsonMap[sortKey2]["copy_to"] = content.substring(0, content.length-2) +  ", " + flatJsonMap[key] + " ]"
+            }else{
+                formatKeyFlatJsonMap[sortKey2]["copy_to"] = "[ " + flatJsonMap[key] + " ]"
+            }
+        }else{
+            formatKeyFlatJsonMap[sortKey][suffix] = flatJsonMap[key]
+        }
     })
 
+    // console.log(formatKeyFlatJsonMap);
     return (
         <table border={1} width={"100%"} cellSpacing={0} cellPadding={8}>
             <thead>
@@ -199,7 +216,8 @@ function MappingsJson2html(json, name, comments, dispatch, mode, detail) {
             <tbody>
             {
                 Object.keys(formatKeyFlatJsonMap)
-                    .filter(key => !key.endsWith(".copy_to")).map((key, index) => {
+                    // .filter(key => !key.endsWith(".copy_to"))
+                    .map((key, index) => {
                     const obj = formatKeyFlatJsonMap[key]
 
                     const etc = Object.keys(obj).map(k => {

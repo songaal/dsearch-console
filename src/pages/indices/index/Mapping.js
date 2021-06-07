@@ -221,7 +221,7 @@ function JsonCard({json}) {
 function Mapping({mappings}) {
     const [chk, setChk] = React.useState('form');
     const [detail, setDetail] = React.useState(false);
-
+    
     function handleRadioChange(e) {
         setChk(e.target.value)
     }
