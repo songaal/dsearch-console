@@ -182,12 +182,10 @@ function MappingsJson2html(json, name, comments, dispatch, mode, detail) {
             formatKeyFlatJsonMap[sortKey] = {}
         }
         
-        console.log(`key: ${key}\nreplaceKey: ${replaceKey}\nsortKey: ${sortKey}\nsuffix: ${suffix}\nflatJsonMap: ${flatJsonMap[key]}` )
-
         // copy_to 표시가 되지 않아 추가.
         if(sortKey.substring(sortKey.lastIndexOf(".") + 1) == "copy_to"){
             const sortKey2 = replaceKey.substring(0, sortKey.lastIndexOf("."))
-            
+            console.log(`key: ${key}\nreplaceKey: ${replaceKey}\nsortKey: ${sortKey}\nsortKey2: ${sortKey2}\nsuffix: ${suffix}\nflatJsonMap: ${flatJsonMap[key]}` )
             if(formatKeyFlatJsonMap[sortKey2] != undefined && formatKeyFlatJsonMap[sortKey2] != null){
                 //리스트 형태일때는 copy_to.0 copy_to.1  이 형식으로 붙음
                 let content = formatKeyFlatJsonMap[sortKey2]["copy_to"];
@@ -196,8 +194,12 @@ function MappingsJson2html(json, name, comments, dispatch, mode, detail) {
                 }else{
                     formatKeyFlatJsonMap[sortKey2]["copy_to"] = flatJsonMap[key] 
                 }
+            }else{
+                formatKeyFlatJsonMap[sortKey2] = { "copy_to": flatJsonMap[key] }
             }
         }else{
+            console.log(`key: ${key}\nreplaceKey: ${replaceKey}\nsortKey: ${sortKey}\nsuffix: ${suffix}\nflatJsonMap: ${flatJsonMap[key]}` )
+
             if(suffix == "copy_to"){
                 let content = formatKeyFlatJsonMap[sortKey]["copy_to"];
                 console.log("asdf:", sortKey, content)
