@@ -31,6 +31,12 @@ export default function reducer(state = initState, actions) {
                 ...state,
                 resultDetail: actions.payload
             }
+        case types.RESET_TOOLS_RESULTS:
+            return {
+                ...state,
+                resultBrief: {},
+                resultDetail: {}
+            }
         default:
             return state
     }

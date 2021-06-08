@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import styled from "styled-components";
-// import { NavLink as RouterNavLink} from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import Helmet from 'react-helmet';
 import {spacing} from "@material-ui/system";
 import AceEditor from "react-ace";
@@ -476,7 +476,7 @@ function RankingTuningCard({dispatch, result, index}) {
 function RankingTuning({ dispatch, result, index}) {
 
     useEffect(() => {
-        return () => dispatch(resetDocumentList())
+        dispatch(resetDocumentList())
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (

@@ -92,6 +92,8 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet, totalCount})
     // authUser.role.analysis = false;
     useEffect(() => {
         let keyword = newKeyword.current.value
+        searchedKeyword = "";
+        checkedList = []
         dispatch(setDictionary(dictionary, pageNum, rowSize, isMatch, keyword, searchColumns))
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 

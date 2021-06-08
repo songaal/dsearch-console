@@ -2,7 +2,8 @@ import {
     SET_TOOLS_ANALYZE_BRIEF_RESULT,
     SET_TOOLS_ANALYZE_DETAIL_RESULT,
     SET_TOOLS_ANALYZER_LIST,
-    SET_TOOLS_PLUGIN_LIST
+    SET_TOOLS_PLUGIN_LIST,
+    RESET_TOOLS_RESULTS,
 } from "../constants";
 import Client from '~/Client'
 
@@ -28,3 +29,5 @@ export const actionPlugin = (data) => dispatch => client.call({
     method: 'POST',
     data: data
 }).then(response => { dispatch({type: SET_TOOLS_ANALYZE_DETAIL_RESULT, payload: response.data}) } )
+
+export const resetAllResults = (data) => dispatch => dispatch({type: RESET_TOOLS_RESULTS})

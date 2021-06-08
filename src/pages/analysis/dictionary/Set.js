@@ -94,6 +94,8 @@ function Set({ dictionary, authUser, setting, dataSet, totalCount }) {
     // authUser.role.analysis = false;
     useEffect(() => {
         let keyword = newKeyword.current.value
+        searchedKeyword = "";
+        checkedList = []
         dispatch(setDictionary(dictionary, pageNum, rowSize, isMatch, keyword, searchColumns))
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -113,6 +115,7 @@ function Set({ dictionary, authUser, setting, dataSet, totalCount }) {
         if(pageNum > result['lastPageNum']){
             return;
         }
+        console.log("searchedKeyword: ",searchedKeyword);
         setPageNum(pageNum)
         dispatch(setDictionary(dictionary, pageNum, rowSize, isMatch, searchedKeyword, searchColumns))
     }

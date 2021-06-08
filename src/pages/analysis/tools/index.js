@@ -3,7 +3,7 @@ import styled from "styled-components";
 import {connect} from "react-redux";
 import Helmet from 'react-helmet';
 import {makeStyles} from '@material-ui/core/styles';
-import {actionAnalyzer, actionPlugin, setAnalyzerList, setPluginList} from '@actions/toolsActions'
+import {actionAnalyzer, actionPlugin, setAnalyzerList, setPluginList, resetAllResults} from '@actions/toolsActions'
 
 import {
     Box,
@@ -301,7 +301,9 @@ function Tools({ dispatch, analyzerList, pluginList, resultBrief, resultDetail }
     useEffect(() => {
         dispatch(setAnalyzerList())
         dispatch(setPluginList())
+        dispatch(resetAllResults())
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
+    
 
 
     return (
