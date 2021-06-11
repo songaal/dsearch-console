@@ -207,7 +207,17 @@ function DataEditTable({dispatch, index, authUser, mappings}) {
             delete body['_hitsId']
             delete body['ID']
             delete body['_id']
-            dispatch(editIndexDocumentSourceAction({ index, id, body }))
+
+            let newbody = {};
+            Object.keys(body).forEach(key => {
+                if(body[key] != ""){
+                   newbody[key]  = body[key];
+                }
+            })
+
+            console.log(index, id, JSON.stringify(newbody));
+
+            dispatch(editIndexDocumentSourceAction({ index, id, body: newbody }))
                 .then(() => setTimeout(() => {
                     setProcess(true);
                     fetchIndexDocumentSourceList({keyword})
