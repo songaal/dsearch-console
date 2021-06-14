@@ -26,7 +26,8 @@ import {
     TextField,
     Typography as MuiTypography,
 } from "@material-ui/core";
-
+import AddBoxIcon from '@material-ui/icons/AddBox';
+import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox';
 import {makeStyles} from '@material-ui/core/styles';
 import {positions, spacing} from "@material-ui/system";
 import {connect} from "react-redux";
@@ -133,6 +134,7 @@ dataSQL : "SELECT * FROM myTable"`
 };
 const NO_SELECTED = 'NO_SELECTED';
 const DEFAULT_CRON = '0 0 * * *'
+let cron_count = 0;
 
 function Source({dispatch, authUser, collection, JdbcList}) {
     const classes = useStyles();
@@ -167,6 +169,10 @@ function Source({dispatch, authUser, collection, JdbcList}) {
     const newHost = useRef({value : ""})
     const newPort = useRef({value : ""})
     const newCron = useRef({value : ""})
+    const newCron2 = useRef({value : ""})
+    const newCron3 = useRef({value : ""})
+    const newCron4 = useRef({value : ""})
+    const newCron5 = useRef({value : ""})
 
     const newEsHost = useRef({value : ""})
     const newEsPort = useRef({value : ""})
@@ -202,7 +208,18 @@ function Source({dispatch, authUser, collection, JdbcList}) {
 
             // setJdbcId(collection['jdbcId']);
             setJdbcId(collection['jdbcId'] === '' ? NO_SELECTED : collection['jdbcId'])
-            newCron.current.value = collection['cron']
+            // newCron.current.value = collection['cron']
+            
+            let cron_list = collection['cron'].split("||")
+            cron_count = cron_list.length;
+            cron_list.forEach((element, index) => {
+                if(index == 0) newCron.current.value = element
+                else if(index == 1) newCron2.current.value = element
+                else if(index == 2) newCron3.current.value = element
+                else if(index == 3) newCron4.current.value = element
+                else if(index == 4) newCron5.current.value = element
+            });
+
             // setCron(collection['cron']);
             setLauncherYaml((collection['launcher']||{})['yaml']||"");
             aceEditor.current.editor.setValue((collection['launcher']||{})['yaml']||"")
@@ -220,7 +237,16 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                 newEsPort.current.value = collection['esPort']
                 newEsUser.current.value = collection['esUser']
                 newEsPassword.current.value = collection['esPassword']
-                newCron.current.value = collection['cron']
+                // newCron.current.value = collection['cron']
+                let cron_list = collection['cron'].split("||")
+                cron_count = cron_list.length;
+                cron_list.forEach((element, index) => {
+                    if(index == 0) newCron.current.value = element
+                    else if(index == 1) newCron2.current.value = element
+                    else if(index == 2) newCron3.current.value = element
+                    else if(index == 3) newCron4.current.value = element
+                    else if(index == 4) newCron5.current.value = element
+                });
 
                 // setSourceName(collection['sourceName']);
                 setScheme((collection['launcher']||{})['scheme']||"");
@@ -272,6 +298,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
         if (sourceName.trim() === "") {
             invalidCheck['sourceName'] = true
         }
+
         if(cron.length === 0){
             newCron.current.value = DEFAULT_CRON
             // setCron(DEFAULT_CRON)
@@ -296,14 +323,68 @@ function Source({dispatch, authUser, collection, JdbcList}) {
             }
         }
 
+        let cron_merge = newCron.current.value 
+        if(newCron.current.value.split(" ").length != 5){
+            invalidCheck['cron'] = true
+        }
+
+        if(newCron2.current.value.length != 0 && newCron2.current.value.split(" ").length == 5 && cron_count >= 1) {
+            if(cron_merge.length == 0){
+                cron_merge +=  newCron2.current.value 
+            }else{
+                cron_merge +=  "||" + newCron2.current.value 
+            }
+        }else if(newCron2.current.value.length == 0){
+            /* ignore */
+        }else{
+            invalidCheck['cron'] = true
+        }
+            
+        if(newCron3.current.value.length > 0 && newCron3.current.value.split(" ").length == 5&& cron_count >= 2) {
+            if(cron_merge.length == 0){
+                cron_merge += newCron3.current.value 
+            }else{
+                cron_merge +=  "||" + newCron3.current.value 
+            }
+        }else if(newCron3.current.value.length == 0){
+            /* ignore */
+        }else{
+            invalidCheck['cron'] = true
+        }
+            
+        if(newCron4.current.value.length != 0 && newCron4.current.value.split(" ").length == 5&& cron_count >= 3) {
+            if(cron_merge.length == 0){
+                cron_merge +=  newCron4.current.value 
+            }else{
+                cron_merge +=  "||" + newCron4.current.value 
+            }
+        }else if(newCron4.current.value.length == 0){
+            /* ignore */
+        }else{
+            invalidCheck['cron'] = true
+        }
+            
+        if(newCron5.current.value.length != 0 && newCron5.current.value.split(" ").length == 5&& cron_count >= 4) {
+            if(cron_merge.length == 0){
+                cron_merge +=  newCron5.current.value
+            }else{
+                cron_merge +=  "||" + newCron5.current.value
+            }
+        }else if(newCron5.current.value.length == 0){
+            /* ignore */
+        }else{
+            invalidCheck['cron'] = true
+        }
+            
         if (Object.keys(invalidCheck).length > 0) {
             setInvalid(invalidCheck)
             return false
         }
-        
+
         dispatch(editCollectionSourceAction(collection['id'], {
             sourceName,
-            cron: (cron.length === 0 ? DEFAULT_CRON : cron),
+            // cron: (cron.length === 0 ? DEFAULT_CRON : cron),
+            cron: (cron_merge.length === 0 ? DEFAULT_CRON : cron_merge),
             jdbcId: (jdbcId === NO_SELECTED ? '' : jdbcId),
             extIndexer: isExtIndexer,
             esScheme, esHost: esHost.trim(), esPort, esUser: esUser.trim(), esPassword: esPassword.trim(),
@@ -325,6 +406,13 @@ function Source({dispatch, authUser, collection, JdbcList}) {
         aceEditor.current.editor.setValue(TEMPLATE[event.target.value]);
     }
 
+    const handleCronAdd = (event) => {
+        cron_count = cron_count < 5 ? cron_count+1 : 5
+    }
+    const handleCronRemove = (event) => {
+        cron_count = cron_count >= 0 ? cron_count-1 : 0
+    }
+
     let jdbcHitList = [
         { id: NO_SELECTED, sourceAsMap: {name: '선택안함'} },
         ...((JdbcList['hits']||{})['hits']||[])
@@ -332,6 +420,13 @@ function Source({dispatch, authUser, collection, JdbcList}) {
 
     let useJdbcList = jdbcHitList.filter(jdbcObj => (collection['jdbcId'] === '' ? NO_SELECTED : collection['jdbcId']) === jdbcObj['id']).map(jdbcObj => jdbcObj['sourceAsMap']['name'])
 
+    let view_cron = "" 
+    let view_cron_list = collection['cron'].split("||");
+    view_cron_list.forEach((element, index) => {
+        if(view_cron.length > 0) view_cron += ",  " + element
+        else view_cron = element;
+    });
+    
     return (
         <React.Fragment>
 
@@ -416,7 +511,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                             </TableRow>
                                             <TableRow>
                                                 <TableCell variant={"head"} component={"th"}>크론주기</TableCell>
-                                                <TableCell> {collection['cron']} </TableCell>
+                                                <TableCell> {view_cron} </TableCell>
                                             </TableRow>
                                         </TableBody>
                                     </Table>
@@ -538,17 +633,53 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                 <TableCell variant={"head"} component={"th"}>크론주기</TableCell>
                                                 <TableCell>
                                                     <Grid container>
-                                                        <Grid item xs={11}>
-                                                            <TextField 
+                                                        <Grid item xs={10}>
+                                                            <Box maxWidth={"100%"}>
+                                                            <TextField
                                                                 inputRef={newCron}
-                                                                // value={cron}
-                                                                //        onChange={event => setCron(event.target.value)}
-                                                                       fullWidth
-                                                                       placeholder={"분 시 일 월 요일 (default: 0 0 * * *)"}
-                                                                       error={invalid['cron']||false}
+                                                                fullWidth
+                                                                placeholder={"분 시 일 월 요일 (default: 0 0 * * *)"}
+                                                                error={invalid['cron'] || false}
                                                             />
+                                                            </Box>
+                                                            <Box maxWidth={"100%"}>
+                                                            <TextField
+                                                                inputRef={newCron2}
+                                                                style={{ display: cron_count > 1 ? "" : "none" }}
+                                                                fullWidth
+                                                                placeholder={"분 시 일 월 요일 (default: 0 0 * * *)"}
+                                                                error={invalid['cron'] || false} />
+                                                            </Box>
+                                                            <Box maxWidth={"100%"}>
+                                                            <TextField
+                                                                inputRef={newCron3}
+                                                                style={{ display: cron_count > 2 ? "" : "none" }}
+                                                                fullWidth
+                                                                placeholder={"분 시 일 월 요일 (default: 0 0 * * *)"}
+                                                                error={invalid['cron'] || false} />
+                                                            </Box>
+                                                            <Box maxWidth={"100%"}>
+                                                            <TextField
+                                                                inputRef={newCron4}
+                                                                style={{ display: cron_count > 3? "" : "none" }}
+                                                                fullWidth
+                                                                placeholder={"분 시 일 월 요일 (default: 0 0 * * *)"}
+                                                                error={invalid['cron'] || false} />
+                                                            </Box>
+                                                            <Box maxWidth={"100%"}>
+                                                            <TextField
+                                                                inputRef={newCron5}
+                                                                style={{ display: cron_count > 4 ? "" : "none" }}
+                                                                fullWidth
+                                                                placeholder={"분 시 일 월 요일 (default: 0 0 * * *)"}
+                                                                error={invalid['cron'] || false} />
+                                                            </Box>
                                                         </Grid>
                                                         <Grid item xs={1}>
+                                                            <Button onClick={handleCronAdd}><AddBoxIcon /></Button>
+                                                            <Button onClick={handleCronRemove}><IndeterminateCheckBoxIcon /></Button>
+                                                        </Grid>
+                                                        <Grid item xs={1} justify={"center"} alignItems="center">
                                                             <Link onMouseOver={handleClick('top')}>예제</Link>
                                                             <Popper open={Boolean(open)} anchorEl={anchorEl}
                                                                     placement={placement} transition>

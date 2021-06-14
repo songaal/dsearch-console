@@ -59,6 +59,7 @@ function SearchPanel(documents, aggregations, template, pagination) {
             patternList.forEach(pattern => {
                 replaceStr = replaceStr.replace('${' + pattern + '}', source[pattern])
             })
+            replaceStr = replaceStr.replace("undefined", "")
         }
         return replaceStr
     }
@@ -123,7 +124,8 @@ function SearchPanel(documents, aggregations, template, pagination) {
                                                                     <List>
                                                                         {template['fields'].map((field, index) => {
                                                                             const label = field['label']
-                                                                            const value = replacePatternForSource(documentMap, String(field['value']))
+                                                                            let value = replacePatternForSource(documentMap, String(field['value']))
+                                                                            // value = value.replace("undefined", "")
                                                                             return (
                                                                                 <ListItem p={1} key={index}>
                                                                                     <Box whiteSpace="nowrap">

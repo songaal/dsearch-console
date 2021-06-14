@@ -318,6 +318,7 @@ const DashBoardHeader = ({theme, onDrawerToggle}) => {
     }
 
     function handleSearch() {
+        console.log(keyword)
         dispatch(setReferenceSearchKeyword(keyword))
         dispatch(setReferenceResultAll(keyword))
         dispatch(setAutoCompleteStoreAction(keyword))

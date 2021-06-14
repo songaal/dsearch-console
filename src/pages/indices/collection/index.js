@@ -277,6 +277,8 @@ function Collection({ dispatch, authUser, indexSuffixA, indexSuffixB, collection
             return 0;
         }
     }).map((c, i) => ({ ...c, no: i }))
+
+
     return (
         <React.Fragment>
             <Helmet title="컬렉션" />
@@ -354,6 +356,13 @@ function Collection({ dispatch, authUser, indexSuffixA, indexSuffixB, collection
                                     return 0
                                 }
                             }).map((collection, num) => {
+                                let view_cron = ""
+                                let view_cron_list = collection['cron'].split("||");
+                                view_cron_list.forEach((element, index) => {
+                                    if (view_cron.length > 0) view_cron += ",  " + element
+                                    else view_cron = element;
+                                });
+
                                 const id = collection['id']
                                 const name = collection['name']
                                 const baseId = collection['baseId']
@@ -417,7 +426,7 @@ function Collection({ dispatch, authUser, indexSuffixA, indexSuffixB, collection
                                             <Box>
 
                                                 {
-                                                    (collection['scheduled'] || false) ? `활성화 (${collection['cron']})` : "비활성화"
+                                                    (collection['scheduled'] || false) ? `활성화 (${view_cron})` : "비활성화"
                                                 }
 
                                                 {/*<Tooltip title="Delete" className={classes.fab}>*/}

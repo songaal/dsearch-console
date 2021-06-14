@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-import {connect} from "react-redux";
+import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
 import {
     Box,
     Button,
@@ -11,11 +11,12 @@ import {
     Table,
     TableBody,
     TableCell,
-    TableHead,
+    TableHead,FormControl,
+    FormControlLabel,
     TableRow
 } from "@material-ui/core";
 import MuiAlert from '@material-ui/lab/Alert';
-import {applyDictionary, setSummary} from "../../../redux/actions/dictionaryActions";
+import { applyDictionary, setSummary } from "../../../redux/actions/dictionaryActions";
 import utils from "../../../utils";
 
 
@@ -24,15 +25,17 @@ const systemInfo = {
     name: "시스템 사전"
 }
 
-function SummaryTable({summary, makeCheckedIdList, makeCheckedList}){
-    if(summary.dictionaryInfo === undefined || summary.dictionarySettings === undefined) return <></>;
+function SummaryTable({ checkedAll, summary, makeCheckedIdList, makeCheckedList,  getChecked}) {
+    if (summary.dictionaryInfo === undefined || summary.dictionarySettings === undefined) return <></>;
+
+    console.log("checkedAll", checkedAll)
 
     let infoDict = JSON.parse(summary.dictionaryInfo).dictionary;
     let settings = summary.dictionarySettings;
     let tableInfo = [];
 
-    for(let i in infoDict){
-        if(infoDict[i].type === systemInfo.type){
+    for (let i in infoDict) {
+        if (infoDict[i].type === systemInfo.type) {
             var info = infoDict[i];
             info.name = systemInfo.name;
             tableInfo.push(info);
@@ -40,10 +43,10 @@ function SummaryTable({summary, makeCheckedIdList, makeCheckedList}){
         }
     }
 
-    for(let i in settings){
+    for (let i in settings) {
         let info = settings[i];
-        for(var j in infoDict){
-            if(settings[i].id === infoDict[j].type){
+        for (var j in infoDict) {
+            if (settings[i].id === infoDict[j].type) {
                 info.count = infoDict[j].count;
                 info.words = infoDict[j].words;
                 info.indexCount = infoDict[j].indexCount;
@@ -53,15 +56,36 @@ function SummaryTable({summary, makeCheckedIdList, makeCheckedList}){
 
         tableInfo.push(info);
     }
-    
-    const handleCheckBox = (event) =>{
+
+    const handleCheckBox = (event) => {
         makeCheckedIdList(event.target.value, event.target.id);
         makeCheckedList(event.target.value, event.target.checked);
     }
+
     
     return tableInfo.map((info, index) => {
-        return  <TableRow key={index}>
-            <TableCell> {info.type === systemInfo.type ? <></> : <Checkbox id={info.documentId} name={"checkbox"} value={info.id} onChange={handleCheckBox}/>} </TableCell>
+        // let key = info.id;
+        return <TableRow key={index}>
+            {/* <TableCell>
+            {info.type === systemInfo.type ? <></> : 
+            <FormControl>
+                <FormControlLabel
+                    control={<Checkbox />}
+                    checked={ checkedAll ? true : event.target.checked }
+                    onChange={handleCheckBox}
+                    value={info.id}
+                    id={info.documentId} 
+                    name={"checkbox"}
+                />
+                </FormControl>
+            }
+            </TableCell> */}
+            {/* {
+                checkedAll ? 
+                <TableCell> {info.type === systemInfo.type ? <></> : <Checkbox defaultChecked={true} id={info.documentId} name={"checkbox"} value={info.id} onChange={handleCheckBox}  />} </TableCell>
+                : <TableCell> {info.type === systemInfo.type ? <></> : <Checkbox id={info.documentId} name={"checkbox"} value={info.id} onChange={handleCheckBox} />} </TableCell>
+            } */}
+            <TableCell> {info.type === systemInfo.type ? <></> : <Checkbox id={info.documentId} name={"checkbox"} value={info.id} onChange={handleCheckBox}  />} </TableCell>
             <TableCell>{info.name}</TableCell>
             <TableCell>{info.type}</TableCell>
             <TableCell>{info.indexCount ? Number(info.indexCount).toLocaleString() : "0"}</TableCell>
@@ -69,15 +93,17 @@ function SummaryTable({summary, makeCheckedIdList, makeCheckedList}){
             <TableCell>{Number(info.count).toLocaleString()}</TableCell>
             <TableCell> {info.appliedTime ? new Date(info.appliedTime).toLocaleString() : "-"} </TableCell>
             <TableCell> {info.tokenType ? info.tokenType : "-"} </TableCell>
-            <TableCell> {info.ignoreCase ? info.ignoreCase ? "Y": "N" : "-"} </TableCell>
-        </TableRow> });
+            <TableCell> {info.ignoreCase ? info.ignoreCase ? "Y" : "N" : "-"} </TableCell>
+        </TableRow>
+    });
 }
 
 
- function Summary({dispatch, authUser, summary, update}) {
+function Summary({ dispatch, authUser, summary, update }) {
     const [applyDict, setApplyDict] = useState(false);
     const [progress, setProgress] = useState(false);
     const [disabled, setDisabled] = useState(true);
+    const [checkedAll, setCheckedAll] = useState(false);
     const [checkedList, setCheckedList] = useState({});
     const [checkedIdList, setCheckedIdList] = useState({});
 
@@ -85,21 +111,23 @@ function SummaryTable({summary, makeCheckedIdList, makeCheckedList}){
         dispatch(setSummary())
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-    function makeCheckedIdList(key, value){
+    function makeCheckedIdList(key, value) {
         let cList = {};
         let list = Object.keys(checkedIdList);
-        for(let key of list){
+        for (let key of list) {
             cList[key] = checkedIdList[key];
         }
 
         cList[key] = value;
         setCheckedIdList(cList);
     }
-
-    function makeCheckedList(key, value){
+    function getChecked(key){
+        return checkedIdList[key]
+    }
+    function makeCheckedList(key, value) {
         let cList = {};
         let list = Object.keys(checkedList);
-        for(let key of list){
+        for (let key of list) {
             cList[key] = checkedList[key];
         }
 
@@ -112,15 +140,15 @@ function SummaryTable({summary, makeCheckedIdList, makeCheckedList}){
         let data = {};
         let str = "";
         let ids = "";
-        
+
         setProgress(true);
         let keyList = Object.keys(checkedList);
-        for(let key of keyList){
-            if(checkedList[key]){
-                if(str.length === 0){
+        for (let key of keyList) {
+            if (checkedList[key]) {
+                if (str.length === 0) {
                     str = key;
                     ids = checkedIdList[key]
-                }else{
+                } else {
                     str += "," + key;
                     ids += "," + checkedIdList[key]
                 }
@@ -128,30 +156,75 @@ function SummaryTable({summary, makeCheckedIdList, makeCheckedList}){
         }
         data.ids = ids;
         data.type = str;
-        dispatch(applyDictionary(data)).then(() => {setApplyDict(true); setProgress(false); utils.sleep(1000).then(() => { dispatch(setSummary()) }); });
+        dispatch(applyDictionary(data)).then(() => { setApplyDict(true); setProgress(false); utils.sleep(1000).then(() => { dispatch(setSummary()) }); });
     }
 
-    function disabledApplyButton(list){
+    function disabledApplyButton(list) {
         let keyList = Object.keys(list);
         let flag = true;
-        for(let key of keyList){
-            if(list[key]){
-                flag = false; 
+        for (let key of keyList) {
+            if (list[key]) {
+                flag = false;
                 break;
             }
         }
         setDisabled(flag);
     }
 
+    function handleCheckBoxClickAll(event) {
+        let infoDict = JSON.parse(summary.dictionaryInfo).dictionary;
+        let settings = summary.dictionarySettings;
+
+        let tableInfo = [];
+
+        for (let i in infoDict) {
+            if (infoDict[i].type === systemInfo.type) {
+                var info = infoDict[i];
+                info.name = systemInfo.name;
+                tableInfo.push(info);
+                break;
+            }
+        }
+
+        for (let i in settings) {
+            let info = settings[i];
+            for (var j in infoDict) {
+                if (settings[i].id === infoDict[j].type) {
+                    info.count = infoDict[j].count;
+                    info.words = infoDict[j].words;
+                    info.indexCount = infoDict[j].indexCount;
+                    break;
+                }
+            }
+
+            tableInfo.push(info);
+        }
+        let tmpCheckedList = {}
+        let tmpCheckedIdList ={}
+
+        tableInfo.forEach((info) => {
+            if (info.type !== systemInfo.type) {
+                let key = info.id;
+                tmpCheckedList[key] = info.documentId;
+                tmpCheckedIdList[key] = event.target.checked;
+            }
+        })
+
+        setCheckedIdList(tmpCheckedIdList);
+        setCheckedList(tmpCheckedList);
+        disabledApplyButton(tmpCheckedList)
+        setCheckedAll(event.target.checked)
+    }
+
     return (
         <React.Fragment>
-            <br/>
+            <br />
             <Card>
                 <CardContent>
                     <Box>
-                        {authUser.role.analysis ? 
-                             progress ? <CircularProgress /> : <Button disabled={disabled} variant={"contained"} color={"primary"} onClick={clickApplyDictionary}>사전적용</Button> 
-                            : <></> }
+                        {authUser.role.analysis ?
+                            progress ? <CircularProgress /> : <Button disabled={disabled} variant={"contained"} color={"primary"} onClick={clickApplyDictionary}>사전적용</Button>
+                            : <></>}
                     </Box>
                     <Box>
                         <Snackbar open={applyDict} autoHideDuration={5000} onClose={() => { setApplyDict(false) }}>
@@ -161,6 +234,7 @@ function SummaryTable({summary, makeCheckedIdList, makeCheckedList}){
                             <TableHead>
                                 <TableRow>
                                     <TableCell>#</TableCell>
+                                    {/* <TableCell><Checkbox onChange={handleCheckBoxClickAll} /></TableCell> */}
                                     <TableCell>이름</TableCell>
                                     <TableCell>타업</TableCell>
                                     <TableCell>작업단어갯수</TableCell>
@@ -172,7 +246,7 @@ function SummaryTable({summary, makeCheckedIdList, makeCheckedList}){
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                <SummaryTable authUser={authUser} summary={summary} makeCheckedIdList={makeCheckedIdList} makeCheckedList={makeCheckedList} />
+                                <SummaryTable checkedAll={checkedAll}  authUser={authUser} summary={summary} makeCheckedIdList={makeCheckedIdList} makeCheckedList={makeCheckedList} getChecked={getChecked} />
                             </TableBody>
                         </Table>
                     </Box>
@@ -183,7 +257,7 @@ function SummaryTable({summary, makeCheckedIdList, makeCheckedList}){
 }
 
 
-export default connect(store => ({ 
+export default connect(store => ({
     authUser: store.dsearchReducers.authUser,
     summary: store.dictionaryReducers.summary,
     update: store.dictionaryReducers.update
