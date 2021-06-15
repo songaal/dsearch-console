@@ -61,5 +61,4 @@ export const editUserPassword = (id, updateUser) => dispatch => client.call({
     params: {action: "UPDATE_PASSWORD"},
     data: updateUser
 }).then(response => {
-    console.log(response.data)
 })

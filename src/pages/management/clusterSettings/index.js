@@ -40,7 +40,6 @@ function ClusterSettings({authUser, serverCheck}) {
             })
     }
 
-    console.log(authUser.role.manage)
     return (
         <React.Fragment>
             <Helmet title="클러스터설정"/>

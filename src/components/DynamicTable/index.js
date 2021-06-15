@@ -78,7 +78,6 @@ function DynamicTable({dataList, from = 0, limit = 100000, showCheckBox = false,
         let updateFields = []
         for (let i = 0; i < array.length; i++) {
             cols.push(array[i][rowIdx]['text'] || '')
-            console.log(fields[i])
             updateFields.push(fields[i] || '')
         }
         onUpdate(id, cols, updateFields)

@@ -450,7 +450,6 @@ function Cluster({ dispatch, clusterList, authUser }) {
             }
         }).then((response) => {
             let status = response.data;
-            console.log("status: ", status);
             if(status['status']['overall']['state'] === "green"){
                 setModalMessage("[연결 성공] 키바나 ");
             }else{
@@ -459,9 +458,9 @@ function Cluster({ dispatch, clusterList, authUser }) {
         }).catch((error) => {
             if (error.response) {
                 // 요청이 이루어졌으며 서버가 2xx의 범위를 벗어나는 상태 코드로 응답했습니다.
-                console.log("data: ", error.response.data);
-                console.log("status: ",error.response.status);
-                console.log("header: ",error.response.headers);
+                // console.log("data: ", error.response.data);
+                // console.log("status: ",error.response.status);
+                // console.log("header: ",error.response.headers);
                 setModalMessage("");
                 setModalMessage("[연결 성공] 키바나");
               }
@@ -469,7 +468,7 @@ function Cluster({ dispatch, clusterList, authUser }) {
                 // 요청이 이루어 졌으나 응답을 받지 못했습니다.
                 // `error.request`는 브라우저의 XMLHttpRequest 인스턴스 또는
                 // Node.js의 http.ClientRequest 인스턴스입니다.
-                console.log("req: ",error.request);
+                // console.log("req: ",error.request);
                 setModalMessage("");
                 setModalMessage("[연결 성공] 키바나");
               }
@@ -593,11 +592,6 @@ function Cluster({ dispatch, clusterList, authUser }) {
         })
     }
     function goDashboard(id) {
-        // const link = document.createElement('a');
-        // link.setAttribute("href", `${id}/dashboard`)
-        // link.setAttribute("target", "_blank")
-        // document.body.appendChild(link);
-        // link.click()
         window.open(`${id}/dashboard`,"_blank" )
     }
 

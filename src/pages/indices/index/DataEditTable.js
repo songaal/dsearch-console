@@ -106,9 +106,6 @@ function DataEditTable({dispatch, index, authUser, mappings}) {
             return dispatch(setIndexMappingsAction(index)).then((response)=> {
                 let indexMapping = response.payload;
                 dispatch(setIndexDocumentSourceListAction({index, from: pageNum, size: searchSize||rowSize, columns, keyword})).then(response => {
-
-
-                console.log('확인용', response['hits']);
                 // columns 적용
                 let tmpColumns = {};
                 // let tmpColumns = {}
@@ -214,8 +211,6 @@ function DataEditTable({dispatch, index, authUser, mappings}) {
                    newbody[key]  = body[key];
                 }
             })
-
-            console.log(index, id, JSON.stringify(newbody));
 
             dispatch(editIndexDocumentSourceAction({ index, id, body: newbody }))
                 .then(() => setTimeout(() => {

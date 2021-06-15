@@ -25,7 +25,11 @@ export const updatedSettingList = (newSettings) => dispatch =>  client.call({
     uri: `/dictionaries/settings/updateList`,
     method: "POST",
     data: newSettings
-}).then(()=>{ console.log("success");}).catch((err) => {console.log(err)});
+}).then((response)=>{
+    // console.log(response)
+}).catch((err) => {
+    console.log(err)
+});
 
 export const setDictionary = (dictionary, pageNum, rowSize, isMatch, value, searchColumns) => dispatch =>
     client.call({
@@ -63,7 +67,7 @@ export const createDictionary = (dictionary, data) =>
         data: data
     })
         .then(response => {
-            console.log(response)
+            // console.log(response)
         })
         .catch(error => console.error(error))
 
@@ -74,7 +78,7 @@ export const updateDictionary = (dictionary, id, data) =>
         data: data
     })
         .then(response => {
-            console.log(response)
+            // console.log(response)
         })
         .catch(error => console.error(error))
 

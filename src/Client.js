@@ -32,7 +32,6 @@ class Client {
             // eslint-disable-next-line no-restricted-globals
             if (server === null && location.pathname !== "/") {
                 window.location.href = "/"
-                console.log("server: is null and pathname: ", window.location.pathname)
                 // location.href = process.env.PUBLIC_URL
                 // return new Promise(async (resolve, reject) => reject())
             } else {
@@ -85,11 +84,6 @@ class Client {
                 } else {
                     reject(error)
                 }
-                // if (axios.isCancel(error)) {
-                //     console.log('Request canceled', error.message);
-                // } else {
-                //
-                // }
             }
         })
     }

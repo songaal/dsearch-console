@@ -19,7 +19,7 @@ export const setJDBCAccessTest = (data) => dispatch => client.call({
     method: "POST",
     data: data
 }).then(response => {
-    dispatch({type:SET_JDBC_ACCESS_TEST , payload: response.data}); console.log(response);
+    dispatch({type:SET_JDBC_ACCESS_TEST , payload: response.data}); 
     return true
 })
 

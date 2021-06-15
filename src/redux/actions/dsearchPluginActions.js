@@ -23,12 +23,17 @@ export const setAutoCompleteURLAction = (url) => dispatch =>
     method: "POST",
     data: url
   }).then(response =>{
-    console.log(response)
-    dispatch({type: SET_AUTOCOMPLETE_URL, payload: response.data})}).catch((err) => { console.log(err) })
+    dispatch({type: SET_AUTOCOMPLETE_URL, payload: response.data})
+  }).catch((err) => { 
+    console.log(err) 
+  })
 
 export const getAutoCompleteURLAction = () => dispatch =>
   client.call({
     uri: `/reference/get/autocomplete`,
     method: "GET"
   }).then(response =>{
-    dispatch({type: SET_AUTOCOMPLETE_URL, payload: response.data})}).catch((err) => { console.log(err) })
+    dispatch({type: SET_AUTOCOMPLETE_URL, payload: response.data})
+  }).catch((err) => { 
+    console.log(err) 
+  })

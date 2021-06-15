@@ -172,12 +172,10 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet, totalCount}
 
         let msg = "";
         if(createId !== undefined && createId !== null && createId !== "" && createId.length > 0){
-            console.log("createId", createId, createId.length);    
             msg += createId
         } 
         
         if(createKeyword !== undefined && createKeyword !== null && createKeyword !== "" && createKeyword.length > 0)  {
-            console.log("createKeyword", createKeyword, createKeyword.length);
             if(msg !== "" || msg.length > 0) {
                 msg += " > "
             }
@@ -185,7 +183,6 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet, totalCount}
         }
 
         if(createValue !== undefined && createValue !== null && createValue !== "" && createValue.length > 0)  {
-            console.log("createValue", createValue, createValue.length);
             if(msg !== "" || msg.length > 0) {
                 msg += " > "
             }
@@ -213,9 +210,13 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet, totalCount}
     }
 
     async function handleDeleteButton(id) {
-        if (!confirm("해당 라인을 삭제 하시겠습니까?")) {
+        // if (!confirm("해당 라인을 삭제 하시겠습니까?")) {
+        //     return false;
+        // }
+        if(!window.confirm("해당 라인을 삭제 하시겠습니까?")){
             return false;
         }
+
         checkedList = checkedList.filter(checkedListId => checkedListId !== id)
         await deleteDictionary(dictionary, id)
         await utils.sleep(1000);
@@ -223,7 +224,10 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet, totalCount}
     }
 
     async function handleUpdateButton(id, row, columns) {
-        if (!confirm("해당 라인을 수정 하시겠습니까?")) {
+        // if (!confirm("해당 라인을 수정 하시겠습니까?")) {
+        //     return false;
+        // }
+        if(!window.confirm("해당 라인을 수정 하시겠습니까?")){
             return false;
         }
 
@@ -636,7 +640,7 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet, totalCount}
                         setUploadProgress(true);
                         dispatch(sendFile(fd))
                             .then(async (res) => {
-                                console.log("onchange res", res);
+                                // console.log("onchange res", res);
                                 setAlertFlag(true);
                                 if(res.data.result){
                                     setAlertColor("info");
@@ -651,7 +655,7 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet, totalCount}
                                 await utils.sleep(1000);
                                 handlePagination(0);
                             }).catch(async (err) => {
-                                console.log("onchange err", err);
+                                // console.log("onchange err", err);
                                 setAlertFlag(true);
                                 setAlertColor("error");
                                 setAlertMessage("실패");

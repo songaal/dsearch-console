@@ -168,7 +168,7 @@ function Role({dispatch, roleList, userRolesList, authUser}) {
         dispatch(addRoleAction({
             name, analysis, index, search, manage
         })).then(response => {
-            console.log(response)
+            // console.log(response)
         }).catch(error => {
             console.error(error)
         }).finally(() => {
@@ -202,7 +202,6 @@ function Role({dispatch, roleList, userRolesList, authUser}) {
         dispatch(editRoleAction(selectedId, {
             name, analysis, index, search, manage
         })).then(response => {
-            console.log(response)
             toggleEditModal()
         }).catch(error => {
             console.error(error)

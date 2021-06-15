@@ -115,7 +115,6 @@ function Set({ dictionary, authUser, setting, dataSet, totalCount }) {
         if(pageNum > result['lastPageNum']){
             return;
         }
-        console.log("searchedKeyword: ",searchedKeyword);
         setPageNum(pageNum)
         dispatch(setDictionary(dictionary, pageNum, rowSize, isMatch, searchedKeyword, searchColumns))
     }
@@ -172,12 +171,10 @@ function Set({ dictionary, authUser, setting, dataSet, totalCount }) {
 
         let msg = "";
         if(createId !== undefined && createId !== null && createId !== "" && createId.length > 0){
-            console.log("createId", createId, createId.length);    
             msg += createId
         } 
         
         if(createKeyword !== undefined && createKeyword !== null && createKeyword !== "" && createKeyword.length > 0)  {
-            console.log("createKeyword", createKeyword, createKeyword.length);
             if(msg !== "" || msg.length > 0) {
                 msg += " > "
             }
@@ -185,7 +182,6 @@ function Set({ dictionary, authUser, setting, dataSet, totalCount }) {
         }
 
         if(createValue !== undefined && createValue !== null && createValue !== "" && createValue.length > 0)  {
-            console.log("createValue", createValue, createValue.length);
             if(msg !== "" || msg.length > 0) {
                 msg += " > "
             }

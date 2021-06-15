@@ -178,7 +178,6 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet, totalCount})
         } 
         
         if(createKeyword !== undefined && createKeyword !== null && createKeyword !== "" && createKeyword.length > 0)  {
-            console.log("createKeyword", createKeyword, createKeyword.length);
             if(msg !== "" || msg.length > 0) {
                 msg += " > "
             }
@@ -186,7 +185,6 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet, totalCount})
         }
 
         if(createValue !== undefined && createValue !== null && createValue !== "" && createValue.length > 0)  {
-            console.log("createValue", createValue, createValue.length);
             if(msg !== "" || msg.length > 0) {
                 msg += " > "
             }

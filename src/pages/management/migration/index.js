@@ -60,8 +60,6 @@ function Migration({authUser}) {
         json.append("jdbc", jdbc)
         
         download(json).then(response => {
-            console.log(response)
-
             let data = response.data
             setDownloadResults(data.result)
             setUploadResults(null)

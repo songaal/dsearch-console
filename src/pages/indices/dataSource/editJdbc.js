@@ -60,7 +60,6 @@ const Card = styled(MuiCard)(spacing);
 
 function EditJdbc(jdbcData) {
   const classes = useStyles();
-  console.log("editData : ", jdbcData.data);
   return (
     <div>
       <Card>

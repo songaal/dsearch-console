@@ -114,7 +114,6 @@ function Summary({ dispatch, authUser, list }) {
     }
 
     function closeModal(){
-        console.log(key);
         setModalFlag(false)
     }
 

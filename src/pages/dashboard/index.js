@@ -535,7 +535,6 @@ function DashBoard({dispatch, result, running, status, alias, indices}) {
                 let index = running[key].server.index;
                 dispatch(setRunningPropagateIndexActions(index))
                     .then((response) => {
-                        // console.log(index, response['data'][index]['shards']);
                         let shardsList = response['data'][index]['shards'];
                         let percent = 0;
                         let count = 0;

@@ -46,5 +46,5 @@ export const removeUserAction = (id) => dispatch => client.call({
     uri: `/users/${id}`,
     method: "DELETE"
 }).then(response => {
-    console.log(response)
+    
 })

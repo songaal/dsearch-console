@@ -111,7 +111,6 @@ function Space({ dictionary, authUser, setting, dataSet, totalCount}) {
     }
 
     function handlePagination(pageNum) {
-        console.log(result['lastPageNum']);
         if(pageNum > result['lastPageNum']){
             return;
         }
@@ -173,12 +172,10 @@ function Space({ dictionary, authUser, setting, dataSet, totalCount}) {
 
         let msg = "";
         if(createId !== undefined && createId !== null && createId !== "" && createId.length > 0){
-            console.log("createId", createId, createId.length);    
             msg += createId
         } 
         
         if(createKeyword !== undefined && createKeyword !== null && createKeyword !== "" && createKeyword.length > 0)  {
-            console.log("createKeyword", createKeyword, createKeyword.length);
             if(msg !== "" || msg.length > 0) {
                 msg += " > "
             }
@@ -186,7 +183,6 @@ function Space({ dictionary, authUser, setting, dataSet, totalCount}) {
         }
 
         if(createValue !== undefined && createValue !== null && createValue !== "" && createValue.length > 0)  {
-            console.log("createValue", createValue, createValue.length);
             if(msg !== "" || msg.length > 0) {
                 msg += " > "
             }

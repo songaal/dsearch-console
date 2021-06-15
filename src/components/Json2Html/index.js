@@ -106,7 +106,6 @@ function MappingsJson2html(json, name, comments, dispatch, mode, detail) {
     if(mode === 'view' && !detail){
         topFields = [
             {title: "타입", key: "type", component: (val) => {return val}},
-            // {title: "색인", key: "enabled", component: (val) => {return <Checkbox style={{cursor: "default"}} checked={val||true}/>}},
             {title: "색인", key: "enabled", component: (val) => {
                 if (val !== undefined && val !== null && val === false) {
                     return (
@@ -127,7 +126,6 @@ function MappingsJson2html(json, name, comments, dispatch, mode, detail) {
     }else{
         topFields = [
             {title: "타입", key: "type", component: (val) => {return val}},
-            // {title: "색인", key: "enabled", component: (val) => {return <Checkbox style={{cursor: "default"}} checked={val||true}/>}},
             {title: "색인", key: "enabled", component: (val) => {
                 if (val !== undefined && val !== null && val === false) {
                     return (
@@ -164,13 +162,11 @@ function MappingsJson2html(json, name, comments, dispatch, mode, detail) {
                             </React.Fragment>
                         )
                     }
-                // return <Checkbox style={{cursor: "default"}} checked={val||true}/>
             }}
         ]
     }
 
     const flatJsonMap = flat(json['properties'] ? json['properties'] : json)
-    // console.log(flatJsonMap);
 
     let formatKeyFlatJsonMap = {}
     Object.keys(flatJsonMap).forEach(key => {
@@ -270,21 +266,18 @@ function MappingsJson2html(json, name, comments, dispatch, mode, detail) {
                                                 <TextField 
                                                     fullWidth
                                                     onKeyPress={(e) => {
-                                                        // if(e.key =='Enter'){
                                                             if(comment.comments == undefined){
                                                                 comment.comments = {};
                                                             }
 
                                                             let n = mappingName + "";
                                                             comment.comments[n] = e.target.value;
-                                                            console.log(comment);
                                                             dispatch(addCommentsAction({"id": null, "name": name, "updatedComment": comment}))
                                                                 .then((res) => {
                                                                     dispatch(setIndexTemplateCommentsAction())
                                                                 }).catch((err) => { 
                                                                     console.log(err) 
                                                                 });
-                                                        // }
                                                     }}
                                                     onBlur={(e) => {
                                                         if(comment.comments == undefined){
@@ -292,7 +285,6 @@ function MappingsJson2html(json, name, comments, dispatch, mode, detail) {
                                                         }
                                                         let n = mappingName + "";
                                                         comment.comments[n] = e.target.value;
-                                                        console.log(comment);
                                                         dispatch(addCommentsAction({"id": null, "name": name, "updatedComment": comment}))
                                                             .then((res) => {
                                                                 dispatch(setIndexTemplateCommentsAction())
@@ -306,21 +298,18 @@ function MappingsJson2html(json, name, comments, dispatch, mode, detail) {
                                                     fullWidth
                                                     onKeyPress={
                                                         (e) => {
-                                                            // if(e.key =='Enter'){
                                                                 if(comment.comments == undefined){
                                                                     comment.comments = {};
                                                                 }
 
                                                                 let n = mappingName + "";
                                                                 comment.comments[n] = e.target.value;
-                                                                console.log(comment);
                                                                 dispatch(addCommentsAction({"id": comment.id, "name": name, "updatedComment": comment}))
                                                                     .then((res) => {
                                                                         dispatch(setIndexTemplateCommentsAction())
                                                                     }).catch((err) => { 
                                                                         console.log(err) 
                                                                     });
-                                                            // }
                                                         }
                                                     }
                                                     onBlur={(e) => {
@@ -329,7 +318,6 @@ function MappingsJson2html(json, name, comments, dispatch, mode, detail) {
                                                         }
                                                         let n = mappingName + "";
                                                         comment.comments[n] = e.target.value;
-                                                        console.log(comment);
                                                         dispatch(addCommentsAction({"id": null, "name": name, "updatedComment": comment}))
                                                             .then((res) => {
                                                                 dispatch(setIndexTemplateCommentsAction())

@@ -44,8 +44,6 @@ function SearchPanel(documents, aggregations, template, pagination) {
         dispatch(addReferenceResult(pagination.id, pagination))
             .then(() => {
                 setDisabledAppendButton(false)
-                // window.scrollTo(scrollX, scrollY);
-                // console.log(scrollY, window.scrollY)
             })
     }
 

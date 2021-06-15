@@ -127,15 +127,11 @@ function History({dispatch, authUser, collection, history}) {
             alert(error)
             toggleMoreMenu()
         })
-
     }
 
     if (!history['hits']) {
         return null;
     }
-
-    console.log('collection', collection)
-    console.log('hits >> ', history['hits'])
 
     // 색인: (FULL_INDEX, DYNAMIC_INDEX) , 전파 : PROPAGATE, 교체: EXPOSE
     const lastPage = Math.ceil(history['hits']['total']['value'] / paginationSize)

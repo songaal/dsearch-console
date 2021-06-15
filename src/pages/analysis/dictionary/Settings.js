@@ -110,7 +110,6 @@ function Settings({ dispatch, authUser, settings }) {
 
     useEffect(() => {
         dispatch(setSettings())
-        console.log(settings);
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     function handleOpenEditModal() {
@@ -133,7 +132,6 @@ function Settings({ dispatch, authUser, settings }) {
     }
 
     function handleAddSetting() {
-        console.log(newDictSetting);
         let dictSetting = newDictSetting;
         dictSetting['id'] = dictId.current.value
         dictSetting['name']= dictName.current.value
@@ -142,8 +140,6 @@ function Settings({ dispatch, authUser, settings }) {
         dictSetting['column_value']= dictColumn_value.current.value
 
         setNewDictSetting(dictSetting)
-
-        console.log(newDictSetting);
 
         let tmpError = {}
 
@@ -179,7 +175,6 @@ function Settings({ dispatch, authUser, settings }) {
         }
 
         if (Object.keys(tmpError).length > 0) {
-            console.log(tmpError)
             setErrorNewDictSetting(tmpError)
             return;
         }
@@ -506,7 +501,6 @@ function Settings({ dispatch, authUser, settings }) {
                                             <Select placeholder={"MAX"}
                                                 value={newDictSetting["tokenType"]}
                                                 onChange={e => {
-                                                    console.log(e.target.value);
                                                     setNewDictSetting({ ...newDictSetting, tokenType: e.target.value })}
                                                 }
                                                 error={errorNewDictSetting['tokenType']}
@@ -531,7 +525,6 @@ function Settings({ dispatch, authUser, settings }) {
                                         <FormControl className={classes.select} fullWidth={true}>
                                             <Select value={newDictSetting["ignoreCase"]}
                                                 onChange={e => {
-                                                        console.log(e.target.value);
                                                         setNewDictSetting({ ...newDictSetting, ignoreCase: e.target.value })
                                                     }
                                                 }

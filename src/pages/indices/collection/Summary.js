@@ -144,7 +144,6 @@ function Summary({dispatch, authUser, collection}) {
 
     const indexA = collection['indexA']
     const indexB = collection['indexB']
-    console.log(collection)
     // authUser.role.index =false;
     return (
         <React.Fragment>

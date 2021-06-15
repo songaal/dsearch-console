@@ -318,7 +318,6 @@ const DashBoardHeader = ({theme, onDrawerToggle}) => {
     }
 
     function handleSearch() {
-        console.log(keyword)
         dispatch(setReferenceSearchKeyword(keyword))
         dispatch(setReferenceResultAll(keyword))
         dispatch(setAutoCompleteStoreAction(keyword))
@@ -348,7 +347,6 @@ const DashBoardHeader = ({theme, onDrawerToggle}) => {
 
                     dispatch(setAutoCompleteAction(value)).then((data) => {
                         let payload = data.data;
-                        console.log(payload);
                         if(payload.query !== undefined && payload.result !== undefined && payload.query !== null && payload.result !== null) {
                             handleCache(payload.query, payload.result.map(item => item['keyword']))
                         }

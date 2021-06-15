@@ -102,7 +102,7 @@ function Edit({dispatch, template, templates, comments}) {
             mappingsAceEditor.current.editor.setValue("")
             settingsAceEditor.current.editor.setValue("")
         } catch (e) {
-            console.log('change ace editor')
+            console.log('change ace editor', e)
         }
         if (selectedTemplate !== "") {
             dispatch(setIndexTemplateAction({template: selectedTemplate}))
@@ -126,7 +126,7 @@ function Edit({dispatch, template, templates, comments}) {
             mappingsAceEditor.current.editor.setValue(json || '', 0)
             mappingsAceEditor.current.editor.clearSelection()
         } catch (e) {
-            console.log('change ace editor')
+            console.log('change ace editor', e)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [template['mappings']])
@@ -138,7 +138,7 @@ function Edit({dispatch, template, templates, comments}) {
             settingsAceEditor.current.editor.setValue(json || '', 0)
             settingsAceEditor.current.editor.clearSelection()
         } catch (e) {
-            console.log('change ace editor')
+            console.log('change ace editor', e)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [template['settings']])
@@ -165,10 +165,8 @@ function Edit({dispatch, template, templates, comments}) {
 
     function handleTabChane(index) {
         if(index === 0 && settingMode === 'json'){ // setting -> mapping
-            console.log(index, settingsAceEditor.current.editor.getValue());
             setSettingsJson(settingsAceEditor.current.editor.getValue())
         }else if(index === 1 && mappingMode === 'json') { // mapping-> setting
-            console.log(index, mappingsAceEditor.current.editor.getValue());
             setMappingsJson(mappingsAceEditor.current.editor.getValue()) 
         }
         
@@ -201,7 +199,6 @@ function Edit({dispatch, template, templates, comments}) {
 
         if (Object.keys(tmpInValid).length > 0) {
             setInvalid(tmpInValid)
-            console.log('tmpInValid', tmpInValid)
             return false;
         }
 

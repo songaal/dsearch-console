@@ -138,7 +138,6 @@ function ControlBox({dispatch, authUser, collection, job}) {
         setProcessUI(true)
         collection['scheduled'] = event.target.checked;
         dispatch(editCollectionScheduleAction(collection['id'], collection))
-        // dispatch(editCollectionScheduleAction(collection['id'], event.target.checked))
             .then(response => {
                 dispatch(setCollection(collection['id']))
                 setTimeout(() => {
@@ -158,7 +157,6 @@ function ControlBox({dispatch, authUser, collection, job}) {
     function handleAction(action) {
         setProcessUI(true)
         // actions: all, indexing, propagate, expose, stop_propagation, stop_indexing
-        console.log(collection);
         dispatch(editCollectionAction(collection['id'], action))
             .then(response => {
                 dispatch(setCollection(collection['id']))

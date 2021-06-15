@@ -47,7 +47,7 @@ function SignIn({dispatch}) {
     // const [server, setServer] = useState("")
     // const [email, setEmail] = useState("")
     // const [password, setPassword] = useState("")
-    console.log(">>", getCookie(SET_DSEARCH_AUTH_USER))
+    // console.log(">>", getCookie(SET_DSEARCH_AUTH_USER))
     const [serverError, setServerError] = useState(false)
     const [inValid, setInValid] = useState(false)
     const [loginSave, setLoginSave] = useState(false)
@@ -60,7 +60,6 @@ function SignIn({dispatch}) {
             dispatch(setDsearchAuthUser())
                 .then(response => {
                     if (response["token"]) {
-                        console.log("authenticated")
                         sessionStorage.setItem(SET_DSEARCH_SERVER, localStorage.getItem(SET_DSEARCH_SERVER));
                         // location.replace(authenticatedRoute)
                         history.replace(authenticatedRoute)
@@ -69,7 +68,6 @@ function SignIn({dispatch}) {
 
             // 자동로그인 (로컬 스토리지 정보 로그인 시도)
             if (hash['hash1']) {
-                console.log("auto login")
                 setLoginSave(hash['hash1'])
                 signInProcess(atob(atob(atob(hash['hash2']))), atob(atob(atob(hash['hash3']))), atob(atob(atob(hash['hash4']))))
             }
@@ -126,7 +124,7 @@ function SignIn({dispatch}) {
         sessionStorage.setItem(SET_DSEARCH_SERVER, server);
         dispatch(setDsearchSignIn({server, email, password}))
             .then(response => {
-                console.log("sign in success")
+                // console.log("sign in success")
                 setInValid(false)
                 if (loginSave) {
                     // 자동로그인 (로컬 스토리지 추가)
