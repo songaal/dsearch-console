@@ -61,6 +61,7 @@ function Migration({authUser}) {
         
         download(json).then(response => {
             let data = response.data
+            console.log(data.result)
             setDownloadResults(data.result)
             setUploadResults(null)
             let json = JSON.parse(sessionStorage.getItem('SET_DSEARCH_AUTH_USER'));
@@ -166,9 +167,10 @@ function Migration({authUser}) {
                                     <TableBody>
                                         <TableRow hover>
                                             <TableCell>
-                                                <Typography variant="h5">파이프라인 다운로드 갯수: { downloadResults.pipeline.result === true ? downloadResults.pipeline.count : 0}</Typography>
+                                                <Typography variant="h5">파이프라인 다운로드 갯수: 
+                                                { downloadResults.pipeline !== undefined && downloadResults.pipeline.result === true ? downloadResults.pipeline.count : 0}</Typography>
                                                 <br />
-                                                {downloadResults.pipeline.list.length > 0 ?
+                                                { downloadResults.pipeline !== undefined && downloadResults.pipeline.list.length > 0 ?
                                                     downloadResults.pipeline.list.map((item) => {
                                                         return <div key={item + "_pipeline_download"} dangerouslySetInnerHTML={{ __html: " - " + item }} />
                                                     })
@@ -177,9 +179,9 @@ function Migration({authUser}) {
                                         </TableRow>
                                         <TableRow hover>
                                             <TableCell>
-                                                <Typography variant="h5">컬렉션 다운로드 갯수: { downloadResults.collection.result === true ? downloadResults.collection.count : 0}</Typography>
+                                                <Typography variant="h5">컬렉션 다운로드 갯수: { downloadResults.collection !== undefined && downloadResults.collection.result === true ? downloadResults.collection.count : 0}</Typography>
                                                 <br />
-                                                {downloadResults.collection.list.length > 0 ?
+                                                {downloadResults.collection !== undefined && downloadResults.collection.list.length > 0 ?
                                                     downloadResults.collection.list.map((item) => {
                                                         return <div key={item + "_collection_download"} dangerouslySetInnerHTML={{ __html: " - " + item }} />
                                                     })
@@ -188,9 +190,9 @@ function Migration({authUser}) {
                                         </TableRow>
                                         <TableRow hover>
                                             <TableCell>
-                                                <Typography variant="h5">JDBC 다운로드 갯수: { downloadResults.jdbc.result === true ? downloadResults.jdbc.count : 0}</Typography>
+                                                <Typography variant="h5">JDBC 다운로드 갯수: { downloadResults.jdbc !== undefined && downloadResults.jdbc.result === true ? downloadResults.jdbc.count : 0}</Typography>
                                                 <br />
-                                                {downloadResults.jdbc.list.length > 0 ?
+                                                {downloadResults.jdbc !== undefined && downloadResults.jdbc.list.length > 0 ?
                                                     downloadResults.jdbc.list.map((item) => {
                                                         return <div key={item + "_jdbc_download"} dangerouslySetInnerHTML={{ __html: " - " + item }} />
                                                     })
@@ -199,9 +201,9 @@ function Migration({authUser}) {
                                         </TableRow>
                                         <TableRow hover>
                                             <TableCell>
-                                                <Typography variant="h5">템플릿 다운로드 갯수: { downloadResults.templates.result === true ? downloadResults.templates.count : 0}</Typography>
+                                                <Typography variant="h5">템플릿 다운로드 갯수: { downloadResults.templates !== undefined && downloadResults.templates.result === true ? downloadResults.templates.count : 0}</Typography>
                                                 <br />
-                                                {downloadResults.templates.list.length > 0 ?
+                                                {downloadResults.templates !== undefined && downloadResults.templates.list.length > 0 ?
                                                     downloadResults.templates.list.map((item) => {
                                                         return <div key={item + "_templates_download"} dangerouslySetInnerHTML={{ __html: " - " + item }} />
                                                     })
