@@ -143,6 +143,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [open, setOpen] = React.useState(null);
     const [placement, setPlacement] = React.useState();
+    const [cronCount, setCronCount]= React.useState(0);
 
     const [templateValue, setTemplateValue] = useState(TEMPLATE_LIST[0]);
 
@@ -211,7 +212,6 @@ function Source({dispatch, authUser, collection, JdbcList}) {
             // newCron.current.value = collection['cron']
             
             let cron_list = collection['cron'].split("||")
-            cron_count = cron_list.length;
             cron_list.forEach((element, index) => {
                 if(index == 0) newCron.current.value = element
                 else if(index == 1) newCron2.current.value = element
@@ -219,7 +219,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                 else if(index == 3) newCron4.current.value = element
                 else if(index == 4) newCron5.current.value = element
             });
-
+            setCronCount(cron_list.length);
             // setCron(collection['cron']);
             setLauncherYaml((collection['launcher']||{})['yaml']||"");
             aceEditor.current.editor.setValue((collection['launcher']||{})['yaml']||"")
@@ -239,7 +239,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                 newEsPassword.current.value = collection['esPassword']
                 // newCron.current.value = collection['cron']
                 let cron_list = collection['cron'].split("||")
-                cron_count = cron_list.length;
+                setCronCount(cron_list.length);
                 cron_list.forEach((element, index) => {
                     if(index == 0) newCron.current.value = element
                     else if(index == 1) newCron2.current.value = element
@@ -407,10 +407,13 @@ function Source({dispatch, authUser, collection, JdbcList}) {
     }
 
     const handleCronAdd = (event) => {
-        cron_count = cron_count < 5 ? cron_count+1 : 5
+        // cron_count = cron_count < 5 ? cron_count+1 : 5
+
+        setCronCount(cronCount < 5 ? cronCount+1 : 5)
     }
     const handleCronRemove = (event) => {
-        cron_count = cron_count >= 0 ? cron_count-1 : 0
+        // cron_count = cron_count >= 0 ? cron_count-1 : 0
+        setCronCount(cronCount >= 0 ? cronCount-1 : 0)
     }
 
     let jdbcHitList = [
@@ -645,7 +648,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                             <Box maxWidth={"100%"}>
                                                             <TextField
                                                                 inputRef={newCron2}
-                                                                style={{ display: cron_count > 1 ? "" : "none" }}
+                                                                style={{ display: cronCount > 1 ? "" : "none" }}
                                                                 fullWidth
                                                                 placeholder={"분 시 일 월 요일 (default: 0 0 * * *)"}
                                                                 error={invalid['cron'] || false} />
@@ -653,7 +656,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                             <Box maxWidth={"100%"}>
                                                             <TextField
                                                                 inputRef={newCron3}
-                                                                style={{ display: cron_count > 2 ? "" : "none" }}
+                                                                style={{ display: cronCount > 2 ? "" : "none" }}
                                                                 fullWidth
                                                                 placeholder={"분 시 일 월 요일 (default: 0 0 * * *)"}
                                                                 error={invalid['cron'] || false} />
@@ -661,7 +664,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                             <Box maxWidth={"100%"}>
                                                             <TextField
                                                                 inputRef={newCron4}
-                                                                style={{ display: cron_count > 3? "" : "none" }}
+                                                                style={{ display: cronCount > 3? "" : "none" }}
                                                                 fullWidth
                                                                 placeholder={"분 시 일 월 요일 (default: 0 0 * * *)"}
                                                                 error={invalid['cron'] || false} />
@@ -669,7 +672,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                             <Box maxWidth={"100%"}>
                                                             <TextField
                                                                 inputRef={newCron5}
-                                                                style={{ display: cron_count > 4 ? "" : "none" }}
+                                                                style={{ display: cronCount > 4 ? "" : "none" }}
                                                                 fullWidth
                                                                 placeholder={"분 시 일 월 요일 (default: 0 0 * * *)"}
                                                                 error={invalid['cron'] || false} />
