@@ -685,9 +685,15 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                         <Grid item xs={1} justify={"center"} alignItems="center">
                                                             <Link onMouseOver={handleClick('top')}>예제</Link>
                                                             <Popper open={Boolean(open)} anchorEl={anchorEl}
-                                                                    placement={placement} transition>
+                                                                    placement={placement} transition 
+                                                                    style={
+                                                                                {
+                                                                                    // overflow: "hidden",
+                                                                                    zIndex: 999999999,
+                                                                                }
+                                                                    }>
                                                                 {({TransitionProps}) => (
-                                                                    <Fade {...TransitionProps} timeout={350}>
+                                                                    <Fade {...TransitionProps} timeout={300}>
                                                                         <Paper>
                                                                             <Typography className={classes.typography}>
                                                                                 예제<br/>
