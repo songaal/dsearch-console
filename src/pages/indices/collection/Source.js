@@ -137,11 +137,6 @@ dataSQL : "SELECT * FROM myTable"`
 const NO_SELECTED = 'NO_SELECTED';
 const DEFAULT_CRON = '0 0 * * *'
 
-function isCronValid(cron) {
-    var cronregex = new RegExp(/^(\*|([0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9])|\*\/([0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9])) (\*|([0-9]|1[0-9]|2[0-3])|\*\/([0-9]|1[0-9]|2[0-3])) (\*|([1-9]|1[0-9]|2[0-9]|3[0-1])|\*\/([1-9]|1[0-9]|2[0-9]|3[0-1])) (\*|([1-9]|1[0-2])|\*\/([1-9]|1[0-2])) (\*|([0-6])|\*\/([0-6]))$/);
-    return cronregex.test(cron);
-}
-
 function Source({dispatch, authUser, collection, JdbcList}) {
     const classes = useStyles();
     const [editModal, setEditModal] = useState(null)
@@ -308,21 +303,14 @@ function Source({dispatch, authUser, collection, JdbcList}) {
             }
         }
 
-
-        console.log(newCron.current.value)
-        console.log(newCron2.current.value)
-        console.log(newCron3.current.value)
-        console.log(newCron4.current.value)
-        console.log(newCron5.current.value)
-
         // 크론 설정 가져오기
-        if(!isCronValid(newCron.current.value)){
+        if(!isValidCron(newCron.current.value)){
             invalidCheck['cron'] = true
         }
 
         let cron_merge = newCron.current.value 
 
-        if(isCronValid(newCron2.current.value) && cronCount >= 2) {
+        if(isValidCron(newCron2.current.value) && cronCount >= 2) {
             if(cron_merge.length == 0){
                 cron_merge +=  newCron2.current.value 
             }else{
@@ -334,7 +322,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
             invalidCheck['cron'] = true
         }
             
-        if(isCronValid(newCron3.current.value) && cronCount >= 3) {
+        if(isValidCron(newCron3.current.value) && cronCount >= 3) {
             if(cron_merge.length == 0){
                 cron_merge += newCron3.current.value 
             }else{
@@ -346,7 +334,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
             invalidCheck['cron'] = true
         }
             
-        if(isCronValid(newCron4.current.value) && cronCount >= 4) {
+        if(isValidCron(newCron4.current.value) && cronCount >= 4) {
             if(cron_merge.length == 0){
                 cron_merge +=  newCron4.current.value 
             }else{
@@ -358,7 +346,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
             invalidCheck['cron'] = true
         }
             
-        if(isCronValid(newCron5.current.value) && cronCount >= 5) {
+        if(isValidCron(newCron5.current.value) && cronCount >= 5) {
             if(cron_merge.length == 0){
                 cron_merge +=  newCron5.current.value
             }else{
