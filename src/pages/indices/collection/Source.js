@@ -281,21 +281,14 @@ function Source({dispatch, authUser, collection, JdbcList}) {
         let port = newPort.current.value
         let esHost = newEsHost.current.value
         let esPort = newEsPort.current.value
-        let cron = newCron.current.value 
         let esUser = newEsUser.current.value
         let esPassword = newEsPassword.current.value
 
         setInvalid({})
+
         let invalidCheck = {}
         if (sourceName.trim() === "") {
             invalidCheck['sourceName'] = true
-        }
-
-        if(cron.length === 0){
-            newCron.current.value = DEFAULT_CRON
-            // setCron(DEFAULT_CRON)
-        }else if (!isValidCron(cron)) {
-            invalidCheck['cron'] = true
         }
 
         if (isExtIndexer) {
@@ -316,10 +309,17 @@ function Source({dispatch, authUser, collection, JdbcList}) {
         }
 
 
+        console.log(newCron.current.value)
+        console.log(newCron2.current.value)
+        console.log(newCron3.current.value)
+        console.log(newCron4.current.value)
+        console.log(newCron5.current.value)
+
         // 크론 설정 가져오기
         if(!isCronValid(newCron.current.value)){
             invalidCheck['cron'] = true
         }
+
         let cron_merge = newCron.current.value 
 
         if(isCronValid(newCron2.current.value) && cronCount >= 2) {
@@ -368,6 +368,11 @@ function Source({dispatch, authUser, collection, JdbcList}) {
             /* ignore */
         }else{
             invalidCheck['cron'] = true
+        }
+        
+        if(cron_merge.length === 0){
+            cron_merge = DEFAULT_CRON
+            delete invalidCheck['cron'];
         }
 
         if (Object.keys(invalidCheck).length > 0) {
