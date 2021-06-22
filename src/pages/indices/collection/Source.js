@@ -396,7 +396,8 @@ function Source({dispatch, authUser, collection, JdbcList}) {
 
     const handleCronAdd = (event) => {
         if(cronCount == 5){
-            setCronMessage(true)
+            if(cronMessage == false)
+                setCronMessage(true)
             return;
         }
         setCronCount(cronCount < 5 ? cronCount+1 : 5)
@@ -826,7 +827,14 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                 </CardContent>
             </Card>
 
-            <Snackbar open={cronMessage} autoHideDuration={5000} onClose={() => {setCronMessage(false)}}>
+            <Snackbar 
+                open={cronMessage} autoHideDuration={3000} 
+                onClose={(event, reason) => {
+                    if (reason === 'clickaway') {
+                        return;
+                      }
+                  setCronMessage(false) }
+                }>
                 <MuiAlert elevation={4} variant="filled" severity="info"> 크론 설정은 최대 5개까지만 설정 가능합니다. </MuiAlert>
             </Snackbar>
 
