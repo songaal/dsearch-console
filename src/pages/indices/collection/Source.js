@@ -26,6 +26,8 @@ import {
     TextField,
     Typography as MuiTypography,
 } from "@material-ui/core";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
 import AddBoxIcon from '@material-ui/icons/AddBox';
 import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox';
 import {makeStyles} from '@material-ui/core/styles';
@@ -134,7 +136,11 @@ dataSQL : "SELECT * FROM myTable"`
 };
 const NO_SELECTED = 'NO_SELECTED';
 const DEFAULT_CRON = '0 0 * * *'
-let cron_count = 0;
+
+function isCronValid(cron) {
+    var cronregex = new RegExp(/^(\*|([0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9])|\*\/([0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9])) (\*|([0-9]|1[0-9]|2[0-3])|\*\/([0-9]|1[0-9]|2[0-3])) (\*|([1-9]|1[0-9]|2[0-9]|3[0-1])|\*\/([1-9]|1[0-9]|2[0-9]|3[0-1])) (\*|([1-9]|1[0-2])|\*\/([1-9]|1[0-2])) (\*|([0-6])|\*\/([0-6]))$/);
+    return cronregex.test(cron);
+}
 
 function Source({dispatch, authUser, collection, JdbcList}) {
     const classes = useStyles();
@@ -144,23 +150,16 @@ function Source({dispatch, authUser, collection, JdbcList}) {
     const [open, setOpen] = React.useState(null);
     const [placement, setPlacement] = React.useState();
     const [cronCount, setCronCount]= React.useState(0);
+    const [cronMessage, setCronMessage]= React.useState(false);
 
     const [templateValue, setTemplateValue] = useState(TEMPLATE_LIST[0]);
 
-    // const [sourceName, setSourceName] = useState("")
     const [launcherYaml, setLauncherYaml] = useState("")
     const [scheme, setScheme] = useState("http")
-    // const [host, setHost] = useState("")
-    // const [port, setPort] = useState("")
     const [jdbcId, setJdbcId] = useState(NO_SELECTED)
-    // const [cron, setCron] = useState("")
 
     const [isExtIndexer, setExtIndexer] = useState(false);
     const [esScheme, setEsScheme] = useState("http");
-    // const [esHost, setEsHost] = useState("");
-    // const [esPort, setEsPort] = useState("");
-    // const [esUser, setEsUser] = useState("");
-    // const [esPassword, setEsPassword] = useState("");
     const [invalid, setInvalid] = useState({})
 
     const aceEditor = useRef(null)
@@ -185,16 +184,13 @@ function Source({dispatch, authUser, collection, JdbcList}) {
         if (collection['sourceName'] === undefined || collection['sourceName'] === null || collection['sourceName'] === "") {
             /* FORCE_EDIT(생성하고 아무런 데이터가 없을 때) 모드일때만 */
             setMode("FORCE_EDIT");
-            // aceEditor.current.editor.setValue(DEFAULT_YAML)
             aceEditor.current.editor.setValue(TEMPLATE[TEMPLATE_LIST[0]]);
         } else {
+            setOpen(false)
             newSourceName.current.value = collection['sourceName']
-            // setSourceName(collection['sourceName']);
             setScheme((collection['launcher']||{})['scheme']||"");
             newHost.current.value = (collection['launcher']||{})['host']||""
             newPort.current.value = (collection['launcher']||{})['port']||""
-            // setHost((collection['launcher']||{})['host']||"");
-            // setPort((collection['launcher']||{})['port']||"");
 
             setExtIndexer(collection['extIndexer'])
             setEsScheme(collection['esScheme'])
@@ -202,15 +198,15 @@ function Source({dispatch, authUser, collection, JdbcList}) {
             newEsPort.current.value = collection['esPort']
             newEsUser.current.value = collection['esUser']
             newEsPassword.current.value = collection['esPassword']
-            // setEsHost(collection['esHost'])
-            // setEsPort(collection['esPort'])
-            // setEsUser(collection['esUser'])
-            // setEsPassword(collection['esPassword'])
 
-            // setJdbcId(collection['jdbcId']);
             setJdbcId(collection['jdbcId'] === '' ? NO_SELECTED : collection['jdbcId'])
-            // newCron.current.value = collection['cron']
-            
+
+            newCron.current.value = ""
+            newCron2.current.value = ""
+            newCron3.current.value = ""
+            newCron4.current.value = ""
+            newCron5.current.value = ""
+
             let cron_list = collection['cron'].split("||")
             cron_list.forEach((element, index) => {
                 if(index == 0) newCron.current.value = element
@@ -219,8 +215,8 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                 else if(index == 3) newCron4.current.value = element
                 else if(index == 4) newCron5.current.value = element
             });
+
             setCronCount(cron_list.length);
-            // setCron(collection['cron']);
             setLauncherYaml((collection['launcher']||{})['yaml']||"");
             aceEditor.current.editor.setValue((collection['launcher']||{})['yaml']||"")
             aceEditor.current.editor.clearSelection()
@@ -230,6 +226,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
     useEffect(() => {
         try {
             if (mode === "EDIT") {
+                setInvalid({})
                 newSourceName.current.value = collection['sourceName']
                 newHost.current.value = (collection['launcher']||{})['host']||""
                 newPort.current.value = (collection['launcher']||{})['port']||""
@@ -237,7 +234,13 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                 newEsPort.current.value = collection['esPort']
                 newEsUser.current.value = collection['esUser']
                 newEsPassword.current.value = collection['esPassword']
-                // newCron.current.value = collection['cron']
+
+                newCron.current.value = ""
+                newCron2.current.value = ""
+                newCron3.current.value = ""
+                newCron4.current.value = ""
+                newCron5.current.value = ""
+
                 let cron_list = collection['cron'].split("||")
                 setCronCount(cron_list.length);
                 cron_list.forEach((element, index) => {
@@ -248,21 +251,10 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                     else if(index == 4) newCron5.current.value = element
                 });
 
-                // setSourceName(collection['sourceName']);
                 setScheme((collection['launcher']||{})['scheme']||"");
-                // setHost((collection['launcher']||{})['host']||"");
-                // setPort((collection['launcher']||{})['port']||"");
-
                 setExtIndexer(collection['extIndexer'])
                 setEsScheme(collection['esScheme'])
-                // setEsHost(collection['esHost'])
-                // setEsPort(collection['esPort'])
-                // setEsUser(collection['esUser'])
-                // setEsPassword(collection['esPassword'])
-
-                // setJdbcId(collection['jdbcId']);
                 setJdbcId(collection['jdbcId'] === '' ? NO_SELECTED : collection['jdbcId'])
-                // setCron(collection['cron']);
                 setLauncherYaml((collection['launcher']||{})['yaml']||"");
                 aceEditor.current.editor.setValue((collection['launcher']||{})['yaml']||"")
                 aceEditor.current.editor.clearSelection()
@@ -280,7 +272,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
     const handleClick = (newPlacement) => (event) => {
         setAnchorEl(event.currentTarget);
         setOpen((prev) => placement !== newPlacement || !prev);
-        setPlacement(newPlacement);
+        // setPlacement(newPlacement);
     }
 
     function handleSaveProcess() {
@@ -323,64 +315,67 @@ function Source({dispatch, authUser, collection, JdbcList}) {
             }
         }
 
-        let cron_merge = newCron.current.value 
-        if(newCron.current.value.split(" ").length != 5){
+
+        // 크론 설정 가져오기
+        if(!isCronValid(newCron.current.value)){
             invalidCheck['cron'] = true
         }
+        let cron_merge = newCron.current.value 
 
-        if(newCron2.current.value.length != 0 && newCron2.current.value.split(" ").length == 5 && cron_count >= 1) {
+        if(isCronValid(newCron2.current.value) && cronCount >= 2) {
             if(cron_merge.length == 0){
                 cron_merge +=  newCron2.current.value 
             }else{
                 cron_merge +=  "||" + newCron2.current.value 
             }
-        }else if(newCron2.current.value.length == 0){
+        }else if(newCron2.current.value.length == 0 || cronCount < 2){
             /* ignore */
         }else{
             invalidCheck['cron'] = true
         }
             
-        if(newCron3.current.value.length > 0 && newCron3.current.value.split(" ").length == 5&& cron_count >= 2) {
+        if(isCronValid(newCron3.current.value) && cronCount >= 3) {
             if(cron_merge.length == 0){
                 cron_merge += newCron3.current.value 
             }else{
                 cron_merge +=  "||" + newCron3.current.value 
             }
-        }else if(newCron3.current.value.length == 0){
+        }else if(newCron3.current.value.length == 0|| cronCount < 3){
             /* ignore */
         }else{
             invalidCheck['cron'] = true
         }
             
-        if(newCron4.current.value.length != 0 && newCron4.current.value.split(" ").length == 5&& cron_count >= 3) {
+        if(isCronValid(newCron4.current.value) && cronCount >= 4) {
             if(cron_merge.length == 0){
                 cron_merge +=  newCron4.current.value 
             }else{
                 cron_merge +=  "||" + newCron4.current.value 
             }
-        }else if(newCron4.current.value.length == 0){
+        }else if(newCron4.current.value.length == 0 || cronCount < 4){
             /* ignore */
         }else{
             invalidCheck['cron'] = true
         }
             
-        if(newCron5.current.value.length != 0 && newCron5.current.value.split(" ").length == 5&& cron_count >= 4) {
+        if(isCronValid(newCron5.current.value) && cronCount >= 5) {
             if(cron_merge.length == 0){
                 cron_merge +=  newCron5.current.value
             }else{
                 cron_merge +=  "||" + newCron5.current.value
             }
-        }else if(newCron5.current.value.length == 0){
+        }else if(newCron5.current.value.length == 0 || cronCount < 5){
             /* ignore */
         }else{
             invalidCheck['cron'] = true
         }
-            
+
         if (Object.keys(invalidCheck).length > 0) {
             setInvalid(invalidCheck)
             return false
         }
 
+        setOpen(false)
         dispatch(editCollectionSourceAction(collection['id'], {
             sourceName,
             // cron: (cron.length === 0 ? DEFAULT_CRON : cron),
@@ -407,12 +402,13 @@ function Source({dispatch, authUser, collection, JdbcList}) {
     }
 
     const handleCronAdd = (event) => {
-        // cron_count = cron_count < 5 ? cron_count+1 : 5
-
+        if(cronCount == 5){
+            setCronMessage(true)
+            return;
+        }
         setCronCount(cronCount < 5 ? cronCount+1 : 5)
     }
     const handleCronRemove = (event) => {
-        // cron_count = cron_count >= 0 ? cron_count-1 : 0
         setCronCount(cronCount >= 0 ? cronCount-1 : 0)
     }
 
@@ -541,7 +537,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                 </Button>
                                 <Button style={{display: authUser.role.index ? mode === 'EDIT' ? "inline" : "none" : "none"}} mx={1}
                                         variant={"outlined"}
-                                        onClick={() => setMode("VIEW")}
+                                        onClick={() => {setOpen(false); setMode("VIEW"); }}
                                 >
                                     취소
                                 </Button>
@@ -570,10 +566,6 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                             <TableRow>
                                                 <TableCell variant={"head"} component={"th"}>파라미터 YAML</TableCell>
                                                 <TableCell>
-                                                    {/*<TextareaAutosize value={launcherYaml}*/}
-                                                    {/*                  onChange={event => setLauncherYaml(event.target.value)}*/}
-                                                    {/*                  style={{width: "100%", minHeight: "200px"}}*/}
-                                                    {/*/>*/}
                                                     <Box display="flex" alignItems="center"  justifyContent="space-between" width="100%" marginBottom="8px">
                                                         <div></div>
                                                         <FormControl style={{width: "200px"}}>
@@ -682,16 +674,16 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                             <Button onClick={handleCronAdd}><AddBoxIcon /></Button>
                                                             <Button onClick={handleCronRemove}><IndeterminateCheckBoxIcon /></Button>
                                                         </Grid>
-                                                        <Grid item xs={1} justify={"center"} alignItems="center">
-                                                            <Link onMouseOver={handleClick('top')}>예제</Link>
-                                                            <Popper open={Boolean(open)} anchorEl={anchorEl}
-                                                                    placement={placement} transition 
-                                                                    style={
-                                                                                {
-                                                                                    // overflow: "hidden",
-                                                                                    zIndex: 999999999,
-                                                                                }
-                                                                    }>
+                                                        <Grid item xs={1} 
+                                                            // justify={"center"} alignItems="center"
+                                                            >
+                                                            <Link onMouseOver={handleClick('top')} onMouseLeave={handleClick('top')}>예제</Link>
+                                                            <Popper open={Boolean(open)} 
+                                                                    anchorEl={anchorEl}
+                                                                    placement={'top'}
+                                                                    // placement={placement}
+                                                                    transition 
+                                                                    style={{ zIndex: 999999999 }}>
                                                                 {({TransitionProps}) => (
                                                                     <Fade {...TransitionProps} timeout={300}>
                                                                         <Paper>
@@ -700,8 +692,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                                                 */1 * * * * : 1분마다 한 번씩<br/>
                                                                                 */5 * * * * : 5분마다 한 번씩<br/>
                                                                                 0 5 1 * * : 매달 1일 새벽 5시에 실행.<br/>
-                                                                                0 5,11 * * 0,3 : 매주 일요일과 수요일 새벽 5시와 밤
-                                                                                11시.<br/>
+                                                                                0 5,11 * * 0,3 : 매주 일요일과 수요일 새벽 5시와 밤 11시.<br/>
                                                                                 0 5,11 * * * : 새벽 5시와 밤 11시
                                                                             </Typography>
                                                                         </Paper>
@@ -780,7 +771,10 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                 <TableCell variant={"head"} component={"th"}>전용인덱서</TableCell>
                                                 <TableCell>
                                                     <Typography component="div">
-                                                        <Grid component="label" container alignItems="center" spacing={1}>
+                                                        <Grid component="label" 
+                                                            container 
+                                                            // alignItems="center" 
+                                                            spacing={1}>
                                                             <Grid item>사용안함</Grid>
                                                             <Grid item>
                                                                 <Switch checked={isExtIndexer} onChange={() => setExtIndexer((!isExtIndexer))}  />
@@ -838,6 +832,10 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                     </Box>
                 </CardContent>
             </Card>
+
+            <Snackbar open={cronMessage} autoHideDuration={5000} onClose={() => {setCronMessage(false)}}>
+                <MuiAlert elevation={4} variant="filled" severity="info"> 크론 설정은 최대 5개까지만 설정 가능합니다. </MuiAlert>
+            </Snackbar>
 
             <Dialog open={Boolean(editModal)}
                     fullWidth
