@@ -255,10 +255,15 @@ function Collection({ dispatch, authUser, indexSuffixA, indexSuffixB, collection
     }
 
     function convertHumanReadableCount(docSize) {
+        if(docSize === null || docSize === undefined){
+            return "";
+        }
+
         let size = docSize + "";
         if (size.length <= 3) {
             return size;
         }
+        
         var count = Math.ceil(size.length / 3);
 
         var newSize = [];

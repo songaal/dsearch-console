@@ -37,15 +37,7 @@ export const setIndexResultActions = key => dispatch => client.call({
         }
       }
     ],
-    "size" : 200
-    // ,
-    // collapse: {
-    //   field: "index",
-    //   inner_hits: {
-    //     name: "_bundle",
-    //     size: 0
-    //   }
-    // }
+    "size" : 100
   }
 })
   .then(response => dispatch({ type: SET_INDEX_RESULT, payload: response.data }))
@@ -75,7 +67,16 @@ export const setIndicesActions = () => dispatch =>
       format: "json",
     }
   })
-    .then(response => dispatch({ type: SET_DASHBOARD_INDICES_INFO, payload: response.data }))
+    .then(response => {
+      let indexList = []
+      response.data.forEach(element => {
+        if(!element.index.startsWith(".")){
+          indexList.push(element);
+        }
+      });
+      dispatch({ type: SET_DASHBOARD_INDICES_INFO, payload: indexList })
+      // dispatch({ type: SET_DASHBOARD_INDICES_INFO, payload: response.data })
+    })
     .catch(error => console.error(error))
 
 

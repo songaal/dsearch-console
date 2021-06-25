@@ -65,40 +65,12 @@ const TableCell = styled(MuiTableCell)`
     border: 1px solid rgba(224, 224, 224, 1);
     padding: 3px;
 `;
-// const Shard = styled(Button)`
-//     min-width: 25px;
-//     max-width: 25px;
-//     width: 25px;
-//     margin: 2px;
-//     min-height: 25px;
-//     max-height: 25px;
-//     height: 25px;
-//     font-size: 0.9em;
-//     padding: 2px;
-// `;
-
-
-// const idxRunning = [
-//     {index:"shop-c",  docs:40000, lastIndex:"1시간 5분", exportDoc:200000},
-//     {index:"community",  docs:16331, lastIndex:"30분", exportDoc:20000}
-// ]
-
-
-// const idxWarning = [
-//     {status:"yellow", index:"shop-a", desc:"레플리카 샤드 이상"},
-//     {status:"red", index:"prod", desc:"프라이머리 샤드 이상"}
-// ]
-
-// const idxResult = [
-//     {status:"success", index:"shop-a", alias:"shop", lastSuccess:"5분전", elapsed:"1시간 20분", docs:140000, storage:"530mb"},
-//     {status:"fail", index:"shop-b", alias:"shop", lastSuccess:"56분전", elapsed:"1초", docs:0, storage:"10kb"},
-// ]
 
 const getFinishTime = (startTime, estimatedTime) => {
     var date = new Date().getTime() - new Date(startTime).getTime();
-    return (date.valueOf()/ estimatedTime) * 100
+    if(date.valueOf() > estimatedTime) return 100;
+    return (date.valueOf() / estimatedTime) * 100
 }
-
 
 const untilTime = (time) => {
     var date = new Date().getTime() - new Date(time).getTime();
@@ -107,7 +79,7 @@ const untilTime = (time) => {
 
     let h = Math.floor(hours / 60)
     let m = Math.floor(hours % 60)
-    // var minutes = Math.ceil(((date - (hours * 3600)) / 60)/ 1000);
+    
     if(h >= 720){
         let month = h / 30 / 24;
         return Math.ceil(month) + "개월"
@@ -135,7 +107,7 @@ const getElapsed = time => {
     }
 
     if(hours !== 0) {
-        return hours+'시간 ' + minutes+'분' 
+        return hours + '시간 ' + minutes+'분' 
     }else{
         return minutes+'분' 
     }
@@ -162,8 +134,6 @@ function WarningIndex({status, indices}) {
         }
         return row;
     })
-
-    // console.log(list);
 
     return(
         <Card>
@@ -221,9 +191,10 @@ function RunningIndex({result, running, status, indices, indexPercent}) {
     const classes = useStyles();
     let indexList = []
     let successIndexList = {};
+    let totalIndexList = result.hits.hits;
 
-    if(result.hits.hits.length >= 0){
-        for(let item of result.hits.hits){
+    if(totalIndexList.length >= 0){
+        for(let item of totalIndexList){
             let index = item._source.index;
             let baseId = index.substring(0, index.length-2);
 
@@ -241,6 +212,8 @@ function RunningIndex({result, running, status, indices, indexPercent}) {
             result = "전파";
         }else if(step === "EXPOSE"){
             result = "교체";
+        }else{
+            result = "";
         }
         return result;
     }
@@ -259,16 +232,7 @@ function RunningIndex({result, running, status, indices, indexPercent}) {
                 })
 
                 let nextStep = server.nextStep;
-                let currentStep = server.currentStep;
-                if(currentStep === "FULL_INDEX"){
-                    currentStep = "색인";
-                }else if(currentStep === "PROPAGATE"){
-                    currentStep = "전파";
-                }else if(currentStep === "EXPOSE"){
-                    currentStep = "교체";
-                }else{
-                    currentStep = "";
-                }
+                let currentStep = convertStep(server.currentStep);
 
                 if( successIndexList[baseId] !== undefined
                     && successIndexList[baseId].endTime !== undefined 
@@ -287,7 +251,6 @@ function RunningIndex({result, running, status, indices, indexPercent}) {
         }
     }
     
-    
     function moveDetail(uuid) {
         history.push(`./indices/${uuid}`)
     }
@@ -304,9 +267,7 @@ function RunningIndex({result, running, status, indices, indexPercent}) {
             newSize.unshift(size.slice(-3*(i+1), size.length-(3*i)));
         }
         return newSize.join(',');
-    }
-
-    
+    }    
 
     return(
         <Card>
@@ -317,7 +278,15 @@ function RunningIndex({result, running, status, indices, indexPercent}) {
             <br/><br/>
             <Table>
                 <TableBody>
-                    {indexList.length === 0 ? <TableRow><TableCell align="center"> <Box display="flex" alignItems="center" justifyContent="center"> <Typography>현재 실행중인 색인 작업이 없습니다.</Typography></Box>  </TableCell></TableRow> : 
+                    {indexList.length === 0 ? 
+                        <TableRow> 
+                            <TableCell align="center"> 
+                                <Box display="flex" alignItems="center" justifyContent="center"> 
+                                    <Typography>현재 실행중인 색인 작업이 없습니다.</Typography>
+                                </Box>
+                            </TableCell>
+                        </TableRow> 
+                        : 
                         Object.values(indexList).map(row =>
                             <TableRow key={row.index}>
                                 <TableCell align="center">
@@ -333,30 +302,39 @@ function RunningIndex({result, running, status, indices, indexPercent}) {
                                                 variant="determinate"
                                                 color="secondary"
                                                 value={Number(getFinishTime(row.startTime, row.estimatedTime))}
-                                                // value={Number(`${Math.round( (untilTime(row.startTime) / getElapsed(row.estimatedTime))*100)}`)}
                                             />
                                         </Box>
                                         <Box minWidth={15}>
                                             <Typography variant="body2" color="textSecondary"> </Typography>
                                         </Box>
                                     </Box>
-                                    {row.estimatedTime !== undefined ? <> 예상 종료 시간 : {getElapsed(row.estimatedTime)} <br/> </> : <>예상 종료 시간 : - <br /></> }
-                                    {row.docSize !== undefined ? <> 예상 처리 문서 건수 : {convertHumanReadableCount(row.docSize)} <br/> </> : <>예상 처리 문서 건수 : - <br /></> }
+                                    {row.estimatedTime !== undefined ? 
+                                        <> 예상 수행 시간 : {getElapsed(row.estimatedTime)} <br/> </> 
+                                        : 
+                                        <> 예상 수행 시간 : - <br /></> 
+                                    }
+                                    {row.docSize !== undefined ? 
+                                        <> 예상 처리 문서 건수 : {convertHumanReadableCount(row.docSize)} <br/> </> 
+                                        : 
+                                        <>예상 처리 문서 건수 : - <br /></> 
+                                    }
                                     시작시간 : {untilTime(row.startTime)} 전 시작<br/>
                                     현재 진행중인 상태 :   <b>
                                         {row.currentStep} 
-                                        {row.currentStep === "전파" ? <><br />{indexPercent[row.index]} </>: <> </>}
-                                        {row.currentStep === "전파" ? " %" : <> </>}
+                                        {row.currentStep === "전파" ? <> <br /> {indexPercent[row.index]}  {" %"} </>: <> </>}
                                     </b>
                                     <br />
                                     다음 진행 :
-                                    {(row.nextStep === undefined || row.nextStep === null || row.nextStep.length === 0) ? "없음" : " " + convertStep(row.nextStep[0])}
+                                    {(row.nextStep === undefined || row.nextStep === null || row.nextStep.length === 0) ? 
+                                        "없음" 
+                                        : 
+                                        " " + convertStep(row.nextStep[0])
+                                    }
                                     <br />
                                 </TableCell>
                             </TableRow>
                         )
                     }
-
                 </TableBody>
             </Table>
             </CardContent>
@@ -382,30 +360,29 @@ function BottomArea({result, alias, indices}) {
     const history = useHistory();
 
     const format = (time) => {
-        // var date = new Date(time * 1000);
         var date = new Date(time);
         
         return date.getFullYear() + '-' +
-        ('0' + (date.getMonth()+1)).slice(-2)+ '-' +  
-        ('0' + date.getDate()).slice(-2) + ' '+
-        ('0'+(date.getHours())).slice(-2)+ ':'+
-        ('0' + (date.getMinutes())).slice(-2)+ ':'+
+        ('0' + (date.getMonth()+1)).slice(-2) + '-' +  
+        ('0' + date.getDate()).slice(-2) + ' ' +
+        ('0' + (date.getHours())).slice(-2) + ':' +
+        ('0' + (date.getMinutes())).slice(-2) + ':' +
         ('0' + (date.getSeconds())).slice(-2)
     }
-
 
     let resultList = []
     Object.values(result.hits.hits).forEach(row => {
 
         let aliasName = ""
-        Object.values(alias).forEach(row2 =>  {
-
-            if(row._source.index === row2.index) {
-                aliasName = row2.alias
+        // 별칭 이름 구하기 
+        Object.values(alias).forEach(item =>  {
+            if(row._source.index === item.index) {
+                aliasName = item.alias
             }
         })
 
         let uuid = ""
+        // UUID 구하기
         Object.values(indices).forEach(item => {
             if(item.index === row._source.index){
                 uuid = item.uuid;
@@ -415,7 +392,7 @@ function BottomArea({result, alias, indices}) {
         if(resultList.length <= 50){
             resultList.push(
                 {
-                    index:row._source.index,
+                    index: row._source.index,
                     alias: aliasName,
                     status: row._source.status,
                     startTime: row._source.startTime,
@@ -456,7 +433,15 @@ function BottomArea({result, alias, indices}) {
                         </TableHead>
                         <TableBody>
 
-                            {resultList.length === 0 ? <TableRow><TableCell colSpan={7} align="center"> <Box display="flex" alignItems="center" justifyContent="center"> <Typography>전체 색인 결과가 없습니다.</Typography></Box> </TableCell></TableRow> : 
+                            {resultList.length === 0 ? 
+                                <TableRow>
+                                    <TableCell colSpan={7} align="center"> 
+                                        <Box display="flex" alignItems="center" justifyContent="center"> 
+                                            <Typography>전체 색인 결과가 없습니다.</Typography>
+                                        </Box> 
+                                    </TableCell>
+                                </TableRow> 
+                                : 
                             Object.values(resultList).sort((a, b) => {
                                 if(a.endTime > b.endTime){
                                     return -1;
@@ -515,6 +500,7 @@ function BottomArea({result, alias, indices}) {
         </React.Fragment>
     );
 }
+
 let eventCode = null
 function DashBoard({dispatch, result, running, status, alias, indices}) {
     const [indexPercent, setIndexPercent] = useState({});
@@ -527,8 +513,9 @@ function DashBoard({dispatch, result, running, status, alias, indices}) {
             loopFunc()
         }, 1000 * 60 * 3);
     }
-
+    
     function getPropagateIndexPercent() {
+        // 전파 작업 수행 시 각 인덱스 별 퍼센트 계산
         let keyList = Object.keys(running);
         if (keyList.length !== 0) {
             for (let key of keyList) {
@@ -568,6 +555,7 @@ function DashBoard({dispatch, result, running, status, alias, indices}) {
             }
         }
     }, [])  // eslint-disable-line react-hooks/exhaustive-deps
+
     getPropagateIndexPercent();
     
     return (
