@@ -506,6 +506,10 @@ function DashBoard({dispatch, result, running, status, alias, indices}) {
     const [indexPercent, setIndexPercent] = useState({});
 
     function loopFunc() {
+        dispatch(setRunningIndexActions())
+        dispatch(setIndexStatusActions())
+        dispatch(setIndexAliasActions())
+        dispatch(setIndicesActions());
         dispatch(setIndexResultActions())
         getPropagateIndexPercent()
 
@@ -544,10 +548,10 @@ function DashBoard({dispatch, result, running, status, alias, indices}) {
     }
 
     useEffect(() => {
-        dispatch(setRunningIndexActions())
-        dispatch(setIndexStatusActions())
-        dispatch(setIndexAliasActions())
-        dispatch(setIndicesActions());
+        // dispatch(setRunningIndexActions())
+        // dispatch(setIndexStatusActions())
+        // dispatch(setIndexAliasActions())
+        // dispatch(setIndicesActions());
         loopFunc()
         return () => {
             if (eventCode !== null) {
