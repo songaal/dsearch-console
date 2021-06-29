@@ -218,6 +218,8 @@ function Space({ dictionary, authUser, setting, dataSet, totalCount}) {
         }
     })
 
+    console.log(dataList)
+
     let createLabels = {}
     const colId = setting['columns'].find(column => column['type'] === 'id')
     const colKeyword = setting['columns'].find(column => column['type'] === 'keyword')

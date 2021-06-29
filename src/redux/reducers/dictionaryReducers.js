@@ -18,6 +18,7 @@ export default function reducer(state = initState, actions) {
         case types.SET_ACTIVE_SETTING_INDEX:    return { ...state, activeIndex: actions.payload }
         case types.SET_SETTING_DICTIONARIES:    return { ...state, settings: actions.payload }
         case types.SET_DICTIONARY_DATASET: {
+            console.log(actions.payload)
             let count = actions.payload.totalCount;
             let cloneDataSet = Object.assign({}, state['dataSet'])
             cloneDataSet[actions.dictionary] = actions.payload
