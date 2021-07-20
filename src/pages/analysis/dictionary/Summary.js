@@ -49,7 +49,7 @@ function makeTableInfo(summary){
                 info.count = infoDict[j].count;
                 info.words = infoDict[j].words;
                 info.indexCount = infoDict[j].indexCount;
-                info.appliedTime = infoDict[j].appliedTime;
+                info.appliedTime = infoDict[j].appliedTime; // 플러그인 info-dict 에서 받아온다.
                 break;
             }
         }

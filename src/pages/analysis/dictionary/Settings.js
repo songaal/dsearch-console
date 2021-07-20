@@ -143,8 +143,16 @@ function Settings({ dispatch, authUser, settings }) {
 
         let tmpError = {}
 
-        if (newDictSetting['id'].trim() === '' || /[^a-z0-9_]+/gi.test(newDictSetting['id'].trim())) {
-            tmpError['id'] = "아이디를 확인하세요. (a-zA-Z0-9_ 글자만 가능합니다.)"
+        // 중복된 아이디는 등록할 수 없다.
+        let isDuplicatedId = false;
+        settingsList.map((item => {
+            if(item.id.toLocaleLowerCase() == dictId.current.value.toLocaleLowerCase()){
+                isDuplicatedId = true;
+            }
+        }))
+
+        if (newDictSetting['id'].trim() === '' || /[^a-z0-9_]+/gi.test(newDictSetting['id'].trim()) || isDuplicatedId ) {
+            tmpError['id'] = "아이디를 확인하세요. (기존 아이디와 중복되지 않거나, a-zA-Z0-9_ 글자만 가능합니다.)"
         }
         if (newDictSetting['name'].trim() === '') {
             tmpError['name'] = "이름를 확인하세요."
