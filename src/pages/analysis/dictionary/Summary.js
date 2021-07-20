@@ -49,6 +49,7 @@ function makeTableInfo(summary){
                 info.count = infoDict[j].count;
                 info.words = infoDict[j].words;
                 info.indexCount = infoDict[j].indexCount;
+                info.appliedTime = infoDict[j].appliedTime;
                 break;
             }
         }
@@ -64,6 +65,7 @@ function isEmpty(param) {
   }
 
 function Summary({ dispatch, authUser, summary, update }) {
+    const [prevSummary, setPrevSummary] = useState({});
     const [applyDict, setApplyDict] = useState(false);
     const [progress, setProgress] = useState(false);
     const [disabled, setDisabled] = useState(true);
@@ -76,13 +78,21 @@ function Summary({ dispatch, authUser, summary, update }) {
 
     useEffect(() => {
         dispatch(setSummary())
+
+        return () => {}
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-    if(isEmpty(tableInfo) && !isEmpty(summary)){
+    if(isEmpty(tableInfo) && !isEmpty(summary)){ // 이 조건이 없으면 tableInfo가 unlimited 업데이트됨.
+        setPrevSummary(JSON.stringify(summary));
+        setTableInfo(makeTableInfo(summary))
+    }else if(JSON.stringify(summary) !== prevSummary){
+        // summary에 등록된 값이 이전 값과 다르면 tableInfo 다시 만들기.
+        // redux에 summary에 새로운 값이 등록되는 시점과 tableInfo가 업데이트 되는 시점이 달라서 추가.
+        setPrevSummary(JSON.stringify(summary));
         setTableInfo(makeTableInfo(summary))
     }
 
-    const clickApplyDictionary = (event) => {
+    const clickApplyDictionary = () => {
         let data = {};
         let str = "";
         let ids = "";
@@ -109,10 +119,11 @@ function Summary({ dispatch, authUser, summary, update }) {
         dispatch(applyDictionary(data)).then(() => { 
             setApplyDict(true); 
             setProgress(false); 
+            setTableInfo([]);
 
             utils.sleep(1000).then(() => { 
-                dispatch(setSummary()) 
-            }); 
+                dispatch(setSummary())
+            })
         });
     }
 
@@ -168,7 +179,7 @@ function Summary({ dispatch, authUser, summary, update }) {
                 <CardContent>
                     <Box>
                         {authUser.role.analysis ?
-                            progress ? <CircularProgress /> : <Button disabled={disabled} variant={"contained"} color={"primary"} onClick={clickApplyDictionary}>사전적용</Button>
+                            progress ? <CircularProgress /> : <Button disabled={disabled} variant={"contained"} color={"primary"} onClick={() => { clickApplyDictionary() } }>사전적용</Button>
                             : <></>}
                         {/* <label style={{marginLeft: "4px", marginTop: "2px"}}>(사전 적용은 시간이 오래 걸립니다.)</label> */}
                     </Box>

@@ -91,7 +91,7 @@ export const searchDictionaries = (data) => dispatch => client.call({
 
 export const setSummary = () => dispatch => client.call({
     uri: "/dictionaries/summary",
-}).then(response => dispatch({type: types.SET_SUMMARY , payload: response.data}))
+}).then(response => { dispatch({type: types.SET_SUMMARY , payload: response.data})} )
 
 
 export const applyDictionary = (data) => dispatch => client.call({

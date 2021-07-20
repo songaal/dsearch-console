@@ -31,7 +31,10 @@ export default function reducer(state = initState, actions) {
             };
         case types.SET_DICTIONARY:
             return {...state, update: actions.payload};
-        case types.SET_SUMMARY:                 return { ...state, summary: actions.payload }
+        case types.SET_SUMMARY:{                
+            console.log("suumary update")
+            return { ...state, summary: actions.payload }
+        }
         default: return state
     }
 }

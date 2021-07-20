@@ -208,8 +208,10 @@ function Space({ dictionary, authUser, setting, dataSet, totalCount}) {
         }, 5000);
     }
 
+    console.log("setting['columns']: ", setting['columns'] )
     let dataList = setting['columns'].map((column, index) => {
         const hits = (result['hits'] || [])
+        console.log(column['type'])
         return {
             field: column['label'],
             // 수정된 사항
