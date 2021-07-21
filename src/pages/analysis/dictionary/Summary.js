@@ -20,43 +20,45 @@ import { applyDictionary, setSummary } from "../../../redux/actions/dictionaryAc
 import utils from "../../../utils";
 
 
-const systemInfo = {
-    type: "SYSTEM",
-    name: "시스템 사전"
-}
-
 function makeTableInfo(summary){
     let tableInfo = [];
 
-    if (summary.dictionaryInfo === undefined || summary.dictionarySettings === undefined) return tableInfo;
+    // if (summary.dictionaryInfo === undefined || summary.dictionarySettings === undefined) return tableInfo;
 
-    let infoDict = JSON.parse(summary.dictionaryInfo).dictionary;
-    let settings = summary.dictionarySettings;
-
-    for (let i in infoDict) {
-        if (infoDict[i].type === systemInfo.type) {
-            var info = infoDict[i];
-            info.name = systemInfo.name;
-            tableInfo.push(info);
-            break;
-        }
-    }
-
+    const settings = summary['dictionarySettings']||[];
     for (let i in settings) {
-        let info = settings[i];
-        for (var j in infoDict) {
-            if (settings[i].id === infoDict[j].type) {
-                info.count = infoDict[j].count;
-                info.words = infoDict[j].words;
-                info.indexCount = infoDict[j].indexCount;
-                info.updatedTime = infoDict[j].updatedTime; // 플러그인 info-dict 호출 후 받아온다.
-                info.appliedTime = infoDict[j].appliedTime; // 플러그인 info-dict 호출 후 받아온다.
-                break;
-            }
-        }
-
-        tableInfo.push(info);
+        tableInfo.push({
+            ...settings[i],
+            count: settings[i]['count']||0,
+            words: settings[i]['words']||0,
+            indexCount: settings[i]['indexCount']||0,
+            updatedTime: settings[i]['updatedTime'],
+            appliedTime: settings[i]['appliedTime'],
+            name: settings[i]['name'],
+            type: settings[i]['type'],
+            tokenType: settings[i]['tokenType'],
+            ignoreCase: settings[i]['ignoreCase']
+        })
     }
+
+    // let infoDict = JSON.parse(summary.dictionaryInfo).dictionary;
+    // let settings = summary['dictionarySettings'];
+
+    // for (let i in settings) {
+    //     let info = settings[i];
+    //     for (var j in infoDict) {
+    //         if (settings[i].id === infoDict[j].type) {
+    //             info.count = infoDict[j].count;
+    //             info.words = infoDict[j].words;
+    //             info.indexCount = infoDict[j].indexCount;
+    //             info.updatedTime = infoDict[j].updatedTime; // 플러그인 info-dict 호출 후 받아온다.
+    //             info.appliedTime = infoDict[j].appliedTime; // 플러그인 info-dict 호출 후 받아온다.
+    //             break;
+    //         }
+    //     }
+    //
+    //     tableInfo.push(info);
+    // }
 
     return tableInfo;
 }
@@ -92,7 +94,7 @@ function Summary({ dispatch, authUser, summary, update }) {
         setPrevSummary(JSON.stringify(summary));
         setTableInfo(makeTableInfo(summary))
     }
-
+    console.log(tableInfo)
     const clickApplyDictionary = () => {
         let data = {};
         let str = "";
@@ -114,8 +116,8 @@ function Summary({ dispatch, authUser, summary, update }) {
                 }    
             }
         }
-        data.ids = ids;
-        data.type = str;
+        data.ids = ids.toLowerCase();
+        data.type = str.toLowerCase();
 
         dispatch(applyDictionary(data)).then(() => { 
             setApplyDict(true); 
@@ -199,7 +201,7 @@ function Summary({ dispatch, authUser, summary, update }) {
                                         />
                                     </TableCell>
                                     <TableCell>이름</TableCell>
-                                    <TableCell>타업</TableCell>
+                                    <TableCell>타입</TableCell>
                                     <TableCell>작업단어갯수</TableCell>
                                     <TableCell>수정시간</TableCell>
                                     <TableCell>적용단어갯수</TableCell>
@@ -216,24 +218,27 @@ function Summary({ dispatch, authUser, summary, update }) {
                                         return <TableRow key={index}>
                                              <TableCell>
                                             {
-                                                checkedAll ? 
-                                                    info.type === systemInfo.type ? <></> : 
-                                                        <FormControlLabel
-                                                                control={<Checkbox />}
-                                                                checked={checkedList == undefined ? false : checkedList[1]}
-                                                                onChange={(event) => handleCheckBox(event, info.documentId)}
-                                                                id={info.documentId} 
-                                                                name={"checkbox"} 
-                                                                value={info.id} 
-                                                                defaultChecked={true}
-                                                        />
-                                                    : info.type === systemInfo.type ? <></> : 
-                                                        <FormControlLabel
-                                                                control={<Checkbox />}
-                                                                checked={checkedList == undefined ? false : checkedList[1]}
-                                                                onChange={(event) => handleCheckBox(event, info.documentId)}
-                                                                id={info.documentId} name={"checkbox"} value={info.id}
-                                                        />
+                                                (info['type']||'') === "PRODUCT" ?
+                                                <></>
+                                                :
+                                                checkedAll ?
+                                                    <FormControlLabel
+                                                        control={<Checkbox />}
+                                                        checked={checkedList == undefined ? false : checkedList[1]}
+                                                        onChange={(event) => handleCheckBox(event, info.documentId)}
+                                                        id={info.documentId}
+                                                        name={"checkbox"}
+                                                        value={info.id}
+                                                        defaultChecked={true}
+                                                    />
+                                                    :
+                                                    <FormControlLabel
+                                                        control={<Checkbox />}
+                                                        checked={checkedList == undefined ? false : checkedList[1]}
+                                                        onChange={(event) => handleCheckBox(event, info.documentId)}
+                                                        id={info.documentId} name={"checkbox"} value={info.id}
+                                                    />
+
                                             }
                                             </TableCell>
                                             <TableCell>{info.name}</TableCell>
@@ -243,7 +248,7 @@ function Summary({ dispatch, authUser, summary, update }) {
                                             <TableCell>{info.count == undefined || info.count == null ? "0" : Number(info.count).toLocaleString()}</TableCell>
                                             <TableCell> {info.appliedTime ? new Date(info.appliedTime).toLocaleString() : "-"} </TableCell>
                                             <TableCell> {info.tokenType ? info.tokenType : "-"} </TableCell>
-                                            <TableCell> {info.ignoreCase ? info.ignoreCase ? "Y" : "N" : "-"} </TableCell>
+                                            <TableCell> {info.ignoreCase ? info.ignoreCase ? "TRUE" : "FALSE" : "-"} </TableCell>
                                         </TableRow>
                                     })
                                 }

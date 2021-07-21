@@ -22,7 +22,7 @@ function Dictionary({dispatch, authUser, settings, active, totalCount}) {
     const [openSettings, setOpenSettings] = React.useState(false)
     const [remote, setRemote] = React.useState({})
     let dictTabs = firstTabs.concat(
-        settings.map(dictionary => ({label: dictionary.name, component: Async(() =>  import("./WrapperTabPanel") )}))
+        settings.map(dictionary => ({type: dictionary.type ,label: dictionary.name, component: Async(() =>  import("./WrapperTabPanel") )}))
     )
 
     useEffect(() => {
@@ -31,7 +31,7 @@ function Dictionary({dispatch, authUser, settings, active, totalCount}) {
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     function handleTabChange(index) {
-        dispatch(setActiveSettingIndex(index - firstTabs.length))
+        dispatch(setActiveSettingIndex(index - firstTabs.length + 1))
     }
 
     return (
@@ -39,7 +39,7 @@ function Dictionary({dispatch, authUser, settings, active, totalCount}) {
             <Helmet title={`사전`}/>
 
             <Grid container>
-                <Grid item xs={10}>
+                <Grid item xs={12}>
                     <Typography variant="h3" gutterBottom display="inline">
                         사전 {openSettings ? "설정" : ""}
                     </Typography>
@@ -47,18 +47,6 @@ function Dictionary({dispatch, authUser, settings, active, totalCount}) {
                         {
                             remote['remote'] && remote['remote'] === true ? `사전소스정보: ${remote['host']||""}:${remote['port']||""}` : ""
                         }
-                    </Box>
-                </Grid>
-                <Grid item xs={2}>
-                    <Box align={"right"}>
-                        <Button color={"primary"} variant={"outlined"} onClick={() => setOpenSettings(!openSettings)}>
-                            {
-                                openSettings ?
-                                    "닫기"
-                                    :
-                                    "설정"
-                            }
-                        </Button >
                     </Box>
                 </Grid>
             </Grid>
@@ -71,7 +59,7 @@ function Dictionary({dispatch, authUser, settings, active, totalCount}) {
                     :
                     <Grid container spacing={6}>
                         <Grid item xs={12}>
-                            <AntTabs authUser={authUser} tabs={dictTabs} tabIndex={active} onChange={handleTabChange}/>
+                            <AntTabs authUser={authUser} tabs={dictTabs.filter(dict => dict['type'] !== 'PRODUCT')} tabIndex={active} onChange={handleTabChange}/>
                         </Grid>
                     </Grid>
             }
