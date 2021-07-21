@@ -49,7 +49,8 @@ function makeTableInfo(summary){
                 info.count = infoDict[j].count;
                 info.words = infoDict[j].words;
                 info.indexCount = infoDict[j].indexCount;
-                info.appliedTime = infoDict[j].appliedTime; // 플러그인 info-dict 에서 받아온다.
+                info.updatedTime = infoDict[j].updatedTime; // 플러그인 info-dict 호출 후 받아온다.
+                info.appliedTime = infoDict[j].appliedTime; // 플러그인 info-dict 호출 후 받아온다.
                 break;
             }
         }
@@ -237,9 +238,9 @@ function Summary({ dispatch, authUser, summary, update }) {
                                             </TableCell>
                                             <TableCell>{info.name}</TableCell>
                                             <TableCell>{info.type}</TableCell>
-                                            <TableCell>{info.indexCount ? Number(info.indexCount).toLocaleString() : "0"}</TableCell>
+                                            <TableCell>{info.indexCount == undefined || info.indexCount == null ?  "0" : Number(info.indexCount).toLocaleString()}</TableCell>
                                             <TableCell> {info.updatedTime ? new Date(info.updatedTime).toLocaleString() : "-"} </TableCell>
-                                            <TableCell>{Number(info.count).toLocaleString()}</TableCell>
+                                            <TableCell>{info.count == undefined || info.count == null ? "0" : Number(info.count).toLocaleString()}</TableCell>
                                             <TableCell> {info.appliedTime ? new Date(info.appliedTime).toLocaleString() : "-"} </TableCell>
                                             <TableCell> {info.tokenType ? info.tokenType : "-"} </TableCell>
                                             <TableCell> {info.ignoreCase ? info.ignoreCase ? "Y" : "N" : "-"} </TableCell>
