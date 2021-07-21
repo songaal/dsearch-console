@@ -25,3 +25,4 @@ yarn-error.log*
 *.bat
 
 package-lock.json
+.idea
