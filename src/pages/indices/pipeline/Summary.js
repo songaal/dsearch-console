@@ -103,12 +103,14 @@ function Summary({ dispatch, authUser, list }) {
     const [flag, setFlag] = useState(0);
     const [orderBy, setOrderBy] = useState("")
     const [order, setOrder] = useState("asc")
+    const [errorMessage, setErrorMessage] = useState('')
 
     function isJson(str) {
         try {
             let json = JSON.parse(str);
             return (typeof json === 'object');
         } catch (e) {
+            console.log(e)
             return false;
         }
     }
@@ -147,11 +149,13 @@ function Summary({ dispatch, authUser, list }) {
             return ;
         }
 
+        setMessage("추가")
         if(!isJson(aceEditor.current.editor.getValue())){
+            setSnackbarFlag(true)
+            setSuccessFlag(false)
+            setErrorMessage("올바르지 않은 JSON 형식입니다.");
             return ;
         }
-
-        setMessage("추가")
         
         dispatch(
             addPipeline(name.current.value, aceEditor.current.editor.getValue())
@@ -161,6 +165,7 @@ function Summary({ dispatch, authUser, list }) {
             dispatch(setPipelineList());
         })
         .catch((err) => {
+            setErrorMessage(err);
             setSnackbarFlag(true)
             setSuccessFlag(false)
             dispatch(setPipelineList());
@@ -170,6 +175,9 @@ function Summary({ dispatch, authUser, list }) {
 
     function handleEditPipeline(){
         if(!isJson(aceEditor.current.editor.getValue())){
+            setSnackbarFlag(true)
+            setSuccessFlag(false)
+            setErrorMessage("올바르지 않은 JSON 형식입니다.");
             return ;
         }
 
@@ -182,6 +190,7 @@ function Summary({ dispatch, authUser, list }) {
             dispatch(setPipelineList());
         })
         .catch((err) => {
+            setErrorMessage(err);
             setSnackbarFlag(true)
             setSuccessFlag(false)
             dispatch(setPipelineList());
@@ -314,7 +323,7 @@ function Summary({ dispatch, authUser, list }) {
             </TableContainer>
             <Snackbar open={snackbarFlag} autoHideDuration={3000} onClose={() => { setSnackbarFlag(false); }}>
                 {successFlag ? <MuiAlert elevation={6} variant="filled" severity="info"> {message} {" 성공"} </MuiAlert>
-                    : <MuiAlert elevation={6} variant="filled" severity="error"> {message}  {" 실패"} </MuiAlert> }
+                    : <MuiAlert elevation={6} variant="filled" severity="error"> {message}  {" 실패 : "} {errorMessage} </MuiAlert> }
             </Snackbar>
 
             <Dialog open={modalFlag}
@@ -337,7 +346,7 @@ function Summary({ dispatch, authUser, list }) {
                                                 fullWidth inputRef={name} error={nameError}
                                                 placeholder={"파이프라인 명칭을 입력해 주세요."}
                                                 label="파이프라인 명칭 입력"
-                                                helperText="공백을 넣지 말아주세요"
+                                                helperText="파이프라인 명칭에 공백을 넣지 말아주세요"
                                             />
                                             <br />
                                             <AceEditor
@@ -352,6 +361,11 @@ function Summary({ dispatch, authUser, list }) {
                                                 setOptions={{ useWorker: false }}
                                                 value={TEMPLATE}
                                             /> 
+                                            <TextField
+                                                fullWidth
+                                                disabled={true}
+                                                value={"파이프라인 추가 시에 개행문자(\\n)를 넣지 말아주세요. 에러가 날 수 있습니다."}
+                                            />
                                         </Box>: 
                                 flag === 3 ? <Box style={{width: "100%"}}>
                                                 <TextField
@@ -372,6 +386,11 @@ function Summary({ dispatch, authUser, list }) {
                                                     setOptions={{ useWorker: false }}
                                                     value={JSON.stringify(list[key], null, 2)}
                                                 /> 
+                                                <TextField
+                                                    fullWidth
+                                                    disabled={true}
+                                                    value={"파이프라인 수정 시에 개행문자(\\n)를 넣지 말아주세요. 에러가 날 수 있습니다."}
+                                                />
                                             </Box>:
                                     "이 파이프라인을 삭제하시겠습니까?"
                     }
