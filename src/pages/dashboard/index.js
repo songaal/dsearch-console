@@ -212,6 +212,8 @@ function RunningIndex({result, running, status, indices, indexPercent}) {
             result = "전파";
         }else if(step === "EXPOSE"){
             result = "교체";
+        }else if(step === "REINDEX"){
+            result = "다시색인";
         }else{
             result = "";
         }

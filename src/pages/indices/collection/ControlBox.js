@@ -121,6 +121,8 @@ function ControlBox({dispatch, authUser, collection, job}) {
             handleAction('propagate')
         } else if ('교체실행' === option) {
             handleAction('expose')
+        } else if ('다시색인실행' === option) {
+            handleAction('reindex')
         }
         setActionOpen(false);
     };
@@ -224,7 +226,7 @@ function ControlBox({dispatch, authUser, collection, job}) {
         )
     }
 
-    let options = ['연속실행', '색인실행', '전파실행', '교체실행'];
+    let options = ['연속실행', '색인실행', '전파실행', '교체실행', '다시색인실행'];
     // if (typeof collection['ignoreRoleYn'] === "string" && collection['ignoreRoleYn'] === "Y") {
     //     options = ['연속실행', '색인실행', '교체실행'];
     // }
@@ -340,6 +342,18 @@ function ControlBox({dispatch, authUser, collection, job}) {
                             >
                                 <LinearProgress />
                                 교체를 진행하고 있습니다.
+                            </Alert>
+                        </Box>
+
+                        <Box style={{display: job['currentStep'] === 'REINDEX' ? 'block' : 'none' }}>
+                            <Alert iconMapping={{ info: <PlayCircleOutlineIcon fontSize="inherit" style={{alignSelf: "center"}}/> }}
+                                   severity="info"
+                                   action={<Button color="inherit" style={{border: "1px solid silver"}} size="small" onClick={() => handleAction('stop_reindexing')}> 정지 </Button> }
+                            >
+                                <LinearProgress/>
+                                <Box mt={2}>
+                                    다시 색인을 진행하고 있습니다.
+                                </Box>
                             </Alert>
                         </Box>
 
