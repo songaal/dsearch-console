@@ -293,7 +293,9 @@ function MappingsJson2html(json, name, comments, dispatch, mode, detail) {
                                                             });
                                                     }}
                                                     key={mappingName}
-                                                    defaultValue={""} /> : 
+                                                    defaultValue={""} /> 
+
+                                                :
                                                 <TextField 
                                                     fullWidth
                                                     onKeyPress={

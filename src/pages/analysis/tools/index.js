@@ -208,7 +208,7 @@ function ToolsCard({dispatch, analyzerList, pluginList, resultBrief, resultDetai
             data.useForQuery = state;
             data.plugin = plugin;
             data.text = analyzer_contents;
-            dispatch(actionPlugin(data));
+            dispatch(actionPlugin(JSON.stringify(data)));
         }
     }
     return (

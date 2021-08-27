@@ -179,8 +179,8 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet, totalCount})
         if(newCreateValue.current != null){
             createValue = newCreateValue.current.value
         }
-
-        await createDictionary(dictionary, {id: createId, keyword: createKeyword, value: createValue})
+        let data = {id: createId, keyword: createKeyword, value: createValue}
+        await createDictionary(dictionary, JSON.stringify(data))
 
         // 등록 메시지 만들기
         let msg = "";
@@ -243,7 +243,7 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet, totalCount})
             return Object.assign( {[setting['columns'][i]['type']]: row[i]}, o)
         }, {})
 
-        await updateDictionary(dictionary, id, data)
+        await updateDictionary(dictionary, id, JSON.stringify(data))
         await utils.sleep(1000);
         handlePagination(pageNum)
     }

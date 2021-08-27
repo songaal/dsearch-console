@@ -495,7 +495,8 @@ function AutocompleteRegister({dispatch, acUrl}){
     }
 
     function handleSubmitURL(){
-        dispatch(setAutoCompleteURLAction({url: autoCompleteUrl})).then(() => {
+        let url = {url: autoCompleteUrl};
+        dispatch(setAutoCompleteURLAction(JSON.stringify(url))).then(() => {
             setRegisteredUrl(true)
             setTimeout(()=>{setRegisteredUrl(false)}, 3000);
         })

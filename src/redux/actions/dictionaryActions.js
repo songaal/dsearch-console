@@ -63,6 +63,7 @@ export const deleteDictionary = (dictionary, id) =>
 export const createDictionary = (dictionary, data) =>
     client.call({
         uri: `/dictionaries/${dictionary}`,
+        headers: {'Content-type': 'application/json'},
         method: "POST",
         data: data
     })
@@ -74,6 +75,7 @@ export const createDictionary = (dictionary, data) =>
 export const updateDictionary = (dictionary, id, data) =>
     client.call({
         uri: `/dictionaries/${dictionary}/${id}`,
+        headers: {'Content-type': 'application/json'},
         method: "PUT",
         data: data
     })
@@ -86,6 +88,7 @@ export const updateDictionary = (dictionary, id, data) =>
 export const searchDictionaries = (data) => dispatch => client.call({
     uri: "/dictionaries/find-dict",
     method: "POST",
+    headers: {'Content-type': 'application/json'},
     data: data
 }).then(response => dispatch({type: types.SET_DICTIONARY_SEARCH_LIST , payload: response.data}))
 
@@ -97,6 +100,7 @@ export const setSummary = () => dispatch => client.call({
 export const applyDictionary = (data) => dispatch => client.call({
     uri: "/dictionaries/compile-dict",
     method: "POST",
+    headers: {'Content-type': 'application/json'},
     data: data
 }).then(response => dispatch({type: types.SET_DICTIONARY, payload: response.data}))
 
