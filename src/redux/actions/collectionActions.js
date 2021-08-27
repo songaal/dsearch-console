@@ -257,10 +257,13 @@ export const setCollectionJob = id => dispatch => client.call({
     return response.data
 })
 
-export const editCollectionAction = (id, action) => dispatch => client.call({
+export const editCollectionAction = (id, action, type) => dispatch => client.call({
     uri: `/collections/${id}/action`,
     method: 'PUT',
-    params: { action }
+    params: { 
+        action,
+        type
+    }
 }).then(response => {
     return response.data
 })

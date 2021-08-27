@@ -20,7 +20,7 @@ import MuiAlert from '@material-ui/lab/Alert';
 import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-kuroir";
-import {getPipeline, getPipelineDetail, setPipelineAction, setPipelineList} from '@actions/pipelineActions'
+import {testPipeline, setPipelineAction, setPipelineList} from '@actions/pipelineActions'
 import {makeStyles} from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
@@ -75,7 +75,7 @@ function TestPipeline({ dispatch, pipeline, pipelineList}) {
         if( JSON.stringify(aceEditor.current.editor.getValue()).length > 0 && isJson(aceEditor.current.editor.getValue())){
             setProgress(true)
             if( checked ){
-                dispatch(getPipelineDetail(pipeline, aceEditor.current.editor.getValue()))
+                dispatch(testPipeline(pipeline, aceEditor.current.editor.getValue(), true))
                 .then((result) => {
                     setProgress(false)
                     setResult(result.payload);
@@ -84,7 +84,7 @@ function TestPipeline({ dispatch, pipeline, pipelineList}) {
                     setProgress(false)
                 })
             }else{
-                dispatch(getPipeline(pipeline, aceEditor.current.editor.getValue())) 
+                dispatch(testPipeline(pipeline, aceEditor.current.editor.getValue())) 
                 .then((result) => {
                     setProgress(false)
                     setResult(result.payload);

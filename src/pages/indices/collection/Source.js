@@ -429,12 +429,12 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                 <CardContent>
                     <Box style={{display: mode === "VIEW" ? "block" : "none"}}>
                         <Grid container>
-                            <Grid item xs={10}>
+                            <Grid item xs={11}>
 
                                 <ControlBox />
 
                             </Grid>
-                            <Grid item xs={2} align={"right"}>
+                            <Grid item xs={1} align={"right"}>
                                 {authUser.role.index ? <Button mx={1} variant={"outlined"} onClick={() => setMode("EDIT")}>
                                     수정
                                 </Button> : <></>}

@@ -52,11 +52,17 @@ const Grid = styled(MuiGrid)(spacing, positions);
 // let testScheduleFlag = true
 let timer = null
 
-
 let pollingDelay = 2000
+
+const options = ['연속실행', '색인실행', '전파실행', '교체실행'];
+const types = ['외부색인', '내부색인']
+
 function ControlBox({dispatch, authUser, collection, job}) {
     const [actionOpen, setActionOpen] = React.useState(false);
+    const [typeOpen, setTypeOpen] = React.useState(false);
+    const [currentType, setCurrentType] = useState("외부색인");
     const actionAnchorRef = React.useRef(null);
+    const typeAnchorRef = React.useRef(null);
     const [connected, setConnected] = useState(false)
     const [processUI, setProcessUI] = useState(false)
     const [errorSnackbar, setErrorSnackbar] = useState(false)
@@ -126,14 +132,28 @@ function ControlBox({dispatch, authUser, collection, job}) {
         }
         setActionOpen(false);
     };
-    const handleToggle = () => {
+
+    const handleActionToggle = () => {
         setActionOpen((prevOpen) => !prevOpen);
     };
-    const handleClose = (event) => {
+
+    const handleTypeToggle = () => {
+        console.log(typeOpen)
+        setTypeOpen((prevOpen) => !prevOpen);
+    };
+
+    const handleActionClose = (event) => {
         if (actionAnchorRef.current && actionAnchorRef.current.contains(event.target)) {
             return;
         }
         setActionOpen(false);
+    };
+
+    const handleTypeClose = (event) => {
+        if (typeAnchorRef.current && typeAnchorRef.current.contains(event.target)) {
+            return;
+        }
+        setTypeOpen(false);
     };
 
     function handleEditSchedule(event) {
@@ -156,10 +176,11 @@ function ControlBox({dispatch, authUser, collection, job}) {
                 }, 2000)
             })
     }
+
     function handleAction(action) {
         setProcessUI(true)
         // actions: all, indexing, propagate, expose, stop_propagation, stop_indexing
-        dispatch(editCollectionAction(collection['id'], action))
+        dispatch(editCollectionAction(collection['id'], action, currentType))
             .then(response => {
                 dispatch(setCollection(collection['id']))
                 setTimeout(() => {
@@ -180,6 +201,11 @@ function ControlBox({dispatch, authUser, collection, job}) {
     function handleErrorSnackbarClose() {
         setErrorSnackbar(false)
     }
+
+    const handleTypeMenuItemClick = (event, option, index) => {
+        setCurrentType(option)
+        setTypeOpen(false);
+    };
 
     if (connected === false) {
         return (
@@ -226,7 +252,10 @@ function ControlBox({dispatch, authUser, collection, job}) {
         )
     }
 
+<<<<<<< HEAD
     let options = ['연속실행', '색인실행', '전파실행', '교체실행', '다시색인실행'];
+=======
+>>>>>>> master
     // if (typeof collection['ignoreRoleYn'] === "string" && collection['ignoreRoleYn'] === "Y") {
     //     options = ['연속실행', '색인실행', '교체실행'];
     // }
@@ -262,7 +291,7 @@ function ControlBox({dispatch, authUser, collection, job}) {
                                 <Button
                                     color="primary"
                                     size="small"
-                                    onClick={handleToggle}
+                                    onClick={handleActionToggle}
                                     disabled={!authUser.role.index}
                                 >
                                     <ArrowDropDownIcon/>
@@ -271,8 +300,13 @@ function ControlBox({dispatch, authUser, collection, job}) {
                                 <></>
                             }
                         </ButtonGroup>
-                        <Popper open={actionOpen} anchorEl={actionAnchorRef.current} role={undefined}
-                                transition disablePortal>
+                        <Popper open={actionOpen} 
+                                anchorEl={actionAnchorRef.current} 
+                                role={undefined}
+                                transition 
+                                disablePortal
+                                style={{zIndex: 999}}
+                            >
                             {({TransitionProps, placement}) => (
                                 <Grow
                                     {...TransitionProps}
@@ -280,8 +314,8 @@ function ControlBox({dispatch, authUser, collection, job}) {
                                         transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
                                     }}
                                 >
-                                    <Paper>
-                                        <ClickAwayListener onClickAway={handleClose}>
+                                    <Paper >
+                                        <ClickAwayListener onClickAway={handleActionClose}>
                                             <MenuList id="split-button-menu">
                                                 {options.map((option, index) => (
                                                     <MenuItem
@@ -294,6 +328,7 @@ function ControlBox({dispatch, authUser, collection, job}) {
                                             </MenuList>
                                         </ClickAwayListener>
                                     </Paper>
+                                        
                                 </Grow>
                             )}
                         </Popper>
@@ -358,7 +393,63 @@ function ControlBox({dispatch, authUser, collection, job}) {
                         </Box>
 
                     </Box>
+                </Grid>
+                <Grid item xs={3} mt={2} style={{height: '40px'}}>
+                    <b>색인타입</b>
+                </Grid>
 
+                <Grid item xs={9}>
+                    <Box>
+                        <ButtonGroup variant="contained" color="primary" ref={typeAnchorRef}>
+                            <Button disabled={true}
+                                    style={{width: '100%', minWidth: "150px", maxWidth: "300px", color: "black"}}
+                            >
+                                {currentType}
+                            </Button>
+                            {authUser.role.index ?
+                                <Button
+                                    color="primary"
+                                    size="small"
+                                    onClick={handleTypeToggle}
+                                    disabled={!authUser.role.index}
+                                >
+                                    <ArrowDropDownIcon/>
+                                </Button>
+                                :
+                                <></>
+                            }
+                        </ButtonGroup>
+                        <Popper open={typeOpen} anchorEl={typeAnchorRef.current} role={undefined}
+                                transition 
+                                disablePortal
+                                style={{zIndex: 999}}
+                                >
+                            {({TransitionProps, placement}) => (
+                                <Grow
+                                    {...TransitionProps}
+                                    style={{
+                                        transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
+                                    }}
+                                >
+                                    <Paper>
+                                        <ClickAwayListener onClickAway={handleTypeClose}>
+                                            <MenuList id="split-button-menu">
+                                                {types.map((type, index) => (
+                                                    <MenuItem
+                                                        key={type}
+                                                        onClick={(event) => handleTypeMenuItemClick(event, type, index)}
+                                                    >
+                                                        {type}
+                                                    </MenuItem>
+                                                ))}
+                                            </MenuList>
+                                        </ClickAwayListener>
+                                    </Paper>
+                                        
+                                </Grow>
+                            )}
+                        </Popper>
+                    </Box>
                 </Grid>
             </Grid>
 
