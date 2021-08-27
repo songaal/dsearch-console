@@ -159,7 +159,7 @@ function ControlBox({dispatch, authUser, collection, job}) {
     function handleEditSchedule(event) {
         setProcessUI(true)
         collection['scheduled'] = event.target.checked;
-        dispatch(editCollectionScheduleAction(collection['id'], collection))
+        dispatch(editCollectionScheduleAction(collection['id'], collection, currentType))
             .then(response => {
                 dispatch(setCollection(collection['id']))
                 setTimeout(() => {
@@ -341,6 +341,7 @@ function ControlBox({dispatch, authUser, collection, job}) {
 
                     <Box style={{
                         display: (isRunningJob === true && collection['scheduled'] === false) || (isRunningJob === true && collection['scheduled'] === true) ? "block" : "none",
+                        marginBottom: "8px",
                         width: '100%', minWidth: "150px", maxWidth: "400px", color: "black" }}
                     >
                         <Box style={{display: job['currentStep'] === 'FULL_INDEX' || job['currentStep'] === 'DYNAMIC_INDEX' ? 'block' : 'none' }}>
@@ -390,12 +391,12 @@ function ControlBox({dispatch, authUser, collection, job}) {
 
                     </Box>
                 </Grid>
+
                 <Grid item xs={3} mt={2} style={{height: '40px'}}>
                     <b>색인타입</b>
                 </Grid>
-
                 <Grid item xs={9}>
-                    <Box>
+                    <Box style={{display: isRunningJob === false && collection['scheduled'] === false ? "block" : "none"}}>
                         <ButtonGroup variant="contained" color="primary" ref={typeAnchorRef}>
                             <Button disabled={true}
                                     style={{width: '100%', minWidth: "150px", maxWidth: "300px", color: "black"}}
