@@ -252,10 +252,6 @@ function ControlBox({dispatch, authUser, collection, job}) {
         )
     }
 
-<<<<<<< HEAD
-    let options = ['연속실행', '색인실행', '전파실행', '교체실행', '다시색인실행'];
-=======
->>>>>>> master
     // if (typeof collection['ignoreRoleYn'] === "string" && collection['ignoreRoleYn'] === "Y") {
     //     options = ['연속실행', '색인실행', '교체실행'];
     // }
