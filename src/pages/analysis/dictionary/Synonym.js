@@ -167,7 +167,9 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet, totalCount})
             createValue = newCreateValue.current.value
         }
 
-        await createDictionary(dictionary, {id: createId, keyword: createKeyword, value: createValue})
+        let data = {id: createId, keyword: createKeyword, value: createValue}
+        await createDictionary(dictionary, JSON.stringify(data))
+        
         const createSearchColumn = createId !== '' ? 'id' : createKeyword !== '' ? 'keyword' : 'value'
         // const createSearchKeyword = createId !== '' ? createId : createKeyword !== '' ? createKeyword : createValue
         let msg = "";
@@ -230,7 +232,7 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet, totalCount})
             return Object.assign( {[setting['columns'][i]['type']]: row[i]}, o)
         }, {})
 
-        await updateDictionary(dictionary, id, data)
+        await updateDictionary(dictionary, id, JSON.stringify(data))
         await utils.sleep(1000);
         handlePagination(pageNum)
     }

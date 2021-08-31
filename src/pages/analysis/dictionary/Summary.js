@@ -119,7 +119,7 @@ function Summary({ dispatch, authUser, summary, update }) {
         data.ids = ids.toLowerCase();
         data.type = str.toLowerCase();
 
-        dispatch(applyDictionary(data)).then(() => { 
+        dispatch(applyDictionary(JSON.stringify(data))).then(() => { 
             setApplyDict(true); 
             setProgress(false); 
             setTableInfo([]);
