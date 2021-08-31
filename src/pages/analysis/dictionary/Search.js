@@ -66,9 +66,9 @@ function DictionarySearch ({dispatch, settings, searchResult}) {
         if (event.key === 'Enter'){
             if(searchInput.current.value.length === 0) return;
             searchResult.result = [ {type: "SYSTEM", posTag: "N", prob: "0"} ];
-            let json = { word:searchInput.current.value };
+            let json = { word:searchInput.current.value.trim() };
             dispatch(searchDictionaries(JSON.stringify(json)))
-            setShowSearchInput(searchInput.current.value);
+            setShowSearchInput(searchInput.current.value.trim());
         }
     }
 
@@ -76,9 +76,9 @@ function DictionarySearch ({dispatch, settings, searchResult}) {
         if(searchInput.current.value.length === 0) return;
         searchResult.result = [ {type: "SYSTEM", posTag: "N", prob: "0"} ];
         // dispatch(searchDictionaries({word: searchInput.current.value}))
-        let json = { word:searchInput.current.value };
+        let json = { word:searchInput.current.value.trim() };
         dispatch(searchDictionaries(JSON.stringify(json)))
-        setShowSearchInput(searchInput.current.value);
+        setShowSearchInput(searchInput.current.value.trim());
     }
 
     return (
