@@ -56,6 +56,7 @@ const useStyles = makeStyles((theme) => ({
 let checkedList = []
 let searchedKeyword = ""
 function SynonymDictionary({dictionary, authUser, setting, dataSet, totalCount}) {
+    console.log("synonym")
     const result = dataSet[dictionary] || {}
     const dispatch = useDispatch()
     const classes = useStyles()
@@ -165,6 +166,9 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet, totalCount})
         }
         if(newCreateValue.current != null){
             createValue = newCreateValue.current.value
+            // 콤마 이후 공백 제거
+            // createValue = createValue.replaceAll(", ", ",");
+            createValue = createValue.replace(/, /gi, ",")
         }
 
         let data = {id: createId, keyword: createKeyword, value: createValue}

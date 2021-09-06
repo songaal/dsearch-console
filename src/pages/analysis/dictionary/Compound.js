@@ -57,6 +57,8 @@ const useStyles = makeStyles((theme) => ({
 let checkedList = []
 let searchedKeyword = ""
 function CompoundDictionary({dictionary, authUser, setting, dataSet, totalCount}) {
+    console.log("compound");
+    
     const result = dataSet[dictionary] || {}
     const dispatch = useDispatch()
     const classes = useStyles()
