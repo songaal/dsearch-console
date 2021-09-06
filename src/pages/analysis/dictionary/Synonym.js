@@ -165,6 +165,7 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet, totalCount})
         }
         if(newCreateValue.current != null){
             createValue = newCreateValue.current.value
+            createValue = createValue.replace(/, /gi, ",")
         }
 
         let data = {id: createId, keyword: createKeyword, value: createValue}
