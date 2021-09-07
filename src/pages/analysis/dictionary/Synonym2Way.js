@@ -57,6 +57,7 @@ const useStyles = makeStyles((theme) => ({
 let checkedList = []
 let searchedKeyword = ""
 function SynonymDictionary({dictionary, authUser, setting, dataSet, totalCount}) {
+    console.log()
     const result = dataSet[dictionary] || {}
     const dispatch = useDispatch()
     const classes = useStyles()
@@ -165,9 +166,13 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet, totalCount})
         }
         if(newCreateKeyword.current != null){
             createKeyword = newCreateKeyword.current.value
+            createKeyword = createKeyword.trim()
         }
         if(newCreateValue.current != null){
             createValue = newCreateValue.current.value
+            createValue = createValue.replace(/, /gi, ",")
+            createValue = createValue.replace(/ ,/gi, ",")
+            createValue = createKeyword.trim()
         }
 
         let data = {id: createId, keyword: createKeyword, value: createValue}
