@@ -165,9 +165,11 @@ function CompoundDictionary({dictionary, authUser, setting, dataSet, totalCount}
         }
         if(newCreateKeyword.current != null){
             createKeyword = newCreateKeyword.current.value
+            createKeyword = createKeyword.trim()
         }
         if(newCreateValue.current != null){
             createValue = newCreateValue.current.value
+            createValue = createValue.trim()
         }
         let data = {id: createId, keyword: createKeyword, value: createValue}
         await createDictionary(dictionary, JSON.stringify(data))
