@@ -172,7 +172,7 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet, totalCount})
             createValue = newCreateValue.current.value
             createValue = createValue.replace(/, /gi, ",")
             createValue = createValue.replace(/ ,/gi, ",")
-            createValue = createKeyword.trim()
+            createValue = createValue.trim()
         }
 
         let data = {id: createId, keyword: createKeyword, value: createValue}
