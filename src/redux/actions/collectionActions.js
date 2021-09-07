@@ -275,3 +275,13 @@ export const editCollectionAliasAction = (actions) => dispatch => client.call({
 }).then(response => {
     return response.data
 })
+
+export const editCollectionIndexingTypeAction = (id, type) => dispatch => client.call({
+    uri: `/collections/${id}/indexingType`,
+    method: 'PUT',
+    params: { 
+        "type": type
+    }
+}).then(response => {
+    return response.data
+})

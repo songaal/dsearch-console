@@ -20,6 +20,7 @@ import {
 import {positions, spacing} from "@material-ui/system";
 import Alert from '@material-ui/lab/Alert';
 import {
+    editCollectionIndexingTypeAction,
     editCollectionAction,
     editCollectionScheduleAction,
     setCollection,
@@ -138,7 +139,7 @@ function ControlBox({dispatch, authUser, collection, job}) {
     };
 
     const handleTypeToggle = () => {
-        console.log(typeOpen)
+
         setTypeOpen((prevOpen) => !prevOpen);
     };
 
@@ -179,6 +180,7 @@ function ControlBox({dispatch, authUser, collection, job}) {
 
     function handleAction(action) {
         setProcessUI(true)
+
         // actions: all, indexing, propagate, expose, stop_propagation, stop_indexing
         dispatch(editCollectionAction(collection['id'], action, currentType))
             .then(response => {
@@ -202,8 +204,14 @@ function ControlBox({dispatch, authUser, collection, job}) {
         setErrorSnackbar(false)
     }
 
-    const handleTypeMenuItemClick = (event, option, index) => {
-        setCurrentType(option)
+    const handleTypeMenuItemClick = (event, type, index) => {
+         if(type === "외부색인"){
+            dispatch(editCollectionIndexingTypeAction(collection['id'], "outer"))    
+        }else if(type === "내부색인"){
+            dispatch(editCollectionIndexingTypeAction(collection['id'], "inner"))
+        }
+
+        setCurrentType(type)
         setTypeOpen(false);
     };
 
