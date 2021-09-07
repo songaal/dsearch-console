@@ -159,8 +159,15 @@ function ControlBox({dispatch, authUser, collection, job}) {
 
     function handleEditSchedule(event) {
         setProcessUI(true)
+        let type = "outer"
+        if(currentType === "외부색인"){
+            type = "outer"
+        }else if(currentType === "내부색인"){
+            type = "inner"
+        }
+
         collection['scheduled'] = event.target.checked;
-        dispatch(editCollectionScheduleAction(collection['id'], collection, currentType))
+        dispatch(editCollectionScheduleAction(collection['id'], collection, type))
             .then(response => {
                 dispatch(setCollection(collection['id']))
                 setTimeout(() => {
@@ -180,9 +187,15 @@ function ControlBox({dispatch, authUser, collection, job}) {
 
     function handleAction(action) {
         setProcessUI(true)
+        let type ="outer"
 
+        if(currentType === "외부색인"){
+            type = "outer"
+        }else if(currentType === "내부색인"){
+            type = "inner"
+        }
         // actions: all, indexing, propagate, expose, stop_propagation, stop_indexing
-        dispatch(editCollectionAction(collection['id'], action, currentType))
+        dispatch(editCollectionAction(collection['id'], action, type))
             .then(response => {
                 dispatch(setCollection(collection['id']))
                 setTimeout(() => {
