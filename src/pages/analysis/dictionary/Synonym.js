@@ -163,12 +163,15 @@ function SynonymDictionary({dictionary, authUser, setting, dataSet, totalCount})
         }
         if(newCreateKeyword.current != null){
             createKeyword = newCreateKeyword.current.value
+            createKeyword = createKeyword.trim()
         }
         if(newCreateValue.current != null){
             createValue = newCreateValue.current.value
             // 콤마 이후 공백 제거
             // createValue = createValue.replaceAll(", ", ",");
             createValue = createValue.replace(/, /gi, ",")
+            createValue = createValue.replace(/ ,/gi, ",")
+            createValue = createValue.trim()
         }
 
         let data = {id: createId, keyword: createKeyword, value: createValue}
