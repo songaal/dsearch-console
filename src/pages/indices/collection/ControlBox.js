@@ -58,10 +58,20 @@ let pollingDelay = 2000
 const options = ['연속실행', '색인실행', '전파실행', '교체실행'];
 const types = ['외부색인', '내부색인']
 
+const getCurrentType = (type) => {
+    if(type == null || type == undefined){
+        return "외부색인"
+    }else if(type ==='inner') {
+        return "내부색인"
+    } else {
+        return "외부색인"
+    }
+}
+
 function ControlBox({dispatch, authUser, collection, job}) {
     const [actionOpen, setActionOpen] = React.useState(false);
     const [typeOpen, setTypeOpen] = React.useState(false);
-    const [currentType, setCurrentType] = useState("외부색인");
+    const [currentType, setCurrentType] = useState(getCurrentType(collection['indexingType']));
     const actionAnchorRef = React.useRef(null);
     const typeAnchorRef = React.useRef(null);
     const [connected, setConnected] = useState(false)
@@ -71,7 +81,6 @@ function ControlBox({dispatch, authUser, collection, job}) {
 
     // job이 있을 경우 데이터가 생김..
     const isRunningJob = job['status'] ? true : false
-
     // useEffect(() => {
     //     dispatch(setCollection(collection['id']))
     // }, [])
@@ -139,7 +148,6 @@ function ControlBox({dispatch, authUser, collection, job}) {
     };
 
     const handleTypeToggle = () => {
-
         setTypeOpen((prevOpen) => !prevOpen);
     };
 
