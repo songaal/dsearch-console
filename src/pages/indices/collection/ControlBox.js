@@ -117,9 +117,11 @@ function ControlBox({dispatch, authUser, collection, job}) {
             handleAction('all')
         } else if ('색인실행' === option) {
             handleAction('indexing')
-        } else if ('전파실행' === option) {
-            handleAction('propagate')
-        } else if ('교체실행' === option) {
+        }
+        //  else if ('전파실행' === option) {
+        //     handleAction('propagate')
+        // } 
+        else if ('교체실행' === option) {
             handleAction('expose')
         }
         setActionOpen(false);
@@ -224,7 +226,8 @@ function ControlBox({dispatch, authUser, collection, job}) {
         )
     }
 
-    let options = ['연속실행', '색인실행', '전파실행', '교체실행'];
+    let options = ['연속실행', '색인실행', '교체실행'];
+    // let options = ['연속실행', '색인실행', '전파실행', '교체실행'];
     // if (typeof collection['ignoreRoleYn'] === "string" && collection['ignoreRoleYn'] === "Y") {
     //     options = ['연속실행', '색인실행', '교체실행'];
     // }
@@ -322,7 +325,7 @@ function ControlBox({dispatch, authUser, collection, job}) {
                             </Alert>
                         </Box>
 
-                        <Box style={{display: job['currentStep'] === 'PROPAGATE' ? 'block' : 'none' }}>
+                        {/* <Box style={{display: job['currentStep'] === 'PROPAGATE' ? 'block' : 'none' }}>
                             <Alert iconMapping={{ info: <PlayCircleOutlineIcon fontSize="inherit" style={{alignSelf: "center"}}/> }}
                                    severity="info"
                                    action={<Button color="inherit" style={{border: "1px solid silver"}} size="small" onClick={() => handleAction('stop_propagation')}> 취소 </Button> }
@@ -332,7 +335,7 @@ function ControlBox({dispatch, authUser, collection, job}) {
                                     전파를 진행하고 있습니다.
                                 </Box>
                             </Alert>
-                        </Box>
+                        </Box> */}
 
                         <Box style={{display: job['currentStep'] === 'EXPOSE' ? 'block' : 'none' }}>
                             <Alert iconMapping={{ info: <PlayCircleOutlineIcon fontSize="inherit" /> }}
