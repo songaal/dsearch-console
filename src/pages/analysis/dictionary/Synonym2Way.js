@@ -57,6 +57,7 @@ const useStyles = makeStyles((theme) => ({
 let checkedList = []
 let searchedKeyword = ""
 function SynonymDictionary({dictionary, authUser, setting, dataSet, totalCount}) {
+    console.log()
     const result = dataSet[dictionary] || {}
     const dispatch = useDispatch()
     const classes = useStyles()

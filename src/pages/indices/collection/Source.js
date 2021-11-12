@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const TEMPLATE_LIST = ["multipleDumpFile", "ndjson", "csv", "file", "procedure", "database"]
+const TEMPLATE_LIST = ["multipleDumpFile", "ndjson", "csv", "file", "procedure", "database", "reindex"]
 const TEMPLATE = {
     "multipleDumpFile":
 `type: "multipleDumpFile"
@@ -132,7 +132,17 @@ fetchSize: 10000
 type: jdbc
 pipeLine: "pipeline"
 threadSize: 1
-dataSQL : "SELECT * FROM myTable"`
+dataSQL : "SELECT * FROM myTable"`,
+
+    "reindex":
+`type: reindex
+#reindexBatchSize max 10000 (index.max_result_window)
+reindexBatchSize: 10000
+reindexSlices: 1
+autoDynamic: false
+autoDynamicQueueNames: ""
+autoDynamicQueueIndexUrl: ""
+autoDynamicQueueIndexConsumeCount: ""`
 };
 const NO_SELECTED = 'NO_SELECTED';
 const DEFAULT_CRON = '0 0 * * *'
@@ -429,12 +439,12 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                 <CardContent>
                     <Box style={{display: mode === "VIEW" ? "block" : "none"}}>
                         <Grid container>
-                            <Grid item xs={10}>
+                            <Grid item xs={11}>
 
                                 <ControlBox />
 
                             </Grid>
-                            <Grid item xs={2} align={"right"}>
+                            <Grid item xs={1} align={"right"}>
                                 {authUser.role.index ? <Button mx={1} variant={"outlined"} onClick={() => setMode("EDIT")}>
                                     수정
                                 </Button> : <></>}
