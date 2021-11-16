@@ -94,7 +94,7 @@ export const editClusterFlush = () => dispatch => client.call({
 
 export const editClusterServerCheckAfterScheduleFlush = (flag) => dispatch => client.call({
     uri: "/clusters/check",
-    method: "GET",
+    method: "PUT",
     params: {
         flag: flag
     }
