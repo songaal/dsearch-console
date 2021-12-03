@@ -12,36 +12,49 @@ import {
     DialogTitle,
     Divider as MuiDivider,
     Grid,
-    Typography
+    Typography,
+    Snackbar
 } from "@material-ui/core";
 import {spacing} from "@material-ui/system";
 import AntTabs from "../../../components/AntTabs";
 import async from "../../../components/Async";
 import {green, orange} from "@material-ui/core/colors";
 import {connect, useDispatch} from "react-redux";
-import {editClusterFlush, editClusterServerCheck, setClusterServerCheck, editClusterServerCheckAfterScheduleFlush} from "../../../redux/actions/clusterActions"
+import MuiAlert from '@material-ui/lab/Alert';
+import {editClusterFlush, setClusterServerCheck, editClusterServerCheckAfterScheduleFlush} from "../../../redux/actions/clusterActions"
 
 const Divider = styled(MuiDivider)(spacing);
 
 function ClusterSettings({authUser, serverCheck}) {
     const dispatch = useDispatch()
     const [openServerCheck, setOpenServerCheck] = React.useState(false)
+    const [alertMessage, setAlertMessage] = React.useState("")
+    const [alertFlag, setAlertFlag] = React.useState(false)
+    const [alertColor, setAlertColor] = React.useState("info");
 
     function handleServerCheck(flag) {
-        const enable = flag ? "none" : "all"
-        dispatch(editClusterServerCheck(enable))
-            .then(() => {
-                if (flag) {
-                    editClusterFlush()
-                }
-                dispatch(editClusterServerCheckAfterScheduleFlush(flag))
-                dispatch(setClusterServerCheck())
-                setOpenServerCheck(false)
-            })
+        if (flag) {
+            editClusterFlush()
+        }
+        dispatch(editClusterServerCheckAfterScheduleFlush(flag))
+        .then(() => {         
+            dispatch(setClusterServerCheck())
+            setOpenServerCheck(false)
+            setAlertFlag(true)
+            setAlertColor("info");
+            setAlertMessage("점검 모드가 "+ (flag ? "시작" : "종료") + "되었습니다");
+        }).catch(err => {
+            setAlertFlag(true)
+            setAlertColor("error");
+            setAlertMessage(err+"");
+        })
     }
 
     return (
         <React.Fragment>
+            <Snackbar open={alertFlag} autoHideDuration={3000} onClose={() => { setAlertFlag(false); setAlertMessage("") }}>
+                <MuiAlert elevation={6} variant="filled" severity={alertColor}> {alertMessage} </MuiAlert>
+            </Snackbar>
             <Helmet title="클러스터설정"/>
             <Grid container={true}>
                 <Grid item xs={6}>
