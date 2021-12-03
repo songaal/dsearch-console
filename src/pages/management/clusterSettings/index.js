@@ -31,7 +31,6 @@ function ClusterSettings({authUser, serverCheck}) {
     const [alertMessage, setAlertMessage] = React.useState("")
     const [alertFlag, setAlertFlag] = React.useState(false)
     const [alertColor, setAlertColor] = React.useState("info");
-    
 
     function handleServerCheck(flag) {
         if (flag) {
