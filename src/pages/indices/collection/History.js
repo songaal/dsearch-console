@@ -133,7 +133,7 @@ function History({dispatch, authUser, collection, history}) {
         return null;
     }
 
-    // 색인: (FULL_INDEX, DYNAMIC_INDEX) , 전파 : PROPAGATE, 교체: EXPOSE
+    // 색인: (FULL_INDEX, DYNAMIC_INDEX),  교체: EXPOSE
     const lastPage = Math.ceil(history['hits']['total']['value'] / paginationSize)
     const nowPage = Math.ceil(from / paginationSize) + 1
 
@@ -163,7 +163,7 @@ function History({dispatch, authUser, collection, history}) {
                                     ((history['hits']||{})['hits']||[]).map((hit, index) => {
                                         const sourceAsMap = hit['_source']
                                         const jobTypeName = sourceAsMap['jobType'] === "FULL_INDEX" ? "전체색인" : sourceAsMap['jobType'] === "DYNAMIC_INDEX" ? "동적색인" :
-                                            sourceAsMap['jobType'] === "PROPAGATE" ? "전파" : sourceAsMap['jobType'] === "EXPOSE" ? "교체" : sourceAsMap['jobType'] === "REINDEX" ? "다시색인" : sourceAsMap['jobType']
+                                            sourceAsMap['jobType'] === "PROPAGATE" ? "전파" : sourceAsMap['jobType'] === "EXPOSE" ? "교체" : sourceAsMap['jobType']
                                         const autoRun = sourceAsMap['autoRun'] ? "자동" : "수동"
                                         let st = new Date();
                                         let et = new Date();
@@ -248,9 +248,6 @@ function History({dispatch, authUser, collection, history}) {
                                         </MenuItem>
                                         <MenuItem onClick={() => {setTypeName("PROPAGATE"); setTimeout(() => { handleSetIndexHistoryList(0, "PROPAGATE")}, 500) }}>
                                             전파만 보기
-                                        </MenuItem>
-                                        <MenuItem onClick={() => {setTypeName("REINDEX"); setTimeout(() => { handleSetIndexHistoryList(0, "REINDEX")}, 500) }}>
-                                            다시색인만 보기
                                         </MenuItem>
                                         <MenuItem onClick={() => handleIndexHistoryList(new Date())}>
                                             초기화

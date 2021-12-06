@@ -52,10 +52,10 @@ export const editCollectionSourceAction = (id, collection) => dispatch => client
 //     }
 // }).then(response => response.data)
 
-export const editCollectionScheduleAction = (id, collection, currentType) => dispatch => client.call({
+export const editCollectionScheduleAction = (id, collection) => dispatch => client.call({
     uri: `/collections/${id}`,
     method: "put",
-    params: {action: "schedule", type: currentType},
+    params: {action: "schedule"},
     data: collection
 }).then(response => response.data)
 
@@ -257,12 +257,11 @@ export const setCollectionJob = id => dispatch => client.call({
     return response.data
 })
 
-export const editCollectionAction = (id, action, type) => dispatch => client.call({
+export const editCollectionAction = (id, action) => dispatch => client.call({
     uri: `/collections/${id}/action`,
     method: 'PUT',
     params: { 
-        action,
-        type
+        action
     }
 }).then(response => {
     return response.data
@@ -272,16 +271,6 @@ export const editCollectionAliasAction = (actions) => dispatch => client.call({
     uri: `/elasticsearch/_aliases`,
     method: 'POST',
     data: { actions }
-}).then(response => {
-    return response.data
-})
-
-export const editCollectionIndexingTypeAction = (id, type) => dispatch => client.call({
-    uri: `/collections/${id}/indexingType`,
-    method: 'PUT',
-    params: { 
-        "type": type
-    }
 }).then(response => {
     return response.data
 })

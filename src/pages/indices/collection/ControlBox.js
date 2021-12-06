@@ -20,7 +20,6 @@ import {
 import {positions, spacing} from "@material-ui/system";
 import Alert from '@material-ui/lab/Alert';
 import {
-    editCollectionIndexingTypeAction,
     editCollectionAction,
     editCollectionScheduleAction,
     setCollection,
@@ -58,24 +57,10 @@ let pollingDelay = 2000
 
 // const options = ['연속실행', '색인실행', '전파실행', '교체실행'];
 const options = ['연속실행', '색인실행', '교체실행'];
-const types = ['외부색인', '내부색인']
-
-const getCurrentType = (type) => {
-    if(type == null || type == undefined){
-        return "외부색인"
-    }else if(type ==='inner') {
-        return "내부색인"
-    } else {
-        return "외부색인"
-    }
-}
 
 function ControlBox({dispatch, authUser, collection, job}) {
     const [actionOpen, setActionOpen] = React.useState(false);
-    const [typeOpen, setTypeOpen] = React.useState(false);
-    const [currentType, setCurrentType] = useState(getCurrentType(collection['indexingType']));
     const actionAnchorRef = React.useRef(null);
-    const typeAnchorRef = React.useRef(null);
     const [connected, setConnected] = useState(false)
     const [processUI, setProcessUI] = useState(false)
     const [errorSnackbar, setErrorSnackbar] = useState(false)
@@ -152,9 +137,6 @@ function ControlBox({dispatch, authUser, collection, job}) {
         setActionOpen((prevOpen) => !prevOpen);
     };
 
-    const handleTypeToggle = () => {
-        setTypeOpen((prevOpen) => !prevOpen);
-    };
 
     const handleActionClose = (event) => {
         if (actionAnchorRef.current && actionAnchorRef.current.contains(event.target)) {
@@ -163,24 +145,11 @@ function ControlBox({dispatch, authUser, collection, job}) {
         setActionOpen(false);
     };
 
-    const handleTypeClose = (event) => {
-        if (typeAnchorRef.current && typeAnchorRef.current.contains(event.target)) {
-            return;
-        }
-        setTypeOpen(false);
-    };
-
     function handleEditSchedule(event) {
         setProcessUI(true)
-        let type = "outer"
-        if(currentType === "외부색인"){
-            type = "outer"
-        }else if(currentType === "내부색인"){
-            type = "inner"
-        }
 
         collection['scheduled'] = event.target.checked;
-        dispatch(editCollectionScheduleAction(collection['id'], collection, type))
+        dispatch(editCollectionScheduleAction(collection['id'], collection))
             .then(response => {
                 dispatch(setCollection(collection['id']))
                 setTimeout(() => {
@@ -199,15 +168,8 @@ function ControlBox({dispatch, authUser, collection, job}) {
     }
     function handleAction(action) {
         setProcessUI(true)
-        let type ="outer"
-
-        if(currentType === "외부색인"){
-            type = "outer"
-        }else if(currentType === "내부색인"){
-            type = "inner"
-        }
-        // actions: all, indexing, propagate, expose, stop_propagation, stop_indexing
-        dispatch(editCollectionAction(collection['id'], action, type))
+        // actions: all, indexing, expose, stop_indexing
+        dispatch(editCollectionAction(collection['id'], action))
             .then(response => {
                 dispatch(setCollection(collection['id']))
                 setTimeout(() => {
@@ -228,17 +190,6 @@ function ControlBox({dispatch, authUser, collection, job}) {
     function handleErrorSnackbarClose() {
         setErrorSnackbar(false)
     }
-
-    const handleTypeMenuItemClick = (event, type, index) => {
-         if(type === "외부색인"){
-            dispatch(editCollectionIndexingTypeAction(collection['id'], "outer"))
-        }else if(type === "내부색인"){
-            dispatch(editCollectionIndexingTypeAction(collection['id'], "inner"))
-        }
-
-        setCurrentType(type)
-        setTypeOpen(false);
-    };
 
     if (connected === false) {
         return (
@@ -284,12 +235,6 @@ function ControlBox({dispatch, authUser, collection, job}) {
             </Grid>
         )
     }
-
-    let options = ['연속실행', '색인실행', '교체실행'];
-    // let options = ['연속실행', '색인실행', '전파실행', '교체실행'];
-    // if (typeof collection['ignoreRoleYn'] === "string" && collection['ignoreRoleYn'] === "Y") {
-    //     options = ['연속실행', '색인실행', '교체실행'];
-    // }
 
     return (
         <React.Fragment>
@@ -390,18 +335,6 @@ function ControlBox({dispatch, authUser, collection, job}) {
                             </Alert>
                         </Box>
 
-                        {/* <Box style={{display: job['currentStep'] === 'PROPAGATE' ? 'block' : 'none' }}>
-                            <Alert iconMapping={{ info: <PlayCircleOutlineIcon fontSize="inherit" style={{alignSelf: "center"}}/> }}
-                                   severity="info"
-                                   action={<Button color="inherit" style={{border: "1px solid silver"}} size="small" onClick={() => handleAction('stop_propagation')}> 취소 </Button> }
-                            >
-                                <LinearProgress />
-                                <Box mt={2}>
-                                    전파를 진행하고 있습니다.
-                                </Box>
-                            </Alert>
-                        </Box> */}
-
                         <Box style={{display: job['currentStep'] === 'EXPOSE' ? 'block' : 'none' }}>
                             <Alert iconMapping={{ info: <PlayCircleOutlineIcon fontSize="inherit" /> }}
                                    severity="info"
@@ -410,78 +343,7 @@ function ControlBox({dispatch, authUser, collection, job}) {
                                 교체를 진행하고 있습니다.
                             </Alert>
                         </Box>
-
-                        <Box style={{display: job['currentStep'] === 'REINDEX' ? 'block' : 'none' }}>
-                            <Alert iconMapping={{ info: <PlayCircleOutlineIcon fontSize="inherit" style={{alignSelf: "center"}}/> }}
-                                   severity="info"
-                                   action={<Button color="inherit" style={{border: "1px solid silver"}} size="small" onClick={() => handleAction('stop_reindexing')}> 정지 </Button> }
-                            >
-                                <LinearProgress/>
-                                <Box mt={2}>
-                                    다시 색인을 진행하고 있습니다.
-                                </Box>
-                            </Alert>
-                        </Box>
-
                     </Box>
-                </Grid>
-
-                <Grid item xs={3} mt={2} style={{height: '40px'}}>
-                    <b>색인타입</b>
-                </Grid>
-                <Grid item xs={9}>
-                    <Box style={{display: isRunningJob === false && collection['scheduled'] === false ? "block" : "none"}}>
-                        <ButtonGroup variant="contained" color="primary" ref={typeAnchorRef}>
-                            <Button disabled={true}
-                                    style={{width: '100%', minWidth: "150px", maxWidth: "300px", color: "black"}}
-                            >
-                                {currentType}
-                            </Button>
-                            {authUser.role.index ?
-                                <Button
-                                    color="primary"
-                                    size="small"
-                                    onClick={handleTypeToggle}
-                                    disabled={!authUser.role.index}
-                                >
-                                    <ArrowDropDownIcon/>
-                                </Button>
-                                :
-                                <></>
-                            }
-                        </ButtonGroup>
-                        <Popper open={typeOpen} anchorEl={typeAnchorRef.current} role={undefined}
-                                transition
-                                disablePortal
-                                style={{zIndex: 999}}
-                                >
-                            {({TransitionProps, placement}) => (
-                                <Grow
-                                    {...TransitionProps}
-                                    style={{
-                                        transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
-                                    }}
-                                >
-                                    <Paper>
-                                        <ClickAwayListener onClickAway={handleTypeClose}>
-                                            <MenuList id="split-button-menu">
-                                                {types.map((type, index) => (
-                                                    <MenuItem
-                                                        key={type}
-                                                        onClick={(event) => handleTypeMenuItemClick(event, type, index)}
-                                                    >
-                                                        {type}
-                                                    </MenuItem>
-                                                ))}
-                                            </MenuList>
-                                        </ClickAwayListener>
-                                    </Paper>
-
-                                </Grow>
-                            )}
-                        </Popper>
-                    </Box>
-
                 </Grid>
             </Grid>
 
