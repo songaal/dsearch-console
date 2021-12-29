@@ -15,9 +15,9 @@ name: docker-ci-workflow
 
 on:
   push:
-    branches: [ master, release/**, hotfix/**, develop, feature/**, bugfix/** ]
+    branches: [ release/**, hotfix/**, develop, feature/**, bugfix/** ]
   pull_request:
-    branches: [ master, release/**, hotfix/**, develop, feature/**, bugfix/** ]
+    branches: [ release/**, hotfix/**, develop, feature/**, bugfix/** ]
 
 env:
   CONTAINER_REGISTRY: ghcr.io
