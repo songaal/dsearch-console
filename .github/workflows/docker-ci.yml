@@ -62,16 +62,15 @@ jobs:
       if: steps.node-cache.outputs.cache-hit != 'true'
       run: npm install
     
-            
-    - name: npm ci
-      run: npm ci
-    
-    - name: ls -al 
-      run: ls -al 
+#     빌드        
+    - name: npm build
+      run: npm build
       
-    - name: ls -al build
-      run: ls -al build
-
+      
+#     체크
+    - name: ls -al
+      run: ls -al
+    
 # #     도커 로그인
 #     - name: Docker Login
 #       uses: docker/login-action@v1.12.0
