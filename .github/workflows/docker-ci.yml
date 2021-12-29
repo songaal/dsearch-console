@@ -62,11 +62,11 @@ jobs:
       if: steps.node-cache.outputs.cache-hit != 'true'
       run: npm install
     
-#     빌드        
-    - name: npm build
-      run: npm build
+#     빌드
+    - name: build
+      run: npm run build
       
-      
+    
 #     체크
     - name: ls -al
       run: ls -al
