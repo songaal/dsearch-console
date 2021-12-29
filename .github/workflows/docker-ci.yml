@@ -49,15 +49,28 @@ jobs:
         node-version: v10.20.1
         
 #     npm or yarn install cache
-    - name: NPM or Yarn install with caching
-      uses: bahmutov/npm-install@v1.6.0
-      with:
-        install-command: npm ci
-        
-    - name: ls -al
-      run: ls- al
+#     - name: Cache node modules
+#       id: node-cache
+#       uses: actions/cache@v2
+#       env:
+#         cache-name: cache-node-modules
+#       with:
+#         path: node_modules
+#         key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+#         restore-keys: ${{ runner.os }}-node-modules-
+#     - name: Install Dependencies
+#       if: steps.node-cache.outputs.cache-hit != 'true'
+#       run: npm install
+    - name: module install
+      run: npm install
+            
+    - name: npm ci
+      run: npm ci
+    
+    - name: ls -al 
+      run: ls- al 
       
-    - name: ls -al
+    - name: ls -al build
       run: ls- al build
 
 # #     도커 로그인
