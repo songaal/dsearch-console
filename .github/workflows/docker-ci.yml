@@ -68,10 +68,10 @@ jobs:
       run: npm ci
     
     - name: ls -al 
-      run: ls- al 
+      run: ls -al 
       
     - name: ls -al build
-      run: ls- al build
+      run: ls -al build
 
 # #     도커 로그인
 #     - name: Docker Login
