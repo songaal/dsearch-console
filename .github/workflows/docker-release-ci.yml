@@ -11,18 +11,20 @@
 #
 ##################################################################################
 
-name: docker-ci-workflow
+name: docker-release-ci
 
 on:
   push:
-    branches: [ release/**, hotfix/**, develop, feature/**, bugfix/** ]
+    branches: [ release/**, hotfix/** ]
   pull_request:
-    branches: [ release/**, hotfix/**, develop, feature/**, bugfix/** ]
+    branches: [ release/**, hotfix/** ]
 
 env:
   CONTAINER_REGISTRY: ghcr.io
   DOCKER_FILE: Dockerfile.flow
   CI: false
+  TAG_SUFFIX: -rc
+  
 
 jobs:
   build:
@@ -37,12 +39,8 @@ jobs:
 
 #     브랜치 추출
     - name: BRANCH_VERSION Exctract
-      run: echo "BRANCH_VERSION=$(echo $GITHUB_REF_NAME|cut -d '/' -f 2)" >> $GITHUB_ENV
+      run: echo "BRANCH_VERSION=$(echo $GITHUB_REF_NAME|cut -d '/' -f 2)$TAG_SUFFIX" >> $GITHUB_ENV
 
-#     소스 버전 추출
-    - name: SOURCE_VERSION Exctract
-      run: echo "SOURCE_VERSION=$(cat package.json | grep version | head -1 | awk -F= "{ print $2 }" | sed -E 's/(version)|[:,\",]//g' | tr -d '[[:space:]]')" >> $GITHUB_ENV
-    
 #     nodejs 활성화
     - name: Setup Node.js environment
       uses: actions/setup-node@v2.5.1
