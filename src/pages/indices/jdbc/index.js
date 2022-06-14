@@ -81,7 +81,7 @@ function JdbcTable({dispatch, authUser, JdbcList, handleAccessFlag}){
     let editURL = useRef("");
 
     const handleEditJdbcSource = (event) => {
-        let JdbcSource = JdbcList.hits.hits[jdbcListIndex];
+        let JdbcSource = JdbcList["list"][jdbcListIndex];
         let editJdbcSource = {};
 
         editJdbcSource.id = editId.current.value;
@@ -92,13 +92,14 @@ function JdbcTable({dispatch, authUser, JdbcList, handleAccessFlag}){
         editJdbcSource.url = editURL.current.value;
         let doc = {}
         doc.doc = editJdbcSource;
-        dispatch(updateJdbcSource(JdbcSource.id, editJdbcSource));
+        dispatch(updateJdbcSource(JdbcSource._id, editJdbcSource));
         setJdbcSourceEditDialogOpenAction(false)
     }
 
     const handleDeleteJdbcSource = (event) => {
-        let JdbcSource = JdbcList.hits.hits[jdbcListIndex];
-        dispatch(deleteJdbcSource(JdbcSource.id))
+        let JdbcSource = JdbcList["list"][jdbcListIndex];
+        console.log(JdbcSource._id)
+        dispatch(deleteJdbcSource(JdbcSource._id))
         setJdbcSourceEditDialogOpenAction(false);
     };
 
@@ -107,6 +108,7 @@ function JdbcTable({dispatch, authUser, JdbcList, handleAccessFlag}){
     };
 
     const handleEditDialogOpen = (id) => {
+        console.log(id)
         setJdbcListIndex(id);
         setJdbcSourceEditDialogOpenAction(true)
     };
@@ -115,11 +117,11 @@ function JdbcTable({dispatch, authUser, JdbcList, handleAccessFlag}){
         setProcessConnTest(true)
 
         let jdbcSourceObj = {};
-        jdbcSourceObj.driver = item.sourceAsMap.driver;
-        jdbcSourceObj.user = item.sourceAsMap.user;
-        jdbcSourceObj.password = item.sourceAsMap.password;
-        jdbcSourceObj.url = item.sourceAsMap.url;
-        dispatch(setJDBCAccessTest(jdbcSourceObj))
+        jdbcSourceObj.driver = item.driver;
+        jdbcSourceObj.user = item.user;
+        jdbcSourceObj.password = item.password;
+        jdbcSourceObj.url = item.url;
+        dispatch(setJDBCAccessTest(jdbcSourceObj)).then((res) => console.log(res)).catch((res) => console.log(res))
         setTimeout(() => {
             setProcessConnTest(false)
             handleAccessFlag(true);
@@ -143,24 +145,20 @@ function JdbcTable({dispatch, authUser, JdbcList, handleAccessFlag}){
         }, 500)
     };
 
-    // let sortedIndices = indices
-    //     .filter(index => checked ? true : index['index'].startsWith(".") === false )
-    //     .map((index, no) => { return index; })
-    //     .sort((a, b) => {
-    //         if(a['index'] > b['index']){
-    //             return 1;
-    //         }else if(a['index'] < b['index']){
-    //             return -1;
-    //         }else{
-    //             return 0;
-    //         }
-    //     })
-    //     .map((c, i) => ({...c, no: i }))
+    // const viewJdbcList = ((JdbcList['hits']||{})['hits']||[]).sort((a, b) => {
+    //     if(((a['sourceAsMap']||{})['id']||'') > ((b['sourceAsMap']||{})['id']||'')){
+    //         return 1;
+    //     }else if(((a['sourceAsMap']||{})['id']||'') < ((b['sourceAsMap']||{})['id']||'')){
+    //         return -1;
+    //     }else{
+    //         return 0;
+    //     }
+    // }).map((v, i) => ({...v, no: i }))
 
-    const viewJdbcList = ((JdbcList['hits']||{})['hits']||[]).sort((a, b) => {
-        if(((a['sourceAsMap']||{})['id']||'') > ((b['sourceAsMap']||{})['id']||'')){
+    const viewJdbcList = (JdbcList['list']||[]).sort((a, b) => {
+        if(((a||{})['id']||'') > ((b||{})['id']||'')){
             return 1;
-        }else if(((a['sourceAsMap']||{})['id']||'') < ((b['sourceAsMap']||{})['id']||'')){
+        }else if(((a||{})['id']||'') < ((b||{})['id']||'')){
             return -1;
         }else{
             return 0;
@@ -182,7 +180,6 @@ function JdbcTable({dispatch, authUser, JdbcList, handleAccessFlag}){
                 </colgroup>
                 <TableHead>
                     <TableRow>
-
                         {
                             fields.map(field =>
                                 <TableCell align="center" key={field['id']}>
@@ -204,15 +201,6 @@ function JdbcTable({dispatch, authUser, JdbcList, handleAccessFlag}){
                                     }
                                 </TableCell>)
                         }
-                        {/*<TableCell>#</TableCell>*/}
-                        {/*<TableCell>아이디</TableCell>*/}
-                        {/*<TableCell>이름</TableCell>*/}
-                        {/*<TableCell>드라이버</TableCell>*/}
-                        {/*<TableCell>URL</TableCell>*/}
-                        {/*<TableCell>사용자</TableCell>*/}
-                        {/*<TableCell>비밀번호</TableCell>*/}
-                        {/*<TableCell align={"center"}>테스트</TableCell>*/}
-
                         {authUser.role.index ? <TableCell align={"center"}> 액션</TableCell> : null}
                     </TableRow>
                 </TableHead>
@@ -222,8 +210,8 @@ function JdbcTable({dispatch, authUser, JdbcList, handleAccessFlag}){
                             viewJdbcList
                                 .sort((a, b) => {
                                     if (orderBy && order) {
-                                        let x = (a['sourceAsMap']||{})[orderBy]||''
-                                        let y = (b['sourceAsMap']||{})[orderBy]||''
+                                        let x = (a||{})[orderBy]||''
+                                        let y = (b||{})[orderBy]||''
                                         if (order === 'asc') {
                                             return x > y ? 1 : -1
                                         } else {
@@ -233,7 +221,7 @@ function JdbcTable({dispatch, authUser, JdbcList, handleAccessFlag}){
                                         return 0
                                     }})
                                 .map((item, index)=>{
-                                    let password = item.sourceAsMap.password;
+                                    let password = item.password;
                                     let star = "";
 
                                     for(let i = 0; i < password.length-3; i++){
@@ -241,20 +229,15 @@ function JdbcTable({dispatch, authUser, JdbcList, handleAccessFlag}){
                                     }
 
                                     password = password.substring(0, 2) + star + password.substring(password.length-1, password.length);
-                                    return <TableRow key={item.sourceAsMap.id}>
+                                    return <TableRow key={item.id}>
                                         <TableCell style={{whiteSpace: "nowrap"}}>{item['no'] + 1}</TableCell>
-                                        {/* <TableCell style={{whiteSpace: "nowrap"}}>{item.sourceAsMap.id}</TableCell>
-                                        <TableCell style={{whiteSpace: "nowrap"}}>{item.sourceAsMap.name}</TableCell>
-                                        <TableCell style={{whiteSpace: "nowrap", wordBreak:"break-all"}}>{item.sourceAsMap.driver}</TableCell>
-                                        <TableCell style={{whiteSpace: "nowrap", wordBreak:"break-all"}}>{item.sourceAsMap.url}</TableCell> */}
-                                        <TableCell style={{wordBreak: "break-word"}}>{item.sourceAsMap.id}</TableCell>
-                                        <TableCell style={{wordBreak: "break-word"}}>{item.sourceAsMap.name}</TableCell>
-                                        <TableCell style={{wordBreak: "break-all"}}>{item.sourceAsMap.driver}</TableCell>
-                                        <TableCell style={{wordBreak: "break-all"}}>{item.sourceAsMap.url}</TableCell>
+                                        <TableCell style={{wordBreak: "break-word"}}>{item.id}</TableCell>
+                                        <TableCell style={{wordBreak: "break-word"}}>{item.name}</TableCell>
+                                        <TableCell style={{wordBreak: "break-all"}}>{item.driver}</TableCell>
+                                        <TableCell style={{wordBreak: "break-all"}}>{item.url}</TableCell>
 
-                                        <TableCell style={{whiteSpace: "nowrap"}}>{item.sourceAsMap.user}</TableCell>
+                                        <TableCell style={{whiteSpace: "nowrap"}}>{item.user}</TableCell>
                                         <TableCell style={{whiteSpace: "nowrap"}}>{password}</TableCell>
-                                        {/* <TableCell>{item._source.password}</TableCell> */}
                                         <TableCell style={{whiteSpace: "nowrap"}}>
                                             <Button variant={"outlined"} color={"primary"} disabled={processConnTest} onClick={()=>accessTestFromTable(item)}> 연결테스트 </Button>
                                         </TableCell>
@@ -304,29 +287,29 @@ function JdbcTable({dispatch, authUser, JdbcList, handleAccessFlag}){
 }
 
 function JdbcSourceEdit({JdbcList, JdbcListIndex, editId, editName, editDriver, editURL, editUser, editPassword}){
-    let JdbcSource = JdbcList.hits.hits[JdbcListIndex];
+    let JdbcSource = JdbcList["list"][JdbcListIndex];
 
     return(
         <Box p={2}>
             <Box display="flex" m={3}  alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>아이디</Typography>
-                <TextField placeholder="ID" fullWidth variant="outlined" defaultValue={((JdbcSource||{}).sourceAsMap||{}).id} inputRef={editId} />
+                <TextField placeholder="ID" fullWidth variant="outlined" defaultValue={((JdbcSource||{})||{}).id} inputRef={editId} />
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>이름</Typography>
-                <TextField placeholder="Name" fullWidth variant="outlined" defaultValue={((JdbcSource||{}).sourceAsMap|| {}).name} inputRef={editName}/>
+                <TextField placeholder="Name" fullWidth variant="outlined" defaultValue={((JdbcSource||{})|| {}).name} inputRef={editName}/>
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{ width: "150px" }}>드라이버</Typography>
-                <TextField placeholder="Driver" fullWidth variant="outlined" defaultValue={((JdbcSource||{}).sourceAsMap||{}).driver} inputRef={editDriver}/>
+                <TextField placeholder="Driver" fullWidth variant="outlined" defaultValue={((JdbcSource||{})||{}).driver} inputRef={editDriver}/>
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>URL</Typography>
-                <TextField placeholder="jdbc:Altibase://localhost:3306/" fullWidth variant="outlined" defaultValue={((JdbcSource||{}).sourceAsMap||{}).url} inputRef={editURL}/>
+                <TextField placeholder="jdbc:Altibase://localhost:3306/" fullWidth variant="outlined" defaultValue={((JdbcSource||{})||{}).url} inputRef={editURL}/>
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>사용자</Typography>
-                <TextField placeholder="USER" fullWidth variant="outlined" defaultValue={((JdbcSource||{}).sourceAsMap||{}).user} inputRef={editUser}/>
+                <TextField placeholder="USER" fullWidth variant="outlined" defaultValue={((JdbcSource||{})||{}).user} inputRef={editUser}/>
             </Box>
             <Box display="flex" m={3} alignItems="center" justifyContent="right">
                 <Typography style={{width:"150px"}}>비밀번호</Typography>
@@ -488,7 +471,6 @@ function JdbcCard({dispatch, authUser, JdbcList, JdbcAccessTest, changedJdbcList
         if(jdbcPort.current.value.length === 0){ flag = true; change.port = true; }
         if(jdbcUser.current.value.length === 0){ flag = true; change.user = true; }
         if(jdbcPassword.current.value.length === 0){ flag = true; change.password = true; }
-        // if(jdbcURL.current.value.length === 0) { flag = true; change.url = true; }
         if(jdbcDB.current.value.length === 0) { flag = true; change.db_name = true; }
         if(jdbcURL.length === 0) { flag = true; change.url = true; }
 
@@ -532,7 +514,6 @@ function JdbcCard({dispatch, authUser, JdbcList, JdbcAccessTest, changedJdbcList
         if(jdbcPassword.current.value.length === 0){ flag = true; change.password = true; }
         if(jdbcDB.current.value.length === 0) { flag = true; change.db_name = true; }
         if(jdbcURL.length === 0) { flag = true; change.url = true; }
-        // if(jdbcURL.current.value.length === 0) { flag = true; change.url = true; }
 
         if(flag){
             setErrorHandleJdbcSource(change);
