@@ -411,9 +411,9 @@ function Source({dispatch, authUser, collection, JdbcList}) {
         ...(JdbcList['list']||[])
     ]
 
-    let useJdbcList = jdbcHitList.filter(jdbcObj => (collection['jdbcId'] === '' ? NO_SELECTED : collection['jdbcId']) === jdbcObj['id']).map(jdbcObj => jdbcObj['name'])
+    let useJdbcList = jdbcHitList.filter(jdbcObj => (collection['jdbcId'] === '' ? NO_SELECTED : collection['jdbcId']) === jdbcObj['_id']).map(jdbcObj => jdbcObj['name'])
     console.log(jdbcHitList)
-    console.log(collection['jdbcId'], useJdbcList)
+    console.log(collection, useJdbcList)
     let view_cron = "" 
     let view_cron_list = collection['cron'].split("||");
     view_cron_list.forEach((element, index) => {
