@@ -608,7 +608,7 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                             jdbcHitList.map((jdbcObj, index) => {
                                                                 return (
                                                                     <MenuItem key={index}
-                                                                              value={jdbcObj['id']}
+                                                                              value={jdbcObj['_id']}
                                                                     >
                                                                         {(jdbcObj['name']||"")}
                                                                     </MenuItem>
