@@ -293,9 +293,8 @@ function Collection({ dispatch, authUser, indexSuffixA, indexSuffixB, collection
         const splitedList = strSize.split(".");
         const filesize = splitedList[1];
         const amount = splitedList[0];
-
         if(filesize.endsWith("tb")){
-            return amount + filesize.charAt(0) + "0000000000"
+            return amount + filesize.charAt(0) + "00000000000"
         }else if(filesize.endsWith("gb")){
             return amount + filesize.charAt(0) + "00000000"
         }else if(filesize.endsWith("mb")){
