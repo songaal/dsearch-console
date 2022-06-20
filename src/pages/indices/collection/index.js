@@ -283,6 +283,73 @@ function Collection({ dispatch, authUser, indexSuffixA, indexSuffixB, collection
         }
     }).map((c, i) => ({ ...c, no: i }))
 
+    
+    const convertFilesize = (strFileSize) => {
+        let strSize = strFileSize.toLocaleLowerCase();
+        if(strSize.indexOf('.') === -1 ){
+            strSize = strSize.substring(0, strSize.length-2) + ".0" + strSize.substring(strSize.length-2)
+        }
+        
+        const splitedList = strSize.split(".");
+        const filesize = splitedList[1];
+        const amount = splitedList[0];
+
+        if(filesize.endsWith("tb")){
+            return amount + filesize.charAt(0) + "00000000000"
+        }else if(filesize.endsWith("gb")){
+            return amount + filesize.charAt(0) + "000000000"
+        }else if(filesize.endsWith("mb")){
+            return amount + filesize.charAt(0) + "000000"
+        }else if(filesize.endsWith("kb")){
+            return amount + filesize.charAt(0) + "000"
+        }
+
+        return strFileSize
+    };
+
+    const getCollectionStorageSize = (collection) =>{
+        const baseId = collection['baseId']
+        const indexA = collection['indexA'] || {}
+        const indexB = collection['indexB'] || {}
+
+        const indexAAlias = indexA['aliases'] && Object.keys(indexA['aliases']).find(alias => alias === baseId)
+        const isActiveA = indexAAlias !== undefined && indexAAlias !== null
+
+        const indexBAlias = indexB['aliases'] && Object.keys(indexB['aliases']).find(alias => alias === baseId)
+        const isActiveB = indexBAlias !== undefined && indexBAlias !== null
+
+        let size = "0"
+        if(isActiveA){
+            size = indexA['storeSize']
+            size = convertFilesize(size)
+        }else if(isActiveB){
+            size = indexB['storeSize']
+            size = convertFilesize(size)
+        }
+
+        return size;
+    }
+
+    const getCollectionDocCount = (collection) =>{
+        const baseId = collection['baseId']
+        const indexA = collection['indexA'] || {}
+        const indexB = collection['indexB'] || {}
+
+        const indexAAlias = indexA['aliases'] && Object.keys(indexA['aliases']).find(alias => alias === baseId)
+        const isActiveA = indexAAlias !== undefined && indexAAlias !== null
+
+        const indexBAlias = indexB['aliases'] && Object.keys(indexB['aliases']).find(alias => alias === baseId)
+        const isActiveB = indexBAlias !== undefined && indexBAlias !== null
+
+        let size = "0"
+        if(isActiveA){
+            size = indexA['docsCount']
+        }else if(isActiveB){
+            size = indexB['docsCount']
+        }
+
+        return size;
+    }
 
     return (
         <React.Fragment>
@@ -353,9 +420,29 @@ function Collection({ dispatch, authUser, indexSuffixA, indexSuffixB, collection
                             viewCollectionList.sort((a, b) => {
                                 if (orderBy && order) {
                                     if (order === 'asc') {
-                                        return a[orderBy] > b[orderBy] ? 1 : -1
+                                        if(orderBy === 'size'){
+                                            let aSize = Number(getCollectionStorageSize(a))
+                                            let bSize = Number(getCollectionStorageSize(b))
+                                            return aSize > bSize ? 1 : -1
+                                        }else if(orderBy === 'docCount'){
+                                            let aSize = Number(getCollectionDocCount(a))
+                                            let bSize = Number(getCollectionDocCount(b))
+                                            return aSize > bSize ? 1 : -1
+                                        }else{
+                                            return a[orderBy] > b[orderBy] ? 1 : -1
+                                        }
                                     } else {
-                                        return a[orderBy] > b[orderBy] ? -1 : 1
+                                        if(orderBy === 'size'){
+                                            let aSize = Number(getCollectionStorageSize(a))
+                                            let bSize = Number(getCollectionStorageSize(b))
+                                            return aSize > bSize ? -1 : 1
+                                        }else if(orderBy === 'docCount'){
+                                            let aSize = Number(getCollectionDocCount(a))
+                                            let bSize = Number(getCollectionDocCount(b))
+                                            return aSize > bSize ? -1 : 1
+                                        }else{
+                                            return a[orderBy] > b[orderBy] ? -1 : 1
+                                        }
                                     }
                                 } else {
                                     return 0
