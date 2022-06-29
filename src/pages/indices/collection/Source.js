@@ -407,12 +407,13 @@ function Source({dispatch, authUser, collection, JdbcList}) {
     }
 
     let jdbcHitList = [
-        { id: NO_SELECTED, sourceAsMap: {name: '선택안함'} },
-        ...((JdbcList['hits']||{})['hits']||[])
+        { id: NO_SELECTED, name: '선택안함' },
+        ...(JdbcList['list']||[])
     ]
 
-    let useJdbcList = jdbcHitList.filter(jdbcObj => (collection['jdbcId'] === '' ? NO_SELECTED : collection['jdbcId']) === jdbcObj['id']).map(jdbcObj => jdbcObj['sourceAsMap']['name'])
-
+    let useJdbcList = jdbcHitList.filter(jdbcObj => (collection['jdbcId'] === '' ? NO_SELECTED : collection['jdbcId']) === jdbcObj['_id']).map(jdbcObj => jdbcObj['name'])
+    console.log(jdbcHitList)
+    console.log(collection, useJdbcList)
     let view_cron = "" 
     let view_cron_list = collection['cron'].split("||");
     view_cron_list.forEach((element, index) => {
@@ -607,9 +608,9 @@ function Source({dispatch, authUser, collection, JdbcList}) {
                                                             jdbcHitList.map((jdbcObj, index) => {
                                                                 return (
                                                                     <MenuItem key={index}
-                                                                              value={jdbcObj['id']}
+                                                                              value={jdbcObj['_id']}
                                                                     >
-                                                                        {(jdbcObj['sourceAsMap']||{})['name']||""}
+                                                                        {(jdbcObj['name']||"")}
                                                                     </MenuItem>
                                                                 )
                                                             })
