@@ -23,6 +23,25 @@ const getClientIp = async () => {
     return res.data.IPv4
 }
 
+const setClientIpInHeader = async (config) => {
+    const clientIp = sessionStorage.getItem("clientIp")
+
+    if(clientIp === null){
+        let newClientIp = await getClientIp()
+        config.headers = Object.assign(config.headers||{}, {
+            "client-ip": newClientIp
+        })
+        sessionStorage.setItem("clientIp", newClientIp)
+    }else{
+        config.headers = Object.assign(config.headers||{}, {
+            "client-ip": clientIp
+        })
+    }
+
+    return config
+}
+
+
 class Client {
     constructor() {
         this.server = null
@@ -65,10 +84,8 @@ class Client {
             })
         }
 
-        const clientIp = await getClientIp()
-        config.headers = Object.assign(config.headers||{}, {
-            "client-ip": clientIp
-        })
+        config = await setClientIpInHeader(config);
+        
 
         if (String(window.location.pathname).endsWith("/auth/sign-out")) {
             deleteCookie(SET_DSEARCH_AUTH_USER)
