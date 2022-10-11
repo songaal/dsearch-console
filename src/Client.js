@@ -18,11 +18,17 @@ const deleteCookie = function(name) {
     document.cookie = name + "= " + "; expires=" + date.toUTCString() + "; path=/";
 }
 
+const getClientIp = async () => {
+    const res = await axios.get('https://geolocation-db.com/json/')
+    return res.data.IPv4
+}
+
 class Client {
     constructor() {
         this.server = null
     }
-    call(config) {
+
+    async call(config) {
         if (config.uri) {
             let server = sessionStorage.getItem(SET_DSEARCH_SERVER)
             if (server === null) {
@@ -59,9 +65,15 @@ class Client {
             })
         }
 
+        const clientIp = await getClientIp()
+        config.headers = Object.assign(config.headers||{}, {
+            "client-ip": clientIp
+        })
+
         if (String(window.location.pathname).endsWith("/auth/sign-out")) {
             deleteCookie(SET_DSEARCH_AUTH_USER)
         }
+
         return new Promise(async (resolve, reject) => {
             try {
                 config.withCredentials = true
