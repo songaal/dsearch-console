@@ -24,7 +24,8 @@ const EditUser = async(() => import("../pages/userManagement/EditUser"));
 // Analysis components
 const Dictionary = async(() => import("../pages/analysis/dictionary"), { time: 0 });
 const Tools = async(() => import("../pages/analysis/tools"), { time: 0 });
-const RankingTuning = async(() => import("../pages/analysis/rankingTuning"), { time: 0 });
+const DocumentAnalysis = async(() => import("../pages/analysis/document"), {time: 0});
+// const RankingTuning = async(() => import("../pages/analysis/rankingTuning"), { time: 0 });
 
 // Indices components
 const Templates = async(() => import("../pages/indices/indexTemplates"));
@@ -69,7 +70,7 @@ const dashboardRoutes = {id: "대시보드", path: `${clusterContext}/dashboard`
 const analysisRoutes = [
     {header: "분석", id: "사전", path: `${clusterContext}/analysis/dictionary`, icon: <Icon.ImportContacts/>, component: Dictionary, children: null},
     {id: "분석도구", path: `${clusterContext}/analysis/tools`, icon: <Icon.Poll/>, component: Tools, children: null},
-    {id: "랭킹튜닝", path: `${clusterContext}/analysis/ranking-tuning`, icon: <Icon.Build/>, component: RankingTuning, children: null}
+    {id: "문서분석", path: `${clusterContext}/analysis/document`, icon: <Icon.Build/>, component: DocumentAnalysis, children: null}
 ];
 
 const indicesRoutes = [
