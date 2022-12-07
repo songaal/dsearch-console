@@ -9,7 +9,7 @@ export default function reducer(state = initState, actions) {
         case types.READ_SEARCH_QUERYS:
             return {
                 ...state,
-                result: actions.payload
+                searchQueryList: actions.payload
             }
         default:
             return state

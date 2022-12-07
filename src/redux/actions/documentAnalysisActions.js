@@ -6,7 +6,8 @@ const client = new Client()
 export const getSearchQueryList = (data) => dispatch => client.call({
     uri: "/document/searchQuery",
     method: 'GET'
-}).then(response => dispatch({type: READ_SEARCH_QUERYS, payload: response.data}))
+}).then(response => {
+    dispatch({type: READ_SEARCH_QUERYS, payload: response.data});})
 
 
 export const createSearchQuery = (data) => dispatch => client.call({
@@ -16,10 +17,9 @@ export const createSearchQuery = (data) => dispatch => client.call({
 }).then(response => dispatch({type: CREATE_SEARCH_QUERY, payload: response.data}))
 
 
-export const deleteSearchQeury = (data) => dispatch => client.call({
-    uri: "/document/searchQuery",
+export const deleteSearchQeury = (id) => dispatch => client.call({
+    uri: `/document/searchQuery?id=${id}`,
     method: 'DELETE',
-    data: data
 }).then(response => dispatch({type: DELETE_SEARCH_QUERY, payload: response.data}))
 
 export const updateSearchQuery = (data) => dispatch => client.call({

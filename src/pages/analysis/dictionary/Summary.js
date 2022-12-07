@@ -94,7 +94,6 @@ function Summary({ dispatch, authUser, summary, update }) {
         setPrevSummary(JSON.stringify(summary));
         setTableInfo(makeTableInfo(summary))
     }
-    console.log(tableInfo)
     const clickApplyDictionary = () => {
         let data = {};
         let str = "";
