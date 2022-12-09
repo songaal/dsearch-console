@@ -234,7 +234,7 @@ function SidebarCategory({
                              ...rest
                          }) {
     let flag = false;
-    if(name === '쿼리테스트') flag = true;
+    if(name === '키바나로 이동') flag = true;
     return (
         <Category {...rest}>
             {icon}
