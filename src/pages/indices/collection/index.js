@@ -23,10 +23,6 @@ import {
     TableRow,
     TableSortLabel,
     TextField,
-    Menu,
-    MenuItem,
-    FormControl,
-    LinearProgress,
     Typography as MuiTypography,
 } from "@material-ui/core";
 import { ArrowDropDown } from "@material-ui/icons";
@@ -39,6 +35,7 @@ import {
     setCollectionList,
 } from "../../../redux/actions/collectionActions";
 import { setIndexTemplatesAction } from "../../../redux/actions/indexTemplateActions";
+import { setJDBCList } from "../../../redux/actions/jdbcActions";
 
 const Divider = styled(MuiDivider)(spacing, positions);
 const Typography = styled(MuiTypography)(spacing, positions);
@@ -75,19 +72,20 @@ const fields = [
     { id: "name", label: "이름", sorting: true },
     { id: "id", label: "아이디", sorting: true },
     { id: "index", label: "선택 인덱스", sorting: true },
+    { id: "jdbcInfo", label: "JDBC 정보", sorting: true },
     { id: "shard", label: "샤드", sorting: true },
     { id: "docCount", label: "문서 수", sorting: true },
     { id: "size", label: "용량", sorting: true },
     { id: "autoRun", label: "자동시작", sorting: true },
 ]
 
-function Collection({ dispatch, authUser, indexSuffixA, indexSuffixB, collectionList, catIndexTemplateList }) {
+function Collection({ dispatch, authUser, indexSuffixA, indexSuffixB, collectionList, catIndexTemplateList, jdbcList }) {
+    
     const history = useHistory();
     const classes = useStyles();
     const [openAddModal, setOpenAddModal] = useState(false)
     const [createName, setCreateName] = useState("")
     const [createBaseId, setCreateBaseId] = useState("")
-
 
     const [applyIndexTemplate, setApplyIndexTemplate] = useState("")
     // const [applyIndexTemplates, setApplyIndexTemplates] = useState([])
@@ -105,7 +103,10 @@ function Collection({ dispatch, authUser, indexSuffixA, indexSuffixB, collection
         dispatch(setIndexTemplatesAction())
         dispatch(setCollectionList())
         dispatch(setCatIndexTemplateList())
+        dispatch(setJDBCList())
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+    console.log(collectionList)
 
     function toggleOpenAddModal() {
         setAddBtnDisabled(true)
@@ -455,12 +456,14 @@ function Collection({ dispatch, authUser, indexSuffixA, indexSuffixB, collection
                                     if (view_cron.length > 0) view_cron += ",  " + element
                                     else view_cron = element;
                                 });
+                                console.log(collection)
 
                                 const id = collection['id']
                                 const name = collection['name']
                                 const baseId = collection['baseId']
                                 const indexA = collection['indexA'] || {}
                                 const indexB = collection['indexB'] || {}
+                                const jdbcId = !collection['jdbcId'] ? "" : collection['jdbcId'] === "null" ? "": collection['jdbcId']
 
                                 const indexAAlias = indexA['aliases'] && Object.keys(indexA['aliases']).find(alias => alias === baseId)
                                 const isActiveA = indexAAlias !== undefined && indexAAlias !== null
@@ -487,6 +490,9 @@ function Collection({ dispatch, authUser, indexSuffixA, indexSuffixB, collection
 
                                             <Box style={{ display: isActiveA === false && isActiveB === false ? "block" : "none" }}> - </Box>
 
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            {jdbcList['list'].filter(item => item._id === jdbcId).map(item => { return item.name })}
                                         </TableCell>
                                         <TableCell align="center">
                                             <Box style={{ display: isActiveA ? "block" : "none" }}>
@@ -517,16 +523,9 @@ function Collection({ dispatch, authUser, indexSuffixA, indexSuffixB, collection
                                         </TableCell>
                                         <TableCell align="center">
                                             <Box>
-
                                                 {
                                                     (collection['scheduled'] || false) ? `활성화 (${view_cron})` : "비활성화"
                                                 }
-
-                                                {/*<Tooltip title="Delete" className={classes.fab}>*/}
-                                                {/*    {*/}
-                                                {/*        (collection['scheduled']||false) ? "활성화" : "비활성화"*/}
-                                                {/*    }*/}
-                                                {/*</Tooltip>*/}
                                             </Box>
                                         </TableCell>
                                     </TableRow>
@@ -626,6 +625,7 @@ function Collection({ dispatch, authUser, indexSuffixA, indexSuffixB, collection
 
 export default connect(store => ({
     authUser: store.dsearchReducers.authUser,
+    jdbcList: store.jdbcReducers.JdbcList,
     ...store.collectionReducers,
     ...store.indexTemplateReducers
 }))(Collection);

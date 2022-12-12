@@ -3,9 +3,7 @@ import * as types from '../constants';
 let initState = {
     JdbcIndex: {},
     JdbcList: {
-        hits:{
-            hits: []
-        }
+        list: []
     },
     JdbcAccessTest: { message : false},
     changedJdbcList: false
