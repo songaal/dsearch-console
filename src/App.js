@@ -7,13 +7,14 @@ import {MuiPickersUtilsProvider} from "@material-ui/pickers";
 import {StylesProvider} from "@material-ui/styles";
 
 import Routes from "./routes/Routes";
+import packageJson from "../package.json"
 
 function App() {
     return (
         <React.Fragment>
             <Helmet
-                titleTemplate="%s | DSearch Console"
-                defaultTitle="DSearch Console"
+                titleTemplate={`%s | DSearch Console ${packageJson.version}`}
+                defaultTitle={`DSearch Console ${packageJson.version}`}
             />
             <StylesProvider injectFirst>
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>

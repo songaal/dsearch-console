@@ -1,4 +1,4 @@
-import { READ_SEARCH_QUERYS, CREATE_SEARCH_QUERY, DELETE_SEARCH_QUERY, UPDATE_SEARCH_QUERY, ANALYSIS_DOCUMENT } from "../constants";
+import { READ_SEARCH_QUERYS, CREATE_SEARCH_QUERY, DELETE_SEARCH_QUERY, UPDATE_SEARCH_QUERY, ANALYSIS_DOCUMENT, ANALYSIS_DOCUMENT_DETAIL } from "../constants";
 import Client from '~/Client'
 
 const client = new Client()
@@ -34,7 +34,17 @@ export const analyzeDocument = (data) => dispatch => client.call({
     uri: "/document/analysis",
     method: 'POST',
     data: data
-}).then(response => dispatch({type: ANALYSIS_DOCUMENT, payload: response.data}))
+}).then(response => { 
+    dispatch({type: ANALYSIS_DOCUMENT, payload: response.data})
+})
+
+export const analyzeDocumentDetail = (data) => dispatch => client.call({
+    uri: "/document/analysis/detail",
+    method: 'POST',
+    data: data
+}).then(response => { 
+    dispatch({type: ANALYSIS_DOCUMENT_DETAIL, payload: response.data})
+})
 
 
 // export const setDocumentList = (index, data) => dispatch => client.call({

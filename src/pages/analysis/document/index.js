@@ -8,6 +8,7 @@ import { connect } from "react-redux";
 import { Resizable } from 're-resizable';
 import {
     analyzeDocument,
+    analyzeDocumentDetail,
     createSearchQuery,
     deleteSearchQeury,
     getSearchQueryList,
@@ -48,379 +49,138 @@ import { setIndicesAction } from "../../../redux/actions/indicesActions";
 const Card = styled(MuiCard)(spacing);
 const Table = styled(MuiTable)(spacing);
 
-function DocumentResults({ page, totalPage, errorMessage }) {
+function DocumentResults({ dispatch, analysisData, analysisDataDetail, leftBoxHeight}) {
+    const [page, setPage] = useState(0)
+    const [maxPage, setMaxPage] = useState(0)
+    const [detailModal, setDetailModal] = useState(false)
+
+    useEffect(() => {
+        let calcMaxPage = parseInt(Object.keys(analysisData["analysis"]).length / 10) + (Object.keys(analysisData["analysis"]).length % 10 >= 1 ? 1 : 0);
+        setMaxPage(calcMaxPage)
+        if (calcMaxPage > 0) setPage(1)
+    }, [analysisData])
+    
+    const getAnalyzedDocumentDetail = (event) => {
+        let data = {
+            index: analysisData["index"],
+            docId: event.target.id
+        }
+        dispatch(analyzeDocumentDetail(data))
+        setDetailModal(true)
+    }
 
     return (
-        <Box style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", border: "solid 1px silver"}}>
+        <Box style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column"}}>
+            <Dialog
+                open={detailModal}
+                onClose={() => { setDetailModal(false) }} >
+                <DialogTitle id="dialog-title">{"문서 분석 디테일"}</DialogTitle>
+                <DialogContent style={{ overflow: "auto"}}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell align="center"> 필드 명</TableCell>
+                                <TableCell align="center"> 문서 내용 </TableCell>
+                                <TableCell align="center"> 분석 내용 </TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {Object.keys(analysisDataDetail).sort().map((fieldName) => {
+                                return (
+                                <TableRow hover key={fieldName}>
+                                    <TableCell>{fieldName}</TableCell>
+                                    <TableCell>{analysisDataDetail[fieldName]['document']}</TableCell>
+                                    <TableCell>{analysisDataDetail[fieldName]['documentTermVectors']}</TableCell>
+                                </TableRow>)
+                            })}
+                        </TableBody>
+                    </Table>
+                </DialogContent>
+                <DialogActions>
+                    <Button variant="contained" color="default" onClick={() => { setDetailModal(false) }}>닫기</Button>
+                </DialogActions>
+            </Dialog>
+
             <Box style={{ marginLeft: "auto", marginTop: "4px" }} mx={3} mb={2}>
                 <Button
                     style={{ marginRight: "4px" }}
                     variant="outlined"
                     color="primary"
-                    onClick={() => { }}
-                    disabled={page === 0 || page === 1}
+                    onClick={() => { 
+                        setPage(page -1);
+                    }}
+                    disabled={page <= 1}
                 > 이전 </Button>
                 <Box component={"span"} m={3}>
-                    1 / 1
-                    {/* {page} / {totalPage} */}
+                    {page} / {maxPage}
                 </Box>
                 <Button
                     style={{ marginLeft: "4px" }}
                     variant="outlined"
                     color="primary"
-                    onClick={() => { }}
-                    disabled={page === 0 ? true : false}
+                    onClick={() => {
+                        setPage(page + 1);
+                    }}
+                    disabled={page === maxPage}
                 > 다음 </Button>
             </Box>
             <Divider />
-            <Box style={{overflow: "auto", height: "90%"}}>
-            <Table>
-                <TableHead>
-                    <TableRow>
-                        <TableCell align="center"> 번호 </TableCell>
-                        <TableCell align="center"> 필드 명</TableCell>
-                        <TableCell align="center"> 분석 내용 </TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    <TableRow>
-                        <TableCell rowSpan={4} style={{fontWeight: "bold", width: "60px"}} padding="none" align="center">1</TableCell>
-                        <TableCell align="center" >
-                            field1
-                        </TableCell>
-                        <TableCell align="center" >
-                            스마트폰|출시OS: 안드로이드10|화면정보|16.36cm(6.44인치)|S-AMOLED|2400x1080|409ppi|60Hz|20:9|시스템|스냅드래곤712|10nm|램:8GB|내장:128GB|MicroSD|네트워크|LTE-A|Wi-Fi4|블루투스v5.0|나노유심|듀얼유심지원|카메라|후면:4,800만화소+800만화소+200만화소+200만화소|전면:3,200만화소+800만화소|동영상:2160p(UHD),30fps|사운드|3.5mm|스피커:모노(1개)|보안/기능|지문인식(온스크린)|GPS|OTG|배터리|USB타입C|4,500mAh|충전지원$최대33W|규격/모델명|가로:75mm|세로:159.6mm|두께:8.5mm|무게:186.5g|LG U+ 미지원
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell align="center" >
-                            field2
-                        </TableCell>
-                        <TableCell align="center" >
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell align="center" >
-                            field3
-                        </TableCell >
-                        <TableCell align="center" >
-                            a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell align="center" >
-                            field4
-                        </TableCell>
-                        <TableCell align="center" >
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell rowSpan={4} style={{fontWeight: "bold", width: "60px"}} padding="none" align="center">2</TableCell>
-                        <TableCell>
-                            field1
-                        </TableCell>
-                        <TableCell>
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell >
-                            field2
-                        </TableCell>
-                        <TableCell >
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell >
-                            field3
-                        </TableCell>
-                        <TableCell >
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell >
-                            field4
-                        </TableCell>
-                        <TableCell >
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell rowSpan={4} style={{fontWeight: "bold", width: "60px"}} padding="none" align="center">3</TableCell>
-                        <TableCell>
-                            field1
-                        </TableCell>
-                        <TableCell>
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell >
-                            field2
-                        </TableCell>
-                        <TableCell >
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell >
-                            field3
-                        </TableCell>
-                        <TableCell >
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell >
-                            field4
-                        </TableCell>
-                        <TableCell >
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell rowSpan={4} style={{fontWeight: "bold", width: "60px"}} padding="none" align="center">4</TableCell>
-                        <TableCell>
-                            field1
-                        </TableCell>
-                        <TableCell>
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell >
-                            field2
-                        </TableCell>
-                        <TableCell >
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell >
-                            field3
-                        </TableCell>
-                        <TableCell >
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell >
-                            field4
-                        </TableCell>
-                        <TableCell >
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell rowSpan={4} style={{fontWeight: "bold", width: "60px"}} padding="none" align="center">5</TableCell>
-                        <TableCell>
-                            field1
-                        </TableCell>
-                        <TableCell>
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell >
-                            field2
-                        </TableCell>
-                        <TableCell >
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell >
-                            field3
-                        </TableCell>
-                        <TableCell >
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell >
-                            field4
-                        </TableCell>
-                        <TableCell >
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell rowSpan={4} style={{fontWeight: "bold", width: "60px"}} padding="none" align="center">6</TableCell>
-                        <TableCell>
-                            field1
-                        </TableCell>
-                        <TableCell>
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell >
-                            field2
-                        </TableCell>
-                        <TableCell >
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell >
-                            field3
-                        </TableCell>
-                        <TableCell >
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell >
-                            field4
-                        </TableCell>
-                        <TableCell >
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell rowSpan={4} style={{fontWeight: "bold", width: "60px"}} padding="none" align="center">7</TableCell>
-                        <TableCell>
-                            field1
-                        </TableCell>
-                        <TableCell>
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell >
-                            field2
-                        </TableCell>
-                        <TableCell >
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell >
-                            field3
-                        </TableCell>
-                        <TableCell >
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell >
-                            field4
-                        </TableCell>
-                        <TableCell >
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell rowSpan={4} style={{fontWeight: "bold", width: "60px"}} padding="none" align="center">8</TableCell>
-                        <TableCell>
-                            field1
-                        </TableCell>
-                        <TableCell>
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell >
-                            field2
-                        </TableCell>
-                        <TableCell >
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell >
-                            field3
-                        </TableCell>
-                        <TableCell >
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell >
-                            field4
-                        </TableCell>
-                        <TableCell >
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell rowSpan={4} style={{fontWeight: "bold", width: "60px"}} padding="none" align="center">9</TableCell>
-                        <TableCell>
-                            field1
-                        </TableCell>
-                        <TableCell>
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell >
-                            field2
-                        </TableCell>
-                        <TableCell >
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell >
-                            field3
-                        </TableCell>
-                        <TableCell >
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell >
-                            field4
-                        </TableCell>
-                        <TableCell >
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell rowSpan={4} style={{fontWeight: "bold", width: "60px"}} padding="none" align="center">10</TableCell>
-                        <TableCell>
-                            field1
-                        </TableCell>
-                        <TableCell>
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell >
-                            field2
-                        </TableCell>
-                        <TableCell >
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell >
-                            field3
-                        </TableCell>
-                        <TableCell >
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell >
-                            field4
-                        </TableCell>
-                        <TableCell >
-                            a, b, c, d
-                        </TableCell>
-                    </TableRow>
-                </TableBody>
-            </Table>
+            <Box style={{overflow: "auto", height: leftBoxHeight - 60 }}>
+                <Table >
+                    <TableHead>
+                        <TableRow>
+                            <TableCell align="center"> 번호 </TableCell>
+                            <TableCell align="center"> 필드 명</TableCell>
+                            <TableCell align="center"> 분석 내용 </TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {
+                            Object.keys(analysisData["analysis"]).sort().slice((page-1)* 10, page * 10).map((id, numOfId) => {
+                                return Object.keys(analysisData["analysis"][id]).sort().map((fieldName, index) => {
+                                    return (
+                                        <TableRow key={fieldName + "_" + id}>
+                                                {index === 0 ? 
+                                                    <TableCell
+                                                        id={id}
+                                                        className={id}
+                                                        onMouseOver={() => { 
+                                                            for(var i = 0 ;i < document.getElementsByClassName(id).length; i++){
+                                                                document.getElementsByClassName(id).item(i).style.backgroundColor = "#ebedf0"
+                                                            }
+                                                        }}
+                                                        onMouseOut={() => { 
+                                                            for(var i = 0 ;i < document.getElementsByClassName(id).length; i++){
+                                                                document.getElementsByClassName(id).item(i).style.backgroundColor = ""
+                                                            }
+                                                        }}
+                                                        onClick={(event) => { 
+                                                            getAnalyzedDocumentDetail(event)
+                                                        }}
+                                                        rowSpan={Object.keys(analysisData["analysis"][id]).length} 
+                                                        style={{fontWeight: "bold", width: "60px"}} 
+                                                        padding="none"
+                                                        align="center">{numOfId+1 + ((page-1)*10)}</TableCell> 
+                                                    : <></> }
+                                                <TableCell align="center" className={id} >
+                                                    {fieldName}
+                                                </TableCell>
+                                                <TableCell align="center" className={id}>
+                                                    {analysisData["analysis"][id][fieldName]['documentTermVectors']}
+                                                </TableCell>
+                                            </TableRow>)
+                                        }
+                                    )
+                            })
+                        }
+                    </TableBody>
+                </Table>
             </Box>
         </Box>
     )
 }
 
-function SearchQueryArea({ dispatch, searchQueryList, indexList }) {
+function SearchQueryArea({ dispatch, searchQueryList, indexList, leftBoxHeight }) {
     const [index, setIndex] = useState("")
     const [searchQuery, setSearchQuery] = useState("")
     const [searchQueryName, setSearchQueryName] = useState("");
@@ -430,6 +190,16 @@ function SearchQueryArea({ dispatch, searchQueryList, indexList }) {
     const [isOpenSearchQueryLoadModal, setOpenSearchQueryLoadModal] = useState(false)
     const [isOpenSearchQuerySaveModal, setOpenSearchQuerySaveModal] = useState(false)
 
+    const uncheckedAllCheckBox = () => {
+        let checkedList = {};
+
+        Object.values(searchQueryList).map((item, index) => {
+            checkedList[item.id] = false
+        })
+        
+        setCheckBoxList(checkedList)
+    }
+
     const handleCheckBox = (id, checked)=> {
         let checkedList = {};
 
@@ -437,7 +207,6 @@ function SearchQueryArea({ dispatch, searchQueryList, indexList }) {
             checkedList[item.id] = item.id === id ? checked : false
         })
         
-        console.log(checkBoxList, checkedList, id, checked)
         setCheckBoxList(checkedList)
     }
 
@@ -461,6 +230,7 @@ function SearchQueryArea({ dispatch, searchQueryList, indexList }) {
         setSearchQueryName(target.name);
         setSearchQuery(target.query);
         setOpenSearchQueryLoadModal(false)
+        uncheckedAllCheckBox()
     }
 
     const deleteSearchQuery = () => {
@@ -470,6 +240,18 @@ function SearchQueryArea({ dispatch, searchQueryList, indexList }) {
         dispatch(deleteSearchQeury(checkedId))
         dispatch(getSearchQueryList())
         setOpenSearchQueryLoadModal(false)
+        uncheckedAllCheckBox()
+    }
+
+    const analyzeSearchQueryDocument = () => {
+        let data = {
+            name: searchQueryName,
+            index: index,
+            query: searchQuery
+        }
+
+        dispatch(analyzeDocument(data))
+        uncheckedAllCheckBox()
     }
 
     return (
@@ -510,7 +292,7 @@ function SearchQueryArea({ dispatch, searchQueryList, indexList }) {
                             return 0;
                         }).map((item, index) => {
                             return <FormControlLabel 
-                                        key={item.name} 
+                                        key={item.id} 
                                         control={
                                             <Checkbox size="small" 
                                                 id={item.id} 
@@ -531,7 +313,7 @@ function SearchQueryArea({ dispatch, searchQueryList, indexList }) {
                 </DialogActions>
             </Dialog>
 
-            <Box display="flex" alignItems="center" justifyContent="space-between" mx={3} mb={2}>
+            <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
                 <FormControl style={{ minWidth: "250px" }}>
                     <InputLabel id="index-select">인덱스 명</InputLabel>
                     <Select
@@ -556,13 +338,19 @@ function SearchQueryArea({ dispatch, searchQueryList, indexList }) {
                 </FormControl>
 
                 <Box display="flex" alignItems="center" justifyContent="space-between" style={{minWidth: "150px"}}>
-                    <Button style={{ margin: "2px" }}
+                    <Button variant="contained" color="primary" style={{ margin: "2px" }} size="small"
+                        onClick={() => {
+                            analyzeSearchQueryDocument()
+                        }}>
+                        쿼리 실행
+                    </Button>
+                    <Button variant="outlined" color="primary" style={{ margin: "2px" }} size="small"
                         onClick={() => {
                             setOpenSearchQuerySaveModal(true)
                         }}>
                         쿼리 저장
                     </Button>
-                    <Button style={{ margin: "2px" }} onClick={() => { setOpenSearchQueryLoadModal(true) }}>
+                    <Button variant="outlined" size="small" color="secondary" style={{ marginLeft: "2px" }} onClick={() => { setOpenSearchQueryLoadModal(true) }}>
                         쿼리 불러오기
                     </Button>
                 </Box>
@@ -576,8 +364,8 @@ function SearchQueryArea({ dispatch, searchQueryList, indexList }) {
                 mode="json"
                 theme="kuroir"
                 fontSize="14px"
-                width="98%"
-                height={"90%"}
+                width="100%"
+                height={(leftBoxHeight - 60) + "px"}
                 tabSize={2}
                 setOptions={{ useWorker: false }}
             />
@@ -586,15 +374,13 @@ function SearchQueryArea({ dispatch, searchQueryList, indexList }) {
 }
 
 
-function DocumentAnalysisCard({ dispatch, searchQueryList, indexList, analysisResult }) {
+function DocumentAnalysisCard({ dispatch, searchQueryList, indexList, analysisData, analysisDataDetail}) {
 
     const MAX_WIDTH = 1310;
-    const MIN_WIDTH = 420;
+    const MIN_WIDTH = 500;
 
     const [leftBoxWidth, setLeftBoxWidth] = useState(655);
-    const [rightBoxWidth, setRightBoxWidth] = useState(655);
     const [leftBoxHeight, setLeftBoxHeight] = useState(500);
-    const [rightBoxHeight, setRightBoxHeight] = useState(500);
     const [dividerHeight, setDividerHeight] = useState(500);
 
     return (
@@ -605,28 +391,18 @@ function DocumentAnalysisCard({ dispatch, searchQueryList, indexList, analysisRe
                     overflow: 'auto',
                     display: "flex"
                 }}>
-                {/* <Box style={{
-                    width: "100%",
-                    height: "100%",
-                    overflow: 'auto',
-                    display: "flex"
-                }}> */}
                     <Resizable
                         onResizeStop={(e, direction, ref, d) => {
-                            const w = leftBoxWidth + d.width
-                            if (w > MAX_WIDTH - MIN_WIDTH) {
-                                setLeftBoxWidth(MAX_WIDTH - MIN_WIDTH)
-                                setRightBoxWidth(MIN_WIDTH)
+                            const w = leftBoxWidth + d.width 
+                            if (w > MAX_WIDTH ) {
+                                setLeftBoxWidth(MAX_WIDTH )
                             } else if (w < MIN_WIDTH) {
                                 setLeftBoxWidth(MIN_WIDTH)
-                                setRightBoxWidth(MAX_WIDTH - MIN_WIDTH)
                             } else {
                                 setLeftBoxWidth(w)
-                                setRightBoxWidth(MAX_WIDTH - w)
                             }
 
                             setLeftBoxHeight(leftBoxHeight + d.height)
-                            setRightBoxHeight(leftBoxHeight + d.height)
                             setDividerHeight(leftBoxHeight + d.height)
                         }}
                         size={{ width: leftBoxWidth, height: leftBoxHeight }}
@@ -637,49 +413,23 @@ function DocumentAnalysisCard({ dispatch, searchQueryList, indexList, analysisRe
                         minWidth={MIN_WIDTH + "px"}
                         maxWidth="90%"
                     >
-                        <SearchQueryArea dispatch={dispatch} searchQueryList={searchQueryList} indexList={indexList} />
+                        <SearchQueryArea dispatch={dispatch} searchQueryList={searchQueryList} indexList={indexList} leftBoxHeight={leftBoxHeight}/>
                     </Resizable>
                     <Divider style={{ height: dividerHeight, margin: "4px" }} orientation="vertical" />
-                    <Resizable
-                        onResizeStop={(e, direction, ref, d) => {
-                            const w = rightBoxWidth + d.width
-                            if (w > MAX_WIDTH - MIN_WIDTH) {
-                                setRightBoxWidth(MAX_WIDTH - MIN_WIDTH)
-                                setLeftBoxWidth(MIN_WIDTH)
-                            } else if (w < MIN_WIDTH) {
-                                setRightBoxWidth(MIN_WIDTH)
-                                setLeftBoxWidth(MAX_WIDTH - MIN_WIDTH)
-                            } else {
-                                setRightBoxWidth(w)
-                                setLeftBoxWidth(MAX_WIDTH - w)
-                            }
-
-                            setLeftBoxHeight(rightBoxHeight + d.height)
-                            setRightBoxHeight(rightBoxHeight + d.height)
-                            setDividerHeight(rightBoxHeight + d.height)
-                        }}
-                        size={{ width: rightBoxWidth, height: rightBoxHeight }}
-                        style={{
-                            // border: "solid 1px silver"
-                            height: "100%"
-                        }}
-                        minWidth={MIN_WIDTH + "px"}
-                        maxWidth="90%"
-                    >
-                        <DocumentResults analysisResult={analysisResult} />
-                    </Resizable>
-                {/* </Box> */}
+                    <Box width={"100%"} height="100%">
+                        <DocumentResults dispatch={dispatch} analysisData={analysisData} leftBoxHeight={leftBoxHeight} analysisDataDetail={analysisDataDetail}/>
+                    </Box>
             </CardContent>
         </Card >
     );
 }
 
-function DocumentAnalysis({ dispatch, searchQueryList, indexList }) {
+function DocumentAnalysis({ dispatch, searchQueryList, indexList, analysisData, analysisDataDetail}) {
 
     useEffect(() => {
         dispatch(getSearchQueryList())
         dispatch(setIndicesAction())
-    }, [searchQueryList]) // eslint-disable-line react-hooks/exhaustive-deps
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <React.Fragment>
@@ -688,11 +438,11 @@ function DocumentAnalysis({ dispatch, searchQueryList, indexList }) {
                 문서 분석
             </Typography>
 
-            <Divider my={6} />
+            <Divider my={6}  />
 
             <Grid container spacing={6}>
-                <Grid item xs={12}  >
-                    <DocumentAnalysisCard dispatch={dispatch} searchQueryList={searchQueryList} indexList={indexList} />
+                <Grid item xs={12} >
+                    <DocumentAnalysisCard dispatch={dispatch} searchQueryList={searchQueryList} indexList={indexList} analysisData={analysisData} analysisDataDetail={analysisDataDetail} />
                 </Grid>
             </Grid>
         </React.Fragment>
@@ -700,6 +450,8 @@ function DocumentAnalysis({ dispatch, searchQueryList, indexList }) {
 }
 
 export default connect(store => ({
+    analysisDataDetail: store.documentAnalysisReducers.analysisDataDetail,
+    analysisData: store.documentAnalysisReducers.analysisData,
     searchQueryList: store.documentAnalysisReducers.searchQueryList,
     indexList: store.indicesReducers.indices
 }))(DocumentAnalysis);

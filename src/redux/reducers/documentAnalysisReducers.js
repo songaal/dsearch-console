@@ -1,7 +1,11 @@
 import * as types from '../constants';
 
 let initState = {
-    searchQueryList: []
+    searchQueryList: [],
+    analysisData: {
+        "analysis": {}
+    },
+    analysisDataDetail: {}
 };
 
 export default function reducer(state = initState, actions) {
@@ -10,6 +14,16 @@ export default function reducer(state = initState, actions) {
             return {
                 ...state,
                 searchQueryList: actions.payload
+            }
+        case types.ANALYSIS_DOCUMENT:
+            return {
+                ...state,
+                analysisData: actions.payload
+            }
+        case types.ANALYSIS_DOCUMENT_DETAIL:
+            return {
+                ...state,
+                analysisDataDetail: actions.payload
             }
         default:
             return state
