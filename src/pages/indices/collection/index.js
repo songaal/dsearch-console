@@ -72,7 +72,7 @@ const fields = [
     { id: "name", label: "이름", sorting: true },
     { id: "id", label: "아이디", sorting: true },
     { id: "index", label: "선택 인덱스", sorting: true },
-    { id: "jdbcInfo", label: "JDBC 정보", sorting: true },
+    { id: "jdbcInfo", label: "JDBC", sorting: true },
     { id: "shard", label: "샤드", sorting: true },
     { id: "docCount", label: "문서 수", sorting: true },
     { id: "size", label: "용량", sorting: true },
@@ -88,7 +88,6 @@ function Collection({ dispatch, authUser, indexSuffixA, indexSuffixB, collection
     const [createBaseId, setCreateBaseId] = useState("")
 
     const [applyIndexTemplate, setApplyIndexTemplate] = useState("")
-    // const [applyIndexTemplates, setApplyIndexTemplates] = useState([])
     const [createNameError, setCreateNameError] = useState(false)
     const [createBaseIdError, setCreateBaseIdError] = useState(false)
     const [modalMessage, setModalMessage] = useState(null)
@@ -114,7 +113,6 @@ function Collection({ dispatch, authUser, indexSuffixA, indexSuffixB, collection
         setModalMessage(null)
         setCreateNameError(false)
         setCreateBaseIdError(false)
-        // setApplyIndexTemplates([])
         setApplyIndexTemplate("")
         setCreateName("")
         setCreateBaseId("")
@@ -176,12 +174,7 @@ function Collection({ dispatch, authUser, indexSuffixA, indexSuffixB, collection
                 tmpMatched.push({ name: event.target.value + indexSuffixA, index_patterns: [event.target.value + indexSuffixB] })
             }
 
-            // console.log(tmpMatched)
             setApplyIndexTemplate(event.target.value)
-            // setApplyIndexTemplates(tmpMatched.map(matched => `${matched['name']} (${matched['index_patterns'].join(',')})`))
-            // setApplyIndexTemplates(tmpMatched.map(matched => matched['name']))
-            // tmpMatched.map(matched => matched['name'])
-            // setApplyIndexTemplates([event.target.value + indexSuffixA, event.target.value + indexSuffixB])
 
             if (createName.trim().length !== 0 && inValid === false) {
                 setAddBtnDisabled(false)
@@ -191,7 +184,6 @@ function Collection({ dispatch, authUser, indexSuffixA, indexSuffixB, collection
 
         } else {
             setAddBtnDisabled(true)
-            // setApplyIndexTemplates([])
             setApplyIndexTemplate("")
         }
     }
@@ -201,10 +193,6 @@ function Collection({ dispatch, authUser, indexSuffixA, indexSuffixB, collection
             setCreateNameError(true)
             return false
         }
-        // if (createBaseId === "" || createBaseId.startsWith(".") || !/[a-z0-9]/g.test(createBaseId)) {
-        //     setCreateBaseIdError(true)
-        //     return false
-        // }
         if (createBaseId.length > 1 && (!/^[a-z]+[a-z0-9-_]/g.test(createBaseId))) {
             setCreateBaseIdError(true)
             return false
@@ -384,8 +372,6 @@ function Collection({ dispatch, authUser, indexSuffixA, indexSuffixB, collection
                 <Table className={classes.table} aria-label="simple table">
                     <TableHead>
                         <TableRow>
-                            {/*<TableCell align="center">#</TableCell>*/}
-
                             {
                                 fields.map(field =>
                                     <TableCell align="center" key={field['id']}>
@@ -407,14 +393,6 @@ function Collection({ dispatch, authUser, indexSuffixA, indexSuffixB, collection
                                         }
                                     </TableCell>)
                             }
-
-                            {/*<TableCell align="center">이름</TableCell>*/}
-                            {/*<TableCell align="center">아이디</TableCell>*/}
-                            {/*<TableCell align="center">선택 인덱스</TableCell>*/}
-                            {/*<TableCell align="center">샤드</TableCell>*/}
-                            {/*<TableCell align="center">문서 수</TableCell>*/}
-                            {/*<TableCell align="center">용량</TableCell>*/}
-                            {/*<TableCell align="center">자동시작</TableCell>*/}
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -456,7 +434,6 @@ function Collection({ dispatch, authUser, indexSuffixA, indexSuffixB, collection
                                     if (view_cron.length > 0) view_cron += ",  " + element
                                     else view_cron = element;
                                 });
-                                console.log(collection)
 
                                 const id = collection['id']
                                 const name = collection['name']
@@ -473,13 +450,17 @@ function Collection({ dispatch, authUser, indexSuffixA, indexSuffixB, collection
 
                                 return (
                                     <TableRow key={collection['id']}>
-                                        <TableCell align="center">{collection['no'] + 1}</TableCell>
+                                        {/* 넘버링 */}
+                                        <TableCell align="center">{collection['no'] + 1}</TableCell> 
+                                        {/* 컬렉션 이름 */}
                                         <TableCell align="center">
                                             <Link className={classes.link} onClick={() => moveDetail(id)}>{name}</Link>
                                         </TableCell>
+                                        {/* 컬렉션 baseId */}
                                         <TableCell align="center">
                                             <Link className={classes.link} onClick={() => moveDetail(id)}>{baseId}</Link>
                                         </TableCell>
+                                        {/* 현재 컬렉션 연결 인덱스 명 */}
                                         <TableCell align="center">
                                             <Link style={{ display: isActiveA ? "block" : "none" }}
                                                 onClick={() => moveIndex(indexA['uuid'])}
@@ -491,9 +472,11 @@ function Collection({ dispatch, authUser, indexSuffixA, indexSuffixB, collection
                                             <Box style={{ display: isActiveA === false && isActiveB === false ? "block" : "none" }}> - </Box>
 
                                         </TableCell>
+                                        {/* 컬렉션에 연결된 JDBC 정보 */}
                                         <TableCell align="center">
                                             {jdbcList['list'].filter(item => item._id === jdbcId).map(item => { return item.name })}
                                         </TableCell>
+                                        {/* 샤드 */}
                                         <TableCell align="center">
                                             <Box style={{ display: isActiveA ? "block" : "none" }}>
                                                 P[{indexA['pri'] || '-'}] R[{indexA['rep'] || '-'}]
@@ -503,6 +486,7 @@ function Collection({ dispatch, authUser, indexSuffixA, indexSuffixB, collection
                                             </Box>
                                             <Box style={{ display: isActiveA === false && isActiveB === false ? "block" : "none" }}> - </Box>
                                         </TableCell>
+                                        {/* 문서 수 */}
                                         <TableCell align="center">
                                             <Box style={{ display: isActiveA ? "block" : "none" }}>
                                                 {convertHumanReadableCount(indexA['docsCount'] || '-')}
@@ -512,6 +496,7 @@ function Collection({ dispatch, authUser, indexSuffixA, indexSuffixB, collection
                                             </Box>
                                             <Box style={{ display: isActiveA === false && isActiveB === false ? "block" : "none" }}> - </Box>
                                         </TableCell>
+                                        {/* 용량 */}
                                         <TableCell align="center">
                                             <Box style={{ display: isActiveA ? "block" : "none" }}>
                                                 {indexA['storeSize'] || '-'}
@@ -521,6 +506,7 @@ function Collection({ dispatch, authUser, indexSuffixA, indexSuffixB, collection
                                             </Box>
                                             <Box style={{ display: isActiveA === false && isActiveB === false ? "block" : "none" }}> - </Box>
                                         </TableCell>
+                                        {/* 자동 시작 */}
                                         <TableCell align="center">
                                             <Box>
                                                 {
