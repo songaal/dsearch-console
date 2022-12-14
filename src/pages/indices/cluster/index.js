@@ -4,7 +4,10 @@ import {
     setClusterInfoActions,
     setIndicesInfoActions,
     setNodesInfoActions,
-    setShardsInfoActions
+    setShardsInfoActions,
+    setMoveInfoActions,
+    setRouteInfoActions,
+    removeNodeAction,
 } from '@actions/clusterInfoActions'
 import Helmet from "react-helmet";
 import {useHistory} from "react-router-dom";
@@ -26,11 +29,18 @@ import {
     TableRow as MuiTableRow,
     TextField,
     Typography,
+    Switch,
+    IconButton,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle
 } from "@material-ui/core";
 import {palette, sizing, spacing} from "@material-ui/system";
 import {makeStyles} from "@material-ui/core/styles";
-import {connect} from "react-redux";
-import {pink, yellow} from '@material-ui/core/colors';
+import {connect, useDispatch} from "react-redux";
+import {pink, red, yellow} from '@material-ui/core/colors';
+import {MinusCircle,PlusCircle} from "react-feather";
 
 const useStyles = makeStyles({
     headerField: {fontSize: '1.2em', fontWeight: "bold"},
@@ -128,11 +138,34 @@ function ShardButton({prirep, label}) {
     )
 }
 
-function ClusterShardMap({indices, nodes, shards}) {
+function useInterval(callback, delay) {
+    const savedCallback = React.useRef();
+    useEffect(() => {
+        savedCallback.current = callback;
+    }, [callback]);
+
+    useEffect(() => {
+        function tick() {
+            savedCallback.current();
+        }
+        if (delay !== null) {
+            let id = setInterval(tick, delay);
+            return () => clearInterval(id);
+        }
+    }, [delay]);
+}
+
+function ClusterShardMap({indices, nodes, shards, move, route}) {
     const [state, setState] = React.useState({
         checkedA: false,
         checkedB: false,
+        checkedC: false,
     });
+
+    const dispatch = useDispatch()
+    const [tempNodeName, setTempNodeName] = React.useState(""); //샤드 제거 노드 name
+    const [tempNodeStatus, setTempNodeStatus] = React.useState(false); //exclude 제외/추가 체크
+    const [openRemoveModal, setOpenRemoveModal] = React.useState(false)
     const [filter, setFilter] = React.useState("")
 
     const handleChange = (event) => {
@@ -212,7 +245,7 @@ function ClusterShardMap({indices, nodes, shards}) {
     }
 
     const matchedCount = Object.values(indicesArr).filter(indexObj => !isFilterIndex(indexObj['index'])).length;
-    
+
     const history = useHistory();
     
     function moveIndexDetail(uuid) {
@@ -222,9 +255,115 @@ function ClusterShardMap({indices, nodes, shards}) {
     function moveServerDetail(nodeName) {
         history.push(`./management/server?nodename=${nodeName}`);
     }
-    
+
+    function handleCheckRoute() {
+        setState({...state, checkedC: !state.checkedC})
+        dispatch(setRouteInfoActions())
+    }
+
+    function handleCancel(){
+        setOpenRemoveModal(false);
+    }
+
+    function handleRemoveNode() {
+        let filterRoute = route.filter((item) => item !== '')
+
+        if (tempNodeName !== '') {
+            if (tempNodeStatus) {
+                filterRoute = filterRoute.filter((element) => element !== tempNodeName)
+            } else {
+                filterRoute.push(tempNodeName)
+            }
+
+            let tempNodeStr = ""
+            if (filterRoute.length > 1) {
+                tempNodeStr = filterRoute.join(",")
+            } else if (filterRoute.length == 1) {
+                tempNodeStr = filterRoute[0]
+            } else {
+                tempNodeStr = null
+            }
+
+            let routeBody = {}
+            let subRouteBody = {
+                "cluster.routing.allocation.exclude._name": tempNodeStr
+            }
+            routeBody.transient = subRouteBody
+            dispatch(removeNodeAction(routeBody))
+
+            setTimeout(() => {
+                dispatch(setRouteInfoActions())
+            }, 1000)
+
+            setTempNodeName("")
+            setOpenRemoveModal(false);
+        }
+        setOpenRemoveModal(false);
+    }
+
     return (
         <React.Fragment>
+            <Typography variant="h4" gutterBottom display="inline">
+                샤드 이동
+            </Typography>
+            <Card mt={2} mb={5} style={{overflow: "auto"}}>
+                <CardContent>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell align="center">Index</TableCell>
+                                <TableCell align="center">Shard</TableCell>
+                                <TableCell align="center">Stage</TableCell>
+                                <TableCell align="center">Total Time</TableCell>
+                                <TableCell align="center">Source/Destination</TableCell>
+                                <TableCell align="center">Files</TableCell>
+                                <TableCell align="center">Bytes</TableCell>
+                                <TableCell align="center">Translog</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                        {
+                            move.length === 0 ?
+                                <TableRow>
+                                    <TableCell colSpan={8} align="center">
+                                        이동중인 샤드가 없습니다.
+                                    </TableCell>
+                                </TableRow>
+                            :
+                            Object.values(move).map(values => {
+                                values = JSON.parse(JSON.stringify(values))
+                                return (
+                                    <TableRow>
+                                        <TableCell>{values.index}</TableCell>
+                                        <TableCell align="center">{values.shard}</TableCell>
+                                        <TableCell align="center">{values.stage}</TableCell>
+                                        <TableCell align="center">{values.time}</TableCell>
+                                        <TableCell align="center">
+                                            {values.sourceNode} > {values.targetNode}
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            {values.filesPercent}
+                                            <br />
+                                            {values.filesRecovered} / {values.files}
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            {values.bytesPercent}
+                                            <br />
+                                            {values.bytesRecovered} / {values.bytesTotal}
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            {values.translogOpsPercent}
+                                            <br />
+                                            {values.translogOpsRecovered} / {values.translogOps}
+                                        </TableCell>
+                                    </TableRow>
+                                )
+                            })
+                        }
+                        </TableBody>
+                    </Table>
+                </CardContent>
+            </Card>
             <Typography variant="h4" gutterBottom display="inline">
                 샤드 배치
             </Typography>
@@ -233,8 +372,27 @@ function ClusterShardMap({indices, nodes, shards}) {
                     <Box my={3}>
                         <TextField fullWidth placeholder={"인덱스 필터 (ex: product, example-index, -index)"} value={filter} onChange={event => setFilter(event.target.value)}/>
                     </Box>
-                    <FormControlLabel control={ <Checkbox checked={state.checkedA} onChange={handleChange} name="checkedA" color="primary"/> } label="닫힌 인덱스" />
-                    <FormControlLabel control={ <Checkbox checked={state.checkedB} onChange={handleChange} name="checkedB" color="primary"/> } label=". 특수 인덱스" />
+                    <Box display="flex"  alignItems="center"  justifyContent="space-between" my={3}>
+                        <Box>
+                            <FormControlLabel control={ <Checkbox checked={state.checkedA} onChange={handleChange} name="checkedA" color="primary"/> } label="닫힌 인덱스" />
+                            <FormControlLabel control={ <Checkbox checked={state.checkedB} onChange={handleChange} name="checkedB" color="primary"/> } label=". 특수 인덱스" />
+                        </Box>
+                        <Box>
+                            <FormControlLabel
+                                style={{whiteSpace: "nowrap"}}
+                                control={
+                                    <Switch
+                                        checked={state.checkedC}
+                                        onChange={handleCheckRoute}
+                                        color="primary"
+                                        name="IndexModeSelector"
+                                        inputProps={{ 'aria-label': 'primary checkbox' }}
+                                    />
+                                }
+                                label="노드 제거 스위치"
+                            />
+                        </Box>
+                    </Box>
 
                     {
                         matchedCount === 0 ?
@@ -273,7 +431,7 @@ function ClusterShardMap({indices, nodes, shards}) {
                             <Table>
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell style={{
+                                        <TableCell colSpan={state.checkedC ? 2 : 1} style={{
                                             fontSize: "0.5em",
                                             minWidth: "100px",
                                             textOverflow: "ellipsis",
@@ -335,8 +493,56 @@ function ClusterShardMap({indices, nodes, shards}) {
                                             </TableRow>
                                             : <></>
                                     }
+
+                                    <Dialog open={openRemoveModal} fullWidth={true}>
+                                        <DialogTitle>샤드 이동</DialogTitle>
+                                        <DialogContent>
+                                            <Box style={{color: red['500']}}> 선택하신 노드의 샤드를 이동 시키겠습니까? </Box>
+                                        </DialogContent>
+                                        <DialogActions>
+                                            <Button style={{backgroundColor: red['200']}}
+                                                    variant="contained"
+                                                    onClick={handleRemoveNode}
+                                            >
+                                                이동
+                                            </Button>
+                                            <Button onClick={() => handleCancel()}
+                                                    variant="contained"
+                                            >
+                                                취소
+                                            </Button>
+                                        </DialogActions>
+                                    </Dialog>
+
                                     {Object.values(nodes).map((nodeRow, nodeRowIndex) => 
                                         <TableRow key={nodeRowIndex}>
+                                            {
+                                                state.checkedC ?
+                                                    <TableCell>
+                                                        {
+                                                            Object.values(route).includes(nodeRow.name) ?
+                                                                <IconButton style={{color: "blue"}}
+                                                                    onClick={() => {
+                                                                        setTempNodeName(nodeRow.name)
+                                                                        setTempNodeStatus(true)
+                                                                        setOpenRemoveModal(true);
+                                                                    }}>
+                                                                    <PlusCircle />
+                                                                </IconButton>
+                                                                :
+                                                                <IconButton style={{color: "red"}}
+                                                                    onClick={() => {
+                                                                        setTempNodeName(nodeRow.name)
+                                                                        setTempNodeStatus(false)
+                                                                        setOpenRemoveModal(true);
+                                                                    }}>
+                                                                    <MinusCircle />
+                                                                </IconButton>
+                                                        }
+                                                    </TableCell>
+                                                :
+                                                    <></>
+                                            }
                                             <TableCell align="center">
                                             <Link style={{cursor: "pointer"}} onClick={() => moveServerDetail(nodeRow.name)}>{nodeRow.name}</Link>
                                                 <Typography>{nodeRow.ip}</Typography>
@@ -374,13 +580,32 @@ function ClusterShardMap({indices, nodes, shards}) {
     );
 }
 
-function ClusterInfo({dispatch, shards, nodes, indices, cluster}) {
+function ClusterInfo({dispatch, shards, nodes, indices, cluster, move, route}) {
+
+    const [moveInfo, setMoveInfo] = React.useState({})
+
     useEffect(() => {
         dispatch(setIndicesInfoActions())
         dispatch(setClusterInfoActions())
         dispatch(setNodesInfoActions())
         dispatch(setShardsInfoActions())
+        dispatch(setRouteInfoActions())
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+    useInterval(() => {
+        dispatch(setMoveInfoActions()).then(response => {
+            if (Object.keys(response.payload).length != 0) {
+                setMoveInfo(response)
+            }
+        })
+    }, 5000)
+
+    useEffect(() => {
+        dispatch(setIndicesInfoActions())
+        dispatch(setClusterInfoActions())
+        dispatch(setShardsInfoActions())
+        dispatch(setNodesInfoActions())
+    }, [moveInfo])
 
     return (
         <React.Fragment>
@@ -400,7 +625,7 @@ function ClusterInfo({dispatch, shards, nodes, indices, cluster}) {
 
             <br/>
 
-            <ClusterShardMap indices={indices} nodes={nodes} shards={shards}/>
+            <ClusterShardMap indices={indices} nodes={nodes} shards={shards} move={move} route={route}/>
         </React.Fragment>
     );
 }
@@ -409,5 +634,7 @@ export default connect(store => ({
     indices: store.clusterInfoReducers.indices,
     shards: store.clusterInfoReducers.shards,
     nodes: store.clusterInfoReducers.nodes,
-    cluster: store.clusterInfoReducers.cluster
+    cluster: store.clusterInfoReducers.cluster,
+    move: store.clusterInfoReducers.move,
+    route: store.clusterInfoReducers.route,
 }))(ClusterInfo);
