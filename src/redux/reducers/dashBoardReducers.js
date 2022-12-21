@@ -2,7 +2,22 @@ import * as types from '../constants';
 
 let initState = {
     result: {
-        result: []
+        hits: {
+            hits:[
+                // {
+                //     index:String,
+                //     _source:{
+                //         index: String,
+                //         alias: String,
+                //         docSize: Number,
+                //         endTime: Date,
+                //         startTime: Date,
+                //         status: String,
+                //         storage: String
+                //     }
+                // }
+            ]
+        }
     },
     running: {
     },
