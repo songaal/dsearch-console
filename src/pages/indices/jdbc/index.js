@@ -31,16 +31,18 @@ import {
 import {spacing} from "@material-ui/system";
 import {addJdbcIndex, deleteJdbcSource, setJDBCAccessTest, setJDBCList, updateJdbcSource} from '@actions/jdbcActions'
 
-const drivers = ["Altibase", "Oracle", "Mysql"];
+const drivers = ["Altibase", "Oracle", "Mysql", "MariaDb"];
 const JdbcDrivers = {
     "Altibase": "Altibase.jdbc.driver.AltibaseDriver",
     "Oracle": "oracle.jdbc.driver.OracleDriver",
-    "Mysql":"com.mysql.cj.jdbc.Driver"
+    "Mysql":"com.mysql.cj.jdbc.Driver",
+    "MariaDb": "org.mariadb.jdbc.Driver"
 }
 const JdbcDriversURL = {
     "Altibase": "jdbc:Altibase://",
     "Oracle": "jdbc:oracle:thin:@",
-    "Mysql":"jdbc:mysql://"
+    "Mysql":"jdbc:mysql://",
+    "MariaDb": "jdbc:mariadb://"
 }
 
 
@@ -108,7 +110,6 @@ function JdbcTable({dispatch, authUser, JdbcList, handleAccessFlag}){
     };
 
     const handleEditDialogOpen = (id) => {
-        console.log(id)
         setJdbcListIndex(id);
         setJdbcSourceEditDialogOpenAction(true)
     };
