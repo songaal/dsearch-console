@@ -39,6 +39,7 @@ const Collection = async(() => import("../pages/indices/collection"), { time: 20
 const CollectionDetail = async(() => import("../pages/indices/collection/Detail"), { time: 0 });
 const Jdbc = async(() => import("../pages/indices/jdbc"), { time: 500 });
 const Pipeline = async(() => import("../pages/indices/pipeline"), { time: 0 });
+const Dynamic = async(() => import("../pages/indices/dynamic"));
 
 // Search components
 const QueryTest = async(() => import("../pages/search/queryTest"), { time: 0 });
@@ -88,6 +89,7 @@ const indicesRoutes = [
 
     {id: "JDBC", path: `${clusterContext}/indices-jdbc`, icon: <Icon.Storage/>, component: Jdbc, children: null},
     {id: "파이프라인", path: `${clusterContext}/indices-pipeline`, icon: <Icon.FilterList/>, component: Pipeline, children: null},
+    {id: "동적색인", path: `${clusterContext}/indices-dynamic`, icon: <Icon.Block/>, component: Dynamic, children: null},
 ];
 
 const searchRoutes = [
