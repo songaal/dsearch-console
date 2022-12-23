@@ -4,7 +4,8 @@ import {
     SET_DYNAMIC_INFO,
     SET_DYNAMIC_STATE_CHANGE_INFO,
     SET_DYNAMIC_UPLOAD_INFO,
-    SET_DYNAMIC_BUNDLE_LIST_INFO
+    SET_DYNAMIC_BUNDLE_LIST_INFO,
+    SET_DYNAMIC_ALL_STATE_INFO
 } from "../constants";
 import Client from '~/Client'
 
@@ -24,6 +25,10 @@ export const setDynamicInfoActions = id => dispatch => client.call({uri: `/dynam
 
 export const setDynamicStatusInfoActions = id => dispatch => client.call({uri: `/dynamic/state/${id}`})
     .then(response => {dispatch({type: SET_DYNAMIC_STATE_INFO, payload: response.data})})
+    .catch(err => console.error(err))
+
+export const setDynamicAllStatusInfoActions = key => dispatch => client.call({uri: `/dynamic/state/all`})
+    .then(response => {dispatch({type: SET_DYNAMIC_ALL_STATE_INFO, payload: response.data})})
     .catch(err => console.error(err))
 
 export const setDynamicStatusChangeActions = (id, body) => dispatch => client.call({

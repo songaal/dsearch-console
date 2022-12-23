@@ -5,6 +5,7 @@ let initState = {
     dynamicInfoBundleList: [],
     dynamicInfo: [],
     dynamicState: {},
+    dynamicAllState: {},
     dynamicChangeState: 0,
     dynamicUpload: 0
 };
@@ -27,11 +28,14 @@ export default function reducer(state = initState, actions) {
                 dynamicInfo: actions.payload
             }
         case types.SET_DYNAMIC_STATE_INFO:
-            let cloneDataSet = Object.assign({}, state['dynamicState'])
-            cloneDataSet[actions.payload.id] = actions.payload
             return {
                 ...state,
-                dynamicState: cloneDataSet
+                dynamicState: actions.payload
+            }
+        case types.SET_DYNAMIC_ALL_STATE_INFO:
+            return {
+                ...state,
+                dynamicAllState: actions.payload
             }
         case types.SET_DYNAMIC_STATE_CHANGE_INFO:
             return {
