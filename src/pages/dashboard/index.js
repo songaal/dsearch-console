@@ -6,6 +6,7 @@ import {
     setIndexStatusActions,
     setIndicesActions,
     setRunningIndexActions,
+    setRunningPropagateIndexActions,
 } from '@actions/dashBoardActions'
 import Helmet from "react-helmet";
 import {useHistory} from "react-router-dom"
@@ -190,31 +191,30 @@ function RunningIndex({result, running, status, indices, indexPercent}) {
     const classes = useStyles();
     let indexList = []
     let successIndexList = {};
-    // let totalIndexList = result.hits.hits;
-    let totalIndexList = result.result;
+    let totalIndexList = result.hits.hits;
 
     if(totalIndexList.length >= 0){
         for(let item of totalIndexList){
-            let index = item.index;
+            let index = item._source.index;
             let baseId = index.substring(0, index.length-2);
 
             if(successIndexList[baseId] === null || successIndexList[baseId] === undefined){
-                successIndexList[baseId] = item;
+                successIndexList[baseId] = item._source;
             }
         }
     }
 
     function convertStep(step){
         let result = "";
-
         if(step === "FULL_INDEX"){
             result = "색인";
+        }else if(step === "PROPAGATE"){
+            result = "전파";
         }else if(step === "EXPOSE"){
             result = "교체";
         }else{
             result = "";
         }
-
         return result;
     }
 
@@ -371,13 +371,12 @@ function BottomArea({result, alias, indices}) {
     }
 
     let resultList = []
-
-    Object.values(result['result']).forEach(row => {
+    Object.values(result.hits.hits).forEach(row => {
 
         let aliasName = ""
         // 별칭 이름 구하기 
         Object.values(alias).forEach(item =>  {
-            if(row.index === item.index) {
+            if(row._source.index === item.index) {
                 aliasName = item.alias
             }
         })
@@ -385,7 +384,7 @@ function BottomArea({result, alias, indices}) {
         let uuid = ""
         // UUID 구하기
         Object.values(indices).forEach(item => {
-            if(item.index === row.index){
+            if(item.index === row._source.index){
                 uuid = item.uuid;
             }
         })
@@ -393,13 +392,13 @@ function BottomArea({result, alias, indices}) {
         if(resultList.length <= 50){
             resultList.push(
                 {
-                    index: row.index,
+                    index: row._source.index,
                     alias: aliasName,
-                    status: row.status,
-                    startTime: row.startTime,
-                    endTime: row.endTime,
-                    docSize: row.docSize,
-                    storage: row.store,
+                    status: row._source.status,
+                    startTime: row._source.startTime,
+                    endTime: row._source.endTime,
+                    docSize: row._source.docSize,
+                    storage: row._source.store,
                     uuid: uuid
                 }
             )
@@ -512,13 +511,47 @@ function DashBoard({dispatch, result, running, status, alias, indices}) {
         dispatch(setIndexAliasActions())
         dispatch(setIndicesActions());
         dispatch(setIndexResultActions())
+        getPropagateIndexPercent()
 
         eventCode = setTimeout(()=>{
             loopFunc()
         }, 1000 * 60 * 3);
     }
+    
+    function getPropagateIndexPercent() {
+        // 전파 작업 수행 시 각 인덱스 별 퍼센트 계산
+        let keyList = Object.keys(running);
+        if (keyList.length !== 0) {
+            for (let key of keyList) {
+                let index = running[key].server.index;
+                dispatch(setRunningPropagateIndexActions(index))
+                    .then((response) => {
+                        let shardsList = response['data'][index]['shards'];
+                        let percent = 0;
+                        let count = 0;
+
+                        shardsList.forEach(item => {
+                            let shardPercent = item['index']['size']['percent'];
+                            percent += Number(shardPercent.substring(0, shardPercent.length - 1));
+                            count++;
+                        });
+
+                        let ip = indexPercent;
+                        ip[index] = Math.ceil(percent / count) 
+                        setIndexPercent(ip);
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
+            }
+        }
+    }
 
     useEffect(() => {
+        // dispatch(setRunningIndexActions())
+        // dispatch(setIndexStatusActions())
+        // dispatch(setIndexAliasActions())
+        // dispatch(setIndicesActions());
         loopFunc()
         return () => {
             if (eventCode !== null) {
@@ -527,6 +560,8 @@ function DashBoard({dispatch, result, running, status, alias, indices}) {
         }
     }, [])  // eslint-disable-line react-hooks/exhaustive-deps
 
+    getPropagateIndexPercent();
+    
     return (
         <React.Fragment>
             <Helmet title="대시보드"/>

@@ -29,6 +29,19 @@ const Card = styled(MuiCard)(spacing, positions);
 const Button = styled(MuiButton)(spacing, positions);
 const Grid = styled(MuiGrid)(spacing, positions);
 
+// const useStyles = makeStyles((theme) => ({
+//     formControl: {
+//         minWidth: 250,
+//     },
+//     root: {
+//         flexGrow: 1,
+//         width: '100%',
+//     },
+//     edit: {
+//         width: '100%'
+//     }
+// }));
+
 function rpad(str, padLen, padStr) {
     if (padStr.length > padLen) {
         return str + "";
@@ -47,16 +60,13 @@ function History({dispatch, authUser, collection, history}) {
     const [moreMenu, setMoreMenu] = useState(null)
     const [from, setFrom] = useState(0)
     const [typeName, setTypeName] = useState("ALL");
-    const [baseId, setBaseId] = useState("");
 
     function toggleMoreMenu(event) {
         setMoreMenu(moreMenu === null ? event.currentTarget : null)
     }
 
     useEffect(() => {
-        setBaseId(collection.baseId)
-        dispatch( 
-            setIndexHistoryList({
+        dispatch(setIndexHistoryList({
             indexA: collection['indexA']['index'],
             indexB: collection['indexB']['index'],
             size: paginationSize,
@@ -88,8 +98,9 @@ function History({dispatch, authUser, collection, history}) {
 
     function handleIndexHistoryList(date) {
         dispatch(deleteIndexHistoryList({
-            collectionName: baseId,
-            // time: date.getTime()
+            indexA: collection['indexA']['index'],
+            indexB: collection['indexB']['index'],
+            time: date.getTime()
         })).then(response => {
             setFrom(0)
             setTimeout(() => {
@@ -118,10 +129,12 @@ function History({dispatch, authUser, collection, history}) {
         })
     }
 
-    const total_size = history['total_size'] 
+    if (!history['hits']) {
+        return null;
+    }
 
     // 색인: (FULL_INDEX, DYNAMIC_INDEX),  교체: EXPOSE
-    const lastPage = total_size ? Math.ceil(total_size / paginationSize) : 1
+    const lastPage = Math.ceil(history['hits']['total']['value'] / paginationSize)
     const nowPage = Math.ceil(from / paginationSize) + 1
 
     return (
@@ -147,19 +160,20 @@ function History({dispatch, authUser, collection, history}) {
                             </TableHead>
                             <TableBody>
                                 {
-                                    (history['result']||[]).map((source, index) => {
-                                        const jobTypeName = source['jobType'] === "FULL_INDEX" ? "전체색인" : source['jobType'] === "DYNAMIC_INDEX" ? "동적색인" :
-                                                source['jobType'] === "PROPAGATE" ? "전파" : source['jobType'] === "EXPOSE" ? "교체" : source['jobType']
-                                        const autoRun = source['autoRun'] ? "자동" : "수동"
+                                    ((history['hits']||{})['hits']||[]).map((hit, index) => {
+                                        const sourceAsMap = hit['_source']
+                                        const jobTypeName = sourceAsMap['jobType'] === "FULL_INDEX" ? "전체색인" : sourceAsMap['jobType'] === "DYNAMIC_INDEX" ? "동적색인" :
+                                            sourceAsMap['jobType'] === "PROPAGATE" ? "전파" : sourceAsMap['jobType'] === "EXPOSE" ? "교체" : sourceAsMap['jobType']
+                                        const autoRun = sourceAsMap['autoRun'] ? "자동" : "수동"
                                         let st = new Date();
                                         let et = new Date();
                                         let time = '';
-                                        let formatDocSize = source['docSize'];
+                                        let formatDocSize = sourceAsMap['docSize'];
 
                                         try {
-                                            formatDocSize = Number(source['docSize']).toLocaleString()
-                                            st.setTime(rpad(source['startTime'], 13, '0'))
-                                            et.setTime(rpad(source['endTime'], 13, '0'))
+                                            formatDocSize = Number(sourceAsMap['docSize']).toLocaleString()
+                                            st.setTime(rpad(sourceAsMap['startTime'], 13, '0'))
+                                            et.setTime(rpad(sourceAsMap['endTime'], 13, '0'))
                                             let diff = et.getTime() - st.getTime()
                                             let H = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                                             let m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
@@ -171,11 +185,11 @@ function History({dispatch, authUser, collection, history}) {
                                             et = ''
                                         }
                                         return (
-                                            <TableRow key={source['id']}>
+                                            <TableRow key={hit['_id']}>
                                                 <TableCell>{from + index + 1}</TableCell>
-                                                <TableCell>{source['index']}</TableCell>
+                                                <TableCell>{sourceAsMap['index']}</TableCell>
                                                 <TableCell>{jobTypeName}</TableCell>
-                                                <TableCell>{source['status']}</TableCell>
+                                                <TableCell>{sourceAsMap['status']}</TableCell>
                                                 <TableCell>{formatDocSize}</TableCell>
                                                 <TableCell>{autoRun}</TableCell>
                                                 <TableCell>{st.toLocaleString()}</TableCell>
@@ -232,12 +246,15 @@ function History({dispatch, authUser, collection, history}) {
                                         <MenuItem onClick={() => {setTypeName("FULL_INDEX"); setTimeout(() => {handleSetIndexHistoryList(0, "FULL_INDEX")}, 500) } }>
                                             색인만 보기
                                         </MenuItem>
+                                        <MenuItem onClick={() => {setTypeName("PROPAGATE"); setTimeout(() => { handleSetIndexHistoryList(0, "PROPAGATE")}, 500) }}>
+                                            전파만 보기
+                                        </MenuItem>
                                         <MenuItem onClick={() => handleIndexHistoryList(new Date())}>
                                             초기화
                                         </MenuItem>
-                                        {/* <MenuItem onClick={() => {let d = new Date(); d.setDate(d.getDate() - 7); handleIndexHistoryList(d)}}>
+                                        <MenuItem onClick={() => {let d = new Date(); d.setDate(d.getDate() - 7); handleIndexHistoryList(d)}}>
                                             7일이전 모두 삭제
-                                        </MenuItem> */}
+                                        </MenuItem>
                                     </Menu> </> : <></>}
                             </Box>
                         </Grid>

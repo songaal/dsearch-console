@@ -10,49 +10,42 @@ import Client from '~/Client'
 const client = new Client()
 
 export const setIndexResultActions = key => dispatch => client.call({
-  uri: `/history`,
-  method: 'POST',
+  uri: `/elasticsearch/.dsearch_index_history/_search`,
+  method: 'post',
   data: {
-    "jobType": "FULL_INDEX",
-    "from" : 0,
+    "query": {
+      "bool": {
+        "minimum_should_match": 1,
+        "should": [
+          {
+            "term": {
+              "jobType": "FULL_INDEX"
+            }
+          },
+          {
+            "term": {
+              "jobType.keyword": "FULL_INDEX"
+            }
+          }
+        ]
+      }
+    },
+    "sort": [
+      {
+        "endTime": {
+          "order": "desc"
+        }
+      }
+    ],
     "size" : 100
-  }})
-.then(response => dispatch({ type: SET_INDEX_RESULT, payload: response.data }))
-.catch(err => console.error(err))
+  }
+})
+  .then(response => dispatch({ type: SET_INDEX_RESULT, payload: response.data }))
+  .catch(err => console.error(err))
 
-// export const setIndexResultActions = key => dispatch => client.call({
-//   uri: `/elasticsearch/.dsearch_index_history/_search`,
-//   method: 'post',
-//   data: {
-//     "query": {
-//       "bool": {
-//         "minimum_should_match": 1,
-//         "should": [
-//           {
-//             "term": {
-//               "jobType": "FULL_INDEX"
-//             }
-//           },
-//           {
-//             "term": {
-//               "jobType.keyword": "FULL_INDEX"
-//             }
-//           }
-//         ]
-//       }
-//     },
-//     "sort": [
-//       {
-//         "endTime": {
-//           "order": "desc"
-//         }
-//       }
-//     ],
-//     "size" : 100
-//   }
-// })
-//   .then(response => dispatch({ type: SET_INDEX_RESULT, payload: response.data }))
-//   .catch(err => console.error(err))
+// export const setRunningIndexActions = key => dispatch => client.call({uri: `/elasticsearch/.dsearch_last_index_status/_search?q=status:RUNNING`})
+//     .then(response => dispatch({type: SET_RUNNING_INDEX, payload: response.data}))
+//     .catch(err => console.error(err))
 
 export const setIndexStatusActions = key => dispatch => client.call({ uri: `/elasticsearch/_cat/indices?format=json` })
   .then(response => dispatch({ type: SET_INDEX_STATUS, payload: response.data }))
