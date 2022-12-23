@@ -3,7 +3,6 @@ import {Link, useHistory} from "react-router-dom";
 import {connect, useDispatch, useSelector} from "react-redux";
 import styled, {withTheme} from "styled-components";
 import {darken} from "polished";
-import {Autocomplete} from '@material-ui/lab';
 
 import {
     AppBar as MuiAppBar,
@@ -20,9 +19,7 @@ import {
 import {ArrowDropDown, Menu as MenuIcon} from "@material-ui/icons";
 
 import {Home, Search as SearchIcon} from "react-feather";
-import {setReferenceResultAll, setReferenceSearchKeyword} from "../redux/actions/referenceSearchActions";
 import {setDsearchSignOut} from "../redux/actions/dsearchActions";
-import {setAutoCompleteAction, setAutoCompleteStoreAction} from "../redux/actions/dsearchPluginActions";
 
 import {SET_DSEARCH_AUTH_USER} from "../redux/constants";
 import {setClusterList, setClusterServerCheck} from "../redux/actions/clusterActions";
@@ -296,32 +293,16 @@ const MainHeader = ({theme, onDrawerToggle}) => (
 
 const DashBoardHeader = ({theme, onDrawerToggle}) => {
     const references = useSelector(store => ({...store.referenceSearchReducers}))
-    const authUserStore = useSelector(store => ({...store.dsearchReducers}))['authUser']
 
     const [keyword, setKeyword] = useState(references.keyword)
-    const [itemList, setItemList] = useState([])
-    const [inputCache, setInputCache] = useState({});
     // eslint-disable-next-line no-restricted-globals
     const qs = new URLSearchParams(location.search)
-    const dispatch = useDispatch()
     const history = useHistory()
 
-    
-    function handleCache(k, val){
-        setItemList(val);
-        let cache = {};
-        cache[k] = val;
-        Object.keys(inputCache).forEach(key =>{
-            cache[key] = inputCache[key];
-        })
-        setInputCache(cache);
-    }
-
     function handleSearch() {
-        dispatch(setReferenceSearchKeyword(keyword))
-        dispatch(setReferenceResultAll(keyword))
-        dispatch(setAutoCompleteStoreAction(keyword))
-        history.push(`/${authUserStore['cluster']['id']}/search`)
+        let search = "https://search.danawa.com/dsearch.php?k1=" + encodeURIComponent(keyword);
+
+        window.open(search, '_blank', "menubar=no,addressbar=no,statusbar=no")
     }
 
     function handleKeyEvent(event, val) {
@@ -337,26 +318,9 @@ const DashBoardHeader = ({theme, onDrawerToggle}) => {
         }else{
             setKeyword(value);
         }
-        
+
         if (event.keyCode === 13) {
             handleSearch()
-        }else{
-            if (value.length > 0 && (inputCache[value] === undefined || inputCache[value] === null)) {
-                /* 비동기 방식으로 보냄 */
-                // 등록된 url로 !
-
-                    dispatch(setAutoCompleteAction(value)).then((data) => {
-                        let payload = data.data;
-                        if(payload.query !== undefined && payload.result !== undefined && payload.query !== null && payload.result !== null) {
-                            handleCache(payload.query, payload.result.map(item => item['keyword']))
-                        }
-                        // if(payload.q !== undefined && payload.result !== undefined && payload.q !== null && payload.result !== null) {
-                        //     handleCache(payload.q, payload.result)
-                        // }
-                    }).catch(err => { console.log(err) });
-            }else if(value.length > 0){
-                setItemList(inputCache[value])
-            }
         }
     }
 
@@ -388,23 +352,15 @@ const DashBoardHeader = ({theme, onDrawerToggle}) => {
                                     <SearchIcon/>
                                 </SearchIconWrapper>
 
-                                <Autocomplete 
-                                    onChange={handleKeyword}
-                                    options={itemList}
-                                    renderInput={(params) => (
-                                        <div ref={params.InputProps.ref}>
-                                            <Input 
-                                                {...params.inputProps} 
-
-                                                style={{ width: "100%" }} 
-                                                placeholder="검색 (Enter 입력)" 
-                                                value={keyword} 
-                                                onChange={handleKeyword} 
-                                                onKeyUp={handleKeyEvent}
-                                            />
-                                        </div>
-                                    )}
-                                />
+                                <div>
+                                    <Input
+                                        style={{ width: "100%" }}
+                                        placeholder="다나와 통합 검색 (Enter 입력)"
+                                        value={keyword}
+                                        onChange={handleKeyword}
+                                        onKeyUp={handleKeyEvent}
+                                    />
+                                </div>
                             </Search>
                         </Grid>
 
