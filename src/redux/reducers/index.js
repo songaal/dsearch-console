@@ -45,6 +45,6 @@ export default combineReducers({
     jdbcReducers,
     dsearchPluginReducers,
     pipelineReducers,
-    dynamicReducers
-    documentAnalysisReducers,
+    dynamicReducers,
+    documentAnalysisReducers
 });
