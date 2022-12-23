@@ -23,7 +23,7 @@ export const setDynamicInfoActions = id => dispatch => client.call({uri: `/dynam
     .catch(err => console.error(err))
 
 export const setDynamicStatusInfoActions = id => dispatch => client.call({uri: `/dynamic/state/${id}`})
-    .then(response => dispatch({type: SET_DYNAMIC_STATE_INFO, payload: response.data}))
+    .then(response => {dispatch({type: SET_DYNAMIC_STATE_INFO, payload: response.data})})
     .catch(err => console.error(err))
 
 export const setDynamicStatusChangeActions = (id, body) => dispatch => client.call({
