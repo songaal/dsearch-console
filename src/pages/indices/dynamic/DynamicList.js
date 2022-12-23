@@ -60,7 +60,9 @@ function DynamicBox({dispatch, dynamicInfoBundle, classes, rndColor, desc, dynam
 }
 
 function DynamicCard({dispatch, dynamicInfo, rndColor, desc, dynamicStateCount, dynamicState}) {
-    const [openRemoveModal, setOpenRemoveModal] = useState(false)
+    const [openStatusModal, setOpenStatusModal] = useState(false)
+    const [openCheckModal, setOpenCheckModal] = useState(false)
+    const [enable, setEnable] = useState(false)
     const [statusBtn, setStatusBtn] = useState(false)
     const [openBtn, setOpenBtn] = useState(false)
     const [closeBtn, setCloseBtn] = useState(false)
@@ -84,7 +86,7 @@ function DynamicCard({dispatch, dynamicInfo, rndColor, desc, dynamicStateCount, 
 
     function handleStatus() {
         dispatch(setDynamicStatusInfoActions(dynamicInfo['id']))
-        setOpenRemoveModal(true)
+        setOpenStatusModal(true)
     }
 
     function handleConsume(enable) {
@@ -93,7 +95,7 @@ function DynamicCard({dispatch, dynamicInfo, rndColor, desc, dynamicStateCount, 
         }
         dispatch(setDynamicStatusChangeActions(dynamicInfo['id'], enableBody)).then(response => {
             if (response.payload == 200) {
-                if (enable == "true") {
+                if (enable) {
                     setCloseBtn(true)
                     setOpenBtn(false)
                 } else {
@@ -102,6 +104,7 @@ function DynamicCard({dispatch, dynamicInfo, rndColor, desc, dynamicStateCount, 
                 }
             }
         })
+        setOpenCheckModal(false)
     }
 
     return (
@@ -117,11 +120,19 @@ function DynamicCard({dispatch, dynamicInfo, rndColor, desc, dynamicStateCount, 
             <CardActions disableSpacing>
                 <Button style={{color: statusBtn ? "#1976d2" : "#000000"}} size="small" disabled={!statusBtn} onClick={() => handleStatus()}>STATUS</Button>
                 <Box marginLeft='auto'>
-                    <Button style={{color: openBtn ? "#1976d2" : "#000000"}} size="small" disabled={!openBtn} onClick={() => handleConsume("true")}>OPEN</Button>
-                    <Button style={{color: closeBtn ? "#1976d2" : "#000000"}} size="small" disabled={!closeBtn} onClick={() => handleConsume("false")}>CLOSE</Button>
+                    <Button style={{color: openBtn ? "#1976d2" : "#000000"}} size="small" disabled={!openBtn}
+                            onClick={() => {
+                                setEnable(true)
+                                setOpenCheckModal(true)
+                            }}>OPEN</Button>
+                    <Button style={{color: closeBtn ? "#1976d2" : "#000000"}} size="small" disabled={!closeBtn}
+                            onClick={() => {
+                                setEnable(false)
+                                setOpenCheckModal(true)
+                            }}>CLOSE</Button>
                 </Box>
             </CardActions>
-            <Dialog open={openRemoveModal} onClose={() => setOpenRemoveModal(!openRemoveModal)}>
+            <Dialog open={openStatusModal} onClose={() => setOpenStatusModal(!openStatusModal)}>
                 <DialogTitle>QUEUE CONSUME ({dynamicInfo['ip'] + ":" + dynamicInfo['port']})</DialogTitle>
                 <DialogContent>
                     <Box style={{fontSize: "1.2em"}}>
@@ -142,12 +153,22 @@ function DynamicCard({dispatch, dynamicInfo, rndColor, desc, dynamicStateCount, 
                 <DialogActions disableSpacing>
                     <Box>
                         <Button style={{marginLeft: "2px", fontSize: "5px"}}
-                                onClick={() => setOpenRemoveModal(false)}
+                                onClick={() => setOpenStatusModal(false)}
                                 variant="contained"
                         >
                             닫기
                         </Button>
                     </Box>
+                </DialogActions>
+            </Dialog>
+            <Dialog open={openCheckModal} onClose={() => setOpenCheckModal(!openCheckModal)}>
+                <DialogTitle>{dynamicInfo['ip'] + ":" + dynamicInfo['port']}</DialogTitle>
+                <DialogContent>
+                    <Box> 동적 색인을 {enable ? "OPEN" : "CLOSE" } 하시겠습니까?</Box>
+                </DialogContent>
+                <DialogActions>
+                    <Button variant="contained" onClick={() => handleConsume(enable)}>확인</Button>
+                    <Button onClick={() => setOpenCheckModal(false)} variant="contained">닫기</Button>
                 </DialogActions>
             </Dialog>
         </Card>
