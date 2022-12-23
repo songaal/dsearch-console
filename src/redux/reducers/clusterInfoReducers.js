@@ -6,6 +6,9 @@ let initState = {
     indices: [],
     health: {},
     store:{},
+    move: [],
+    route: [],
+    remove:String,
     cluster:{
         cluster_name:String,
         indices:{
@@ -53,6 +56,21 @@ export default function reducer(state = initState, actions) {
             return {
                 ...state,
                 cluster: actions.payload
+            }
+        case types.SET_MOVE_INFO:
+            return {
+                ...state,
+                move: actions.payload
+            }
+        case types.SET_ROUTE_INFO:
+            return {
+                ...state,
+                route: actions.payload
+            }
+        case types.SET_REMOVE_INFO:
+            return {
+                ...state,
+                remove: actions.payload
             }
         default:
             return state
