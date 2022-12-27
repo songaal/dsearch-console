@@ -39,7 +39,7 @@ import {
 import {palette, sizing, spacing} from "@material-ui/system";
 import {makeStyles} from "@material-ui/core/styles";
 import {connect, useDispatch} from "react-redux";
-import {pink, red, yellow} from '@material-ui/core/colors';
+import {pink, red, yellow, blue} from '@material-ui/core/colors';
 import {MinusCircle,PlusCircle} from "react-feather";
 
 const useStyles = makeStyles({
@@ -339,7 +339,7 @@ function ClusterShardMap({indices, nodes, shards, move, route}) {
                                         <TableCell align="center">{values.stage}</TableCell>
                                         <TableCell align="center">{values.time}</TableCell>
                                         <TableCell align="center">
-                                            {values.sourceNode} > {values.targetNode}
+                                            {values.sourceNode + " > " + values.targetNode}
                                         </TableCell>
                                         <TableCell align="center">
                                             {values.filesPercent}
@@ -389,7 +389,7 @@ function ClusterShardMap({indices, nodes, shards, move, route}) {
                                         inputProps={{ 'aria-label': 'primary checkbox' }}
                                     />
                                 }
-                                label="노드 제거 스위치"
+                                label="샤드 추가/제거 스위치"
                             />
                         </Box>
                     </Box>
@@ -495,16 +495,16 @@ function ClusterShardMap({indices, nodes, shards, move, route}) {
                                     }
 
                                     <Dialog open={openRemoveModal} fullWidth={true}>
-                                        <DialogTitle>샤드 이동</DialogTitle>
+                                        <DialogTitle>샤드 {tempNodeStatus ? "추가" : "제거" }</DialogTitle>
                                         <DialogContent>
-                                            <Box style={{color: red['500']}}> 선택하신 노드의 샤드를 이동 시키겠습니까? </Box>
+                                            <Box style={{color: tempNodeStatus ? blue['500'] : red['500']}}> 선택하신 노드의 샤드를 {tempNodeStatus ? "추가" : "제거" }하시겠습니까? </Box>
                                         </DialogContent>
                                         <DialogActions>
-                                            <Button style={{backgroundColor: red['200']}}
+                                            <Button style={{backgroundColor: tempNodeStatus ? blue['200'] : red['200']}}
                                                     variant="contained"
                                                     onClick={handleRemoveNode}
                                             >
-                                                이동
+                                                {tempNodeStatus ? "추가" : "제거" }
                                             </Button>
                                             <Button onClick={() => handleCancel()}
                                                     variant="contained"
@@ -523,8 +523,8 @@ function ClusterShardMap({indices, nodes, shards, move, route}) {
                                                             Object.values(route).includes(nodeRow.name) ?
                                                                 <IconButton style={{color: "blue"}}
                                                                     onClick={() => {
-                                                                        setTempNodeName(nodeRow.name)
                                                                         setTempNodeStatus(true)
+                                                                        setTempNodeName(nodeRow.name)
                                                                         setOpenRemoveModal(true);
                                                                     }}>
                                                                     <PlusCircle />
@@ -532,8 +532,8 @@ function ClusterShardMap({indices, nodes, shards, move, route}) {
                                                                 :
                                                                 <IconButton style={{color: "red"}}
                                                                     onClick={() => {
-                                                                        setTempNodeName(nodeRow.name)
                                                                         setTempNodeStatus(false)
+                                                                        setTempNodeName(nodeRow.name)
                                                                         setOpenRemoveModal(true);
                                                                     }}>
                                                                     <MinusCircle />
