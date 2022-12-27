@@ -3,7 +3,6 @@ import * as types from '../constants';
 let initState = {
     dynamicInfoList: [],
     dynamicInfoBundleList: [],
-    dynamicInfo: [],
     dynamicState: {},
     dynamicAllState: {},
     dynamicChangeState: 0,
@@ -21,11 +20,6 @@ export default function reducer(state = initState, actions) {
             return {
                 ...state,
                 dynamicInfoBundleList: actions.payload
-            }
-        case types.SET_DYNAMIC_INFO:
-            return {
-                ...state,
-                dynamicInfo: actions.payload
             }
         case types.SET_DYNAMIC_STATE_INFO:
             return {
