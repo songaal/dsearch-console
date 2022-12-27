@@ -11,16 +11,16 @@ import MuiAlert from '@material-ui/lab/Alert';
 import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-kuroir";
-import {setDynamicInfoListActions, setDynamicUploadActions} from '@actions/dynamicInfoActions';
+import {setDynamicIndexInfoListActions, setDynamicIndexUploadActions} from '@actions/dynamicIndexInfoActions';
 
-function DynamicUpload({ dispatch, dynamicInfoList }) {
-    const aceEditor = useRef(dynamicInfoList);
+function DynamicIndexUpload({ dispatch, dynamicIndexInfoList }) {
+    const aceEditor = useRef(dynamicIndexInfoList);
     const [snackbarFlag, setSnackbarFlag] = useState(false)
     const [message, setMessage] = useState('')
     const [messageStatus, setMessageStatus] = useState("success")
     
     useEffect(() => {
-        dispatch(setDynamicInfoListActions()).then(response => {
+        dispatch(setDynamicIndexInfoListActions()).then(response => {
             aceEditor.current.editor.setValue(JSON.stringify(response.payload, null, 2))
         })
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
@@ -48,7 +48,7 @@ function DynamicUpload({ dispatch, dynamicInfoList }) {
             "dynamic": aceEditor.current.editor.getValue()
         }
 
-        dispatch(setDynamicUploadActions(body)).then(response => {
+        dispatch(setDynamicIndexUploadActions(body)).then(response => {
             if (response.payload == 0) {
                 setMessage("업로드 실패했습니다.")
                 setMessageStatus("error")
@@ -91,5 +91,5 @@ function DynamicUpload({ dispatch, dynamicInfoList }) {
 }
 
 export default connect(store => ({
-    dynamicInfoList : store.dynamicReducers.dynamicInfoList
-}))(DynamicUpload)
+    dynamicIndexInfoList : store.dynamicIndexReducers.dynamicIndexInfoList
+}))(DynamicIndexUpload)

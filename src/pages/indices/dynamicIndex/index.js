@@ -25,8 +25,8 @@ function Dynamic({dispatch}) {
             <Divider my={6}/>
 
             <AntTabs tabs={[
-                {label: "목록", component: Async(() => import("./DynamicList"))},
-                {label: "업로드", component: Async(() => import("./DynamicUpload"))}
+                {label: "목록", component: Async(() => import("./DynamicIndexList"))},
+                {label: "업로드", component: Async(() => import("./DynamicIndexUpload"))}
             ]} />
 
         </React.Fragment>
