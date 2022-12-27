@@ -11,9 +11,10 @@ import {
     CardActions,
     CardHeader,
     Avatar,
+    Typography,
     Card as MuiCard,
     Grid as MuiGrid,
-    Dialog, DialogActions, DialogContent, DialogTitle
+    Dialog, DialogActions, DialogContent, DialogTitle, CardContent
 } from "@material-ui/core";
 import styled from "styled-components";
 import {spacing} from "@material-ui/system";
@@ -28,8 +29,9 @@ const useStyles = makeStyles({
         marginTop: "15px"
     },
     marginBox: {
-        marginTop: "15px",
-        marginRight: "7px"
+        marginTop: "10px",
+        marginRight: "4px",
+        overflow: "auto"
     }
 });
 
@@ -44,7 +46,7 @@ function DynamicBox({dispatch, dynamicIndexInfoBundle, classes, rndColor, desc, 
                 } else {
                     dynamicIndexStateCount = -1
                 }
-                return (<Grid item xs={2} key={"bundleBox" + i} className={classes.marginBox}>
+                return (<Grid item xs={2} key={"bundleBox" + i} className={classes.marginBox} >
                     <DynamicCard dynamicIndexInfo={dynamicIndexInfo}
                                  dispatch={dispatch}
                                  rndColor={rndColor}
@@ -108,16 +110,20 @@ function DynamicCard({dispatch, dynamicIndexInfo, rndColor, desc, dynamicIndexSt
     }
 
     return (
-        <Card>
+        <Card >
             <CardHeader
                 avatar={
                     <Avatar style={{fontSize: 15, width: 80, height: 25, backgroundColor: rndColor}} variant="square">
                         {desc === "server" ? dynamicIndexInfo['bundleServer'] : dynamicIndexInfo['bundleQueue']}
                     </Avatar>
                 }
-                title={dynamicIndexInfo['scheme'] + "://" + dynamicIndexInfo['ip'] + ":" + dynamicIndexInfo['port']}
             />
-            <CardActions disableSpacing>
+            <CardContent>
+                <Typography style={{fontSize: 14, fontWeight: "bold"}} >
+                    {dynamicIndexInfo['scheme'] + "://" + dynamicIndexInfo['ip'] + ":" + dynamicIndexInfo['port']}
+                </Typography>
+            </CardContent>
+            <CardActions>
                 <Button style={{color: statusBtn ? "#1976d2" : "#000000"}} size="small" disabled={!statusBtn} onClick={() => handleStatus()}>STATUS</Button>
                 <Box marginLeft='auto'>
                     <Button style={{color: openBtn ? "#1976d2" : "#000000"}} size="small" disabled={!openBtn}

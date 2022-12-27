@@ -43,11 +43,8 @@ function DynamicIndexUpload({ dispatch, dynamicIndexInfoList }) {
             setMessageStatus("error")
             return;
         }
-
-        let body = {
-            "dynamic": aceEditor.current.editor.getValue()
-        }
-
+        
+        let body = JSON.parse(aceEditor.current.editor.getValue())
         dispatch(setDynamicIndexUploadActions(body)).then(response => {
             if (response.payload == 0) {
                 setMessage("업로드 실패했습니다.")
