@@ -60,187 +60,38 @@ export const editCollectionScheduleAction = (id, collection) => dispatch => clie
 }).then(response => response.data)
 
 export const setIndexHistoryTypeList = ({ indexA, indexB, from, size, type }) => dispatch => client.call({
-    uri: `/elasticsearch/.dsearch_index_history/_search`,
-    method: "post",
-    params: {
-        pretty: true,
-        filter_path: "hits"
-    },
+    uri: `/history`,
+    method: "POST",
     data: {
-        "query": {
-            "bool": {
-                "should": [
-                    // {
-                    //     "term": {
-                    //         "index": {
-                    //             "value": indexA
-                    //         }
-                    //     }
-                    // },
-                    // {
-                    //     "term": {
-                    //         "index": {
-                    //             "value": indexB
-                    //         }
-                    //     }
-                    // },
-                    // {
-                    //     "term": {
-                    //         "index.keyword": {
-                    //             "value": indexA
-                    //         }
-                    //     }
-                    // },
-                    // {
-                    //     "term": {
-                    //         "index.keyword": {
-                    //             "value": indexB
-                    //         }
-                    //     }
-                    // },
-                    {
-                        "match": {
-                            "index": indexA
-                        }
-                    },
-                    {
-                        "match": {
-                            "index": indexB
-                        }
-                    },
-                    {
-                        "match": {
-                            "index.keyword": indexA
-                        }
-                    },
-                    {
-                        "match": {
-                            "index.keyword": indexB
-                        }
-                    },
-                    {
-                        "match": {
-                            "jobType.keyword": type
-                        }
-                    },
-                    {
-                        "match": {
-                            "jobType": type
-                        }
-                    }
-                ],
-                "minimum_should_match": 2
-            }
-        },
-        "sort": [
-            {
-                "startTime": {
-                    "order": "desc"
-                },
-                "_score": {
-                    "order": "desc"
-                }
-            }
-        ],
-        "from": from,
-        "size": size
+        indexA: indexA,
+        indexB: indexB,
+        from: from,
+        size: size,
+        jobType: type
     }
 }).then(response => dispatch({type: SET_COLLECTION_INDEX_HISTORY_LIST, payload: response.data}))
+
 
 export const setIndexHistoryList = ({ indexA, indexB, from, size }) => dispatch => client.call({
-    uri: `/elasticsearch/.dsearch_index_history/_search`,
-    method: "post",
-    params: {
-        pretty: true,
-        filter_path: "hits"
-    },
+    uri: `/history`,
+    method: "POST",
     data: {
-        "query": {
-            "bool": {
-                "should": [
-                    {
-                        "term": {
-                            "index": {
-                                "value": indexA
-                            }
-                        }
-                    },
-                    {
-                        "term": {
-                            "index": {
-                                "value": indexB
-                            }
-                        }
-                    },
-                    {
-                        "term": {
-                            "index.keyword": {
-                                "value": indexA
-                            }
-                        }
-                    },
-                    {
-                        "term": {
-                            "index.keyword": {
-                                "value": indexB
-                            }
-                        }
-                    },
-                ],
-                "minimum_should_match": 1
-            }
-        },
-        "sort": [
-            {
-                "startTime": {
-                    "order": "desc"
-                },
-                "_score": {
-                    "order": "desc"
-                }
-            }
-        ],
-        "from": from,
-        "size": size
+        indexA: indexA,
+        indexB: indexB,
+        from: from,
+        size: size,
     }
 }).then(response => dispatch({type: SET_COLLECTION_INDEX_HISTORY_LIST, payload: response.data}))
 
-export const deleteIndexHistoryList = ({indexA, indexB, time}) => dispatch => client.call({
-    uri: `/elasticsearch/.dsearch_index_history/_delete_by_query`,
-    method: 'post',
+
+export const deleteIndexHistoryList = ({collectionName, time}) => dispatch => client.call({
+    uri: `/history` ,
+    method: 'DELETE',
     data: {
-        "query": {
-            "bool": {
-                "should": [
-                    {
-                        "match": {
-                            "index": {
-                                "query": indexA,
-                                "boost": 1
-                            }
-                        }
-                    },
-                    {
-                        "match": {
-                            "index": {
-                                "query": indexB,
-                                "boost": 1
-                            }
-                        }
-                    }
-                ],
-                "minimum_should_match": 1,
-                "filter": {
-                    "range": {
-                        "startTime": {
-                            "lte": time
-                        }
-                    }
-                }
-            }
-        }
+        "collectionName": collectionName
     }
 }).then(response => response.data)
+
 
 export const setCatIndexTemplateList = () => dispatch => client.call({
     uri: `/elasticsearch/_cat/templates?format=json`
