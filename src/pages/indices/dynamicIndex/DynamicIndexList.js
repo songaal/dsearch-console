@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
-import {setDynamicInfoBundleListActions,
-        setDynamicStatusChangeActions,
-        setDynamicStatusInfoActions,
-        setDynamicAllStatusInfoActions
-} from '@actions/dynamicInfoActions';
+import {setDynamicIndexInfoBundleListActions,
+        setDynamicIndexStatusChangeActions,
+        setDynamicIndexStatusInfoActions,
+        setDynamicIndexAllStatusInfoActions
+} from '@actions/dynamicIndexInfoActions';
 import {
     Box,
     Button,
@@ -33,24 +33,24 @@ const useStyles = makeStyles({
     }
 });
 
-function DynamicBox({dispatch, dynamicInfoBundle, classes, rndColor, desc, dynamicAllState, dynamicState}) {
+function DynamicBox({dispatch, dynamicIndexInfoBundle, classes, rndColor, desc, dynamicIndexAllState, dynamicIndexState}) {
     return (
         <>
-            {Object.values(dynamicInfoBundle).map((dynamicInfo, i) =>{
-                let dynamicIdState = dynamicAllState[dynamicInfo.id] || {}
-                let dynamicStateCount = 0
-                if (Object.keys(dynamicIdState).length > 0) {
-                    dynamicStateCount = dynamicIdState.count
+            {Object.values(dynamicIndexInfoBundle).map((dynamicIndexInfo, i) =>{
+                let dynamicIndexIdState = dynamicIndexAllState[dynamicIndexInfo.id] || {}
+                let dynamicIndexStateCount = 0
+                if (Object.keys(dynamicIndexIdState).length > 0) {
+                    dynamicIndexStateCount = dynamicIndexStateCount.count
                 } else {
-                    dynamicStateCount = -1
+                    dynamicIndexStateCount = -1
                 }
                 return (<Grid item xs={2} key={"bundleBox" + i} className={classes.marginBox}>
-                    <DynamicCard dynamicInfo={dynamicInfo}
+                    <DynamicCard dynamicIndexInfo={dynamicIndexInfo}
                                  dispatch={dispatch}
                                  rndColor={rndColor}
                                  desc={desc}
-                                 dynamicStateCount={dynamicStateCount}
-                                 dynamicState={dynamicState}
+                                 dynamicIndexStateCount={dynamicIndexStateCount}
+                                 dynamicIndexState={dynamicIndexState}
                     />
                 </Grid>)
             }
@@ -59,7 +59,7 @@ function DynamicBox({dispatch, dynamicInfoBundle, classes, rndColor, desc, dynam
     );
 }
 
-function DynamicCard({dispatch, dynamicInfo, rndColor, desc, dynamicStateCount, dynamicState}) {
+function DynamicCard({dispatch, dynamicIndexInfo, rndColor, desc, dynamicIndexStateCount, dynamicIndexState}) {
     const [openStatusModal, setOpenStatusModal] = useState(false)
     const [openCheckModal, setOpenCheckModal] = useState(false)
     const [enable, setEnable] = useState(false)
@@ -68,13 +68,13 @@ function DynamicCard({dispatch, dynamicInfo, rndColor, desc, dynamicStateCount, 
     const [closeBtn, setCloseBtn] = useState(false)
 
     useEffect(() => {
-        if (dynamicStateCount < 0) {
+        if (dynamicIndexStateCount < 0) {
             setStatusBtn(false)
             setOpenBtn(false)
             setCloseBtn(false)
         } else {
             setStatusBtn(true)
-            if (dynamicStateCount == 0) {
+            if (dynamicIndexStateCount == 0) {
                 setOpenBtn(true)
                 setCloseBtn(false)
             } else {
@@ -82,10 +82,10 @@ function DynamicCard({dispatch, dynamicInfo, rndColor, desc, dynamicStateCount, 
                 setCloseBtn(true)
             }
         }
-    }, [dynamicStateCount])
+    }, [dynamicIndexStateCount])
 
     function handleStatus() {
-        dispatch(setDynamicStatusInfoActions(dynamicInfo['id']))
+        dispatch(setDynamicIndexStatusInfoActions(dynamicIndexInfo['id']))
         setOpenStatusModal(true)
     }
 
@@ -93,7 +93,7 @@ function DynamicCard({dispatch, dynamicInfo, rndColor, desc, dynamicStateCount, 
         let enableBody = {
             "enable": enable
         }
-        dispatch(setDynamicStatusChangeActions(dynamicInfo['id'], enableBody)).then(response => {
+        dispatch(setDynamicIndexStatusChangeActions(dynamicIndexInfo['id'], enableBody)).then(response => {
             if (response.payload == 200) {
                 if (enable) {
                     setCloseBtn(true)
@@ -112,10 +112,10 @@ function DynamicCard({dispatch, dynamicInfo, rndColor, desc, dynamicStateCount, 
             <CardHeader
                 avatar={
                     <Avatar style={{fontSize: 15, width: 80, height: 25, backgroundColor: rndColor}} variant="square">
-                        {desc === "server" ? dynamicInfo['bundleServer'] : dynamicInfo['bundleQueue']}
+                        {desc === "server" ? dynamicIndexInfo['bundleServer'] : dynamicIndexInfo['bundleQueue']}
                     </Avatar>
                 }
-                title={dynamicInfo['scheme'] + "://" + dynamicInfo['ip'] + ":" + dynamicInfo['port']}
+                title={dynamicIndexInfo['scheme'] + "://" + dynamicIndexInfo['ip'] + ":" + dynamicIndexInfo['port']}
             />
             <CardActions disableSpacing>
                 <Button style={{color: statusBtn ? "#1976d2" : "#000000"}} size="small" disabled={!statusBtn} onClick={() => handleStatus()}>STATUS</Button>
@@ -133,17 +133,17 @@ function DynamicCard({dispatch, dynamicInfo, rndColor, desc, dynamicStateCount, 
                 </Box>
             </CardActions>
             <Dialog open={openStatusModal} onClose={() => setOpenStatusModal(!openStatusModal)}>
-                <DialogTitle>QUEUE CONSUME ({dynamicInfo['ip'] + ":" + dynamicInfo['port']})</DialogTitle>
+                <DialogTitle>QUEUE CONSUME ({dynamicIndexInfo['ip'] + ":" + dynamicIndexInfo['port']})</DialogTitle>
                 <DialogContent>
                     <Box style={{fontSize: "1.2em"}}>
-                        {Object.keys(dynamicState).map((queueName, key) => {
+                        {Object.keys(dynamicIndexState).map((queueName, key) => {
 
                             if (queueName == 'count') return ;
 
                             return (
                                 <Grid key={key} item xs={4}>
                                     <Box style={{whiteSpace: "nowrap", fontSize: "10px"}}>
-                                        {queueName} : {dynamicState[queueName]}
+                                        {queueName} : {dynamicIndexState[queueName]}
                                     </Box>
                                 </Grid>
                             )
@@ -162,7 +162,7 @@ function DynamicCard({dispatch, dynamicInfo, rndColor, desc, dynamicStateCount, 
                 </DialogActions>
             </Dialog>
             <Dialog open={openCheckModal} onClose={() => setOpenCheckModal(!openCheckModal)}>
-                <DialogTitle>{dynamicInfo['ip'] + ":" + dynamicInfo['port']}</DialogTitle>
+                <DialogTitle>{dynamicIndexInfo['ip'] + ":" + dynamicIndexInfo['port']}</DialogTitle>
                 <DialogContent>
                     <Box> 동적 색인을 {enable ? "OPEN" : "CLOSE" } 하시겠습니까?</Box>
                 </DialogContent>
@@ -175,19 +175,19 @@ function DynamicCard({dispatch, dynamicInfo, rndColor, desc, dynamicStateCount, 
     );
 }
 
-function DynamicList({dispatch, dynamicInfoBundleList, dynamicAllState, dynamicState}) {
+function DynamicIndexList({dispatch, dynamicIndexAllState, dynamicIndexState, dynamicIndexInfoBundleList}) {
 
     const classes = useStyles();
     const color = ['#1b2430', '#1976d2', '#388e3c', '#1976d2', '#3949ab']
     const [desc, setDesc] = React.useState("queue")
 
     useEffect(() => {
-        dispatch(setDynamicInfoBundleListActions())
-        dispatch(setDynamicAllStatusInfoActions())
+        dispatch(setDynamicIndexInfoBundleListActions())
+        dispatch(setDynamicIndexAllStatusInfoActions())
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
-        dispatch(setDynamicInfoBundleListActions(desc))
+        dispatch(setDynamicIndexInfoBundleListActions(desc))
     }, [desc]) // eslint-disable-line react-hooks/exhaustive-deps
 
     function handleDesc(desc) {
@@ -209,13 +209,13 @@ function DynamicList({dispatch, dynamicInfoBundleList, dynamicAllState, dynamicS
             </Box>
 
             <Grid container spacing={1}>
-                {Object.keys(dynamicInfoBundleList).sort((a, b) => {
+                {Object.keys(dynamicIndexInfoBundleList).sort((a, b) => {
                         if (a > b) return 1;
                         if (a < b) return -1;
                         return 0;
                     }).map((key, i) => {
 
-                        let dynamicInfoBundle = dynamicInfoBundleList[key]
+                        let dynamicIndexInfoBundle = dynamicIndexInfoBundleList[key]
 
                         let rndColor = "";
                         if (color.length < i) {
@@ -225,15 +225,15 @@ function DynamicList({dispatch, dynamicInfoBundleList, dynamicAllState, dynamicS
                         }
 
                         return (
-                            <Grid container item spacing={dynamicInfoBundleList.length} key={"bundleList" + i} className={classes.marginGrid}>
+                            <Grid container item spacing={dynamicIndexInfoBundleList.length} key={"bundleList" + i} className={classes.marginGrid}>
                                 <DynamicBox
-                                    dynamicInfoBundle={dynamicInfoBundle}
+                                    dynamicIndexInfoBundle={dynamicIndexInfoBundle}
                                     dispatch={dispatch}
                                     classes={classes}
                                     rndColor={rndColor}
                                     desc={desc}
-                                    dynamicAllState={dynamicAllState}
-                                    dynamicState={dynamicState}
+                                    dynamicIndexAllState={dynamicIndexAllState}
+                                    dynamicIndexState={dynamicIndexState}
                                 />
                             </Grid>
                         )
@@ -245,7 +245,7 @@ function DynamicList({dispatch, dynamicInfoBundleList, dynamicAllState, dynamicS
 }
 
 export default connect(store => ({
-    dynamicAllState: store.dynamicReducers.dynamicAllState,
-    dynamicState: store.dynamicReducers.dynamicState,
-    dynamicInfoBundleList: store.dynamicReducers.dynamicInfoBundleList
-}))(DynamicList);
+    dynamicIndexAllState: store.dynamicIndexReducers.dynamicIndexAllState,
+    dynamicIndexState: store.dynamicIndexReducers.dynamicIndexState,
+    dynamicIndexInfoBundleList: store.dynamicIndexReducers.dynamicIndexInfoBundleList
+}))(DynamicIndexList);

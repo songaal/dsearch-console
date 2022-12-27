@@ -40,7 +40,7 @@ const Collection = async(() => import("../pages/indices/collection"), { time: 20
 const CollectionDetail = async(() => import("../pages/indices/collection/Detail"), { time: 0 });
 const Jdbc = async(() => import("../pages/indices/jdbc"), { time: 500 });
 const Pipeline = async(() => import("../pages/indices/pipeline"), { time: 0 });
-const Dynamic = async(() => import("../pages/indices/dynamicIndexe"));
+const Dynamic = async(() => import("../pages/indices/dynamicIndex"));
 
 // Search components
 const QueryTest = async(() => import("../pages/search/queryTest"), { time: 0 });
