@@ -3,6 +3,7 @@ import * as types from '../constants';
 let initState = {
     searchQueryList: [],
     analysisData: {
+        "isSuccess": true,
         "analysis": {}
     },
     analysisDataDetail: {}

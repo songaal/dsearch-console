@@ -58,6 +58,7 @@ function DocumentResults({ dispatch, analysisData, analysisDataDetail, leftBoxHe
         let calcMaxPage = parseInt(Object.keys(analysisData["analysis"]).length / 10) + (Object.keys(analysisData["analysis"]).length % 10 >= 1 ? 1 : 0);
         setMaxPage(calcMaxPage)
         if (calcMaxPage > 0) setPage(1)
+        else if(!calcMaxPage ) setPage(0)
     }, [analysisData])
     
     const getAnalyzedDocumentDetail = (event) => {
@@ -69,19 +70,22 @@ function DocumentResults({ dispatch, analysisData, analysisDataDetail, leftBoxHe
         setDetailModal(true)
     }
 
+    console.log(analysisData)
+
     return (
         <Box style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column"}}>
             <Dialog
                 open={detailModal}
+                style={{width: "100%"}}
                 onClose={() => { setDetailModal(false) }} >
                 <DialogTitle id="dialog-title">{"문서 분석 디테일"}</DialogTitle>
-                <DialogContent style={{ overflow: "auto"}}>
+                <DialogContent style={{ overflow: "auto", width: "100%" }} >
                     <Table>
                         <TableHead>
                             <TableRow>
-                                <TableCell align="center"> 필드 명</TableCell>
-                                <TableCell align="center"> 문서 내용 </TableCell>
-                                <TableCell align="center"> 분석 내용 </TableCell>
+                                <TableCell align="center" style={{width: "10%"}}> 필드 명</TableCell>
+                                <TableCell align="center" style={{width: "40%"}}> 문서 내용 </TableCell>
+                                <TableCell align="center" style={{width: "50%"}}> 분석 내용 </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -107,7 +111,7 @@ function DocumentResults({ dispatch, analysisData, analysisDataDetail, leftBoxHe
                     variant="outlined"
                     color="primary"
                     onClick={() => { 
-                        setPage(page -1);
+                        setPage(page - 1);
                     }}
                     disabled={page <= 1}
                 > 이전 </Button>
@@ -135,7 +139,11 @@ function DocumentResults({ dispatch, analysisData, analysisDataDetail, leftBoxHe
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {
+                        { analysisData["isSuccess"] === false ?  
+                            <TableRow>
+                                <TableCell colSpan={3} style={{textAlign: "center"}}> 데이터가 없거나 인덱스 분석기 및 쿼리를 확인해주세요 </TableCell>
+                            </TableRow>
+                        :
                             Object.keys(analysisData["analysis"]).sort().slice((page-1)* 10, page * 10).map((id, numOfId) => {
                                 return Object.keys(analysisData["analysis"][id]).sort().map((fieldName, index) => {
                                     return (
@@ -218,7 +226,7 @@ function SearchQueryArea({ dispatch, searchQueryList, indexList, leftBoxHeight }
         }
 
         dispatch(createSearchQuery(searchQuery))
-        dispatch(getSearchQueryList())
+        setTimeout(() => {dispatch(getSearchQueryList())}, 1000) 
     }
 
     const loadSearchQuery = () => {
