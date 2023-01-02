@@ -42,6 +42,8 @@ import {
     FormGroup,
     FormControlLabel,
     Checkbox,
+    LinearProgress,
+    CircularProgress,
 } from "@material-ui/core";
 
 import { setIndicesAction } from "../../../redux/actions/indicesActions";
@@ -69,8 +71,6 @@ function DocumentResults({ dispatch, analysisData, analysisDataDetail, leftBoxHe
         dispatch(analyzeDocumentDetail(data))
         setDetailModal(true)
     }
-
-    console.log(analysisData)
 
     return (
         <Box style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column"}}>
@@ -188,15 +188,20 @@ function DocumentResults({ dispatch, analysisData, analysisDataDetail, leftBoxHe
     )
 }
 
-function SearchQueryArea({ dispatch, searchQueryList, indexList, leftBoxHeight }) {
+function SearchQueryArea({ dispatch, searchQueryList, indexList, leftBoxHeight, analysisData }) {
     const [index, setIndex] = useState("")
     const [searchQuery, setSearchQuery] = useState("")
     const [searchQueryName, setSearchQueryName] = useState("");
+    const [progress , setProgress] = useState(false)
     
     const [checkBoxList, setCheckBoxList] = useState({});
 
     const [isOpenSearchQueryLoadModal, setOpenSearchQueryLoadModal] = useState(false)
     const [isOpenSearchQuerySaveModal, setOpenSearchQuerySaveModal] = useState(false)
+
+    useEffect(() => {
+        setProgress(false)
+    }, [analysisData])
 
     const uncheckedAllCheckBox = () => {
         let checkedList = {};
@@ -259,6 +264,7 @@ function SearchQueryArea({ dispatch, searchQueryList, indexList, leftBoxHeight }
         }
 
         dispatch(analyzeDocument(data))
+        setProgress(true)
         uncheckedAllCheckBox()
     }
 
@@ -346,12 +352,16 @@ function SearchQueryArea({ dispatch, searchQueryList, indexList, leftBoxHeight }
                 </FormControl>
 
                 <Box display="flex" alignItems="center" justifyContent="space-between" style={{minWidth: "150px"}}>
-                    <Button variant="contained" color="primary" style={{ margin: "2px" }} size="small"
-                        onClick={() => {
-                            analyzeSearchQueryDocument()
-                        }}>
-                        쿼리 실행
-                    </Button>
+                    {
+                        progress ? 
+                            <CircularProgress /> : 
+                            <Button variant="contained" color="primary" style={{ margin: "2px" }} size="small"
+                                onClick={() => {
+                                    analyzeSearchQueryDocument()
+                                }}>
+                                    쿼리 실행
+                                </Button>
+                    }
                     <Button variant="outlined" color="primary" style={{ margin: "2px" }} size="small"
                         onClick={() => {
                             setOpenSearchQuerySaveModal(true)
@@ -421,7 +431,7 @@ function DocumentAnalysisCard({ dispatch, searchQueryList, indexList, analysisDa
                         minWidth={MIN_WIDTH + "px"}
                         maxWidth="90%"
                     >
-                        <SearchQueryArea dispatch={dispatch} searchQueryList={searchQueryList} indexList={indexList} leftBoxHeight={leftBoxHeight}/>
+                        <SearchQueryArea dispatch={dispatch} searchQueryList={searchQueryList} indexList={indexList} leftBoxHeight={leftBoxHeight} analysisData={analysisData} />
                     </Resizable>
                     <Divider style={{ height: dividerHeight, margin: "4px" }} orientation="vertical" />
                     <Box width={"100%"} height="100%">
