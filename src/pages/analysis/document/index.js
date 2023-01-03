@@ -42,7 +42,6 @@ import {
     FormGroup,
     FormControlLabel,
     Checkbox,
-    LinearProgress,
     CircularProgress,
 } from "@material-ui/core";
 
@@ -194,6 +193,8 @@ function SearchQueryArea({ dispatch, searchQueryList, indexList, leftBoxHeight, 
     const [searchQuery, setSearchQuery] = useState("")
     const [searchQueryName, setSearchQueryName] = useState("");
     const [progress , setProgress] = useState(false)
+    const [delProgress , setDelProgress] = useState(false)
+
     
     const [checkBoxList, setCheckBoxList] = useState({});
 
@@ -252,8 +253,12 @@ function SearchQueryArea({ dispatch, searchQueryList, indexList, leftBoxHeight, 
         if(checkedList === null || checkedList === undefined|| checkedList.length === 0) return;
         const checkedId = checkedList[0]
         dispatch(deleteSearchQeury(checkedId))
-        setTimeout(() => {dispatch(getSearchQueryList())}, 1000) 
-        setOpenSearchQueryLoadModal(false)
+        setDelProgress(true)
+        setTimeout(() => {
+            dispatch(getSearchQueryList())
+            setDelProgress(false)
+            // setOpenSearchQueryLoadModal(false)
+        }, 1000) 
         uncheckedAllCheckBox()
     }
 
@@ -323,7 +328,11 @@ function SearchQueryArea({ dispatch, searchQueryList, indexList, leftBoxHeight, 
                 </DialogContent>
                 <DialogActions>
                     <Button variant="outlined" color="primary" onClick={() => { loadSearchQuery() }}>불러오기</Button>
-                    <Button variant="contained" style={{ backgroundColor: "red", color: "white" }} onClick={() => { deleteSearchQuery() }}>삭제</Button>
+                    {
+                        delProgress 
+                            ? <CircularProgress></CircularProgress> 
+                            : <Button variant="contained" style={{ backgroundColor: "red", color: "white" }} onClick={() => { deleteSearchQuery() }}>삭제</Button>
+                    }
                     <Button variant="contained" color="default" onClick={() => { setOpenSearchQueryLoadModal(false) }}>닫기</Button>
                 </DialogActions>
             </Dialog>
