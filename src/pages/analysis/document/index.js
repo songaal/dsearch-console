@@ -73,28 +73,29 @@ function DocumentResults({ dispatch, analysisData, analysisDataDetail, leftBoxHe
     }
 
     return (
-        <Box style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column"}}>
+        <Box style={{ width: "100%", display: "flex", flexDirection: "column"}}>
             <Dialog
+                fullWidth={true}
                 open={detailModal}
-                style={{width: "100%"}}
+                maxWidth={"lg"}
                 onClose={() => { setDetailModal(false) }} >
                 <DialogTitle id="dialog-title">{"문서 분석 디테일"}</DialogTitle>
-                <DialogContent style={{ overflow: "auto", width: "100%" }} >
+                <DialogContent style={{ overflow: "auto" }} >
                     <Table>
                         <TableHead>
                             <TableRow>
-                                <TableCell align="center" style={{width: "10%"}}> 필드 명</TableCell>
-                                <TableCell align="center" style={{width: "40%"}}> 문서 내용 </TableCell>
-                                <TableCell align="center" style={{width: "50%"}}> 분석 내용 </TableCell>
+                                <TableCell align="center" > 필드 명</TableCell>
+                                <TableCell align="center" > 문서 내용 </TableCell>
+                                <TableCell align="center" > 분석 내용 </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {Object.keys(analysisDataDetail).sort().map((fieldName) => {
                                 return (
                                 <TableRow hover key={fieldName}>
-                                    <TableCell>{fieldName}</TableCell>
-                                    <TableCell>{analysisDataDetail[fieldName]['document']}</TableCell>
-                                    <TableCell>{analysisDataDetail[fieldName]['documentTermVectors']}</TableCell>
+                                    <TableCell style={{width: "10%"}}>{fieldName}</TableCell>
+                                    <TableCell style={{width: "40%"}}>{analysisDataDetail[fieldName]['document']}</TableCell>
+                                    <TableCell style={{width: "50%"}}>{analysisDataDetail[fieldName]['documentTermVectors']}</TableCell>
                                 </TableRow>)
                             })}
                         </TableBody>
@@ -251,7 +252,7 @@ function SearchQueryArea({ dispatch, searchQueryList, indexList, leftBoxHeight, 
         if(checkedList === null || checkedList === undefined|| checkedList.length === 0) return;
         const checkedId = checkedList[0]
         dispatch(deleteSearchQeury(checkedId))
-        dispatch(getSearchQueryList())
+        setTimeout(() => {dispatch(getSearchQueryList())}, 1000) 
         setOpenSearchQueryLoadModal(false)
         uncheckedAllCheckBox()
     }
