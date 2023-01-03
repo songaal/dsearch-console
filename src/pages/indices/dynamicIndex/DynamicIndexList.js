@@ -14,12 +14,15 @@ import {
     Typography,
     Card as MuiCard,
     Grid as MuiGrid,
-    Dialog, DialogActions, DialogContent, DialogTitle, CardContent
+    Dialog, DialogActions, DialogContent, DialogTitle, CardContent,
+    CircularProgress
 } from "@material-ui/core";
 import styled from "styled-components";
 import {spacing} from "@material-ui/system";
 import {makeStyles} from "@material-ui/core/styles";
 import {Cached} from "@material-ui/icons";
+import {blue, red} from "@material-ui/core/colors";
+import {rgba} from "polished";
 
 const Card = styled(MuiCard)(spacing);
 const Grid = styled(MuiGrid)(spacing);
@@ -42,7 +45,7 @@ function DynamicBox({dispatch, dynamicIndexInfoBundle, classes, rndColor, desc, 
                 let dynamicIndexIdState = dynamicIndexAllState[dynamicIndexInfo.id] || {}
                 let dynamicIndexStateCount = 0
                 if (Object.keys(dynamicIndexIdState).length > 0) {
-                    dynamicIndexStateCount = dynamicIndexStateCount.count
+                    dynamicIndexStateCount = dynamicIndexIdState.count
                 } else {
                     dynamicIndexStateCount = -1
                 }
@@ -64,6 +67,7 @@ function DynamicBox({dispatch, dynamicIndexInfoBundle, classes, rndColor, desc, 
 function DynamicCard({dispatch, dynamicIndexInfo, rndColor, desc, dynamicIndexStateCount, dynamicIndexState}) {
     const [openStatusModal, setOpenStatusModal] = useState(false)
     const [openCheckModal, setOpenCheckModal] = useState(false)
+    const [openCircleModal, setOpenCircleModal] = useState(false)
     const [enable, setEnable] = useState(false)
     const [statusBtn, setStatusBtn] = useState(false)
     const [openBtn, setOpenBtn] = useState(false)
@@ -95,14 +99,19 @@ function DynamicCard({dispatch, dynamicIndexInfo, rndColor, desc, dynamicIndexSt
         let enableBody = {
             "enable": enable
         }
+        setOpenCircleModal(true)
+        setOpenBtn(false)
+        setCloseBtn(false)
         dispatch(setDynamicIndexStatusChangeActions(dynamicIndexInfo['id'], enableBody)).then(response => {
             if (response.payload == 200) {
                 if (enable) {
-                    setCloseBtn(true)
                     setOpenBtn(false)
+                    setCloseBtn(true)
+                    setOpenCircleModal(false)
                 } else {
                     setOpenBtn(true)
                     setCloseBtn(false)
+                    setOpenCircleModal(false)
                 }
             }
         })
@@ -110,7 +119,8 @@ function DynamicCard({dispatch, dynamicIndexInfo, rndColor, desc, dynamicIndexSt
     }
 
     return (
-        <Card >
+        <Card style={{position: "relative", backgroundColor: openCircleModal ? rgba(0, 0, 0, 0.5) : ""}}>
+            <CircularProgress style={{display: openCircleModal ? "block" : "none", top: "45%", left: "42%", position: "absolute"}}/>
             <CardHeader
                 avatar={
                     <Avatar style={{fontSize: 15, width: 80, height: 25, backgroundColor: rndColor}} variant="square">
@@ -173,7 +183,9 @@ function DynamicCard({dispatch, dynamicIndexInfo, rndColor, desc, dynamicIndexSt
                     <Box> 동적 색인을 {enable ? "OPEN" : "CLOSE" } 하시겠습니까?</Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="contained" onClick={() => handleConsume(enable)}>확인</Button>
+                    <Button variant="contained" onClick={() => handleConsume(enable)} style={{backgroundColor: enable ? blue['200'] : red['200'] }}>
+                        {enable ? "OPEN" : "CLOSE" }
+                    </Button>
                     <Button onClick={() => setOpenCheckModal(false)} variant="contained">닫기</Button>
                 </DialogActions>
             </Dialog>
