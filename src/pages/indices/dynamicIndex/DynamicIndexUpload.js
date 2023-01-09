@@ -11,7 +11,7 @@ import MuiAlert from '@material-ui/lab/Alert';
 import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/theme-kuroir";
-import {setDynamicIndexInfoListActions, setDynamicIndexUploadActions} from '@actions/dynamicIndexInfoActions';
+import {setDynamicIndexInfoListActions, setDynamicIndexUploadActions, setDynamicIndexAllStatusInfoActions} from '@actions/dynamicIndexInfoActions';
 
 function DynamicIndexUpload({ dispatch, dynamicIndexInfoList }) {
     const aceEditor = useRef(dynamicIndexInfoList);
@@ -23,6 +23,7 @@ function DynamicIndexUpload({ dispatch, dynamicIndexInfoList }) {
         dispatch(setDynamicIndexInfoListActions()).then(response => {
             aceEditor.current.editor.setValue(JSON.stringify(response.payload, null, 2))
         })
+        dispatch(setDynamicIndexAllStatusInfoActions())
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     function isJson(str) {
@@ -47,10 +48,10 @@ function DynamicIndexUpload({ dispatch, dynamicIndexInfoList }) {
         let body = JSON.parse(aceEditor.current.editor.getValue())
         dispatch(setDynamicIndexUploadActions(body)).then(response => {
             if (response.payload == 0) {
-                setMessage("업로드 실패했습니다.")
+                setMessage("저장 실패했습니다.")
                 setMessageStatus("error")
             } else {
-                setMessage(response.payload + "개 업로드 하였습니다.")
+                setMessage(response.payload + "개 저장 하였습니다.")
                 setMessageStatus("success")
             }
         })
@@ -76,7 +77,7 @@ function DynamicIndexUpload({ dispatch, dynamicIndexInfoList }) {
                         />
                     </Box>
                     <Box align="right" mx={3} mt={3}>
-                        <Button fullWidth variant="outlined" color="primary" onClick={() => handleUpload()}> 업로드 </Button>
+                        <Button fullWidth variant="outlined" color="primary" onClick={() => handleUpload()}> 저장 </Button>
                     </Box>
                     <Snackbar open={snackbarFlag} autoHideDuration={3000} onClose={() => { setSnackbarFlag(false); }}>
                         <MuiAlert elevation={6} variant="filled" severity={messageStatus}> {message} </MuiAlert>

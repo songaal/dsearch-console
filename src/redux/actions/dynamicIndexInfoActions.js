@@ -1,6 +1,5 @@
 import {
     SET_DYNAMICINDEX_LIST_INFO,
-    SET_DYNAMICINDEX_STATE_INFO,
     SET_DYNAMICINDEX_BUNDLE_LIST_INFO,
     SET_DYNAMICINDEX_ALL_STATE_INFO,
     SET_DYNAMICINDEX_STATE_CHANGE_INFO,
@@ -14,12 +13,8 @@ export const setDynamicIndexInfoListActions = key => dispatch => client.call({ur
     .then(response => dispatch({type: SET_DYNAMICINDEX_LIST_INFO, payload: response.data}))
     .catch(err => console.error(err))
 
-export const setDynamicIndexInfoBundleListActions = desc => dispatch => client.call({uri: `/dynamicIndex/bundle?desc=${desc}`})
+export const setDynamicIndexInfoBundleListActions = key => dispatch => client.call({uri: `/dynamicIndex/bundle`})
     .then(response => dispatch({type: SET_DYNAMICINDEX_BUNDLE_LIST_INFO, payload: response.data}))
-    .catch(err => console.error(err))
-
-export const setDynamicIndexStatusInfoActions = id => dispatch => client.call({uri: `/dynamicIndex/state/${id}`})
-    .then(response => {dispatch({type: SET_DYNAMICINDEX_STATE_INFO, payload: response.data})})
     .catch(err => console.error(err))
 
 export const setDynamicIndexAllStatusInfoActions = key => dispatch => client.call({uri: `/dynamicIndex/state`})

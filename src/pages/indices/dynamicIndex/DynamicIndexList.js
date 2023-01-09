@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 import {connect} from "react-redux";
 import {setDynamicIndexInfoBundleListActions,
         setDynamicIndexStatusChangeActions,
-        setDynamicIndexStatusInfoActions,
         setDynamicIndexAllStatusInfoActions
 } from '@actions/dynamicIndexInfoActions';
 import {
@@ -10,7 +9,6 @@ import {
     Button,
     CardActions,
     CardHeader,
-    Avatar,
     Typography,
     Card as MuiCard,
     Grid as MuiGrid,
@@ -38,7 +36,7 @@ const useStyles = makeStyles({
     }
 });
 
-function DynamicBox({dispatch, dynamicIndexInfoBundle, classes, rndColor, desc, dynamicIndexAllState, dynamicIndexState}) {
+function DynamicBox({dispatch, dynamicIndexInfoBundle, classes, rndColor, dynamicIndexAllState}) {
     return (
         <>
             {Object.values(dynamicIndexInfoBundle).map((dynamicIndexInfo, i) =>{
@@ -53,9 +51,9 @@ function DynamicBox({dispatch, dynamicIndexInfoBundle, classes, rndColor, desc, 
                     <DynamicCard dynamicIndexInfo={dynamicIndexInfo}
                                  dispatch={dispatch}
                                  rndColor={rndColor}
-                                 desc={desc}
+                                 dynamicIndexInfoBundle={dynamicIndexInfoBundle}
                                  dynamicIndexStateCount={dynamicIndexStateCount}
-                                 dynamicIndexState={dynamicIndexState}
+                                 dynamicIndexIdState={dynamicIndexIdState}
                     />
                 </Grid>)
             }
@@ -64,22 +62,23 @@ function DynamicBox({dispatch, dynamicIndexInfoBundle, classes, rndColor, desc, 
     );
 }
 
-function DynamicCard({dispatch, dynamicIndexInfo, rndColor, desc, dynamicIndexStateCount, dynamicIndexState}) {
-    const [openStatusModal, setOpenStatusModal] = useState(false)
+function DynamicCard({dispatch, dynamicIndexInfo, rndColor, dynamicIndexStateCount, dynamicIndexIdState}) {
+    const classes = useStyles();
     const [openCheckModal, setOpenCheckModal] = useState(false)
     const [openCircleModal, setOpenCircleModal] = useState(false)
+    const [cardDisable, setCardDisable] = useState(false)
     const [enable, setEnable] = useState(false)
-    const [statusBtn, setStatusBtn] = useState(false)
     const [openBtn, setOpenBtn] = useState(false)
     const [closeBtn, setCloseBtn] = useState(false)
 
     useEffect(() => {
+        setCardDisable(false)
         if (dynamicIndexStateCount < 0) {
-            setStatusBtn(false)
             setOpenBtn(false)
             setCloseBtn(false)
+            setCardDisable(false)
         } else {
-            setStatusBtn(true)
+            setCardDisable(true)
             if (dynamicIndexStateCount == 0) {
                 setOpenBtn(true)
                 setCloseBtn(false)
@@ -90,101 +89,82 @@ function DynamicCard({dispatch, dynamicIndexInfo, rndColor, desc, dynamicIndexSt
         }
     }, [dynamicIndexStateCount])
 
-    function handleStatus() {
-        dispatch(setDynamicIndexStatusInfoActions(dynamicIndexInfo['id']))
-        setOpenStatusModal(true)
-    }
-
     function handleConsume(enable) {
         let enableBody = {
             "enable": enable
         }
         setOpenCircleModal(true)
-        setOpenBtn(false)
-        setCloseBtn(false)
         dispatch(setDynamicIndexStatusChangeActions(dynamicIndexInfo['id'], enableBody)).then(response => {
             if (response.payload == 200) {
-                if (enable) {
-                    setOpenBtn(false)
-                    setCloseBtn(true)
+                dispatch(setDynamicIndexAllStatusInfoActions()).then(response => {
+                    if (enable) {
+                        setOpenBtn(false)
+                        setCloseBtn(true)
+                    } else {
+                        setOpenBtn(true)
+                        setCloseBtn(false)
+                    }
                     setOpenCircleModal(false)
-                } else {
-                    setOpenBtn(true)
-                    setCloseBtn(false)
-                    setOpenCircleModal(false)
-                }
+                })
             }
         })
         setOpenCheckModal(false)
     }
 
     return (
-        <Card style={{position: "relative", backgroundColor: openCircleModal ? rgba(0, 0, 0, 0.5) : ""}}>
+        <Card style={{position: "relative", backgroundColor: cardDisable ? "" : rgba(0, 0, 0, 0.5)}}>
             <CircularProgress style={{display: openCircleModal ? "block" : "none", top: "45%", left: "42%", position: "absolute"}}/>
-            <CardHeader
-                avatar={
-                    <Avatar style={{fontSize: 15, width: 80, height: 25, backgroundColor: rndColor}} variant="square">
-                        {desc === "server" ? dynamicIndexInfo['bundleServer'] : dynamicIndexInfo['bundleQueue']}
-                    </Avatar>
-                }
+            <CardHeader style={{fontSize: 15, width: "100%", height: 25, backgroundColor: rndColor, color: "white", textAlign: "center"}}
+                        title={dynamicIndexInfo['bundleServer'] + " - " + dynamicIndexInfo['bundleQueue']}
             />
             <CardContent>
                 <Typography style={{fontSize: 14, fontWeight: "bold"}} >
                     {dynamicIndexInfo['scheme'] + "://" + dynamicIndexInfo['ip'] + ":" + dynamicIndexInfo['port']}
                 </Typography>
+                <Box className={classes.marginGrid} style={{fontSize: "1.2em"}}>
+                    {
+                        dynamicIndexStateCount >= 0 ?
+                            <Box style={{fontSize: "1.2em"}}>
+                                {Object.keys(dynamicIndexIdState).map((queueName, key) => {
+
+                                    if (queueName == 'count') return ;
+
+                                    return (
+                                        <Grid key={key} item xs={4}>
+                                            <Box style={{whiteSpace: "nowrap", fontSize: "10px"}}>
+                                                {queueName} : {dynamicIndexIdState[queueName]}
+                                            </Box>
+                                        </Grid>
+                                    )
+                                })}
+                            </Box>
+                            :
+                            <></>
+                    }
+                </Box>
             </CardContent>
             <CardActions>
-                <Button style={{color: statusBtn ? "#1976d2" : "#000000"}} size="small" disabled={!statusBtn} onClick={() => handleStatus()}>STATUS</Button>
                 <Box marginLeft='auto'>
-                    <Button style={{color: openBtn ? "#1976d2" : "#000000"}} size="small" disabled={!openBtn}
+                    <Button style={{backgroundColor: openBtn ? blue['200'] : ""}}size="small" disabled={!openBtn} variant="contained"
                             onClick={() => {
                                 setEnable(true)
                                 setOpenCheckModal(true)
-                            }}>OPEN</Button>
-                    <Button style={{color: closeBtn ? "#1976d2" : "#000000"}} size="small" disabled={!closeBtn}
+                            }}>ON</Button>
+                    <Button style={{backgroundColor: closeBtn ? red['200'] : "", marginLeft: 10}} size="small" disabled={!closeBtn} variant="contained"
                             onClick={() => {
                                 setEnable(false)
                                 setOpenCheckModal(true)
-                            }}>CLOSE</Button>
+                            }}>OFF</Button>
                 </Box>
             </CardActions>
-            <Dialog open={openStatusModal} onClose={() => setOpenStatusModal(!openStatusModal)}>
-                <DialogTitle>QUEUE CONSUME ({dynamicIndexInfo['ip'] + ":" + dynamicIndexInfo['port']})</DialogTitle>
-                <DialogContent>
-                    <Box style={{fontSize: "1.2em"}}>
-                        {Object.keys(dynamicIndexState).map((queueName, key) => {
-
-                            if (queueName == 'count') return ;
-
-                            return (
-                                <Grid key={key} item xs={4}>
-                                    <Box style={{whiteSpace: "nowrap", fontSize: "10px"}}>
-                                        {queueName} : {dynamicIndexState[queueName]}
-                                    </Box>
-                                </Grid>
-                            )
-                        })}
-                    </Box>
-                </DialogContent>
-                <DialogActions disableSpacing>
-                    <Box>
-                        <Button style={{marginLeft: "2px", fontSize: "5px"}}
-                                onClick={() => setOpenStatusModal(false)}
-                                variant="contained"
-                        >
-                            닫기
-                        </Button>
-                    </Box>
-                </DialogActions>
-            </Dialog>
             <Dialog open={openCheckModal} onClose={() => setOpenCheckModal(!openCheckModal)}>
                 <DialogTitle>{dynamicIndexInfo['ip'] + ":" + dynamicIndexInfo['port']}</DialogTitle>
                 <DialogContent>
-                    <Box> 동적 색인을 {enable ? "OPEN" : "CLOSE" } 하시겠습니까?</Box>
+                    <Box> 동적 색인을 {enable ? "ON" : "OFF" } 하시겠습니까?</Box>
                 </DialogContent>
                 <DialogActions>
                     <Button variant="contained" onClick={() => handleConsume(enable)} style={{backgroundColor: enable ? blue['200'] : red['200'] }}>
-                        {enable ? "OPEN" : "CLOSE" }
+                        {enable ? "ON" : "OFF" }
                     </Button>
                     <Button onClick={() => setOpenCheckModal(false)} variant="contained">닫기</Button>
                 </DialogActions>
@@ -193,11 +173,11 @@ function DynamicCard({dispatch, dynamicIndexInfo, rndColor, desc, dynamicIndexSt
     );
 }
 
-function DynamicIndexList({dispatch, dynamicIndexAllState, dynamicIndexState, dynamicIndexInfoBundleList}) {
+function DynamicIndexList({dispatch, dynamicIndexAllState, dynamicIndexInfoBundleList}) {
 
     const classes = useStyles();
     const color = ['#1b2430', '#1976d2', '#388e3c', '#1976d2', '#3949ab']
-    const [desc, setDesc] = React.useState("queue")
+    const [refDynamicIndexAllState, setRefDynamicIndexAllState] = useState(dynamicIndexAllState)
 
     useEffect(() => {
         dispatch(setDynamicIndexInfoBundleListActions())
@@ -205,15 +185,15 @@ function DynamicIndexList({dispatch, dynamicIndexAllState, dynamicIndexState, dy
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
-        dispatch(setDynamicIndexInfoBundleListActions(desc))
-    }, [desc]) // eslint-disable-line react-hooks/exhaustive-deps
+        setRefDynamicIndexAllState(dynamicIndexAllState)
+    }, [dynamicIndexAllState])
 
-    function handleDesc(desc) {
-        if (desc === "queue") {
-            setDesc("server")
-        } else {
-            setDesc("queue")
-        }
+    /*useEffect(() => {
+        dispatch(setDynamicIndexAllStatusInfoActions())
+    }, [refDynamicIndexAllState]) // eslint-disable-line react-hooks/exhaustive-deps*/
+
+    function handleRefresh() {
+        dispatch(setDynamicIndexAllStatusInfoActions())
     }
 
     return (
@@ -222,8 +202,8 @@ function DynamicIndexList({dispatch, dynamicIndexAllState, dynamicIndexState, dy
                 <Button variant={"outlined"}
                         color={"primary"}
                         size={"small"}
-                        onClick={() => handleDesc(desc)}
-                ><Cached/>정렬 변경</Button>
+                        onClick={() => handleRefresh()}
+                ><Cached/> Consume Status Update</Button>
             </Box>
 
             <Grid container spacing={1}>
@@ -249,9 +229,7 @@ function DynamicIndexList({dispatch, dynamicIndexAllState, dynamicIndexState, dy
                                     dispatch={dispatch}
                                     classes={classes}
                                     rndColor={rndColor}
-                                    desc={desc}
-                                    dynamicIndexAllState={dynamicIndexAllState}
-                                    dynamicIndexState={dynamicIndexState}
+                                    dynamicIndexAllState={refDynamicIndexAllState}
                                 />
                             </Grid>
                         )
@@ -264,6 +242,5 @@ function DynamicIndexList({dispatch, dynamicIndexAllState, dynamicIndexState, dy
 
 export default connect(store => ({
     dynamicIndexAllState: store.dynamicIndexReducers.dynamicIndexAllState,
-    dynamicIndexState: store.dynamicIndexReducers.dynamicIndexState,
     dynamicIndexInfoBundleList: store.dynamicIndexReducers.dynamicIndexInfoBundleList
 }))(DynamicIndexList);
