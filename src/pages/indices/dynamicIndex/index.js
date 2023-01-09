@@ -26,7 +26,7 @@ function Dynamic({dispatch}) {
 
             <AntTabs tabs={[
                 {label: "목록", component: Async(() => import("./DynamicIndexList"))},
-                {label: "저장", component: Async(() => import("./DynamicIndexUpload"))}
+                {label: "설정", component: Async(() => import("./DynamicIndexUpload"))}
             ]} />
 
         </React.Fragment>
